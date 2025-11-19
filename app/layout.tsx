@@ -25,9 +25,13 @@ export const metadata: Metadata = {
     description: "A collaborative platform for mapping and documenting false solutions in circular economy and climate action.",
     creator: "@citizensatlas",
   },
-  viewport: "width=device-width, initial-scale=1",
   themeColor: "#0d234f",
   manifest: "/manifest.json",
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
