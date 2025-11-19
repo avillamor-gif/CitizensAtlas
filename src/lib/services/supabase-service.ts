@@ -474,16 +474,14 @@ export async function createNews(article: Omit<Article, 'id'>) {
     const accessToken = session.access_token
     console.log('✅ [Supabase] Retrieved access token from session')
     
-    const supabaseUrl = 'https://srsjynjccivtjvordrlc.supabase.co'
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyc2p5bmpjY2l2dGp2b3JkcmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMDE3NjUsImV4cCI6MjA3Mzc3Nzc2NX0.YOyYebTJSgq0bEcBQDXsNCiK6WPvB8lViSKtquzkdGE'
+    // Use environment variables instead of hardcoded URLs
+    console.log('🌐 [Supabase] Making direct fetch call to:', `${SUPABASE_URL}/rest/v1/news`)
     
-    console.log('🌐 [Supabase] Making direct fetch call to:', `${supabaseUrl}/rest/v1/news`)
-    
-    const response = await fetch(`${supabaseUrl}/rest/v1/news`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/news`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': supabaseAnonKey,
+        'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${accessToken}`,
         'Prefer': 'return=representation'
       },
@@ -1030,16 +1028,14 @@ export async function createVideo(article: Omit<Article, 'id'>) {
       throw new Error('No access token found in auth data')
     }
     
-    const supabaseUrl = 'https://srsjynjccivtjvordrlc.supabase.co'
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyc2p5bmpjY2l2dGp2b3JkcmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMDE3NjUsImV4cCI6MjA3Mzc3Nzc2NX0.YOyYebTJSgq0bEcBQDXsNCiK6WPvB8lViSKtquzkdGE'
+    // Use environment variables instead of hardcoded URLs
+    console.log('🌐 [Supabase] Making direct fetch call to:', `${SUPABASE_URL}/rest/v1/videos`)
     
-    console.log('🌐 [Supabase] Making direct fetch call to:', `${supabaseUrl}/rest/v1/videos`)
-    
-    const response = await fetch(`${supabaseUrl}/rest/v1/videos`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/videos`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': supabaseAnonKey,
+        'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${accessToken}`,
         'Prefer': 'return=representation'
       },
