@@ -1,4 +1,5 @@
 // Fix admin user roles on production
+(async () => {
 const SUPABASE_URL = 'https://srsjynjccivtjvordrlc.supabase.co'
 const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyc2p5bmpjY2l2dGp2b3JkcmxjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODIwMTc2NSwiZXhwIjoyMDczNzc3NzY1fQ.sXesnBbiwklHz0dzc4WoXWS38R7HZKGM1cdMOyfc__g'
 
@@ -17,7 +18,7 @@ async function fixAdminRoles() {
     
     if (usersResponse.ok) {
       const usersData = await usersResponse.json()
-      console.log('📋 Current users:', usersData.users.map(u => ({
+      console.log('📋 Current users:', usersData.users.map((u: any) => ({
         id: u.id,
         email: u.email,
         created_at: u.created_at,
@@ -25,12 +26,12 @@ async function fixAdminRoles() {
       })))
       
       // Find the admin users
-      const adminUsers = usersData.users.filter(u => 
+      const adminUsers = usersData.users.filter((u: any) => 
         u.email === 'akawar@gmail.com' || 
         u.email === 'alberto.b.villamor@gmail.com'
       )
       
-      console.log('👨‍💼 Found admin users:', adminUsers.map(u => ({
+      console.log('👨‍💼 Found admin users:', adminUsers.map((u: any) => ({
         id: u.id,
         email: u.email
       })))
@@ -46,7 +47,7 @@ async function fixAdminRoles() {
       
       if (profilesResponse.ok) {
         const profilesData = await profilesResponse.json()
-        console.log('👤 Current profiles:', profilesData.map(p => ({
+        console.log('👤 Current profiles:', profilesData.map((p: any) => ({
           id: p.id,
           email: p.email,
           role: p.role,
@@ -125,7 +126,7 @@ async function fixAdminRoles() {
         
         if (finalProfilesResponse.ok) {
           const finalProfilesData = await finalProfilesResponse.json()
-          console.log('🎯 Final profiles:', finalProfilesData.map(p => ({
+          console.log('🎯 Final profiles:', finalProfilesData.map((p: any) => ({
             id: p.id,
             email: p.email,
             role: p.role,
@@ -149,4 +150,5 @@ async function fixAdminRoles() {
 }
 
 // Run the fix
-fixAdminRoles()
+await fixAdminRoles()
+})()
