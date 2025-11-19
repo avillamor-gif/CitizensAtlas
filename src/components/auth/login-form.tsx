@@ -37,18 +37,32 @@ export function LoginForm({
       if (error) {
         console.error('Login error:', error);
         setError(error.message);
-        setLoading(false);
       } else {
         console.log('Login successful, redirecting...');
-        // Don't set loading to false - keep the loading state until redirect
-        // Use router.push for better navigation
-        router.push('/?admin=true');
+        
+        // Try multiple redirect methods to ensure it works
+        try {
+          router.push('/?admin=true');
+        } catch (routerError) {
+          console.warn('Router.push failed, using window.location:', routerError);
+          window.location.href = '/?admin=true';
+        }
+        
+        // Fallback: reset loading state after 3 seconds if redirect doesn't work
+        setTimeout(() => {
+          console.log('Fallback: resetting loading state');
+          setLoading(false);
+        }, 3000);
+        
+        return; // Exit early to avoid setting loading to false immediately
       }
     } catch (err) {
       console.error('Unexpected error:', err);
       setError('An unexpected error occurred');
-      setLoading(false);
     }
+    
+    // Only set loading to false if there was an error
+    setLoading(false);
   };
 
   return (
