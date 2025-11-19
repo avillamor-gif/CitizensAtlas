@@ -28,10 +28,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+    console.log('🚨 [EMERGENCY DEBUG] fetchUserProfile called for:', supabaseUser.email);
+    
+    // IMMEDIATE HARDCODED ROLES - NO DELAYS, NO CONDITIONS
+    if (supabaseUser.email === 'akawar@gmail.com') {
+      console.log('🛡️ [IMMEDIATE] Hardcoded super-admin for akawar@gmail.com');
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email,
+        role: 'super-admin',
+        name: 'akawar',
+        full_name: 'akawar',
+      });
+      return;
+    }
+    
+    if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
+      console.log('🛡️ [IMMEDIATE] Hardcoded admin for alberto.b.villamor@gmail.com');
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email,
+        role: 'admin',
+        name: 'alberto.b.villamor',
+        full_name: 'alberto.b.villamor',
+      });
+      return;
+    }
+    
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
-      // IMMEDIATE SAFETY NET: Known admin users get hardcoded roles
+      // BACKUP SAFETY NET: Known admin users get hardcoded roles
       if (supabaseUser.email === 'akawar@gmail.com') {
         console.log('🛡️ [IMMEDIATE] Hardcoded super-admin for akawar@gmail.com');
         setUser({
