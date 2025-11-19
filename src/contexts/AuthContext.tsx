@@ -1,0 +1,318 @@
+'use client';
+
+import { createContext, useContext, useEffect, useState } from 'react';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@/types/types';
+
+interface AuthContextType {
+  user: User | null;
+  supabaseUser: SupabaseUser | null;
+  session: Session | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: Error | null }>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: Error | null }>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Create client once outside component to avoid recreating on every render
+const supabase = createClient();
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+    try {
+      console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
+      
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single<User>();
+
+      if (error) {
+        console.error('❌ Error fetching user profile:', error);
+        console.error('❌ Error details:', JSON.stringify(error, null, 2));
+        console.warn('⚠️ Using fallback: contributor role');
+        // Use email as fallback if profile doesn't exist
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          role: 'contributor',
+          name: supabaseUser.email!,
+        });
+        return;
+      }
+
+      if (profile) {
+        console.log('✅ Profile loaded successfully:', {
+          email: profile.email,
+          role: profile.role,
+          name: profile.full_name
+        });
+        
+        setUser({
+          id: profile.id,
+          email: profile.email,
+          role: profile.role,
+          name: profile.full_name,
+          full_name: profile.full_name,
+          avatar_url: profile.avatar_url || supabaseUser.user_metadata?.avatar_url,
+        });
+      } else {
+        console.warn('⚠️ No profile data returned, using fallback');
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          role: 'contributor',
+          name: supabaseUser.email!,
+        });
+      }
+    } catch (error) {
+      console.error('❌ Exception fetching user profile:', error);
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        role: 'contributor',
+        name: supabaseUser.email!,
+      });
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    // Get initial session
+    const initializeAuth = async () => {
+      try {
+        // Increase timeout and add better logging
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => {
+            console.error('⏱️ Auth initialization timeout after 15s');
+            reject(new Error('Auth initialization timeout'))
+          }, 15000)
+        })
+        
+        console.log('🔄 Initializing auth session...');
+        const sessionPromise = supabase.auth.getSession()
+        
+        const { data: { session } } = await Promise.race([
+          sessionPromise,
+          timeoutPromise
+        ]) as { data: { session: Session | null } }
+        
+        console.log('✅ Auth session initialized:', session ? 'Logged in' : 'Not logged in');
+        
+        if (!mounted) return;
+        
+        setSession(session);
+        setSupabaseUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await fetchUserProfile(session.user);
+        }
+      } catch (error) {
+        console.error('❌ Error initializing auth:', error);
+        // Continue anyway - user can still try to login
+      } finally {
+        if (mounted) {
+          console.log('✅ Auth initialization complete, setting loading = false');
+          setLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+      
+      console.log('🔄 Auth state changed:', _event);
+      
+      setSession(session);
+      setSupabaseUser(session?.user ?? null);
+      
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      console.log('AuthContext: Starting login with REST API...');
+      console.log('AuthContext: Email:', email);
+      
+      const startTime = Date.now();
+      
+      // Use direct REST API call instead of problematic SDK
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        })
+      });
+      
+      const duration = Date.now() - startTime;
+      console.log(`AuthContext: Login completed in ${duration}ms`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('AuthContext: Login error:', errorData);
+        return { error: new Error(errorData.message || 'Login failed') };
+      }
+      
+      const data = await response.json();
+      
+      console.log('AuthContext: Login successful', {
+        hasUser: !!data?.user,
+        hasAccessToken: !!data?.access_token,
+        userId: data?.user?.id
+      });
+      
+      // Store the session data for use by our localStorage auth pattern
+      if (data.access_token && data.refresh_token) {
+        const sessionData = {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expires_at: data.expires_at,
+          expires_in: data.expires_in,
+          token_type: data.token_type,
+          user: data.user
+        };
+        
+        localStorage.setItem('atlas-auth-token', JSON.stringify(sessionData));
+        console.log('✅ [AuthContext] Session stored in localStorage for CRUD operations');
+        
+        // Also save to Supabase client storage for compatibility
+        if (data.user) {
+          setSupabaseUser(data.user);
+          setSession(sessionData as any);
+          await fetchUserProfile(data.user);
+        }
+      }
+      
+      return { error: null };
+    } catch (error) {
+      console.error('AuthContext: Login exception:', error);
+      return { error: error as Error };
+    }
+  };
+
+  const signUp = async (email: string, password: string, metadata?: any) => {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: metadata,
+        },
+      });
+      return { error };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      console.log('AuthContext: Signing out...');
+      
+      // Clear local state immediately
+      setUser(null);
+      setSupabaseUser(null);
+      setSession(null);
+      
+      // Clear any lingering session data
+      if (typeof window !== 'undefined') {
+        // Clear our custom auth token first
+        localStorage.removeItem('atlas-auth-token');
+        console.log('AuthContext: Cleared atlas-auth-token');
+        
+        // Clear localStorage keys that Supabase might use
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        console.log('AuthContext: Cleared', keysToRemove.length, 'localStorage keys');
+      }
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) {
+        console.error('AuthContext: Sign out error:', error);
+        // Continue anyway - local state is cleared
+      }
+      
+      console.log('AuthContext: Sign out complete');
+    } catch (error) {
+      console.error('AuthContext: Sign out exception:', error);
+      // Still clear state even if there's an error
+      setUser(null);
+      setSupabaseUser(null);
+      setSession(null);
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+      return { error };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        supabaseUser,
+        session,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        resetPassword,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

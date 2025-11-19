@@ -1,0 +1,158 @@
+# GraphQL Schema Definition Language (SDL)
+
+scalar DateTime
+
+# Project Types
+type Project {
+  id: ID!
+  country: String!
+  title: String!
+  date: String
+  publishDate: String
+  corruptionType: String!
+  details: String!
+  latitude: Float!
+  longitude: Float!
+  status: ProjectStatus
+  submittedBy: String
+  submittedAt: String
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+}
+
+# Article Types (News, Publications, Videos)
+type Article {
+  id: ID!
+  slug: String!
+  category: String!
+  title: String!
+  description: String!
+  imageUrl: String!
+  tagColor: String!
+  tags: [String!]
+  publishDate: String
+  documentNames: [String!]
+  downloadCount: Int
+  videoUrl: String
+  status: ArticleStatus
+  submittedBy: String
+  submittedAt: String
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+# Category Types
+type Category {
+  id: ID!
+  name: String!
+}
+
+# Input Types for Mutations
+input ProjectInput {
+  country: String!
+  title: String!
+  date: String
+  publishDate: String
+  corruptionType: String!
+  details: String!
+  latitude: Float!
+  longitude: Float!
+  status: ProjectStatus
+  submittedBy: String
+}
+
+input ProjectUpdateInput {
+  id: ID!
+  country: String
+  title: String
+  date: String
+  publishDate: String
+  corruptionType: String
+  details: String
+  latitude: Float
+  longitude: Float
+  status: ProjectStatus
+  submittedBy: String
+}
+
+input ArticleInput {
+  category: String!
+  title: String!
+  description: String!
+  imageUrl: String!
+  tagColor: String!
+  tags: [String!]
+  publishDate: String
+  documentNames: [String!]
+  videoUrl: String
+  status: ArticleStatus
+  submittedBy: String
+}
+
+input ArticleUpdateInput {
+  id: ID!
+  category: String
+  title: String
+  description: String
+  imageUrl: String
+  tagColor: String
+  tags: [String!]
+  publishDate: String
+  documentNames: [String!]
+  videoUrl: String
+  status: ArticleStatus
+}
+
+input CategoryInput {
+  name: String!
+}
+
+# Query Root
+type Query {
+  # Projects
+  projects(status: ProjectStatus, limit: Int, offset: Int): [Project!]!
+  project(id: ID!): Project
+  projectsByCountry(country: String!): [Project!]!
+  
+  # Articles
+  news(category: String, limit: Int, offset: Int): [Article!]!
+  publications(limit: Int, offset: Int): [Article!]!
+  videos(category: String, limit: Int, offset: Int): [Article!]!
+  article(id: ID!): Article
+  articleBySlug(slug: String!): Article
+  
+  # Categories
+  newsCategories: [Category!]!
+  publicationTypes: [Category!]!
+  videoCategories: [Category!]!
+  
+  # Search
+  searchProjects(query: String!): [Project!]!
+  searchArticles(query: String!): [Article!]!
+}
+
+# Mutation Root
+type Mutation {
+  # Projects
+  createProject(input: ProjectInput!): Project!
+  updateProject(input: ProjectUpdateInput!): Project!
+  deleteProject(id: ID!): Boolean!
+  deleteProjects(ids: [ID!]!): Boolean!
+  
+  # Articles
+  createArticle(input: ArticleInput!): Article!
+  updateArticle(input: ArticleUpdateInput!): Article!
+  deleteArticle(id: ID!): Boolean!
+  deleteArticles(ids: [ID!]!): Boolean!
+  
+  # Categories
+  createCategory(name: String!, type: String!): Category!
+  updateCategory(oldName: String!, newName: String!, type: String!): Category!
+  deleteCategory(name: String!, type: String!): Boolean!
+}

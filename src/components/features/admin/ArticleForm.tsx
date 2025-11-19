@@ -1,0 +1,646 @@
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
+import { Article } from '@/types/types';
+import { uploadImage, uploadMultipleDocuments, validateImageFile, validateDocumentFile } from '@/lib/supabase/storage';
+
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+
+interface ArticleFormProps {
+    onClose: () => void;
+    onSubmit: (article: Omit<Article, 'id' | 'slug'>) => void;
+    onUpdate: (article: Omit<Article, 'slug'>) => void;
+    itemToEdit: Article | null;
+    itemType: 'News Update' | 'Publication' | 'Video';
+    categories?: string[];
+    onAddCategory?: (category: string) => void;
+    isModal?: boolean; // If false, renders as inline form without overlay
+    userRole?: 'contributor' | 'admin' | 'super-admin';
+}
+
+const FormField: React.FC<{ label: string; children: React.ReactNode; required?: boolean }> = ({ label, children, required }) => (
+    <div className="mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+            {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        {children}
+    </div>
+);
+
+const emptyFormState = {
+    title: '',
+    description: '',
+    category: '',
+    imageUrl: '',
+    tagColor: 'bg-yellow-400',
+    tags: [] as string[],
+    publishDate: '',
+    videoUrl: '',
+    imageFile: null as File | null,
+    docFiles: null as FileList | null,
+};
+
+const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, itemToEdit, itemType, categories, onAddCategory, isModal = true, userRole = 'contributor' }) => {
+    console.log('🎨 [ArticleForm] Component mounted/updated:', { itemType, isModal, userRole, hasItemToEdit: !!itemToEdit });
+    
+    const isEditMode = Boolean(itemToEdit);
+    const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+    const [formData, setFormData] = useState({ ...emptyFormState, publishDate: today });
+    const [showAddCategory, setShowAddCategory] = useState(false);
+    const [newCategory, setNewCategory] = useState('');
+    
+    // State for managing news categories (like ProjectForm)
+    const [newsCategories, setNewsCategories] = useState<string[]>(categories || ['Breaking News', 'Politics', 'Environment', 'N/A']);
+    const [showManageNewsCategories, setShowManageNewsCategories] = useState(false);
+
+    // State for tag management
+    const [newTag, setNewTag] = useState('');
+    const [showAddTag, setShowAddTag] = useState(false);
+
+    // Update newsCategories when categories prop changes
+    useEffect(() => {
+        if (categories && categories.length > 0) {
+            setNewsCategories(categories);
+        }
+    }, [categories]);
+
+    useEffect(() => {
+        if (isEditMode && itemToEdit) {
+            setFormData({
+                title: itemToEdit.title,
+                description: itemToEdit.description || '',
+                category: itemToEdit.category,
+                imageUrl: itemToEdit.imageUrl,
+                tagColor: itemToEdit.tagColor,
+                tags: itemToEdit.tags || [],
+                publishDate: itemToEdit.publishDate || '',
+                videoUrl: itemToEdit.videoUrl || '',
+                imageFile: null,
+                docFiles: null,
+            });
+        } else {
+            setFormData({ ...emptyFormState, publishDate: today });
+        }
+    }, [itemToEdit, isEditMode]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        
+        // Auto-fetch video thumbnail when video URL changes
+        if (name === 'videoUrl' && value && itemType === 'Video') {
+            fetchVideoThumbnail(value);
+        }
+    };
+    
+    const fetchVideoThumbnail = (url: string) => {
+        try {
+            let thumbnailUrl = '';
+            
+            // YouTube
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                const videoId = url.includes('youtu.be') 
+                    ? url.split('youtu.be/')[1]?.split('?')[0]
+                    : new URL(url).searchParams.get('v');
+                    
+                if (videoId) {
+                    thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                    setFormData(prev => ({ ...prev, imageUrl: thumbnailUrl }));
+                    console.log('✅ YouTube thumbnail fetched:', thumbnailUrl);
+                }
+            }
+            // Vimeo
+            else if (url.includes('vimeo.com')) {
+                const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+                if (videoId) {
+                    // Vimeo requires API call, use placeholder for now
+                    fetch(`https://vimeo.com/api/v2/video/${videoId}.json`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data[0] && data[0].thumbnail_large) {
+                                setFormData(prev => ({ ...prev, imageUrl: data[0].thumbnail_large }));
+                                console.log('✅ Vimeo thumbnail fetched:', data[0].thumbnail_large);
+                            }
+                        })
+                        .catch(err => console.warn('Could not fetch Vimeo thumbnail:', err));
+                }
+            }
+            // Facebook - use a placeholder as thumbnails require authentication
+            else if (url.includes('facebook.com')) {
+                console.log('ℹ️ Facebook videos require manual thumbnail upload');
+            }
+        } catch (error) {
+            console.warn('Error fetching video thumbnail:', error);
+        }
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    imageFile: file,
+                    imageUrl: reader.result as string,
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleDocsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFormData(prev => ({ ...prev, docFiles: e.target.files }));
+        }
+    };
+
+    const handleAddCategory = () => {
+        if (newCategory.trim() && onAddCategory) {
+            onAddCategory(newCategory.trim());
+            setFormData(prev => ({ ...prev, category: newCategory.trim() }));
+            setNewCategory('');
+            setShowAddCategory(false);
+        }
+    };
+
+    const handleAddNewsCategory = () => {
+        if (newCategory.trim()) {
+            const trimmedCategory = newCategory.trim();
+            if (!newsCategories.includes(trimmedCategory)) {
+                setNewsCategories(prev => [...prev, trimmedCategory]);
+                setFormData(prev => ({ ...prev, category: trimmedCategory }));
+            }
+            setNewCategory('');
+            setShowAddCategory(false);
+        }
+    };
+
+    const handleDeleteNewsCategory = (categoryToDelete: string) => {
+        if (window.confirm(`Are you sure you want to delete the category "${categoryToDelete}"?`)) {
+            setNewsCategories(prev => prev.filter(cat => cat !== categoryToDelete));
+            // If the deleted category was selected, clear it
+            if (formData.category === categoryToDelete) {
+                setFormData(prev => ({ ...prev, category: '' }));
+            }
+        }
+    };
+
+    const handleAddTag = () => {
+        if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+            setFormData(prev => ({
+                ...prev,
+                tags: [...prev.tags, newTag.trim()]
+            }));
+            setNewTag('');
+            setShowAddTag(false);
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        setFormData(prev => ({
+            ...prev,
+            tags: prev.tags.filter(tag => tag !== tagToRemove)
+        }));
+    };
+    
+    const handleSubmit = async (e: React.FormEvent) => {
+        console.log('🚀 [handleSubmit] START - Form submission triggered!', { itemType, isEditMode, userRole });
+        e.preventDefault();
+        console.log('✋ [handleSubmit] preventDefault() called');
+        console.log('📊 [handleSubmit] Form data:', {
+            title: formData.title,
+            category: formData.category,
+            hasImage: !!formData.imageUrl || !!formData.imageFile,
+            videoUrl: formData.videoUrl,
+            tags: formData.tags,
+            publishDate: formData.publishDate
+        });
+        
+        try {
+            let uploadedImageUrl = formData.imageUrl;
+            let uploadedDocuments: Array<{url: string, name: string}> = [];
+
+            // Upload image if a new file was selected
+            if (formData.imageFile) {
+                console.log('Uploading image...');
+                console.log('Image file details:', {
+                    name: formData.imageFile.name,
+                    type: formData.imageFile.type,
+                    size: formData.imageFile.size
+                });
+                const validation = validateImageFile(formData.imageFile);
+                console.log('Image validation result:', validation);
+                if (!validation.valid) {
+                    alert(`Image validation failed: ${validation.error}`);
+                    return;
+                }
+                try {
+                    console.log('Calling uploadImage...');
+                    uploadedImageUrl = await uploadImage(formData.imageFile);
+                    console.log('✅ Image uploaded successfully:', uploadedImageUrl);
+                } catch (uploadError) {
+                    console.error('❌ Image upload FAILED:', uploadError);
+                    alert(`Image upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
+                    return;
+                }
+            } else if (itemType === 'Video' && !uploadedImageUrl) {
+                // For videos without uploaded image, ensure we have thumbnail URL
+                console.log('ℹ️ No custom image uploaded for video, using video thumbnail');
+            }
+
+            // Upload documents if any (for publications)
+            if (formData.docFiles && formData.docFiles.length > 0) {
+                console.log('Uploading documents...');
+                const files = Array.from(formData.docFiles);
+                
+                // Validate all documents
+                for (const file of files) {
+                    const validation = validateDocumentFile(file);
+                    if (!validation.valid) {
+                        alert(`Document validation failed for ${file.name}: ${validation.error}`);
+                        return;
+                    }
+                }
+                
+                uploadedDocuments = await uploadMultipleDocuments(files);
+                console.log('Documents uploaded:', uploadedDocuments);
+            }
+
+            const articleData: any = {
+                title: formData.title,
+                description: formData.description,
+                category: formData.category,
+                imageUrl: uploadedImageUrl,
+                tagColor: formData.tagColor,
+                tags: formData.tags,
+                publishDate: formData.publishDate,
+                videoUrl: formData.videoUrl || undefined,
+                status: (userRole === 'admin' || userRole === 'super-admin') ? 'published' as const : 'draft' as const,
+            };
+
+            // Only add document fields for Publications
+            if (itemType === 'Publication') {
+                articleData.documentNames = uploadedDocuments.length > 0
+                    ? uploadedDocuments.map(doc => doc.name)
+                    : (itemToEdit?.documentNames || []);
+                articleData.documentUrls = uploadedDocuments.length > 0
+                    ? uploadedDocuments.map(doc => doc.url)
+                    : (itemToEdit?.documentUrls || []);
+            }
+
+            console.log('Article data to save:', articleData);
+
+            if (isEditMode && itemToEdit) {
+                console.log('Calling onUpdate');
+                onUpdate({ ...articleData, id: itemToEdit.id });
+            } else {
+                console.log('Calling onSubmit');
+                onSubmit(articleData);
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
+    };
+    
+    const inputClass = "w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue";
+
+    const formContent = (
+        <>
+            {isModal && (
+                <div className="p-8 border-b">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
+                        <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+                    </div>
+                </div>
+            )}
+            <form onSubmit={handleSubmit} onClick={() => console.log('📋 Form clicked')}>
+                <div className={isModal ? "p-8 space-y-6 max-h-[75vh] overflow-y-auto" : "p-8 space-y-6"}>
+                    <FormField label="Title" required>
+                        <input type="text" name="title" value={formData.title} onChange={handleInputChange} className={inputClass} required />
+                    </FormField>
+                    <div className="mb-6">
+                        <ReactQuill
+                            theme="snow"
+                            value={formData.description}
+                            onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+                            modules={{
+                                toolbar: [
+                                    [{ 'header': [1, 2, 3, false] }],
+                                    ['bold', 'italic', 'underline', 'strike'],
+                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                                    ['link', 'image'],
+                                    ['clean']
+                                ],
+                            }}
+                            className="bg-white"
+                            style={{ height: '200px', marginBottom: '50px' }}
+                            placeholder="Enter content..."
+                        />
+                    </div>
+                    <FormField label={itemType === 'Publication' ? 'Publication Type' : itemType === 'Video' ? 'Video Category' : 'Category'} required>
+                        {itemType === 'Publication' || itemType === 'Video' ? (
+                            <>
+                                <select 
+                                    name="category" 
+                                    value={formData.category} 
+                                    onChange={handleInputChange} 
+                                    className={inputClass} 
+                                    required
+                                >
+                                    <option value="">{itemType === 'Publication' ? 'Select Publication Type' : 'Select Video Category'}</option>
+                                    {categories && categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                </select>
+                                {onAddCategory && (
+                                    <>
+                                        {!showAddCategory ? (
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setShowAddCategory(true)} 
+                                                className="mt-2 text-sm text-brand-medium-blue hover:underline"
+                                            >
+                                                {itemType === 'Publication' ? '+ Add New Publication Type' : '+ Add New Video Category'}
+                                            </button>
+                                        ) : (
+                                            <div className="mt-2 flex items-center space-x-2">
+                                                <input 
+                                                    type="text" 
+                                                    value={newCategory} 
+                                                    onChange={(e) => setNewCategory(e.target.value)} 
+                                                    placeholder={itemType === 'Publication' ? 'Enter new publication type' : 'Enter new video category'}
+                                                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
+                                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
+                                                />
+                                                <button 
+                                                    type="button" 
+                                                    onClick={handleAddCategory} 
+                                                    className="text-white px-4 py-2 rounded-md transition-colors"
+                                                    style={{ backgroundColor: '#0d234f' }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                                >
+                                                    Add
+                                                </button>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => { setShowAddCategory(false); setNewCategory(''); }} 
+                                                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <select 
+                                    name="category" 
+                                    value={formData.category} 
+                                    onChange={handleInputChange} 
+                                    className={inputClass} 
+                                    required
+                                >
+                                    <option value="">Select Category</option>
+                                    {newsCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                </select>
+                                {showAddCategory ? (
+                                    <div className="mt-2 flex items-center space-x-2">
+                                        <input 
+                                            type="text" 
+                                            value={newCategory} 
+                                            onChange={(e) => setNewCategory(e.target.value)} 
+                                            placeholder="Enter new category"
+                                            className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue text-sm"
+                                            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddNewsCategory())}
+                                        />
+                                        <button 
+                                            type="button" 
+                                            onClick={handleAddNewsCategory} 
+                                            className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
+                                        >
+                                            Add
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => { setShowAddCategory(false); setNewCategory(''); }} 
+                                            className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-2 flex items-center gap-4">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setShowAddCategory(true)} 
+                                            className="text-sm text-brand-medium-blue hover:underline"
+                                        >
+                                            + Add more category
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowManageNewsCategories(!showManageNewsCategories)}
+                                            className="text-sm text-brand-medium-blue hover:underline"
+                                        >
+                                            - Manage Categories
+                                        </button>
+                                    </div>
+                                )}
+                                {showManageNewsCategories && (
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {newsCategories.map(cat => (
+                                            <div key={cat} className="inline-flex items-center bg-gray-100 rounded-md px-2 py-1 text-sm">
+                                                <span className="text-gray-700">{cat}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteNewsCategory(cat)}
+                                                    className="ml-2 text-red-500 hover:text-red-700 font-bold"
+                                                    title="Delete category"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </FormField>
+                    {itemType === 'Video' && (
+                        <FormField label="Video URL (YouTube, Vimeo, Facebook)" required>
+                            <input 
+                                type="url" 
+                                name="videoUrl" 
+                                value={formData.videoUrl} 
+                                onChange={handleInputChange} 
+                                className={inputClass} 
+                                placeholder="https://youtube.com/watch?v=..." 
+                                required 
+                            />
+                            <p className="mt-1 text-xs text-gray-500">
+                                Paste the full URL from YouTube, Vimeo, or Facebook
+                            </p>
+                        </FormField>
+                    )}
+                    <FormField label="Featured Image" required={!isEditMode && itemType !== 'Video'}>
+                        {itemType === 'Video' && (
+                            <p className="mb-2 text-sm text-gray-600">
+                                💡 Thumbnail will be automatically fetched from the video URL. You can upload a custom image if needed.
+                            </p>
+                        )}
+                        <input 
+                            type="file" 
+                            name="imageFile" 
+                            onChange={handleImageChange} 
+                            className={inputClass} 
+                            accept="image/*" 
+                            required={!itemToEdit && itemType !== 'Video'} 
+                        />
+                         {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-auto rounded object-cover border" />}
+                    </FormField>
+                    {itemType === 'Publication' && (
+                        <FormField label="Publication Documents">
+                            <input type="file" name="docFiles" onChange={handleDocsChange} className={inputClass} multiple />
+                            {formData.docFiles && (
+                                <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
+                                    {/* FIX: Explicitly type `file` as File to resolve type error. */}
+                                    {Array.from(formData.docFiles).map((file: File) => <li key={file.name}>{file.name}</li>)}
+                                </ul>
+                            )}
+                        </FormField>
+                    )}
+                    <FormField label="Tags">
+                        <div className="space-y-2">
+                            {/* Display existing tags */}
+                            {formData.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {formData.tags.map((tag, index) => (
+                                        <div key={index} className="inline-flex items-center bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm">
+                                            <span>{tag}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveTag(tag)}
+                                                className="ml-2 text-blue-600 hover:text-blue-900 font-bold"
+                                                title="Remove tag"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {/* Add new tag */}
+                            {showAddTag ? (
+                                <div className="flex items-center space-x-2">
+                                    <input 
+                                        type="text" 
+                                        value={newTag} 
+                                        onChange={(e) => setNewTag(e.target.value)} 
+                                        placeholder="Enter tag name"
+                                        className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue text-sm"
+                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                                    />
+                                    <button 
+                                        type="button" 
+                                        onClick={handleAddTag} 
+                                        className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
+                                    >
+                                        Add
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => { setShowAddTag(false); setNewTag(''); }} 
+                                        className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            ) : (
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowAddTag(true)} 
+                                    className="text-sm text-brand-medium-blue hover:underline"
+                                >
+                                    + Add tag
+                                </button>
+                            )}
+                        </div>
+                    </FormField>
+                </div>
+                <div className="p-8 flex justify-between items-center space-x-4 bg-gray-50 border-t rounded-b-lg">
+                    <div className="flex items-center space-x-3">
+                        <label className="text-sm font-medium text-gray-700">Publish Date:</label>
+                        <input 
+                            type="date" 
+                            name="publishDate" 
+                            value={formData.publishDate} 
+                            onChange={handleInputChange} 
+                            className="p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
+                            placeholder="Leave empty to use today's date"
+                        />
+                    </div>
+                    <div className="flex space-x-4">
+                        {!isModal && (
+                            <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                                Back
+                            </button>
+                        )}
+                        {isModal && (
+                            <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                                Cancel
+                            </button>
+                        )}
+                        <button 
+                            type="submit" 
+                            className="text-white font-bold py-2 px-6 rounded-md transition-colors"
+                            style={{ backgroundColor: '#0d234f' }}
+                            onMouseEnter={(e) => {
+                                console.log('🖱️ Mouse entered submit button');
+                                e.currentTarget.style.backgroundColor = '#081629';
+                            }}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                            onClick={(e) => {
+                                console.log('🔘 Submit button clicked!', {
+                                    type: e.currentTarget.type,
+                                    disabled: e.currentTarget.disabled,
+                                    formValid: e.currentTarget.form?.checkValidity(),
+                                    itemType,
+                                    isEditMode
+                                });
+                            }}
+                            onMouseDown={() => console.log('⬇️ Mouse down on submit button')}
+                            onMouseUp={() => console.log('⬆️ Mouse up on submit button')}
+                        >
+                            {isEditMode ? `Update ${itemType}` : `Submit ${itemType}`}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </>
+    );
+
+    if (isModal) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4" onClick={onClose}>
+                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+                    {formContent}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-white rounded-lg shadow-xl w-full">
+            {formContent}
+        </div>
+    );
+};
+
+export default ArticleForm;
