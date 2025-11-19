@@ -73,9 +73,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error('❌ RLS Policy blocking profile access - user may need profile created by admin');
         }
         
-        console.warn('⚠️ Profile not found, will create one');
+        console.warn('⚠️ Profile not found, checking if user already loaded...');
+        
+        // Don't overwrite existing user data if we already have it loaded
+        if (user && user.email === supabaseUser.email && user.role !== 'contributor') {
+          console.log('✅ User already loaded with role:', user.role, '- keeping existing data');
+          return;
+        }
         
         // Use email as fallback if profile doesn't exist
+        console.warn('⚠️ Setting fallback contributor role');
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
@@ -171,14 +178,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
       
-      console.log('🔄 Auth state changed:', _event);
+      console.log('🔄 Auth state changed:', _event, 'Session:', session ? 'exists' : 'null');
+      
+      // Prevent unnecessary profile fetches for token refresh events
+      if (_event === 'TOKEN_REFRESHED') {
+        console.log('🔄 Token refreshed - keeping existing user data');
+        setSession(session);
+        setSupabaseUser(session?.user ?? null);
+        return;
+      }
       
       setSession(session);
       setSupabaseUser(session?.user ?? null);
       
       if (session?.user) {
+        console.log('👤 Fetching profile for auth state change...');
         await fetchUserProfile(session.user);
       } else {
+        console.log('👤 No user in session - clearing user data');
         setUser(null);
       }
     });
