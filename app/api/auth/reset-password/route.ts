@@ -14,22 +14,23 @@ export async function POST(request: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Use the stable Vercel domain if available, otherwise construct from current request
-    let appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    // Always use the stable domain for production
+    const isLocalhost = request.nextUrl.host.includes('localhost') || request.nextUrl.host.includes('127.0.0.1');
     
-    if (!appUrl || appUrl.includes('localhost')) {
-      // Fallback to current request URL
-      const currentHost = request.nextUrl.host
-      const protocol = request.nextUrl.protocol
-      appUrl = `${protocol}//${currentHost}`
+    let appUrl;
+    if (isLocalhost) {
+      appUrl = 'http://localhost:3000';
+    } else {
+      // Always use stable domain for any production deployment
+      appUrl = 'https://citizens-atlas.vercel.app';
     }
     
     const redirectTo = `${appUrl}/auth/reset-password`
 
     console.log('🔄 [API] Sending password reset email to:', email)
     console.log('📧 [API] Redirect URL:', redirectTo)
-    console.log('🌍 [API] App URL from env:', process.env.NEXT_PUBLIC_APP_URL)
     console.log('🌍 [API] Current host:', request.nextUrl.host)
+    console.log('🌍 [API] Is localhost:', isLocalhost)
     console.log('🌍 [API] Final app URL used:', appUrl)
 
     // Use the standard resetPasswordForEmail instead of admin.generateLink
