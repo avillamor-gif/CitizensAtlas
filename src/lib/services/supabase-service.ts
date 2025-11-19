@@ -1,15 +1,5 @@
-import { createClient, resetClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { Project, Article } from '@/types/types'
-
-// Constants for direct REST API calls
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-// Force reset client on module reload (development only)
-if (typeof window !== 'undefined') {
-  console.log('🔄 [Supabase Service] Module loaded, resetting client to apply new config')
-  resetClient()
-}
 
 // Get fresh supabase client with current auth state
 function getSupabase() {
