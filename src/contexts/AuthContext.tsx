@@ -31,22 +31,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
-      // Make sure we have the user's session for authenticated requests
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        console.error('❌ No session found when fetching profile');
-        throw new Error('No session found');
-      }
+      // Try to fetch by ID first
+      let profile = null;
+      let error = null;
       
-      console.log('✅ Using authenticated session to fetch profile');
-      
-      const { data: profile, error } = await supabase
+      console.log('🔍 Attempting to fetch profile by ID:', supabaseUser.id);
+      const idResult = await supabase
         .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
         .single<User>();
+      
+      if (idResult.data) {
+        profile = idResult.data;
+        console.log('✅ Profile found by ID:', profile.email, 'Role:', profile.role);
+      } else {
+        console.log('⚠️ Profile not found by ID, trying email lookup...');
+        
+        // Try to fetch by email as fallback
+        const emailResult = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', supabaseUser.email!)
+          .single<User>();
+          
+        if (emailResult.data) {
+          profile = emailResult.data;
+          console.log('✅ Profile found by email:', profile.email, 'Role:', profile.role);
+        } else {
+          error = emailResult.error;
+          console.error('❌ Profile not found by email either');
+        }
+      }
 
-      if (error) {
+      if (error && !profile) {
         console.error('❌ Error fetching user profile:', error);
         console.error('❌ Error details:', JSON.stringify(error, null, 2));
         
