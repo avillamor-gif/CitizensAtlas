@@ -125,6 +125,8 @@ function HomePageContent() {
 
   // Handle browser back/forward navigation
   useEffect(() => {
+    if (!searchParams) return
+    
     const page = searchParams.get('page') as Page | null
     const articleSlug = searchParams.get('article')
     const admin = searchParams.get('admin')
