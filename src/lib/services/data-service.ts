@@ -41,7 +41,16 @@ const isSupabaseConfigured = () => {
 export async function getProjects(): Promise<Project[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getProjects()
+      // Try authenticated access first
+      const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+      if (authData) {
+        // User is logged in, get all projects
+        return await supabaseService.getProjects()
+      } else {
+        // User is not logged in, get only published projects
+        console.log('🔓 [Data Service] No auth token, getting published projects only')
+        return await supabaseService.getPublishedProjects()
+      }
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -129,7 +138,16 @@ export async function deleteProjects(ids: number[]): Promise<void> {
 export async function getNews(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getNews()
+      // Try authenticated access first
+      const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+      if (authData) {
+        // User is logged in, get all news
+        return await supabaseService.getNews()
+      } else {
+        // User is not logged in, get only published news
+        console.log('🔓 [Data Service] No auth token, getting published news only')
+        return await supabaseService.getPublishedNews()
+      }
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -252,7 +270,16 @@ export async function deleteNews(ids: number[]): Promise<void> {
 export async function getPublications(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getPublications()
+      // Try authenticated access first
+      const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+      if (authData) {
+        // User is logged in, get all publications
+        return await supabaseService.getPublications()
+      } else {
+        // User is not logged in, get only published publications
+        console.log('🔓 [Data Service] No auth token, getting published publications only')
+        return await supabaseService.getPublishedPublications()
+      }
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -402,7 +429,16 @@ export async function incrementDownloadCount(id: number): Promise<void> {
 export async function getVideos(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getVideos()
+      // Try authenticated access first
+      const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+      if (authData) {
+        // User is logged in, get all videos
+        return await supabaseService.getVideos()
+      } else {
+        // User is not logged in, get only published videos
+        console.log('🔓 [Data Service] No auth token, getting published videos only')
+        return await supabaseService.getPublishedVideos()
+      }
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
