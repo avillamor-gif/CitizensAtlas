@@ -62,14 +62,30 @@ export async function getProjects() {
 }
 
 export async function getPublishedProjects() {
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('status', 'published')
-    .order('id', { ascending: false })
+  console.log('📖 [Supabase] Getting published projects (public access)...')
   
-  if (error) throw error
-  return data as Project[]
+  try {
+    // Use direct REST API without authentication for public data
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=*&eq=status.published&order=id.desc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting published projects:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] Published projects loaded successfully:', data.length, 'projects')
+    
+    return data as Project[]
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getPublishedProjects:', error)
+    throw error
+  }
 }
 
 export async function createProject(project: Omit<Project, 'id'>) {
@@ -387,14 +403,30 @@ export async function getNews() {
 }
 
 export async function getPublishedNews() {
-  const { data, error } = await supabase
-    .from('news')
-    .select('*')
-    .eq('status', 'published')
-    .order('id', { ascending: false })
+  console.log('📖 [Supabase] Getting published news (public access)...')
   
-  if (error) throw error
-  return data as Article[]
+  try {
+    // Use direct REST API without authentication for public data
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/news?select=*&eq=status.published&order=id.desc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting published news:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] Published news loaded successfully:', data.length, 'articles')
+    
+    return data as Article[]
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getPublishedNews:', error)
+    throw error
+  }
 }
 
 export async function createNews(article: Omit<Article, 'id'>) {
@@ -619,14 +651,30 @@ export async function getPublications() {
 }
 
 export async function getPublishedPublications() {
-  const { data, error } = await supabase
-    .from('publications')
-    .select('*')
-    .eq('status', 'published')
-    .order('id', { ascending: false })
+  console.log('📖 [Supabase] Getting published publications (public access)...')
   
-  if (error) throw error
-  return data as Article[]
+  try {
+    // Use direct REST API without authentication for public data
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/publications?select=*&eq=status.published&order=id.desc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting published publications:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] Published publications loaded successfully:', data.length, 'publications')
+    
+    return data as Article[]
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getPublishedPublications:', error)
+    throw error
+  }
 }
 
 export async function createPublication(article: Omit<Article, 'id'>) {
@@ -897,14 +945,30 @@ export async function getVideos() {
 }
 
 export async function getPublishedVideos() {
-  const { data, error } = await supabase
-    .from('videos')
-    .select('*')
-    .eq('status', 'published')
-    .order('id', { ascending: false })
+  console.log('📖 [Supabase] Getting published videos (public access)...')
   
-  if (error) throw error
-  return data as Article[]
+  try {
+    // Use direct REST API without authentication for public data
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/videos?select=*&eq=status.published&order=id.desc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting published videos:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] Published videos loaded successfully:', data.length, 'videos')
+    
+    return data as Article[]
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getPublishedVideos:', error)
+    throw error
+  }
 }
 
 export async function createVideo(article: Omit<Article, 'id'>) {
@@ -1107,13 +1171,30 @@ export async function deleteVideos(ids: number[]) {
 // CATEGORIES
 // ============================================
 export async function getNewsCategories() {
-  const { data, error } = await supabase
-    .from('news_categories')
-    .select('name')
-    .order('name')
+  console.log('📖 [Supabase] Getting news categories (public access)...')
   
-  if (error) throw error
-  return data.map((c: { name: string }) => c.name)
+  try {
+    // Use direct REST API without authentication for public data
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/news_categories?select=name&order=name.asc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting news categories:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] News categories loaded successfully:', data.length, 'categories')
+    
+    return data.map((c: { name: string }) => c.name)
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getNewsCategories:', error)
+    throw error
+  }
 }
 
 export async function createNewsCategory(name: string) {
@@ -1149,13 +1230,28 @@ export async function deleteNewsCategory(name: string) {
 }
 
 export async function getPublicationTypes() {
-  const { data, error } = await supabase
-    .from('publication_types')
-    .select('name')
-    .order('name')
+  console.log('📖 [Supabase] Getting publication types (public access)...')
   
-  if (error) throw error
-  return data.map((t: { name: string }) => t.name)
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/publication_types?select=name&order=name.asc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting publication types:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] Publication types loaded successfully:', data.length, 'types')
+    return data.map((t: { name: string }) => t.name)
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getPublicationTypes:', error)
+    throw error
+  }
 }
 
 export async function createPublicationType(name: string) {
@@ -1191,13 +1287,28 @@ export async function deletePublicationType(name: string) {
 }
 
 export async function getVideoCategories() {
-  const { data, error } = await supabase
-    .from('video_categories')
-    .select('name')
-    .order('name')
+  console.log('📖 [Supabase] Getting video categories (public access)...')
   
-  if (error) throw error
-  return data.map((c: { name: string }) => c.name)
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/video_categories?select=name&order=name.asc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ [Supabase] HTTP error getting video categories:', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ [Supabase] Video categories loaded successfully:', data.length, 'categories')
+    return data.map((c: { name: string }) => c.name)
+  } catch (error) {
+    console.error('❌ [Supabase] Error in getVideoCategories:', error)
+    throw error
+  }
 }
 
 export async function createVideoCategory(name: string) {
