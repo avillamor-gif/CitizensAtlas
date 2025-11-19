@@ -26,13 +26,21 @@ export function ResetPasswordForm() {
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
+        const tokenType = hashParams.get('type');
         
-        if (accessToken && refreshToken) {
-          console.log('Setting session from URL tokens...');
-          // Set the session using the tokens from the URL
+        console.log('URL hash params:', {
+          accessToken: accessToken ? 'present' : 'missing',
+          refreshToken: refreshToken ? 'present' : 'missing',
+          tokenType,
+          fullHash: window.location.hash
+        });
+        
+        if (accessToken && tokenType === 'recovery') {
+          console.log('Setting session from recovery tokens...');
+          // For recovery tokens, we need to set the session differently
           const { data, error } = await supabase.auth.setSession({
             access_token: accessToken,
-            refresh_token: refreshToken,
+            refresh_token: refreshToken || '', // refresh_token might be empty for recovery
           });
           
           if (error) {
@@ -46,14 +54,38 @@ export function ResetPasswordForm() {
             setSessionReady(true);
             // Clear the hash from URL for security
             window.history.replaceState(null, '', window.location.pathname);
+          } else {
+            console.error('No session returned from setSession');
+            setError('Failed to establish recovery session. Please request a new link.');
+          }
+        } else if (accessToken) {
+          console.log('Found access token but not recovery type, attempting session setup...');
+          // Try with just access token for other token types
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          });
+          
+          if (error) {
+            console.error('Error setting session with access token:', error);
+            setError('Invalid or expired password reset link. Please request a new one.');
+            return;
+          }
+          
+          if (data.session) {
+            console.log('Session established with access token');
+            setSessionReady(true);
+            window.history.replaceState(null, '', window.location.pathname);
           }
         } else {
+          console.log('No access token found, checking for existing session...');
           // Check if we already have a valid session
           const { data: { session } } = await supabase.auth.getSession();
           if (session) {
             console.log('Existing session found');
             setSessionReady(true);
           } else {
+            console.log('No tokens or session found');
             setError('Invalid or expired password reset link. Please request a new one.');
           }
         }
