@@ -31,6 +31,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
+      // Make sure we have the user's session for authenticated requests
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.error('❌ No session found when fetching profile');
+        throw new Error('No session found');
+      }
+      
+      console.log('✅ Using authenticated session to fetch profile');
+      
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
@@ -40,56 +49,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.error('❌ Error fetching user profile:', error);
         console.error('❌ Error details:', JSON.stringify(error, null, 2));
+        
+        // Check if it's an RLS policy error
+        if (error.code === 'PGRST116' || error.message.includes('row-level security')) {
+          console.error('❌ RLS Policy blocking profile access - user may need profile created by admin');
+        }
+        
         console.warn('⚠️ Profile not found, will create one');
         
-        // Try to create a profile for this user
-        const newProfile = {
+        // Use email as fallback if profile doesn't exist
+        setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email!,
-          role: 'contributor', // Default role, can be changed later by super-admin
-          avatar_url: supabaseUser.user_metadata?.avatar_url,
-        };
-        
-        console.log('📝 Creating new profile:', newProfile);
-        
-        try {
-          const { data: createdProfile, error: createError } = await supabase
-            .from('profiles')
-            .insert([newProfile])
-            .select()
-            .single<User>();
-            
-          if (createError) {
-            console.error('❌ Error creating profile:', createError);
-            // Fall back to local user object
-            setUser({
-              id: supabaseUser.id,
-              email: supabaseUser.email!,
-              role: 'contributor',
-              name: supabaseUser.email!,
-            });
-          } else {
-            console.log('✅ Profile created successfully:', createdProfile);
-            setUser({
-              id: createdProfile.id,
-              email: createdProfile.email,
-              role: createdProfile.role,
-              name: createdProfile.full_name,
-              full_name: createdProfile.full_name,
-              avatar_url: createdProfile.avatar_url,
-            });
-          }
-        } catch (createException) {
-          console.error('❌ Exception creating profile:', createException);
-          // Fall back to local user object
-          setUser({
-            id: supabaseUser.id,
-            email: supabaseUser.email!,
-            role: 'contributor',
-            name: supabaseUser.email!,
-          });
-        }
+          role: 'contributor',
+          name: supabaseUser.email!,
+        });
         return;
       }
 
