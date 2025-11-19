@@ -42,17 +42,12 @@ export function LoginForm({
       } else {
         console.log('✅ Login successful! Redirecting to admin dashboard...');
         
-        // Give a brief moment for the auth state to update
-        setTimeout(() => {
-          console.log('🚀 Executing redirect...');
-          window.location.href = '/?admin=true';
-        }, 100);
+        // Immediate redirect - don't wait
+        console.log('🚀 Executing immediate redirect...');
+        window.location.href = '/?admin=true';
         
-        // Backup timeout to reset button if redirect fails
-        setTimeout(() => {
-          console.log('⚠️ Backup: Resetting loading state');
-          setLoading(false);
-        }, 5000);
+        // Don't reset loading - let the page redirect
+        return;
       }
     } catch (err) {
       console.error('💥 Unexpected login error:', err);
