@@ -27,42 +27,38 @@ export function LoginForm({
     setError(null);
     setLoading(true);
 
-    console.log('Starting login with email:', email);
+    console.log('🔄 Starting login process...');
+    console.log('📧 Email:', email);
     
     try {
       const { error } = await signIn(email, password);
 
-      console.log('Login result:', { error });
+      console.log('🔍 Login result:', { hasError: !!error, errorMessage: error?.message });
 
       if (error) {
-        console.error('Login error:', error);
+        console.error('❌ Login failed:', error);
         setError(error.message);
+        setLoading(false);
       } else {
-        console.log('Login successful, redirecting...');
+        console.log('✅ Login successful! Redirecting to admin dashboard...');
         
-        // Try multiple redirect methods to ensure it works
-        try {
-          router.push('/?admin=true');
-        } catch (routerError) {
-          console.warn('Router.push failed, using window.location:', routerError);
-          window.location.href = '/?admin=true';
-        }
-        
-        // Fallback: reset loading state after 3 seconds if redirect doesn't work
+        // Give a brief moment for the auth state to update
         setTimeout(() => {
-          console.log('Fallback: resetting loading state');
-          setLoading(false);
-        }, 3000);
+          console.log('🚀 Executing redirect...');
+          window.location.href = '/?admin=true';
+        }, 100);
         
-        return; // Exit early to avoid setting loading to false immediately
+        // Backup timeout to reset button if redirect fails
+        setTimeout(() => {
+          console.log('⚠️ Backup: Resetting loading state');
+          setLoading(false);
+        }, 5000);
       }
     } catch (err) {
-      console.error('Unexpected error:', err);
-      setError('An unexpected error occurred');
+      console.error('💥 Unexpected login error:', err);
+      setError('An unexpected error occurred. Please try again.');
+      setLoading(false);
     }
-    
-    // Only set loading to false if there was an error
-    setLoading(false);
   };
 
   return (
