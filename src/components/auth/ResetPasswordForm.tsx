@@ -15,8 +15,11 @@ export function ResetPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
+
+  // Create a separate Supabase client instance for reset operations
+  const [resetClient] = useState(() => createClient());
 
   // Handle the auth tokens from URL and check session
   useEffect(() => {
@@ -28,75 +31,48 @@ export function ResetPasswordForm() {
         const refreshToken = hashParams.get('refresh_token');
         const tokenType = hashParams.get('type');
         
-        console.log('URL hash params:', {
+        console.log('🔍 Reset form checking URL tokens:', {
           accessToken: accessToken ? 'present' : 'missing',
           refreshToken: refreshToken ? 'present' : 'missing',
           tokenType,
-          fullHash: window.location.hash
+          fullHash: window.location.hash.substring(0, 50) + '...'
         });
         
-        if (accessToken && tokenType === 'recovery') {
-          console.log('Setting session from recovery tokens...');
-          // For recovery tokens, we need to set the session differently
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || '', // refresh_token might be empty for recovery
-          });
+        if (accessToken) {
+          console.log('🔄 Setting recovery session...');
           
-          if (error) {
-            console.error('Error setting session:', error);
-            setError('Invalid or expired password reset link. Please request a new one.');
-            return;
-          }
-          
-          if (data.session) {
-            console.log('Recovery session established successfully');
-            setSessionReady(true);
-            // Clear the hash from URL for security
-            window.history.replaceState(null, '', window.location.pathname);
-          } else {
-            console.error('No session returned from setSession');
-            setError('Failed to establish recovery session. Please request a new link.');
-          }
-        } else if (accessToken) {
-          console.log('Found access token but not recovery type, attempting session setup...');
-          // Try with just access token for other token types
-          const { data, error } = await supabase.auth.setSession({
+          // Use the separate client to avoid conflicts
+          const { data, error } = await resetClient.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken || '',
           });
           
           if (error) {
-            console.error('Error setting session with access token:', error);
+            console.error('❌ Error setting recovery session:', error);
             setError('Invalid or expired password reset link. Please request a new one.');
-            return;
-          }
-          
-          if (data.session) {
-            console.log('Session established with access token');
+          } else if (data.session) {
+            console.log('✅ Recovery session established successfully');
             setSessionReady(true);
+            // Clear the hash from URL for security
             window.history.replaceState(null, '', window.location.pathname);
+          } else {
+            console.error('❌ No session returned from setSession');
+            setError('Failed to establish recovery session. Please request a new link.');
           }
         } else {
-          console.log('No access token found, checking for existing session...');
-          // Check if we already have a valid session
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            console.log('Existing session found');
-            setSessionReady(true);
-          } else {
-            console.log('No tokens or session found');
-            setError('Invalid or expired password reset link. Please request a new one.');
-          }
+          console.log('❌ No access token found in URL');
+          setError('Invalid password reset link. Please request a new one.');
         }
       } catch (err) {
-        console.error('Error handling auth tokens:', err);
+        console.error('❌ Error handling auth tokens:', err);
         setError('An error occurred while processing the reset link. Please try again.');
+      } finally {
+        setInitializing(false);
       }
     };
 
     handleAuthTokens();
-  }, []);
+  }, [resetClient]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,14 +93,17 @@ export function ResetPasswordForm() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      console.log('🔄 Updating password...');
+      const { error } = await resetClient.auth.updateUser({
         password: password,
       });
 
       if (error) {
+        console.error('❌ Password update error:', error);
         setError(error.message);
         setLoading(false);
       } else {
+        console.log('✅ Password updated successfully');
         setSuccess(true);
         setLoading(false);
         // Redirect to login after 2 seconds
@@ -133,6 +112,7 @@ export function ResetPasswordForm() {
         }, 2000);
       }
     } catch (err) {
+      console.error('❌ Password update exception:', err);
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }
@@ -151,7 +131,7 @@ export function ResetPasswordForm() {
     );
   }
 
-  if (!sessionReady) {
+  if (initializing || !sessionReady) {
     return (
       <Card className="w-full max-w-md">
         <CardHeader>
