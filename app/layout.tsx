@@ -4,9 +4,30 @@ import type { Metadata } from 'next'
 import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
-  title: "Citizens' Atlas",
-  description: "The Citizens’ Atlas focuses on mapping and documenting false solutions in circular economy and climate action,",
-  keywords: "false solutions, circular economy, climate action, citizen initiatives",
+  title: "Citizens' Atlas - Mapping False Solutions in Climate Action",
+  description: "The Citizens' Atlas is a collaborative platform for mapping and documenting false solutions in circular economy and climate action. Discover citizen-led initiatives, research, and evidence-based analysis of environmental policies and corporate greenwashing.",
+  keywords: "false solutions, circular economy, climate action, citizen initiatives, environmental justice, greenwashing, climate policy, sustainability, environmental activism",
+  authors: [{ name: "Citizens' Atlas Team" }],
+  creator: "Citizens' Atlas",
+  publisher: "Citizens' Atlas",
+  robots: "index, follow",
+  openGraph: {
+    title: "Citizens' Atlas - Mapping False Solutions in Climate Action",
+    description: "A collaborative platform for mapping and documenting false solutions in circular economy and climate action.",
+    url: "https://citizens-atlas.vercel.app",
+    siteName: "Citizens' Atlas",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Citizens' Atlas - Mapping False Solutions in Climate Action",
+    description: "A collaborative platform for mapping and documenting false solutions in circular economy and climate action.",
+    creator: "@citizensatlas",
+  },
+  viewport: "width=device-width, initial-scale=1",
+  themeColor: "#0d234f",
+  manifest: "/manifest.json",
 }
 
 export default function RootLayout({
