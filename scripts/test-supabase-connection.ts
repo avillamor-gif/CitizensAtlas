@@ -27,7 +27,7 @@ async function testSupabaseConnection() {
     // Test 2: CORS check
     console.log('\n2. Testing CORS headers...')
     console.log('Response headers:')
-    for (const [key, value] of publicResponse.headers.entries()) {
+    for (const [key, value] of Array.from(publicResponse.headers.entries())) {
       if (key.includes('cors') || key.includes('access-control')) {
         console.log(`  ${key}: ${value}`)
       }
