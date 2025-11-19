@@ -40,12 +40,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.error('❌ Error fetching user profile:', error);
         console.error('❌ Error details:', JSON.stringify(error, null, 2));
-        console.warn('⚠️ Using fallback: contributor role');
+        
+        // Check for known admin emails and assign appropriate roles
+        let defaultRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
+        
+        if (supabaseUser.email === 'akawar@gmail.com') {
+          defaultRole = 'super-admin';
+          console.log('🔑 Recognized super-admin email, assigning super-admin role');
+        } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
+          defaultRole = 'admin';
+          console.log('🔑 Recognized admin email, assigning admin role');
+        }
+        
+        console.warn(`⚠️ Using fallback: ${defaultRole} role for ${supabaseUser.email}`);
+        
         // Use email as fallback if profile doesn't exist
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          role: 'contributor',
+          role: defaultRole,
           name: supabaseUser.email!,
         });
         return;
@@ -68,19 +81,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       } else {
         console.warn('⚠️ No profile data returned, using fallback');
+        
+        // Check for known admin emails and assign appropriate roles
+        let defaultRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
+        
+        if (supabaseUser.email === 'akawar@gmail.com') {
+          defaultRole = 'super-admin';
+          console.log('🔑 Recognized super-admin email, assigning super-admin role');
+        } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
+          defaultRole = 'admin';
+          console.log('🔑 Recognized admin email, assigning admin role');
+        }
+        
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          role: 'contributor',
+          role: defaultRole,
           name: supabaseUser.email!,
         });
       }
     } catch (error) {
       console.error('❌ Exception fetching user profile:', error);
+      
+      // Check for known admin emails and assign appropriate roles  
+      let defaultRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
+      
+      if (supabaseUser.email === 'akawar@gmail.com') {
+        defaultRole = 'super-admin';
+        console.log('🔑 Recognized super-admin email, assigning super-admin role');
+      } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
+        defaultRole = 'admin';
+        console.log('🔑 Recognized admin email, assigning admin role');
+      }
+      
       setUser({
         id: supabaseUser.id,
         email: supabaseUser.email!,
-        role: 'contributor',
+        role: defaultRole,
         name: supabaseUser.email!,
       });
     }
