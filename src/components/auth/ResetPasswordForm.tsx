@@ -14,18 +14,56 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
-  // Check if we have a valid recovery session
+  // Handle the auth tokens from URL and check session
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setError('Invalid or expired password reset link. Please request a new one.');
+    const handleAuthTokens = async () => {
+      try {
+        // Extract tokens from URL hash if present
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        
+        if (accessToken && refreshToken) {
+          console.log('Setting session from URL tokens...');
+          // Set the session using the tokens from the URL
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          
+          if (error) {
+            console.error('Error setting session:', error);
+            setError('Invalid or expired password reset link. Please request a new one.');
+            return;
+          }
+          
+          if (data.session) {
+            console.log('Recovery session established successfully');
+            setSessionReady(true);
+            // Clear the hash from URL for security
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+        } else {
+          // Check if we already have a valid session
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            console.log('Existing session found');
+            setSessionReady(true);
+          } else {
+            setError('Invalid or expired password reset link. Please request a new one.');
+          }
+        }
+      } catch (err) {
+        console.error('Error handling auth tokens:', err);
+        setError('An error occurred while processing the reset link. Please try again.');
       }
     };
-    checkSession();
+
+    handleAuthTokens();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,6 +115,38 @@ export function ResetPasswordForm() {
             Your password has been updated successfully. Redirecting to login...
           </CardDescription>
         </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!sessionReady) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Processing Reset Link</CardTitle>
+          <CardDescription>
+            Please wait while we verify your password reset link...
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {error ? (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error}
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-2 text-sm text-gray-600">Verifying...</p>
+            </div>
+          )}
+        </CardContent>
+        {error && (
+          <CardFooter>
+            <a href="/auth/forgot-password" className="text-sm text-[#0d234f] hover:underline mx-auto">
+              Request a new reset link
+            </a>
+          </CardFooter>
+        )}
       </Card>
     );
   }
