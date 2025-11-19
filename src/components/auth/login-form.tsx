@@ -40,10 +40,9 @@ export function LoginForm({
         setLoading(false);
       } else {
         console.log('Login successful, redirecting...');
-        // Small delay to ensure session is set
-        setTimeout(() => {
-          window.location.href = '/?admin=true';
-        }, 500);
+        // Don't set loading to false - keep the loading state until redirect
+        // Use router.push for better navigation
+        router.push('/?admin=true');
       }
     } catch (err) {
       console.error('Unexpected error:', err);
