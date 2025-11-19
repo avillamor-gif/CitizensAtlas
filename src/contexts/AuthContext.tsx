@@ -29,35 +29,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
-      console.log('🔍 [DETAILED] Fetching profile for user:', {
-        id: supabaseUser.id,
-        email: supabaseUser.email,
-        timestamp: new Date().toISOString()
-      });
+      console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
+      
+      // IMMEDIATE SAFETY NET: Known admin users get hardcoded roles
+      if (supabaseUser.email === 'akawar@gmail.com') {
+        console.log('🛡️ [IMMEDIATE] Hardcoded super-admin for akawar@gmail.com');
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          role: 'super-admin',
+          name: 'akawar',
+          full_name: 'akawar',
+        });
+        return;
+      }
+      
+      if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
+        console.log('🛡️ [IMMEDIATE] Hardcoded admin for alberto.b.villamor@gmail.com');
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          role: 'admin',
+          name: 'alberto.b.villamor',
+          full_name: 'alberto.b.villamor',
+        });
+        return;
+      }
+      
+      // For other users, try database lookup
+      console.log('🔍 Database lookup for other users...');
       
       // With RLS disabled, we can use simple queries
       let profile = null;
       let error = null;
       
-      console.log('🔍 [STEP 1] Attempting to fetch profile by ID:', supabaseUser.id);
+      console.log('🔍 Attempting to fetch profile by ID:', supabaseUser.id);
       const idResult = await supabase
         .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
         .maybeSingle<User>();
       
-      console.log('🔍 [STEP 1 RESULT]', {
-        hasData: !!idResult.data,
-        error: idResult.error,
-        data: idResult.data ? { email: idResult.data.email, role: idResult.data.role } : null
-      });
-      
       if (idResult.data) {
         profile = idResult.data;
-        console.log('✅ [SUCCESS] Profile found by ID:', profile.email, 'Role:', profile.role);
+        console.log('✅ Profile found by ID:', profile.email, 'Role:', profile.role);
       } else if (idResult.error?.code !== 'PGRST116') {
         // Not a "no rows" error, try email lookup
-        console.log('⚠️ [STEP 2] Profile not found by ID, trying email lookup for:', supabaseUser.email);
+        console.log('⚠️ Profile not found by ID, trying email lookup...');
         
         const emailResult = await supabase
           .from('profiles')
@@ -65,53 +83,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .eq('email', supabaseUser.email!)
           .maybeSingle<User>();
           
-        console.log('🔍 [STEP 2 RESULT]', {
-          hasData: !!emailResult.data,
-          error: emailResult.error,
-          data: emailResult.data ? { email: emailResult.data.email, role: emailResult.data.role } : null
-        });
-          
         if (emailResult.data) {
           profile = emailResult.data;
-          console.log('✅ [SUCCESS] Profile found by email:', profile.email, 'Role:', profile.role);
+          console.log('✅ Profile found by email:', profile.email, 'Role:', profile.role);
         } else {
           error = emailResult.error;
-          console.error('❌ [FAILED] Profile not found by email either:', error);
+          console.error('❌ Profile not found by email either');
         }
       }
 
       if (!profile) {
-        console.error('❌ [CRITICAL] No profile found for user:', supabaseUser.email);
-        console.error('❌ [CRITICAL] This should not happen with RLS disabled and existing profiles');
-        
-        // Let's try a direct query to see all profiles
-        console.log('🔍 [DEBUG] Attempting to fetch ALL profiles to debug...');
-        const allProfilesResult = await supabase
-          .from('profiles')
-          .select('id, email, role')
-          .limit(10);
-          
-        console.log('🔍 [DEBUG] All profiles result:', {
-          count: allProfilesResult.data?.length || 0,
-          profiles: allProfilesResult.data?.map((p: any) => ({ email: p.email, role: p.role })) || [],
-          error: allProfilesResult.error
-        });
-        
-        // Try to recover from localStorage backup
-        const backupProfile = localStorage.getItem('atlas-user-profile');
-        if (backupProfile) {
-          try {
-            const parsedProfile = JSON.parse(backupProfile);
-            if (parsedProfile.email === supabaseUser.email) {
-              console.log('🔄 Recovering profile from localStorage backup:', parsedProfile.role);
-              setUser(parsedProfile);
-              return;
-            }
-          } catch (e) {
-            console.warn('⚠️ Failed to parse backup profile');
-          }
-        }
-        
+        console.error('❌ No profile found for user:', supabaseUser.email);
         console.warn('⚠️ Profile not found, checking if user already loaded...');
         
         // Don't overwrite existing user data if we already have it loaded
@@ -120,31 +102,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         
-        // SAFETY NET: Hardcoded admin roles for known emails (since profiles exist but lookup failed)
-        let fallbackRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
-        let fallbackName = supabaseUser.email!;
-        
-        if (supabaseUser.email === 'akawar@gmail.com') {
-          fallbackRole = 'super-admin';
-          fallbackName = 'akawar';
-          console.log('🛡️ [SAFETY NET] Using hardcoded super-admin role for akawar@gmail.com');
-        } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
-          fallbackRole = 'admin';
-          fallbackName = 'alberto.b.villamor';
-          console.log('🛡️ [SAFETY NET] Using hardcoded admin role for alberto.b.villamor@gmail.com');
-        } else if (supabaseUser.email === 'albrecht@no-burn.org') {
-          fallbackRole = 'super-admin';
-          fallbackName = 'Super Admin';
-          console.log('🛡️ [SAFETY NET] Using hardcoded super-admin role for albrecht@no-burn.org');
-        }
-        
-        // Use fallback role
-        console.warn('⚠️ Setting fallback role:', fallbackRole);
+        // Use email as fallback if profile doesn't exist
+        console.warn('⚠️ Setting fallback contributor role');
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          role: fallbackRole,
-          name: fallbackName,
+          role: 'contributor',
+          name: supabaseUser.email!,
         });
         return;
       }
@@ -168,7 +132,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         localStorage.setItem('atlas-user-profile', JSON.stringify(userProfile));
         console.log('💾 Profile backed up to localStorage:', profile.role);
-        console.log('🔒 ADMIN ROLE LOADED - should persist now:', profile.role);
         
         setUser(userProfile);
       } else {
