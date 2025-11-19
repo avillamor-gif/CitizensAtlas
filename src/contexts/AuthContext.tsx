@@ -210,10 +210,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (data.user) {
           setSupabaseUser(data.user);
           setSession(sessionData as any);
-          await fetchUserProfile(data.user);
+          
+          // Fetch profile in background - don't block login completion
+          fetchUserProfile(data.user).catch(error => {
+            console.error('Profile fetch failed but login still successful:', error);
+          });
         }
       }
       
+      console.log('✅ [AuthContext] Login completed successfully');
       return { error: null };
     } catch (error) {
       console.error('AuthContext: Login exception:', error);
