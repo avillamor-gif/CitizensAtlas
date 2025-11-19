@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
-      // Try to fetch by ID first
+      // With RLS disabled, we can use simple queries
       let profile = null;
       let error = null;
       
@@ -40,20 +40,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
-        .single<User>();
+        .maybeSingle<User>();
       
       if (idResult.data) {
         profile = idResult.data;
         console.log('✅ Profile found by ID:', profile.email, 'Role:', profile.role);
-      } else {
+      } else if (idResult.error?.code !== 'PGRST116') {
+        // Not a "no rows" error, try email lookup
         console.log('⚠️ Profile not found by ID, trying email lookup...');
         
-        // Try to fetch by email as fallback
         const emailResult = await supabase
           .from('profiles')
           .select('*')
           .eq('email', supabaseUser.email!)
-          .single<User>();
+          .maybeSingle<User>();
           
         if (emailResult.data) {
           profile = emailResult.data;
@@ -64,15 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      if (error && !profile) {
-        console.error('❌ Error fetching user profile:', error);
-        console.error('❌ Error details:', JSON.stringify(error, null, 2));
-        
-        // Check if it's an RLS policy error
-        if (error.code === 'PGRST116' || error.message.includes('row-level security')) {
-          console.error('❌ RLS Policy blocking profile access - user may need profile created by admin');
-        }
-        
+      if (!profile) {
+        console.error('❌ No profile found for user:', supabaseUser.email);
         console.warn('⚠️ Profile not found, checking if user already loaded...');
         
         // Don't overwrite existing user data if we already have it loaded
@@ -99,14 +92,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name: profile.full_name
         });
         
-        setUser({
+        // Store the profile data in localStorage as backup
+        const userProfile = {
           id: profile.id,
           email: profile.email,
           role: profile.role,
           name: profile.full_name,
           full_name: profile.full_name,
           avatar_url: profile.avatar_url || supabaseUser.user_metadata?.avatar_url,
-        });
+        };
+        
+        localStorage.setItem('atlas-user-profile', JSON.stringify(userProfile));
+        console.log('💾 Profile backed up to localStorage:', profile.role);
+        
+        setUser(userProfile);
       } else {
         console.warn('⚠️ No profile data returned, using fallback');
         setUser({
