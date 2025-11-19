@@ -15,9 +15,17 @@ export function createClient() {
     return supabaseInstance
   }
 
-  // Temporary hardcoded values for testing
-  const supabaseUrl = 'https://srsjynjccivtjvordrlc.supabase.co'
-  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyc2p5bmpjY2l2dGp2b3JkcmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMDE3NjUsImV4cCI6MjA3Mzc3Nzc2NX0.YOyYebTJSgq0bEcBQDXsNCiK6WPvB8lViSKtquzkdGE'
+  // Use environment variables instead of hardcoded values
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(
+      `Missing Supabase environment variables:
+      NEXT_PUBLIC_SUPABASE_URL: ${supabaseUrl ? '✓' : '✗'}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${supabaseAnonKey ? '✓' : '✗'}`
+    )
+  }
 
   console.log('Creating new Supabase client singleton')
   console.log('URL:', supabaseUrl)

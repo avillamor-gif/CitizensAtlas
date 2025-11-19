@@ -16,11 +16,6 @@ import * as supabaseService from './supabase-service'
 
 // Check if Supabase is configured
 const isSupabaseConfigured = () => {
-  // TEMP FIX: Force Supabase usage since environment variables exist but aren't loading in browser
-  console.log('🔧 [TEMP] Forcing Supabase connection - environment variables are set in Vercel')
-  return true
-  
-  /* Original check - environment variables not loading properly in browser
   const configured = !!(
     typeof window !== 'undefined' &&
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -38,7 +33,6 @@ const isSupabaseConfigured = () => {
   }
   
   return configured
-  */
 }
 
 // ============================================
