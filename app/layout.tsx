@@ -5,7 +5,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
   title: "Citizens' Atlas",
-  description: "A comprehensive platform for tracking and analyzing citizen-led anti-corruption initiatives",
+  description: "The Citizens’ Atlas focuses on mapping and documenting false solutions in circular economy and climate action,",
   keywords: "corruption, transparency, governance, citizen initiatives",
 }
 
