@@ -1,4 +1,22 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+
 export default function AuthTestPage() {
+  const [envData, setEnvData] = useState<any>({})
+
+  useEffect(() => {
+    // Check environment variables client-side
+    const data = {
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'undefined',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'undefined',
+      hasLocalStorage: typeof window !== 'undefined',
+      authToken: typeof window !== 'undefined' ? (localStorage.getItem('atlas-auth-token') ? 'EXISTS' : 'MISSING') : 'SERVER_SIDE',
+      currentURL: typeof window !== 'undefined' ? window.location.href : 'server-side'
+    }
+    setEnvData(data)
+  }, [])
+
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
@@ -7,12 +25,7 @@ export default function AuthTestPage() {
         <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
           <h2 className="text-xl font-bold mb-4">Environment Check</h2>
           <pre className="bg-gray-100 p-4 rounded text-sm overflow-x-auto">
-            {JSON.stringify({
-              NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'undefined',
-              NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'undefined',
-              hasLocalStorage: typeof window !== 'undefined',
-              authToken: typeof window !== 'undefined' ? (localStorage.getItem('atlas-auth-token') ? 'EXISTS' : 'MISSING') : 'SERVER_SIDE'
-            }, null, 2)}
+            {JSON.stringify(envData, null, 2)}
           </pre>
         </div>
         
@@ -38,6 +51,15 @@ export default function AuthTestPage() {
             className="ml-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
           >
             Go to Admin Page
+          </button>
+
+          <button 
+            onClick={() => {
+              window.location.href = '/debug'
+            }}
+            className="ml-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+          >
+            Go to Debug Page
           </button>
         </div>
       </div>
