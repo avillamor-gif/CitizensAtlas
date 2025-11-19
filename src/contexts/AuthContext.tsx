@@ -282,12 +282,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
-      // Use environment variable for redirect URL in production
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      // Get the current production URL dynamically
+      const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+      let baseUrl;
+      
+      if (isProduction) {
+        // In production, construct the URL from the current location
+        baseUrl = `${window.location.protocol}//${window.location.host}`;
+      } else {
+        // In development, use localhost
+        baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      }
+      
       const redirectTo = `${baseUrl}/auth/reset-password`;
       
       console.log('🔄 Sending password reset email to:', email);
+      console.log('🌍 Environment:', isProduction ? 'Production' : 'Development');
       console.log('📧 Redirect URL:', redirectTo);
+      console.log('🔧 NEXT_PUBLIC_APP_URL env var:', process.env.NEXT_PUBLIC_APP_URL);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectTo,
