@@ -74,6 +74,8 @@ function HomePageContent() {
       setDataLoading(true)
       console.log('🔄 Loading data from Supabase...')
       
+      // For the public homepage, always load published data only
+      // This ensures consistent behavior regardless of authentication state
       const [
         projectsData,
         newsData,
@@ -83,10 +85,10 @@ function HomePageContent() {
         publicationTypesData,
         videoCategoriesData
       ] = await Promise.all([
-        dataService.getProjects(),
-        dataService.getNews(),
-        dataService.getPublications(),
-        dataService.getVideos(),
+        dataService.getPublishedProjects(),
+        dataService.getPublishedNews(),
+        dataService.getPublishedPublications(), 
+        dataService.getPublishedVideos(),
         dataService.getNewsCategories(),
         dataService.getPublicationTypes(),
         dataService.getVideoCategories()

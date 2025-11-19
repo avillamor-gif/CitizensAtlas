@@ -30,6 +30,13 @@ export default function Admin() {
   const loadData = async () => {
     try {
       console.log('📥 Admin: Loading data...')
+      console.log('🔍 Admin: Current user:', { 
+        id: user?.id, 
+        email: user?.email, 
+        role: user?.role,
+        hasAuthToken: !!localStorage.getItem('atlas-auth-token')
+      })
+      
       setLoading(true)
       setLoadError(null)
       
@@ -79,7 +86,10 @@ export default function Admin() {
         projects: projectsData.length,
         news: newsData.length,
         publications: publicationsData.length,
-        videos: videosData.length
+        videos: videosData.length,
+        categories: newsCatsData.length,
+        types: pubTypesData.length,
+        videoCategories: videoCatsData.length
       })
     } catch (error) {
       console.error('❌ Admin: Error loading data:', error)
@@ -134,6 +144,29 @@ export default function Admin() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
           <p className="text-gray-700 font-medium">Loading dashboard...</p>
           <p className="text-sm text-gray-500 mt-2">This should only take a moment</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show login prompt if user is not authenticated
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center max-w-md p-6">
+          <div className="text-blue-600 mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Admin Access Required</h2>
+          <p className="text-gray-600 mb-4">Please log in with an admin account to access the dashboard.</p>
+          <button
+            onClick={() => router.push('/?showLogin=true')}
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Go to Login
+          </button>
         </div>
       </div>
     )

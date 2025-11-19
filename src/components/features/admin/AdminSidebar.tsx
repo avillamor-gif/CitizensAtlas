@@ -52,6 +52,36 @@ interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AdminSidebar({ activePage, setActivePage, currentUser, ...props }: AdminSidebarProps) {
   const userRole = currentUser?.role;
   
+  // If no user is provided, render a minimal sidebar
+  if (!currentUser) {
+    console.warn('⚠️ [AdminSidebar] No currentUser provided');
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" className="bg-sidebar-accent hover:bg-sidebar-accent cursor-default">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-[#0d234f] text-white">
+                  <LayoutGrid className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Citizens' Atlas</span>
+                  <span className="truncate text-xs">Admin Dashboard</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <div className="p-4 text-center text-gray-500">
+            <p>Please log in to access admin functions</p>
+          </div>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+    )
+  }
+  
   // Check permissions based on database role
   const canViewProjects = hasPermission(userRole, 'View/Edit Projects');
   const canViewNews = hasPermission(userRole, 'View/Edit News');
@@ -221,6 +251,24 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
     email: "",
     avatar: "",
   };
+
+  // Debug: Log what's being generated
+  console.log('🔍 [AdminSidebar] User role:', userRole);
+  console.log('🔍 [AdminSidebar] Permissions check results:', {
+    canViewProjects,
+    canViewNews, 
+    canViewPublications,
+    canViewVideos,
+    canViewAnalytics,
+    canManageCategories,
+    canBatchUpload,
+    canApproveDrafts,
+    canManageTeam,
+    canManageRoles
+  });
+  console.log('🔍 [AdminSidebar] Generated nav items:', navItems);
+  console.log('🔍 [AdminSidebar] Generated admin items:', adminItems);
+  console.log('🔍 [AdminSidebar] Generated team management items:', teamManagementItems);
 
   console.log('👤 AdminSidebar userData:', { 
     currentUser, 

@@ -89,6 +89,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         
         if (!currentUser?.role) {
             console.warn('⚠️ [AdminDashboard] No role found! Check if profile exists in database.');
+        } else {
+            console.log('✅ [AdminDashboard] User role found:', currentUser.role);
+            
+            // Test some permissions
+            console.log('🔍 [AdminDashboard] Testing permissions:');
+            console.log('- View/Edit Projects:', hasPermission(currentUser.role, 'View/Edit Projects'));
+            console.log('- View/Edit News:', hasPermission(currentUser.role, 'View/Edit News'));
+            console.log('- View/Edit Publications:', hasPermission(currentUser.role, 'View/Edit Publications'));
+            console.log('- View Analytics:', hasPermission(currentUser.role, 'View Analytics'));
         }
     }, [currentUser]);
 

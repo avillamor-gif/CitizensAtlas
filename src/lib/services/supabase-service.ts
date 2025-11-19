@@ -21,6 +21,8 @@ const supabase = getSupabase()
 // ============================================
 // PROJECTS
 // ============================================
+
+// Get all projects (authenticated users only)
 export async function getProjects() {
   console.log('📖 [Supabase] Getting projects...')
   
@@ -66,7 +68,8 @@ export async function getPublishedProjects() {
   
   try {
     // Use direct REST API without authentication for public data
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=*&eq=status.published&order=id.desc`, {
+    // Temporarily get all projects to debug
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=*&order=id.desc`, {
       headers: {
         'apikey': SUPABASE_ANON_KEY
       }
@@ -80,8 +83,13 @@ export async function getPublishedProjects() {
     
     const data = await response.json()
     console.log('✅ [Supabase] Published projects loaded successfully:', data.length, 'projects')
+    console.log('🔍 [Supabase] First few projects:', data.slice(0, 3).map((p: any) => ({ id: p.id, title: p.title, status: p.status })))
     
-    return data as Project[]
+    // Filter published projects client-side for now
+    const publishedProjects = data.filter((p: any) => p.status === 'published' || p.status === undefined || p.status === null)
+    console.log('✅ [Supabase] Filtered published projects:', publishedProjects.length, 'projects')
+    
+    return publishedProjects as Project[]
   } catch (error) {
     console.error('❌ [Supabase] Error in getPublishedProjects:', error)
     throw error
@@ -407,7 +415,8 @@ export async function getPublishedNews() {
   
   try {
     // Use direct REST API without authentication for public data
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/news?select=*&eq=status.published&order=id.desc`, {
+    // Temporarily get all news to debug
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/news?select=*&order=id.desc`, {
       headers: {
         'apikey': SUPABASE_ANON_KEY
       }
@@ -421,8 +430,13 @@ export async function getPublishedNews() {
     
     const data = await response.json()
     console.log('✅ [Supabase] Published news loaded successfully:', data.length, 'articles')
+    console.log('🔍 [Supabase] First few news:', data.slice(0, 3).map((n: any) => ({ id: n.id, title: n.title, status: n.status })))
     
-    return data as Article[]
+    // Filter published news client-side for now
+    const publishedNews = data.filter((n: any) => n.status === 'published' || n.status === undefined || n.status === null)
+    console.log('✅ [Supabase] Filtered published news:', publishedNews.length, 'articles')
+    
+    return publishedNews as Article[]
   } catch (error) {
     console.error('❌ [Supabase] Error in getPublishedNews:', error)
     throw error
@@ -655,7 +669,7 @@ export async function getPublishedPublications() {
   
   try {
     // Use direct REST API without authentication for public data
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/publications?select=*&eq=status.published&order=id.desc`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/publications?select=*&status=eq.published&order=id.desc`, {
       headers: {
         'apikey': SUPABASE_ANON_KEY
       }
@@ -949,7 +963,7 @@ export async function getPublishedVideos() {
   
   try {
     // Use direct REST API without authentication for public data
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/videos?select=*&eq=status.published&order=id.desc`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/videos?select=*&status=eq.published&order=id.desc`, {
       headers: {
         'apikey': SUPABASE_ANON_KEY
       }

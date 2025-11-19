@@ -36,6 +36,93 @@ const isSupabaseConfigured = () => {
 }
 
 // ============================================
+// PUBLIC DATA - Always returns published content only
+// ============================================
+export async function getPublishedProjects(): Promise<Project[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      console.log('🌍 [Data Service] Getting published projects for public view')
+      return await supabaseService.getPublishedProjects()
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage - filter published only
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_projects')
+    if (stored) {
+      const projects: Project[] = JSON.parse(stored)
+      return projects.filter(p => p.status === 'published' || p.status === undefined)
+    }
+  }
+  return []
+}
+
+export async function getPublishedNews(): Promise<Article[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      console.log('🌍 [Data Service] Getting published news for public view')
+      return await supabaseService.getPublishedNews()
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage - filter published only
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_news')
+    if (stored) {
+      const news: Article[] = JSON.parse(stored)
+      return news.filter(n => n.status === 'published' || n.status === undefined)
+    }
+  }
+  return []
+}
+
+export async function getPublishedPublications(): Promise<Article[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      console.log('🌍 [Data Service] Getting published publications for public view')
+      return await supabaseService.getPublishedPublications()
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage - filter published only
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_publications')
+    if (stored) {
+      const publications: Article[] = JSON.parse(stored)
+      return publications.filter(p => p.status === 'published' || p.status === undefined)
+    }
+  }
+  return []
+}
+
+export async function getPublishedVideos(): Promise<Article[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      console.log('🌍 [Data Service] Getting published videos for public view')
+      return await supabaseService.getPublishedVideos()
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage - filter published only
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_videos')
+    if (stored) {
+      const videos: Article[] = JSON.parse(stored)
+      return videos.filter(v => v.status === 'published' || v.status === undefined)
+    }
+  }
+  return []
+}
+
+// ============================================
 // PROJECTS
 // ============================================
 export async function getProjects(): Promise<Project[]> {
@@ -45,6 +132,7 @@ export async function getProjects(): Promise<Project[]> {
       const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
       if (authData) {
         // User is logged in, get all projects
+        console.log('🔐 [Data Service] Auth token found, getting all projects (including drafts)')
         return await supabaseService.getProjects()
       } else {
         // User is not logged in, get only published projects
