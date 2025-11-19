@@ -40,27 +40,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.error('❌ Error fetching user profile:', error);
         console.error('❌ Error details:', JSON.stringify(error, null, 2));
+        console.warn('⚠️ Profile not found, will create one');
         
-        // Check for known admin emails and assign appropriate roles
-        let defaultRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
-        
-        if (supabaseUser.email === 'akawar@gmail.com') {
-          defaultRole = 'super-admin';
-          console.log('🔑 Recognized super-admin email, assigning super-admin role');
-        } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
-          defaultRole = 'admin';
-          console.log('🔑 Recognized admin email, assigning admin role');
-        }
-        
-        console.warn(`⚠️ Using fallback: ${defaultRole} role for ${supabaseUser.email}`);
-        
-        // Use email as fallback if profile doesn't exist
-        setUser({
+        // Try to create a profile for this user
+        const newProfile = {
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          role: defaultRole,
-          name: supabaseUser.email!,
-        });
+          full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email!,
+          role: 'contributor', // Default role, can be changed later by super-admin
+          avatar_url: supabaseUser.user_metadata?.avatar_url,
+        };
+        
+        console.log('📝 Creating new profile:', newProfile);
+        
+        try {
+          const { data: createdProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert([newProfile])
+            .select()
+            .single<User>();
+            
+          if (createError) {
+            console.error('❌ Error creating profile:', createError);
+            // Fall back to local user object
+            setUser({
+              id: supabaseUser.id,
+              email: supabaseUser.email!,
+              role: 'contributor',
+              name: supabaseUser.email!,
+            });
+          } else {
+            console.log('✅ Profile created successfully:', createdProfile);
+            setUser({
+              id: createdProfile.id,
+              email: createdProfile.email,
+              role: createdProfile.role,
+              name: createdProfile.full_name,
+              full_name: createdProfile.full_name,
+              avatar_url: createdProfile.avatar_url,
+            });
+          }
+        } catch (createException) {
+          console.error('❌ Exception creating profile:', createException);
+          // Fall back to local user object
+          setUser({
+            id: supabaseUser.id,
+            email: supabaseUser.email!,
+            role: 'contributor',
+            name: supabaseUser.email!,
+          });
+        }
         return;
       }
 
@@ -81,43 +110,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       } else {
         console.warn('⚠️ No profile data returned, using fallback');
-        
-        // Check for known admin emails and assign appropriate roles
-        let defaultRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
-        
-        if (supabaseUser.email === 'akawar@gmail.com') {
-          defaultRole = 'super-admin';
-          console.log('🔑 Recognized super-admin email, assigning super-admin role');
-        } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
-          defaultRole = 'admin';
-          console.log('🔑 Recognized admin email, assigning admin role');
-        }
-        
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          role: defaultRole,
+          role: 'contributor',
           name: supabaseUser.email!,
         });
       }
     } catch (error) {
       console.error('❌ Exception fetching user profile:', error);
-      
-      // Check for known admin emails and assign appropriate roles  
-      let defaultRole: 'super-admin' | 'admin' | 'contributor' = 'contributor';
-      
-      if (supabaseUser.email === 'akawar@gmail.com') {
-        defaultRole = 'super-admin';
-        console.log('🔑 Recognized super-admin email, assigning super-admin role');
-      } else if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
-        defaultRole = 'admin';
-        console.log('🔑 Recognized admin email, assigning admin role');
-      }
-      
       setUser({
         id: supabaseUser.id,
         email: supabaseUser.email!,
-        role: defaultRole,
+        role: 'contributor',
         name: supabaseUser.email!,
       });
     }
