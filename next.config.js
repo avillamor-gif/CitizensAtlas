@@ -6,6 +6,10 @@ const nextConfig = {
   env: {
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   },
+  // Force cache invalidation
+  generateBuildId: async () => {
+    return `build-${Date.now()}`
+  },
 }
 
 module.exports = nextConfig
