@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { AdminDashboard } from '@/components/features/admin'
@@ -26,6 +26,18 @@ const slugify = (text: string) =>
     .replace(/--+/g, '-')
 
 export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
+  );
+}
+
+function HomePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user: currentUser, loading: authLoading } = useAuth()
