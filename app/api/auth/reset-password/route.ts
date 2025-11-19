@@ -14,21 +14,22 @@ export async function POST(request: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Get the production URL from environment or construct from request
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || `${request.nextUrl.protocol}//${request.nextUrl.host}`
+    // Force the production URL - don't rely on environment variable
+    const currentHost = request.nextUrl.host
+    const protocol = request.nextUrl.protocol
+    const appUrl = `${protocol}//${currentHost}`
     const redirectTo = `${appUrl}/auth/reset-password`
 
     console.log('🔄 [API] Sending password reset email to:', email)
     console.log('📧 [API] Redirect URL:', redirectTo)
     console.log('🌍 [API] App URL from env:', process.env.NEXT_PUBLIC_APP_URL)
-    console.log('🌍 [API] Request host:', request.nextUrl.host)
+    console.log('🌍 [API] Current host:', currentHost)
+    console.log('🌍 [API] Protocol:', protocol)
+    console.log('🌍 [API] Constructed URL:', appUrl)
 
-    const { error } = await supabase.auth.admin.generateLink({
-      type: 'recovery',
-      email: email,
-      options: {
-        redirectTo: redirectTo,
-      },
+    // Use the standard resetPasswordForEmail instead of admin.generateLink
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectTo,
     })
 
     if (error) {
