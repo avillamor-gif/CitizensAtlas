@@ -14,18 +14,23 @@ export async function POST(request: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Force the production URL - don't rely on environment variable
-    const currentHost = request.nextUrl.host
-    const protocol = request.nextUrl.protocol
-    const appUrl = `${protocol}//${currentHost}`
+    // Use the stable Vercel domain if available, otherwise construct from current request
+    let appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    
+    if (!appUrl || appUrl.includes('localhost')) {
+      // Fallback to current request URL
+      const currentHost = request.nextUrl.host
+      const protocol = request.nextUrl.protocol
+      appUrl = `${protocol}//${currentHost}`
+    }
+    
     const redirectTo = `${appUrl}/auth/reset-password`
 
     console.log('🔄 [API] Sending password reset email to:', email)
     console.log('📧 [API] Redirect URL:', redirectTo)
     console.log('🌍 [API] App URL from env:', process.env.NEXT_PUBLIC_APP_URL)
-    console.log('🌍 [API] Current host:', currentHost)
-    console.log('🌍 [API] Protocol:', protocol)
-    console.log('🌍 [API] Constructed URL:', appUrl)
+    console.log('🌍 [API] Current host:', request.nextUrl.host)
+    console.log('🌍 [API] Final app URL used:', appUrl)
 
     // Use the standard resetPasswordForEmail instead of admin.generateLink
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
