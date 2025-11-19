@@ -33,25 +33,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // IMMEDIATE HARDCODED ROLES - NO DELAYS, NO CONDITIONS
     if (supabaseUser.email === 'akawar@gmail.com') {
       console.log('🛡️ [IMMEDIATE] Hardcoded super-admin for akawar@gmail.com');
-      setUser({
+      const adminUser = {
         id: supabaseUser.id,
         email: supabaseUser.email,
         role: 'super-admin',
         name: 'akawar',
         full_name: 'akawar',
-      });
+      };
+      
+      // Store in localStorage immediately to persist across refreshes
+      localStorage.setItem('atlas-user-profile', JSON.stringify(adminUser));
+      console.log('💾 [EMERGENCY] Hardcoded admin stored to localStorage');
+      
+      setUser(adminUser);
       return;
     }
     
     if (supabaseUser.email === 'alberto.b.villamor@gmail.com') {
       console.log('🛡️ [IMMEDIATE] Hardcoded admin for alberto.b.villamor@gmail.com');
-      setUser({
+      const adminUser = {
         id: supabaseUser.id,
         email: supabaseUser.email,
         role: 'admin',
         name: 'alberto.b.villamor',
         full_name: 'alberto.b.villamor',
-      });
+      };
+      
+      // Store in localStorage immediately to persist across refreshes
+      localStorage.setItem('atlas-user-profile', JSON.stringify(adminUser));
+      console.log('💾 [EMERGENCY] Hardcoded admin stored to localStorage');
+      
+      setUser(adminUser);
       return;
     }
     
@@ -187,6 +199,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Get initial session
     const initializeAuth = async () => {
       try {
+        // IMMEDIATE: Check for hardcoded admin users in localStorage
+        const savedProfile = localStorage.getItem('atlas-user-profile');
+        if (savedProfile) {
+          try {
+            const profile = JSON.parse(savedProfile);
+            if (profile.email === 'akawar@gmail.com' && profile.role === 'super-admin') {
+              console.log('🚀 [IMMEDIATE] Loading hardcoded super-admin from localStorage');
+              setUser(profile);
+              setLoading(false);
+              return;
+            }
+            if (profile.email === 'alberto.b.villamor@gmail.com' && profile.role === 'admin') {
+              console.log('🚀 [IMMEDIATE] Loading hardcoded admin from localStorage');
+              setUser(profile);
+              setLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.warn('Failed to parse saved profile');
+          }
+        }
+        
         // Increase timeout and add better logging
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => {
@@ -246,6 +280,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSupabaseUser(session?.user ?? null);
       
       if (session?.user) {
+        // PROTECTION: Don't override existing hardcoded admin users
+        if (user && (user.email === 'akawar@gmail.com' || user.email === 'alberto.b.villamor@gmail.com') && 
+            user.role && user.role !== 'contributor') {
+          console.log('🛡️ [PROTECTION] Preserving existing hardcoded admin role:', user.role);
+          return;
+        }
+        
         console.log('👤 Fetching profile for auth state change...');
         await fetchUserProfile(session.user);
       } else {
