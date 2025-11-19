@@ -30,6 +30,12 @@ export default function Admin() {
   const loadData = async () => {
     try {
       console.log('📥 Admin: Loading data...')
+      console.log('🔍 Admin: Environment check:', {
+        hasURL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+        keyPrefix: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20)
+      })
       console.log('🔍 Admin: Current user:', { 
         id: user?.id, 
         email: user?.email, 
