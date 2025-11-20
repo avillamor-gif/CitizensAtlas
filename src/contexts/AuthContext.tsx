@@ -123,6 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: (profile as any).role,
           name: (profile as any).full_name || (profile as any).email,
           full_name: (profile as any).full_name,
+          avatar_url: (profile as any).avatar_url || '',
         };
         console.log('👤 Setting user data:', userData);
         setUserWithPersistence(userData);
