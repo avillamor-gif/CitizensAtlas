@@ -106,6 +106,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         const checkAndRedirect = () => {
             const userRole = currentUser?.role;
             
+            // Don't redirect if we don't have user info yet (still loading)
+            if (!userRole) {
+                console.log('[Dashboard] No user role yet, skipping permission check');
+                return;
+            }
+            
             const canViewProjects = hasPermission(userRole, 'View/Edit Projects');
             const canViewNews = hasPermission(userRole, 'View/Edit News');
             const canViewPublications = hasPermission(userRole, 'View/Edit Publications');
@@ -174,7 +180,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         
         window.addEventListener('role-permissions-updated', handlePermissionsUpdated);
         return () => window.removeEventListener('role-permissions-updated', handlePermissionsUpdated);
-    }, [activeAdminPage, currentUser]);
+    }, [activeAdminPage, currentUser?.role]); // Only depend on role, not entire currentUser object
 
     const testLogout = async () => {
         console.log('TEST: Logout button clicked in header');

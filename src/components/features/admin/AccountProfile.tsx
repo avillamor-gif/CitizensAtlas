@@ -49,6 +49,18 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
 
   const [previewUrl, setPreviewUrl] = useState(formData.avatar_url)
 
+  // Update formData when currentUser changes
+  React.useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        full_name: currentUser.full_name || currentUser.name || '',
+        email: currentUser.email || '',
+        avatar_url: currentUser.avatar_url || '',
+      })
+      setPreviewUrl(currentUser.avatar_url || '')
+    }
+  }, [currentUser])
+
   const getInitials = () => {
     const name = formData.full_name || formData.email
     return name
