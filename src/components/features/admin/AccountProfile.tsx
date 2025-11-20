@@ -2,12 +2,13 @@
 
 import React, { useState, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { Camera, Loader2, User } from 'lucide-react'
+import { Camera, Loader2, User, ChevronDown, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { createClient } from '@/lib/supabase/client'
 import * as DataService from '@/lib/services/data-service'
 
@@ -28,11 +29,22 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [showPasswordSection, setShowPasswordSection] = useState(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   
   const [formData, setFormData] = useState({
     full_name: currentUser?.full_name || currentUser?.name || '',
     email: currentUser?.email || '',
     avatar_url: currentUser?.avatar_url || '',
+  })
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   })
 
   const [previewUrl, setPreviewUrl] = useState(formData.avatar_url)
@@ -128,6 +140,59 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
       alert('Failed to update profile. Please try again.')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validate passwords
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      alert('Please fill in all password fields.')
+      return
+    }
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('New password and confirmation do not match.')
+      return
+    }
+    
+    if (passwordData.newPassword.length < 6) {
+      alert('New password must be at least 6 characters long.')
+      return
+    }
+    
+    if (passwordData.newPassword === passwordData.currentPassword) {
+      alert('New password must be different from current password.')
+      return
+    }
+
+    try {
+      setIsChangingPassword(true)
+
+      // Update password using Supabase
+      const { error } = await supabase.auth.updateUser({
+        password: passwordData.newPassword
+      })
+
+      if (error) throw error
+
+      alert('Password changed successfully!')
+      
+      // Clear password fields
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      })
+      
+      // Close the password section
+      setShowPasswordSection(false)
+    } catch (error: any) {
+      console.error('Error changing password:', error)
+      alert(error.message || 'Failed to change password. Please try again.')
+    } finally {
+      setIsChangingPassword(false)
     }
   }
 
@@ -259,28 +324,121 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
         </CardContent>
       </Card>
 
-      {/* Additional Settings Card */}
+      {/* Account Settings Card with Password Change */}
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Account Settings</CardTitle>
+          <CardTitle>Account Security</CardTitle>
           <CardDescription>
-            Manage your account security and preferences
+            Manage your password and account security settings
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div>
-                <h3 className="font-medium">Change Password</h3>
-                <p className="text-sm text-muted-foreground">
-                  Update your password to keep your account secure
-                </p>
+          <Collapsible open={showPasswordSection} onOpenChange={setShowPasswordSection}>
+            <CollapsibleTrigger asChild>
+              <div className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
+                <div>
+                  <h3 className="font-medium">Change Password</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Update your password to keep your account secure
+                  </p>
+                </div>
+                <ChevronDown className={`h-5 w-5 transition-transform ${showPasswordSection ? 'rotate-180' : ''}`} />
               </div>
-              <Button variant="outline" disabled>
-                Coming Soon
-              </Button>
-            </div>
-          </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4">
+              <form onSubmit={handlePasswordChange} className="space-y-4 p-4 border rounded-lg">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="currentPassword"
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={passwordData.currentPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                      placeholder="Enter current password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                      placeholder="Enter new password (min. 6 characters)"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                      placeholder="Re-enter new password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setPasswordData({
+                        currentPassword: '',
+                        newPassword: '',
+                        confirmPassword: '',
+                      })
+                      setShowPasswordSection(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isChangingPassword}>
+                    {isChangingPassword ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Changing...
+                      </>
+                    ) : (
+                      'Change Password'
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </CollapsibleContent>
+          </Collapsible>
         </CardContent>
       </Card>
     </div>

@@ -119,16 +119,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             
             // Check if user has permission for current page
             let hasAccess = true;
-            if (activeAdminPage.startsWith('projects') && !canViewProjects) hasAccess = false;
-            if (activeAdminPage.startsWith('news') && !canViewNews) hasAccess = false;
-            if (activeAdminPage.startsWith('publications') && !canViewPublications) hasAccess = false;
-            if (activeAdminPage.startsWith('videos') && !canViewVideos) hasAccess = false;
-            if (activeAdminPage === 'projects-analytics' && !canViewAnalytics) hasAccess = false;
-            if ((activeAdminPage === 'news-categories' || activeAdminPage === 'publications-types' || activeAdminPage === 'videos-categories') && !canManageCategories) hasAccess = false;
-            if (activeAdminPage === 'batch-upload' && !canBatchUpload) hasAccess = false;
-            if (activeAdminPage === 'pending-approvals' && !canApproveDrafts) hasAccess = false;
-            if (activeAdminPage === 'team-management' && !canManageTeam) hasAccess = false;
-            if (activeAdminPage === 'role-management' && !canManageRoles) hasAccess = false;
+            
+            // Account profile is accessible to everyone
+            if (activeAdminPage === 'account-profile') {
+                hasAccess = true;
+            } else if (activeAdminPage.startsWith('projects') && !canViewProjects) {
+                hasAccess = false;
+            } else if (activeAdminPage.startsWith('news') && !canViewNews) {
+                hasAccess = false;
+            } else if (activeAdminPage.startsWith('publications') && !canViewPublications) {
+                hasAccess = false;
+            } else if (activeAdminPage.startsWith('videos') && !canViewVideos) {
+                hasAccess = false;
+            } else if (activeAdminPage === 'projects-analytics' && !canViewAnalytics) {
+                hasAccess = false;
+            } else if ((activeAdminPage === 'news-categories' || activeAdminPage === 'publications-types' || activeAdminPage === 'videos-categories') && !canManageCategories) {
+                hasAccess = false;
+            } else if (activeAdminPage === 'batch-upload' && !canBatchUpload) {
+                hasAccess = false;
+            } else if (activeAdminPage === 'pending-approvals' && !canApproveDrafts) {
+                hasAccess = false;
+            } else if (activeAdminPage === 'team-management' && !canManageTeam) {
+                hasAccess = false;
+            } else if (activeAdminPage === 'role-management' && !canManageRoles) {
+                hasAccess = false;
+            }
             
             // Redirect to first accessible page if no access
             if (!hasAccess) {
