@@ -86,9 +86,9 @@ function AcceptInviteContent() {
     const checkToken = async () => {
       // Supabase can send either 'token_hash' or 'token' parameter
       // Or it might be in the URL fragment (hash) after #
-      let tokenHash = searchParams.get('token_hash');
-      let token = searchParams.get('token');
-      let type = searchParams.get('type');
+      let tokenHash = searchParams?.get('token_hash');
+      let token = searchParams?.get('token');
+      let type = searchParams?.get('type');
       let errorMessage = null;
 
       // If not in search params, check URL hash fragment
