@@ -37,6 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
+    // If we already have a user profile with the same ID, don't refetch
+    if (user && user.id === supabaseUser.id) {
+      console.log('✅ Profile already loaded for this user, skipping fetch');
+      return;
+    }
+    
     fetchingProfile.current = true;
     
     try {
@@ -145,21 +151,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (!mounted) return;
         
-        // Skip INITIAL_SESSION event during initialization to avoid double fetch
-        if (event === 'INITIAL_SESSION' && isInitializing) {
-          console.log('⏭️  Skipping INITIAL_SESSION during initialization');
-          return;
-        }
-        
         console.log('🔄 Auth state change:', event, session ? 'Session exists' : 'No session');
         
-        setSession(session);
-        setSupabaseUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchUserProfile(session.user);
-        } else {
+        // Only handle specific events that require action
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          console.log('✅ Handling auth event:', event);
+          setSession(session);
+          setSupabaseUser(session?.user ?? null);
+          
+          if (session?.user) {
+            await fetchUserProfile(session.user);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          console.log('👋 User signed out, clearing state');
+          setSession(null);
+          setSupabaseUser(null);
           setUser(null);
+        } else if (event === 'INITIAL_SESSION') {
+          console.log('⏭️  Skipping INITIAL_SESSION event (handled by initialization)');
+        } else {
+          console.log('⏭️  Ignoring event:', event);
         }
       });
       
