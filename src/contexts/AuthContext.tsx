@@ -66,46 +66,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    let authSubscription: any = null;
 
     const initializeAuth = async () => {
       try {
+        console.log('🚀 Initializing auth...');
+        
+        // First check for existing session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!mounted) return;
+        
+        console.log('📦 Session found:', session ? 'YES' : 'NO');
         
         setSession(session);
         setSupabaseUser(session?.user ?? null);
         
         if (session?.user) {
           await fetchUserProfile(session.user);
+        } else {
+          setUser(null);
         }
+        
+        setLoading(false);
       } catch (error) {
         console.error('❌ Auth initialization error:', error);
-      } finally {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
-    initializeAuth();
+    // Subscribe to auth changes BEFORE initializing
+    const setupAuthListener = () => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (!mounted) return;
+        
+        console.log('🔄 Auth state change:', event, session ? 'Session exists' : 'No session');
+        
+        setSession(session);
+        setSupabaseUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await fetchUserProfile(session.user);
+        } else {
+          setUser(null);
+        }
+      });
+      
+      authSubscription = subscription;
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
-      
-      console.log('🔄 Auth state change:', event);
-      
-      setSession(session);
-      setSupabaseUser(session?.user ?? null);
-      
-      if (session?.user) {
-        await fetchUserProfile(session.user);
-      } else {
-        setUser(null);
-      }
-    });
+    setupAuthListener();
+    initializeAuth();
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      if (authSubscription) {
+        authSubscription.unsubscribe();
+      }
     };
   }, []);
 

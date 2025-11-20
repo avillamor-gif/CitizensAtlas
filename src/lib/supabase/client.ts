@@ -27,7 +27,21 @@ export function createClient() {
       detectSessionInUrl: true,
       flowType: 'pkce',
       storageKey: 'atlas-auth-token',
-      storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+      storage: typeof window !== 'undefined' ? {
+        getItem: (key: string) => {
+          const value = window.localStorage.getItem(key);
+          console.log('🔑 Storage GET:', key, value ? 'found' : 'not found');
+          return value;
+        },
+        setItem: (key: string, value: string) => {
+          console.log('💾 Storage SET:', key);
+          window.localStorage.setItem(key, value);
+        },
+        removeItem: (key: string) => {
+          console.log('🗑️  Storage REMOVE:', key);
+          window.localStorage.removeItem(key);
+        },
+      } : undefined,
     },
     global: {
       headers: {
