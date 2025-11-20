@@ -333,7 +333,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
+                      <SidebarMenuButton tooltip={item.title} className="cursor-pointer">
                         <item.icon />
                         <span>{item.title}</span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -346,6 +346,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
                             <SidebarMenuSubButton
                               isActive={activePage === subItem.page}
                               onClick={() => setActivePage(subItem.page)}
+                              className="cursor-pointer"
                             >
                               <span>{subItem.title}</span>
                             </SidebarMenuSubButton>
