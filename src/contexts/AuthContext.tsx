@@ -17,23 +17,35 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const supabase = createClient();
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Get supabase client (lazy initialization)
+  const supabase = createClient();
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
-      const { data: profile, error } = await supabase
+      // Add timeout to prevent hanging
+      const queryPromise = supabase
         .from('profiles')
         .select('*')
         .eq('email', supabaseUser.email!)
         .maybeSingle();
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile query timeout')), 5000)
+      );
+      
+      const { data: profile, error } = await Promise.race([
+        queryPromise,
+        timeoutPromise
+      ]) as any;
 
       console.log('📦 Profile query result:', { profile, error });
 
