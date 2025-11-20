@@ -29,17 +29,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   // Track if we're currently fetching a profile to prevent race conditions
   const fetchingProfile = useRef(false);
+  
+  // Helper to save user to localStorage
+  const saveUserToStorage = (userData: User | null) => {
+    if (typeof window === 'undefined') return;
+    
+    if (userData) {
+      localStorage.setItem('atlas-user-profile', JSON.stringify(userData));
+      console.log('💾 Saved user profile to localStorage');
+    } else {
+      localStorage.removeItem('atlas-user-profile');
+      console.log('🗑️  Removed user profile from localStorage');
+    }
+  };
+  
+  // Helper to load user from localStorage
+  const loadUserFromStorage = (): User | null => {
+    if (typeof window === 'undefined') return null;
+    
+    try {
+      const stored = localStorage.getItem('atlas-user-profile');
+      if (stored) {
+        const userData = JSON.parse(stored);
+        console.log('📥 Loaded user profile from localStorage:', userData.role);
+        return userData;
+      }
+    } catch (error) {
+      console.error('❌ Error loading user from localStorage:', error);
+    }
+    return null;
+  };
+  
+  // Wrapped setUser to also persist to localStorage
+  const setUserWithPersistence = (userData: User | null) => {
+    setUser(userData);
+    saveUserToStorage(userData);
+  };
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     // Prevent multiple simultaneous fetches for the same user
     if (fetchingProfile.current) {
       console.log('⏸️  Profile fetch already in progress, skipping...');
-      return;
-    }
-    
-    // If we already have a user profile with the same ID, don't refetch
-    if (user && user.id === supabaseUser.id) {
-      console.log('✅ Profile already loaded for this user, skipping fetch');
       return;
     }
     
@@ -68,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('❌ Error querying profile:', error);
-        setUser({
+        setUserWithPersistence({
           id: supabaseUser.id,
           email: supabaseUser.email!,
           role: 'contributor',
@@ -87,10 +117,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           full_name: (profile as any).full_name,
         };
         console.log('👤 Setting user data:', userData);
-        setUser(userData);
+        setUserWithPersistence(userData);
       } else {
         console.log('⚠️ No profile found in database, using default contributor role');
-        setUser({
+        setUserWithPersistence({
           id: supabaseUser.id,
           email: supabaseUser.email!,
           role: 'contributor',
@@ -99,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('❌ Exception fetching profile:', error);
-      setUser({
+      setUserWithPersistence({
         id: supabaseUser.id,
         email: supabaseUser.email!,
         role: 'contributor',
@@ -119,7 +149,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         console.log('🚀 Initializing auth...');
         
-        // First check for existing session
+        // Try to load user from localStorage first for instant state restoration
+        const cachedUser = loadUserFromStorage();
+        if (cachedUser) {
+          console.log('⚡ Restoring user from cache:', cachedUser.role);
+          setUser(cachedUser);
+        }
+        
+        // Then check for existing session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!mounted) return;
@@ -130,9 +167,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSupabaseUser(session?.user ?? null);
         
         if (session?.user) {
-          await fetchUserProfile(session.user);
+          // Only fetch if we don't have cached data or if user ID changed
+          if (!cachedUser || cachedUser.id !== session.user.id) {
+            await fetchUserProfile(session.user);
+          }
         } else {
-          setUser(null);
+          setUserWithPersistence(null);
         }
         
         setLoading(false);
@@ -163,12 +203,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await fetchUserProfile(session.user);
           }
         } else if (event === 'SIGNED_OUT') {
-          console.log('👋 User signed out, clearing state');
+          console.log('🚪 User signed out');
           setSession(null);
           setSupabaseUser(null);
-          setUser(null);
-        } else if (event === 'INITIAL_SESSION') {
-          console.log('⏭️  Skipping INITIAL_SESSION event (handled by initialization)');
+          setUserWithPersistence(null);
         } else {
           console.log('⏭️  Ignoring event:', event);
         }
