@@ -149,12 +149,58 @@ export function LoginForm({
               </div>
             </div>
           </form>
-          <div className="relative hidden bg-[#3d5a80] md:block">
-            <img
-              src="/login-image.jpg"
-              alt="GAIA 25th Anniversary"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+          <div className="relative hidden bg-gradient-to-br from-[#0d234f] via-[#3d5a80] to-[#98c1d9] md:block overflow-hidden">
+            {/* Animated Earth Background */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Rotating Earth */}
+              <div className="relative w-64 h-64 animate-spin-slow">
+                {/* Earth circle with gradient */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#4a90e2] via-[#2c5f8d] to-[#1a3a52] shadow-2xl">
+                  {/* Continents overlay - using CSS shapes */}
+                  <div className="absolute inset-0 rounded-full overflow-hidden opacity-40">
+                    {/* North America */}
+                    <div className="absolute top-[20%] left-[15%] w-16 h-20 bg-[#98c1d9] rounded-tl-full rounded-br-full transform -rotate-12"></div>
+                    {/* South America */}
+                    <div className="absolute top-[45%] left-[20%] w-10 h-16 bg-[#98c1d9] rounded-bl-full transform rotate-12"></div>
+                    {/* Africa */}
+                    <div className="absolute top-[30%] left-[45%] w-14 h-24 bg-[#98c1d9] rounded-tr-full rounded-bl-full"></div>
+                    {/* Europe */}
+                    <div className="absolute top-[15%] left-[45%] w-12 h-10 bg-[#98c1d9] rounded-full"></div>
+                    {/* Asia */}
+                    <div className="absolute top-[20%] right-[15%] w-20 h-20 bg-[#98c1d9] rounded-full"></div>
+                    {/* Australia */}
+                    <div className="absolute bottom-[20%] right-[20%] w-12 h-10 bg-[#98c1d9] rounded-full"></div>
+                  </div>
+                  
+                  {/* Latitude/Longitude lines */}
+                  <div className="absolute inset-0 rounded-full">
+                    <div className="absolute top-1/4 left-0 right-0 h-px bg-white opacity-20"></div>
+                    <div className="absolute top-1/2 left-0 right-0 h-px bg-white opacity-30"></div>
+                    <div className="absolute top-3/4 left-0 right-0 h-px bg-white opacity-20"></div>
+                  </div>
+                  
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white to-transparent opacity-20"></div>
+                </div>
+                
+                {/* Glow effect */}
+                <div className="absolute inset-[-20%] rounded-full bg-[#4a90e2] opacity-20 blur-2xl animate-pulse"></div>
+              </div>
+              
+              {/* Orbiting dots representing satellites/data points */}
+              <div className="absolute inset-0 animate-spin-slower">
+                <div className="absolute top-[10%] left-1/2 w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
+              </div>
+              <div className="absolute inset-0 animate-spin-reverse">
+                <div className="absolute bottom-[15%] left-1/2 w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
+              </div>
+            </div>
+            
+            {/* Text overlay */}
+            <div className="absolute bottom-8 left-0 right-0 text-center text-white z-10">
+              <h2 className="text-2xl font-bold mb-2">Citizens' Atlas</h2>
+              <p className="text-sm opacity-90">Global Development Insights Platform</p>
+            </div>
           </div>
         </CardContent>
       </Card>
