@@ -66,6 +66,36 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
     }
   }, [currentUser])
 
+  // Force refresh profile from database on mount to get latest avatar
+  React.useEffect(() => {
+    const refreshProfile = async () => {
+      if (!currentUser?.id) return
+      
+      try {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single()
+        
+        if (profile && !error) {
+          console.log('[AccountProfile] Fresh profile from DB:', profile)
+          // Update form data with fresh profile
+          setFormData({
+            full_name: (profile as any).full_name || '',
+            email: (profile as any).email || '',
+            avatar_url: (profile as any).avatar_url || '',
+          })
+          setPreviewUrl((profile as any).avatar_url || '')
+        }
+      } catch (error) {
+        console.error('[AccountProfile] Error fetching fresh profile:', error)
+      }
+    }
+    
+    refreshProfile()
+  }, []) // Only run once on mount
+
   const getInitials = () => {
     const name = formData.full_name || formData.email
     return name

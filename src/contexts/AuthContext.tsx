@@ -184,8 +184,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSupabaseUser(session?.user ?? null);
         
         if (session?.user) {
-          // Only fetch if we don't have cached data or if user ID changed
-          if (!cachedUser || cachedUser.id !== session.user.id) {
+          // Force fetch if no cached data, user ID changed, or avatar_url is missing
+          const needsFetch = !cachedUser || 
+                            cachedUser.id !== session.user.id || 
+                            !cachedUser.avatar_url;
+          
+          if (needsFetch) {
+            console.log('🔄 Fetching fresh profile (missing data or avatar)');
             await fetchUserProfile(session.user);
           }
         } else {
