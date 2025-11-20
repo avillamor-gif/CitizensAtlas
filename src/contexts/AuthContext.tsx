@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
-      console.log('🔍 Fetching profile for user:', supabaseUser.email);
+      console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -35,17 +35,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('email', supabaseUser.email!)
         .maybeSingle();
 
-      if (profile && !error) {
-        console.log('✅ Profile found:', (profile as any).role);
+      console.log('📦 Profile query result:', { profile, error });
+
+      if (error) {
+        console.error('❌ Error querying profile:', error);
         setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          role: 'contributor',
+          name: supabaseUser.email!,
+        });
+        return;
+      }
+
+      if (profile) {
+        console.log('✅ Profile found:', (profile as any).role);
+        const userData = {
           id: (profile as any).id,
           email: (profile as any).email,
           role: (profile as any).role,
           name: (profile as any).full_name || (profile as any).email,
           full_name: (profile as any).full_name,
-        });
+        };
+        console.log('👤 Setting user data:', userData);
+        setUser(userData);
       } else {
-        console.log('⚠️ No profile found, using default');
+        console.log('⚠️ No profile found in database, using default contributor role');
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
@@ -54,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       }
     } catch (error) {
-      console.error('❌ Error fetching profile:', error);
+      console.error('❌ Exception fetching profile:', error);
       setUser({
         id: supabaseUser.id,
         email: supabaseUser.email!,
