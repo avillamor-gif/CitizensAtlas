@@ -52,6 +52,11 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
   // Update formData when currentUser changes
   React.useEffect(() => {
     if (currentUser) {
+      console.log('[AccountProfile] Updating from currentUser:', {
+        avatar_url: currentUser.avatar_url,
+        full_name: currentUser.full_name,
+      })
+      
       setFormData({
         full_name: currentUser.full_name || currentUser.name || '',
         email: currentUser.email || '',
@@ -230,7 +235,17 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
             <div className="flex flex-col items-center space-y-4">
               <div className="relative group">
                 <Avatar className="h-32 w-32">
-                  <AvatarImage src={previewUrl} alt={formData.full_name} />
+                  <AvatarImage 
+                    src={previewUrl || undefined} 
+                    alt={formData.full_name}
+                    onError={(e) => {
+                      console.error('[AccountProfile] Avatar failed to load:', previewUrl);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    onLoad={() => {
+                      console.log('[AccountProfile] Avatar loaded successfully:', previewUrl);
+                    }}
+                  />
                   <AvatarFallback className="text-2xl">
                     {getInitials()}
                   </AvatarFallback>
