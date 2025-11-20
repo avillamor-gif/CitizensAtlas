@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@/types/types';
@@ -26,8 +26,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   // Get supabase client (lazy initialization)
   const supabase = createClient();
+  
+  // Track if we're currently fetching a profile to prevent race conditions
+  const fetchingProfile = useRef(false);
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+    // Prevent multiple simultaneous fetches for the same user
+    if (fetchingProfile.current) {
+      console.log('⏸️  Profile fetch already in progress, skipping...');
+      return;
+    }
+    
+    fetchingProfile.current = true;
+    
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
@@ -88,12 +99,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: 'contributor',
         name: supabaseUser.email!,
       });
+    } finally {
+      fetchingProfile.current = false;
     }
   };
 
   useEffect(() => {
     let mounted = true;
     let authSubscription: any = null;
+    let isInitializing = true;
 
     const initializeAuth = async () => {
       try {
@@ -116,18 +130,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         setLoading(false);
+        isInitializing = false;
       } catch (error) {
         console.error('❌ Auth initialization error:', error);
         if (mounted) {
           setLoading(false);
+          isInitializing = false;
         }
       }
     };
 
-    // Subscribe to auth changes BEFORE initializing
+    // Subscribe to auth changes
     const setupAuthListener = () => {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (!mounted) return;
+        
+        // Skip INITIAL_SESSION event during initialization to avoid double fetch
+        if (event === 'INITIAL_SESSION' && isInitializing) {
+          console.log('⏭️  Skipping INITIAL_SESSION during initialization');
+          return;
+        }
         
         console.log('🔄 Auth state change:', event, session ? 'Session exists' : 'No session');
         
