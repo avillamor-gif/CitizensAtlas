@@ -98,12 +98,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('❌ Error querying profile:', error);
-        setUserWithPersistence({
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          role: 'contributor',
-          name: supabaseUser.email!,
-        });
+        // Don't overwrite cached profile on error - keep existing data
+        const cachedUser = loadUserFromStorage();
+        if (cachedUser && cachedUser.id === supabaseUser.id) {
+          console.log('⚠️ Query failed, keeping cached profile:', cachedUser.role);
+          setUser(cachedUser); // Update state without overwriting localStorage
+        } else {
+          console.log('⚠️ Query failed and no cache, using default contributor role');
+          setUserWithPersistence({
+            id: supabaseUser.id,
+            email: supabaseUser.email!,
+            role: 'contributor',
+            name: supabaseUser.email!,
+          });
+        }
         return;
       }
 
@@ -129,12 +137,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('❌ Exception fetching profile:', error);
-      setUserWithPersistence({
-        id: supabaseUser.id,
-        email: supabaseUser.email!,
-        role: 'contributor',
-        name: supabaseUser.email!,
-      });
+      // Don't overwrite cached profile on exception - keep existing data
+      const cachedUser = loadUserFromStorage();
+      if (cachedUser && cachedUser.id === supabaseUser.id) {
+        console.log('⚠️ Query exception, keeping cached profile:', cachedUser.role);
+        setUser(cachedUser); // Update state without overwriting localStorage
+      } else {
+        console.log('⚠️ Query exception and no cache, using default contributor role');
+        setUserWithPersistence({
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          role: 'contributor',
+          name: supabaseUser.email!,
+        });
+      }
     } finally {
       fetchingProfile.current = false;
     }
