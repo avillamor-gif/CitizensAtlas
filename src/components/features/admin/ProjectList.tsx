@@ -126,16 +126,21 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onAddProject, onUpd
                                 </th>
                                 <SortableTableHeader label="Project Title" sortKey="title" sortConfig={sortConfig} requestSort={requestSort} />
                                 <SortableTableHeader label="Country" sortKey="country" sortConfig={sortConfig} requestSort={requestSort} />
-                                <SortableTableHeader label="Submitted At" sortKey="submittedAt" sortConfig={sortConfig} requestSort={requestSort} />
-                                <SortableTableHeader label="Publish Date" sortKey="publishDate" sortConfig={sortConfig} requestSort={requestSort} />
-                                <th scope="col" className="px-6 py-4 font-bold text-brand-dark-blue">Project Status</th>
-                                <SortableTableHeader label="Approval" sortKey="status" sortConfig={sortConfig} requestSort={requestSort} />
+                                <SortableTableHeader label="Date" sortKey="publishDate" sortConfig={sortConfig} requestSort={requestSort} />
+                                <SortableTableHeader label="Status" sortKey="status" sortConfig={sortConfig} requestSort={requestSort} />
                                 <th scope="col" className="px-6 py-4 font-bold text-brand-dark-blue text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {paginatedItems.map(project => {
                                 const status = project.details.match(/\*\*Project Status:\*\*(.*)/)?.[1]?.trim() || 'N/A';
+                                const displayDate = project.publishDate || (project.submittedAt 
+                                    ? new Date(project.submittedAt).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short', 
+                                        day: 'numeric'
+                                    })
+                                    : 'N/A');
                                 return (
                                     <tr key={project.id} className={`border-b transition-colors ${selectedItems.includes(project.id) ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
                                         <td className="px-6 py-4">
@@ -147,35 +152,15 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onAddProject, onUpd
                                         </td>
                                         <td className="px-6 py-4 font-medium max-w-sm truncate">{project.title}</td>
                                         <td className="px-6 py-4 uppercase">{project.country}</td>
-                                        <td className="px-6 py-4">
-                                            {project.submittedAt 
-                                                ? new Date(project.submittedAt).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short', 
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })
-                                                : 'N/A'
-                                            }
-                                        </td>
-                                        <td className="px-6 py-4">{project.publishDate || 'N/A'}</td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                                status === 'Active' ? 'bg-green-100 text-green-800' :
-                                                status === 'Cancelled' ? 'bg-red-100 text-red-800' :
-                                                status === 'Inactive' ? 'bg-gray-100 text-gray-800' :
-                                                'bg-blue-100 text-blue-800'
-                                            }`}>
-                                                {status}
-                                            </span>
-                                        </td>
+                                        <td className="px-6 py-4">{displayDate}</td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                                 project.status === 'draft' 
                                                     ? 'bg-yellow-100 text-yellow-800' 
                                                     : 'bg-green-100 text-green-800'
-                                            }`}>{project.status === 'draft' ? 'Waiting for approval' : 'Published'}</span>
+                                            }`}>
+                                                {project.status === 'draft' ? 'Waiting for approval' : 'Published'}
+                                            </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-end items-center space-x-3">
