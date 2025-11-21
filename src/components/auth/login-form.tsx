@@ -199,11 +199,11 @@ export function LoginForm({
             {/* Logo and Text overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
               {/* Logo */}
-              <div className="mb-8">
+              <div className="mb-12 p-6 bg-white/10 backdrop-blur-sm rounded-2xl">
                 <img 
-                  src="/logo.png" 
-                  alt="Citizens' Atlas Logo" 
-                  className="h-24 w-auto drop-shadow-2xl"
+                  src="/gaia-logo.jpg" 
+                  alt="GAIA Logo" 
+                  className="h-40 w-auto drop-shadow-2xl rounded-xl"
                 />
               </div>
               
