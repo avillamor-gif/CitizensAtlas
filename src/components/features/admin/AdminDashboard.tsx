@@ -299,7 +299,40 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             }, 500);
                         }}
                         onReject={onRejectDraft}
-                        onEdit={onEditDraft}
+                        onEdit={(item) => {
+                            console.log('✏️ AdminDashboard onEdit wrapper called with:', item);
+                            
+                            // Find the item in the appropriate array and set it as the edit target
+                            switch (item.type) {
+                                case 'project':
+                                    const project = projects.find(p => p.id === item.id);
+                                    if (project) {
+                                        handleEditProject(project);
+                                    }
+                                    break;
+                                case 'news':
+                                    const newsItem = news.find(n => n.id === item.id);
+                                    if (newsItem) {
+                                        handleEditNews(newsItem);
+                                    }
+                                    break;
+                                case 'publication':
+                                    const publication = publications.find(p => p.id === item.id);
+                                    if (publication) {
+                                        handleEditPublication(publication);
+                                    }
+                                    break;
+                                case 'video':
+                                    const video = videos.find(v => v.id === item.id);
+                                    if (video) {
+                                        handleEditVideo(video);
+                                    }
+                                    break;
+                            }
+                            
+                            // Call the parent's onEdit handler if it exists
+                            onEditDraft(item);
+                        }}
                         filterType="all"
                     />
                 );

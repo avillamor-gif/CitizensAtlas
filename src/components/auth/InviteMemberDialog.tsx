@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -135,14 +141,18 @@ export function InviteMemberDialog({ trigger, onSuccess }: InviteMemberProps) {
               <div className="grid gap-2">
                 <Label htmlFor="role">Role</Label>
                 <Select
-                  id="role"
                   value={role}
-                  onChange={(e) => setRole(e.target.value as any)}
+                  onValueChange={(value) => setRole(value as 'contributor' | 'admin' | 'super-admin')}
                   disabled={loading}
                 >
-                  <option value="contributor">Contributor</option>
-                  <option value="admin">Admin</option>
-                  <option value="super-admin">Super Admin</option>
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="contributor">Contributor</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="super-admin">Super Admin</SelectItem>
+                  </SelectContent>
                 </Select>
                 <p className="text-xs text-gray-500">
                   {role === 'contributor' && 'Can create and submit content for approval'}

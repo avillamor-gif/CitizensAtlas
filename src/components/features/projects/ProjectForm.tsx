@@ -4,6 +4,17 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import { Project } from '@/types/types';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -25,10 +36,10 @@ interface ProjectFormProps {
 }
 
 const FormField: React.FC<{ label: string; children: React.ReactNode; required?: boolean }> = ({ label, children, required }) => (
-    <div className="mb-2">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="mb-2 space-y-2">
+        <Label className="text-sm font-medium text-gray-700">
             {label} {required && <span className="text-red-500">*</span>}
-        </label>
+        </Label>
         {children}
     </div>
 );
@@ -419,6 +430,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             setFormData(prev => ({ ...prev, [name]: value }));
         }
     };
+
+    // Helper for Select components (value-only callback)
+    const handleSelectChange = (name: string, value: string) => {
+        // If region changes, reset country and city selection
+        if (name === 'region') {
+            setFormData(prev => ({ ...prev, [name]: value, country: '', city: '' }));
+        }
+        // If country changes, reset city selection
+        else if (name === 'country') {
+            setFormData(prev => ({ ...prev, [name]: value, city: '' }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
+    };
     
     // Get available countries based on selected region
     const availableCountries = formData.region ? (regionCountries[formData.region] || []) : [];
@@ -633,8 +658,12 @@ ${references}
             <form onSubmit={handleSubmit}>
                 <div className={isModal ? "p-8 space-y-6 max-h-[75vh] overflow-y-auto" : "p-8 space-y-6"}>
                     <SectionTitle isFirst={true}>Project Information</SectionTitle>
-                    <FormField label="Project Name" required><input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} className={inputClass} required /></FormField>
-                    <FormField label="Project Number"><input type="number" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} className={inputClass} /></FormField>
+                    <FormField label="Project Name" required>
+                        <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} required />
+                    </FormField>
+                    <FormField label="Project Number">
+                        <Input type="number" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
+                    </FormField>
                     
                     {/* Map Picker - Only show in Admin page form (not in modal) */}
                     {!isModal && (
@@ -673,63 +702,105 @@ ${references}
                     )}
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField label="Region"><select name="region" value={formData.region} onChange={handleInputChange} className={selectClass}><option value="">Select Region</option><option>Africa</option><option>Asia</option><option>Europe</option><option>North America</option><option>South America</option><option>Oceania</option></select></FormField>
-                            <FormField label="Country">
-                                <select name="country" value={formData.country} onChange={handleInputChange} className={selectClass} disabled={!formData.region}>
-                                    <option value="">{formData.region ? 'Select Country' : 'Select Region First'}</option>
+                        <FormField label="Region">
+                            <Select value={formData.region || undefined} onValueChange={(value) => handleSelectChange('region', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Region" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Africa">Africa</SelectItem>
+                                    <SelectItem value="Asia">Asia</SelectItem>
+                                    <SelectItem value="Europe">Europe</SelectItem>
+                                    <SelectItem value="North America">North America</SelectItem>
+                                    <SelectItem value="South America">South America</SelectItem>
+                                    <SelectItem value="Oceania">Oceania</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
+                        <FormField label="Country">
+                            <Select value={formData.country || undefined} onValueChange={(value) => handleSelectChange('country', value)} disabled={!formData.region}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={formData.region ? 'Select Country' : 'Select Region First'} />
+                                </SelectTrigger>
+                                <SelectContent>
                                     {availableCountries.map(country => (
-                                        <option key={country} value={country}>{country}</option>
+                                        <SelectItem key={country} value={country}>{country}</SelectItem>
                                     ))}
-                                </select>
-                            </FormField>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField label="Latitude"><input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleInputChange} className={inputClass} placeholder="e.g., 34.0522" /></FormField>
-                            <FormField label="Longitude"><input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleInputChange} className={inputClass} placeholder="e.g., -118.2437" /></FormField>
-                        </div>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField label="Latitude">
+                            <Input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="e.g., 34.0522" />
+                        </FormField>
+                        <FormField label="Longitude">
+                            <Input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="e.g., -118.2437" />
+                        </FormField>
+                    </div>
                         
                         <SectionTitle>Financials</SectionTitle>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField label="International financial institution (IFI)"><input type="text" name="ifi" value={formData.ifi} onChange={handleInputChange} className={inputClass} /></FormField>
-                            <FormField label="Funding source"><input type="text" name="fundingSource" value={formData.fundingSource} onChange={handleInputChange} className={inputClass} /></FormField>
+                            <FormField label="International financial institution (IFI)">
+                                <Input type="text" name="ifi" value={formData.ifi} onChange={handleInputChange} />
+                            </FormField>
+                            <FormField label="Funding source">
+                                <Input type="text" name="fundingSource" value={formData.fundingSource} onChange={handleInputChange} />
+                            </FormField>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Financial Instruments Amount</label>
+                            <Label className="block text-sm font-medium text-gray-700 mb-1">Financial Instruments Amount</Label>
                             {formData.financialInstruments.map((instrument, index) => (
                                 <div key={index} className="flex items-center space-x-2 mb-2">
-                                    <input type="number" placeholder="Amount" value={instrument.amount} onChange={(e) => handleRepeatableChange('financialInstruments', index, { ...instrument, amount: e.target.value })} className={repeatableInputClass} />
+                                    <Input type="number" placeholder="Amount" value={instrument.amount} onChange={(e) => handleRepeatableChange('financialInstruments', index, { ...instrument, amount: e.target.value })} />
                                     {formData.financialInstruments.length > 1 && <button type="button" onClick={() => removeRepeatableRow('financialInstruments', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
                                 </div>
                             ))}
                             <button type="button" onClick={() => addRepeatableRow('financialInstruments')} className="text-sm text-brand-medium-blue hover:underline">+ Add Amount</button>
                         </div>
-                        <FormField label="Total Project Amount"><input type="text" value={`$${formData.totalProjectAmount.toLocaleString()}`} readOnly className={`${inputClass} bg-gray-100`} /></FormField>
+                        <FormField label="Total Project Amount">
+                            <Input type="text" value={`$${formData.totalProjectAmount.toLocaleString()}`} readOnly className="bg-gray-100" />
+                        </FormField>
                         
                         <SectionTitle>Details</SectionTitle>
                         <FormField label="False solution type">
                             {formData.falseSolutions.map((solution, index) => (
                                 <div key={index} className="flex items-center space-x-2 mb-2">
-                                    <select 
-                                        value={solution} 
-                                        onChange={(e) => handleRepeatableChange('falseSolutions', index, e.target.value)} 
-                                        className={repeatableInputClass}
+                                    <Select 
+                                        value={solution || undefined} 
+                                        onValueChange={(value) => handleRepeatableChange('falseSolutions', index, value)}
                                     >
-                                        <option value="">Select False Solution Type</option>
-                                        <option value="Waste-to-Energy">Waste-to-Energy</option>
-                                        <option value="Plastic-to-Fuel Technologies">Plastic-to-Fuel Technologies</option>
-                                        <option value="Chemical Recycling">Chemical Recycling</option>
-                                        <option value="Refuse-derived fuel">Refuse-derived fuel</option>
-                                    </select>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select False Solution Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Waste-to-Energy">Waste-to-Energy</SelectItem>
+                                            <SelectItem value="Plastic-to-Fuel Technologies">Plastic-to-Fuel Technologies</SelectItem>
+                                            <SelectItem value="Chemical Recycling">Chemical Recycling</SelectItem>
+                                            <SelectItem value="Refuse-derived fuel">Refuse-derived fuel</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     {formData.falseSolutions.length > 1 && <button type="button" onClick={() => removeRepeatableRow('falseSolutions', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
                                 </div>
                             ))}
                             <button type="button" onClick={() => addRepeatableRow('falseSolutions')} className="text-sm text-brand-medium-blue hover:underline">+ Add solution</button>
                         </FormField>
-                        <FormField label="Owner (Public/ Private / PPP)"><select name="owner" value={formData.owner} onChange={handleInputChange} className={selectClass}><option value="">Select Owner</option><option>Public</option><option>Private</option><option>PPP</option></select></FormField>
+                        <FormField label="Owner (Public/ Private / PPP)">
+                            <Select value={formData.owner || undefined} onValueChange={(value) => handleSelectChange('owner', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Owner" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Public">Public</SelectItem>
+                                    <SelectItem value="Private">Private</SelectItem>
+                                    <SelectItem value="PPP">PPP</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
                         <FormField label="Private Sector Borrower">
                             {formData.privateSectorBorrowers.map((borrower, index) => (
                                 <div key={index} className="flex items-center space-x-2 mb-2">
-                                    <input type="text" value={borrower} onChange={(e) => handleRepeatableChange('privateSectorBorrowers', index, e.target.value)} className={repeatableInputClass} />
+                                    <Input type="text" value={borrower} onChange={(e) => handleRepeatableChange('privateSectorBorrowers', index, e.target.value)} />
                                     {formData.privateSectorBorrowers.length > 1 && <button type="button" onClick={() => removeRepeatableRow('privateSectorBorrowers', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
                                 </div>
                             ))}
@@ -754,21 +825,45 @@ ${references}
                                 style={{ height: '200px', marginBottom: '50px' }}
                             />
                         </FormField>
-                        <FormField label="Project Status"><select name="projectStatus" value={formData.projectStatus} onChange={handleInputChange} className={selectClass}><option value="">Select Status</option><option>Proposed</option><option>Active</option><option>Cancelled</option><option>Inactive</option></select></FormField>
+                        <FormField label="Project Status">
+                            <Select value={formData.projectStatus || undefined} onValueChange={(value) => handleSelectChange('projectStatus', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Proposed">Proposed</SelectItem>
+                                    <SelectItem value="Active">Active</SelectItem>
+                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="Inactive">Inactive</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                              <div className="w-full">
                                 <FormField label="Approval date" required>
-                                    <input type="date" name="approvalDate" value={formData.approvalDate} onChange={handleInputChange} className={dateInputClass} style={{width: '100%'}} required />
+                                    <DatePicker
+                                        value={formData.approvalDate}
+                                        onChange={(date) => handleSelectChange('approvalDate', date)}
+                                        placeholder="Pick approval date"
+                                    />
                                 </FormField>
                              </div>
                             <div className="w-full">
                                 <FormField label="Start date">
-                                    <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} className={dateInputClass} style={{width: '100%'}} />
+                                    <DatePicker
+                                        value={formData.startDate}
+                                        onChange={(date) => handleSelectChange('startDate', date)}
+                                        placeholder="Pick start date"
+                                    />
                                 </FormField>
                             </div>
                             <div className="w-full">
                                 <FormField label="End date">
-                                    <input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} className={dateInputClass} style={{width: '100%'}} />
+                                    <DatePicker
+                                        value={formData.endDate}
+                                        onChange={(date) => handleSelectChange('endDate', date)}
+                                        placeholder="Pick end date"
+                                    />
                                 </FormField>
                             </div>
                         </div>
@@ -777,16 +872,19 @@ ${references}
                                 <FormField label="Environmental">
                                     {formData.environmental.map((env, index) => (
                                         <div key={index} className="flex items-center space-x-2 mb-2">
-                                            <select 
-                                                value={env} 
-                                                onChange={(e) => handleRepeatableChange('environmental', index, e.target.value)} 
-                                                className={repeatableInputClass}
+                                            <Select 
+                                                value={env || undefined} 
+                                                onValueChange={(value) => handleRepeatableChange('environmental', index, value)}
                                             >
-                                                <option value="">Select Category</option>
-                                                {environmentalCategories.map(cat => (
-                                                    <option key={cat} value={cat}>{cat}</option>
-                                                ))}
-                                            </select>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {environmentalCategories.map(cat => (
+                                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                             {formData.environmental.length > 1 && (
                                                 <button 
                                                     type="button" 
@@ -800,12 +898,11 @@ ${references}
                                     ))}
                                     {showAddEnvironmentalCategory ? (
                                         <div className="flex items-center space-x-2 mb-2">
-                                            <input 
+                                            <Input 
                                                 type="text"
                                                 value={newEnvironmentalCategory}
                                                 onChange={(e) => setNewEnvironmentalCategory(e.target.value)}
                                                 placeholder="Enter new category"
-                                                className={repeatableInputClass}
                                                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddEnvironmentalCategory())}
                                             />
                                             <button 
@@ -869,16 +966,19 @@ ${references}
                                 <FormField label="Social Safeguard">
                                     {formData.socialSafeguard.map((safeguard, index) => (
                                         <div key={index} className="flex items-center space-x-2 mb-2">
-                                            <select 
-                                                value={safeguard} 
-                                                onChange={(e) => handleRepeatableChange('socialSafeguard', index, e.target.value)} 
-                                                className={repeatableInputClass}
+                                            <Select 
+                                                value={safeguard || undefined} 
+                                                onValueChange={(value) => handleRepeatableChange('socialSafeguard', index, value)}
                                             >
-                                                <option value="">Select Category</option>
-                                                {socialSafeguardCategories.map(cat => (
-                                                    <option key={cat} value={cat}>{cat}</option>
-                                                ))}
-                                            </select>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {socialSafeguardCategories.map(cat => (
+                                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                             {formData.socialSafeguard.length > 1 && (
                                                 <button 
                                                     type="button" 
@@ -892,12 +992,11 @@ ${references}
                                     ))}
                                     {showAddSocialSafeguardCategory ? (
                                         <div className="flex items-center space-x-2 mb-2">
-                                            <input 
+                                            <Input 
                                                 type="text"
                                                 value={newSocialSafeguardCategory}
                                                 onChange={(e) => setNewSocialSafeguardCategory(e.target.value)}
                                                 placeholder="Enter new category"
-                                                className={repeatableInputClass}
                                                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSocialSafeguardCategory())}
                                             />
                                             <button 
@@ -962,40 +1061,37 @@ ${references}
                         
                         <SectionTitle>Community & Actions</SectionTitle>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-3">Community Actions</label>
+                            <Label className="block text-sm font-medium text-gray-700 mb-3">Community Actions</Label>
                             {formData.groupsInOpposition.map((group, index) => (
                                 <div key={index} className="mb-3">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
-                                            <label className="block text-xs text-gray-600 mb-1">Groups in Opposition</label>
-                                            <input 
+                                            <Label className="block text-xs text-gray-600 mb-1">Groups in Opposition</Label>
+                                            <Input 
                                                 type="text" 
                                                 value={group} 
                                                 onChange={(e) => handleRepeatableChange('groupsInOpposition', index, e.target.value)} 
-                                                className={repeatableInputClass}
                                                 placeholder="Enter group name"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-gray-600 mb-1">Types of Actions</label>
-                                            <input 
+                                            <Label className="block text-xs text-gray-600 mb-1">Types of Actions</Label>
+                                            <Input 
                                                 type="text" 
                                                 name="typesOfActions" 
                                                 value={formData.typesOfActions} 
                                                 onChange={handleInputChange} 
-                                                className={inputClass}
                                                 placeholder="e.g., Protests, Legal action"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-gray-600 mb-1">Links to Actions</label>
+                                            <Label className="block text-xs text-gray-600 mb-1">Links to Actions</Label>
                                             <div className="flex items-center space-x-2">
-                                                <input 
+                                                <Input 
                                                     type="url" 
                                                     name="linksToActions" 
                                                     value={formData.linksToActions} 
                                                     onChange={handleInputChange} 
-                                                    className={inputClass}
                                                     placeholder="https://example.com"
                                                 />
                                                 {formData.groupsInOpposition.length > 1 && (
@@ -1020,24 +1116,41 @@ ${references}
                                 + Add more
                             </button>
                         </div>
-                        <FormField label="Active GAIA support?"><select name="activeGaiAASupport" value={formData.activeGaiAASupport} onChange={handleInputChange} className={selectClass}><option value="">Select an option</option><option>Yes</option><option>No</option></select></FormField>
+                        <FormField label="Active GAIA support?">
+                            <Select value={formData.activeGaiAASupport || undefined} onValueChange={(value) => handleSelectChange('activeGaiAASupport', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select an option" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Yes">Yes</SelectItem>
+                                    <SelectItem value="No">No</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
                         
                         <SectionTitle>Additional Information</SectionTitle>
-                        <FormField label="Notes"><textarea name="notes" value={formData.notes} onChange={handleInputChange} rows={3} className={inputClass}></textarea></FormField>
-                        <FormField label="References"><textarea name="references" value={formData.references} onChange={handleInputChange} rows={3} className={inputClass}></textarea></FormField>
-                        <FormField label="Gender concerns"><input type="text" name="genderConcerns" value={formData.genderConcerns} onChange={handleInputChange} className={inputClass} /></FormField>
-                        <FormField label="Waste workers"><input type="text" name="wasteWorkers" value={formData.wasteWorkers} onChange={handleInputChange} className={inputClass} /></FormField>
-                        <FormField label="Displacement"><input type="text" name="displacement" value={formData.displacement} onChange={handleInputChange} className={inputClass} /></FormField>
+                        <FormField label="Notes">
+                            <Textarea name="notes" value={formData.notes} onChange={handleInputChange} rows={3} />
+                        </FormField>
+                        <FormField label="References">
+                            <Textarea name="references" value={formData.references} onChange={handleInputChange} rows={3} />
+                        </FormField>
+                        <FormField label="Gender concerns">
+                            <Input type="text" name="genderConcerns" value={formData.genderConcerns} onChange={handleInputChange} />
+                        </FormField>
+                        <FormField label="Waste workers">
+                            <Input type="text" name="wasteWorkers" value={formData.wasteWorkers} onChange={handleInputChange} />
+                        </FormField>
+                        <FormField label="Displacement">
+                            <Input type="text" name="displacement" value={formData.displacement} onChange={handleInputChange} />
+                        </FormField>
                     </div>
                     <div className="p-6 flex justify-between items-center space-x-4 bg-gray-50 border-t rounded-b-lg">
                         <div className="flex items-center space-x-3">
-                            <label className="text-sm font-medium text-gray-700">Publish Date (optional):</label>
-                            <input 
-                                type="date" 
-                                name="publishDate" 
-                                value={formData.publishDate} 
-                                onChange={handleInputChange} 
-                                className="p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
+                            <Label className="text-sm font-medium text-gray-700">Publish Date (optional):</Label>
+                            <DatePicker
+                                value={formData.publishDate}
+                                onChange={(date) => handleSelectChange('publishDate', date)}
                                 placeholder="Leave empty to use today's date"
                             />
                         </div>

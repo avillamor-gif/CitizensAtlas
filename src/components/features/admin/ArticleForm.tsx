@@ -3,6 +3,17 @@ import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import { Article } from '@/types/types';
 import { uploadImage, uploadMultipleDocuments, validateImageFile, validateDocumentFile } from '@/lib/supabase/storage';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -20,10 +31,10 @@ interface ArticleFormProps {
 }
 
 const FormField: React.FC<{ label: string; children: React.ReactNode; required?: boolean }> = ({ label, children, required }) => (
-    <div className="mb-2">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="mb-2 space-y-2">
+        <Label className="text-sm font-medium text-gray-700">
             {label} {required && <span className="text-red-500">*</span>}
-        </label>
+        </Label>
         {children}
     </div>
 );
@@ -92,6 +103,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
         if (name === 'videoUrl' && value && itemType === 'Video') {
             fetchVideoThumbnail(value);
         }
+    };
+
+    // Helper for Select components (value-only callback)
+    const handleSelectChange = (name: string, value: string) => {
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
     
     const fetchVideoThumbnail = (url: string) => {
@@ -320,7 +336,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             <form onSubmit={handleSubmit} onClick={() => console.log('📋 Form clicked')}>
                 <div className={isModal ? "p-8 space-y-6 max-h-[75vh] overflow-y-auto" : "p-8 space-y-6"}>
                     <FormField label="Title" required>
-                        <input type="text" name="title" value={formData.title} onChange={handleInputChange} className={inputClass} required />
+                        <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>
                     <div className="mb-6">
                         <ReactQuill
@@ -345,16 +361,20 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     <FormField label={itemType === 'Publication' ? 'Publication Type' : itemType === 'Video' ? 'Video Category' : 'Category'} required>
                         {itemType === 'Publication' || itemType === 'Video' ? (
                             <>
-                                <select 
-                                    name="category" 
-                                    value={formData.category} 
-                                    onChange={handleInputChange} 
-                                    className={inputClass} 
+                                <Select 
+                                    value={formData.category || undefined} 
+                                    onValueChange={(value) => handleSelectChange('category', value)}
                                     required
                                 >
-                                    <option value="">{itemType === 'Publication' ? 'Select Publication Type' : 'Select Video Category'}</option>
-                                    {categories && categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={itemType === 'Publication' ? 'Select Publication Type' : 'Select Video Category'} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categories && categories.filter(c => c !== '').map(cat => (
+                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 {onAddCategory && (
                                     <>
                                         {!showAddCategory ? (
@@ -367,12 +387,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                             </button>
                                         ) : (
                                             <div className="mt-2 flex items-center space-x-2">
-                                                <input 
+                                                <Input 
                                                     type="text" 
                                                     value={newCategory} 
                                                     onChange={(e) => setNewCategory(e.target.value)} 
                                                     placeholder={itemType === 'Publication' ? 'Enter new publication type' : 'Enter new video category'}
-                                                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
                                                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
                                                 />
                                                 <button 
@@ -399,19 +418,23 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             </>
                         ) : (
                             <>
-                                <select 
-                                    name="category" 
-                                    value={formData.category} 
-                                    onChange={handleInputChange} 
-                                    className={inputClass} 
+                                <Select 
+                                    value={formData.category || undefined} 
+                                    onValueChange={(value) => handleSelectChange('category', value)}
                                     required
                                 >
-                                    <option value="">Select Category</option>
-                                    {newsCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {newsCategories.filter(c => c !== '').map(cat => (
+                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 {showAddCategory ? (
                                     <div className="mt-2 flex items-center space-x-2">
-                                        <input 
+                                        <Input 
                                             type="text" 
                                             value={newCategory} 
                                             onChange={(e) => setNewCategory(e.target.value)} 
@@ -474,12 +497,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     </FormField>
                     {itemType === 'Video' && (
                         <FormField label="Video URL (YouTube, Vimeo, Facebook)" required>
-                            <input 
+                            <Input 
                                 type="url" 
                                 name="videoUrl" 
                                 value={formData.videoUrl} 
                                 onChange={handleInputChange} 
-                                className={inputClass} 
                                 placeholder="https://youtube.com/watch?v=..." 
                                 required 
                             />
@@ -494,11 +516,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                 💡 Thumbnail will be automatically fetched from the video URL. You can upload a custom image if needed.
                             </p>
                         )}
-                        <input 
+                        <Input 
                             type="file" 
                             name="imageFile" 
                             onChange={handleImageChange} 
-                            className={inputClass} 
                             accept="image/*" 
                             required={!itemToEdit && itemType !== 'Video'} 
                         />
@@ -506,10 +527,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     </FormField>
                     {itemType === 'Publication' && (
                         <FormField label="Publication Documents">
-                            <input type="file" name="docFiles" onChange={handleDocsChange} className={inputClass} multiple />
+                            <Input type="file" name="docFiles" onChange={handleDocsChange} multiple />
                             {formData.docFiles && (
                                 <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
-                                    {/* FIX: Explicitly type `file` as File to resolve type error. */}
                                     {Array.from(formData.docFiles).map((file: File) => <li key={file.name}>{file.name}</li>)}
                                 </ul>
                             )}
@@ -539,12 +559,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             {/* Add new tag */}
                             {showAddTag ? (
                                 <div className="flex items-center space-x-2">
-                                    <input 
+                                    <Input 
                                         type="text" 
                                         value={newTag} 
                                         onChange={(e) => setNewTag(e.target.value)} 
                                         placeholder="Enter tag name"
-                                        className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue text-sm"
+                                        className="flex-1"
                                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                                     />
                                     <button 
@@ -576,14 +596,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 </div>
                 <div className="p-8 flex justify-between items-center space-x-4 bg-gray-50 border-t rounded-b-lg">
                     <div className="flex items-center space-x-3">
-                        <label className="text-sm font-medium text-gray-700">Publish Date:</label>
-                        <input 
-                            type="date" 
-                            name="publishDate" 
-                            value={formData.publishDate} 
-                            onChange={handleInputChange} 
-                            className="p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
-                            placeholder="Leave empty to use today's date"
+                        <Label className="text-sm font-medium text-gray-700">Publish Date:</Label>
+                        <DatePicker
+                            value={formData.publishDate}
+                            onChange={(date) => handleSelectChange('publishDate', date)}
+                            placeholder="Select publish date"
                         />
                     </div>
                     <div className="flex space-x-4">

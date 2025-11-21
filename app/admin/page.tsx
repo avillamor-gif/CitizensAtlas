@@ -344,15 +344,76 @@ export default function Admin() {
           await loadData()
         }}
         onApproveDraft={async (item) => {
-          // TODO: Implement approve draft
-          await loadData()
+          try {
+            console.log('✅ Admin: Approving draft:', item)
+            
+            // Update the item's status to 'published' based on its type
+            switch (item.type) {
+              case 'project':
+                const project = projects.find(p => p.id === item.id)
+                if (project) {
+                  await DataService.updateProject(item.id, { ...project, status: 'published' })
+                }
+                break
+              case 'news':
+                const newsItem = news.find(n => n.id === item.id)
+                if (newsItem) {
+                  await DataService.updateNews(item.id, { ...newsItem, status: 'published' })
+                }
+                break
+              case 'publication':
+                const publication = publications.find(p => p.id === item.id)
+                if (publication) {
+                  await DataService.updatePublication(item.id, { ...publication, status: 'published' })
+                }
+                break
+              case 'video':
+                const video = videos.find(v => v.id === item.id)
+                if (video) {
+                  await DataService.updateVideo(item.id, { ...video, status: 'published' })
+                }
+                break
+            }
+            
+            // Reload data to reflect the changes
+            await loadData()
+            alert(`✅ "${item.title}" has been approved and published!`)
+          } catch (error) {
+            console.error('❌ Admin: Error approving draft:', error)
+            alert('❌ Failed to approve draft. Please try again.')
+          }
         }}
         onRejectDraft={async (item) => {
-          // TODO: Implement reject draft
-          await loadData()
+          try {
+            console.log('🗑️ Admin: Rejecting/deleting draft:', item)
+            
+            // Delete the item based on its type
+            switch (item.type) {
+              case 'project':
+                await DataService.deleteProjects([item.id])
+                break
+              case 'news':
+                await DataService.deleteNews([item.id])
+                break
+              case 'publication':
+                await DataService.deletePublications([item.id])
+                break
+              case 'video':
+                await DataService.deleteVideos([item.id])
+                break
+            }
+            
+            // Reload data to reflect the changes
+            await loadData()
+            alert(`🗑️ "${item.title}" has been rejected and deleted.`)
+          } catch (error) {
+            console.error('❌ Admin: Error rejecting draft:', error)
+            alert('❌ Failed to reject draft. Please try again.')
+          }
         }}
         onEditDraft={async (item) => {
-          // TODO: Implement edit draft
+          console.log('✏️ Admin: Edit draft requested:', item)
+          // The AdminDashboard will handle navigation to the appropriate edit page
         }}
         currentUser={currentUser}
       />

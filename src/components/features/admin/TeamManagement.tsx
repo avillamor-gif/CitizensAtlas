@@ -5,6 +5,14 @@ import { createClient } from '@/lib/supabase/client';
 import { InviteMemberDialog } from '@/components/auth/InviteMemberDialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface TeamMember {
   id: string;
@@ -31,7 +39,12 @@ const TeamManagement: React.FC = () => {
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [changingRole, setChangingRole] = useState<string | null>(null);
   const supabase = createClient();
+  const { user: currentUser } = useAuth();
+  
+  // Check if current user is super-admin
+  const isSuperAdmin = currentUser?.role === 'super-admin';
 
   const loadTeamMembers = async () => {
     try {
@@ -182,6 +195,45 @@ const TeamManagement: React.FC = () => {
       loadTeamMembers(); // Refresh the list
     } catch (err: any) {
       alert(`Failed to resend: ${err.message}`);
+    }
+  };
+
+  const handleRoleChange = async (userId: string, newRole: string, memberEmail: string) => {
+    if (!isSuperAdmin) {
+      alert('Only super admins can change user roles');
+      return;
+    }
+
+    if (userId === currentUser?.id) {
+      alert('You cannot change your own role');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to change ${memberEmail}'s role to ${newRole}?`)) {
+      return;
+    }
+
+    try {
+      setChangingRole(userId);
+
+      // Update role in profiles table
+      const { error } = await supabase
+        .from('profiles')
+        // @ts-expect-error - Supabase typing issue with profiles table
+        .update({ role: newRole })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      alert(`Role updated successfully to ${newRole}`);
+      
+      // Refresh the list to show updated role
+      await loadTeamMembers();
+    } catch (err: any) {
+      console.error('❌ Role change error:', err);
+      alert(`Failed to change role: ${err.message}`);
+    } finally {
+      setChangingRole(null);
     }
   };
 
@@ -372,13 +424,30 @@ const TeamManagement: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeColor(
-                            member.role
-                          )}`}
-                        >
-                          {member.role || 'contributor'}
-                        </span>
+                        {isSuperAdmin && member.id !== currentUser?.id ? (
+                          <Select
+                            value={member.role}
+                            onValueChange={(value) => handleRoleChange(member.id, value, member.email)}
+                            disabled={changingRole === member.id}
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="contributor">contributor</SelectItem>
+                              <SelectItem value="admin">admin</SelectItem>
+                              <SelectItem value="super-admin">super-admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeColor(
+                              member.role
+                            )}`}
+                          >
+                            {member.role || 'contributor'}
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(member.created_at)}
@@ -387,12 +456,14 @@ const TeamManagement: React.FC = () => {
                         {formatDate(member.last_sign_in_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleDeleteMember(member.id)}
-                          className="text-red-600 hover:text-red-900 transition-colors"
-                        >
-                          Remove
-                        </button>
+                        {member.id !== currentUser?.id && (
+                          <button
+                            onClick={() => handleDeleteMember(member.id)}
+                            className="text-red-600 hover:text-red-900 transition-colors"
+                          >
+                            Remove
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

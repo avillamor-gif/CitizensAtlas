@@ -196,10 +196,22 @@ export function LoginForm({
               </div>
             </div>
             
-            {/* Text overlay */}
-            <div className="absolute bottom-8 left-0 right-0 text-center text-white z-10">
-              <h2 className="text-2xl font-bold mb-2">Citizens' Atlas</h2>
-              <p className="text-sm opacity-90">Global Development Insights Platform</p>
+            {/* Logo and Text overlay */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
+              {/* Logo */}
+              <div className="mb-8">
+                <img 
+                  src="/logo.png" 
+                  alt="Citizens' Atlas Logo" 
+                  className="h-24 w-auto drop-shadow-2xl"
+                />
+              </div>
+              
+              {/* Text */}
+              <div className="text-center text-white px-8">
+                <h2 className="text-3xl font-bold mb-3 drop-shadow-lg">Citizens' Atlas</h2>
+                <p className="text-base opacity-90 drop-shadow-md max-w-md">on False Solutions to Climate and Circularity</p>
+              </div>
             </div>
           </div>
         </CardContent>
