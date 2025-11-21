@@ -280,12 +280,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      setUser(null);
+      console.log('🚪 Signing out...');
+      setUserWithPersistence(null); // Clear user from state and localStorage
       setSupabaseUser(null);
       setSession(null);
       await supabase.auth.signOut();
+      console.log('✅ Signed out successfully');
+      // Redirect to home page
+      window.location.href = '/';
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('❌ Sign out error:', error);
     }
   };
 

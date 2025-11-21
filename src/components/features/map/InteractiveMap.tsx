@@ -58,9 +58,10 @@ interface InteractiveMapProps {
     projects: Project[];
     onMarkerClick: (project: Project) => void;
     onMapClick?: (location: { latitude: number; longitude: number }) => void;
+    onMapLoad?: () => void;
 }
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad }) => {
     const [popupInfo, setPopupInfo] = useState<Project | null>(null);
 
     const { minAmount, maxAmount } = useMemo(() => {
@@ -109,6 +110,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 }}
                 style={{ width: '100%', height: '100%' }}
                 mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                onLoad={() => {
+                    if (onMapLoad) {
+                        onMapLoad();
+                    }
+                }}
                 onClick={(e) => {
                     setPopupInfo(null);
                     // If onMapClick is provided and user clicks on empty map area (not a marker)
