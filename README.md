@@ -1,6 +1,6 @@
 # Citizens' Atlas - Next.js
 
-A comprehensive platform for tracking and analyzing citizen-led anti-corruption initiatives. This project has been converted from Vite to Next.js with a professional file structure.
+The Citizens' Atlas is a collaborative platform for mapping and documenting false solutions in circular economy and climate action. Discover citizen-led initiatives, research, and evidence-based analysis of environmental policies and corporate greenwashing.
 
 ## 🏗️ Project Structure
 
