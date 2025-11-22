@@ -42,7 +42,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ content, onClick, onEditClick
           e.stopPropagation();
           onEditClick();
         }}
-        className="absolute top-4 right-4 bg-brand-light-blue text-white p-2 rounded hover:bg-brand-dark-blue transition-colors"
+        className="absolute top-4 right-4 bg-brand-light-blue text-white p-2 rounded-lg hover:bg-brand-dark-blue transition-all shadow-md z-10"
         title="Edit Content"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,13 +77,6 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
   const [saving, setSaving] = useState(false);
 
   const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super-admin';
-
-  // Debug logging
-  useEffect(() => {
-    console.log('🔍 WhatWeDoPage - Current User:', currentUser);
-    console.log('🔍 WhatWeDoPage - User Role:', currentUser?.role);
-    console.log('🔍 WhatWeDoPage - Is Admin:', isAdmin);
-  }, [currentUser, isAdmin]);
 
   useEffect(() => {
     loadContent();
