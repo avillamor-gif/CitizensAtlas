@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { WhatWeDoPage } from '@/components/pages'
 import { Page } from '@/types/types'
+import { useAuth } from '@/contexts/AuthContext'
 
 export const dynamic = 'force-dynamic'
 
 export default function WhatWeDo() {
   const router = useRouter()
+  const { user: currentUser } = useAuth()
 
   const handleNavigate = (page: Page) => {
     if (page === 'home') {
@@ -26,7 +28,7 @@ export default function WhatWeDo() {
         onNavigate={handleNavigate}
       />
       <main className="flex-grow">
-        <WhatWeDoPage />
+        <WhatWeDoPage currentUser={currentUser ?? undefined} />
       </main>
       <Footer />
     </div>

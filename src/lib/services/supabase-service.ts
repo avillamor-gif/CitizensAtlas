@@ -802,3 +802,66 @@ export async function updateChartVisibility(chartId: string, isVisible: boolean)
     throw error
   }
 }
+
+// ============================================
+// PAGE CONTENT
+// ============================================
+export interface PageContent {
+  id: number
+  page_name: string
+  card_id: string
+  title: string
+  icon_name: string | null
+  content: string
+  display_order: number
+  is_visible: boolean
+  created_at: string
+  updated_at: string
+}
+
+export async function getPageContent(pageName: string): Promise<PageContent[]> {
+  const { data, error } = await supabase
+    .from('page_content')
+    .select('*')
+    .eq('page_name', pageName)
+    .eq('is_visible', true)
+    .order('display_order', { ascending: true })
+  
+  if (error) {
+    console.error('Error fetching page content:', error)
+    throw error
+  }
+  
+  return data as PageContent[]
+}
+
+export async function updatePageContent(id: number, contentData: Partial<PageContent>): Promise<PageContent> {
+  const { data, error } = await (supabase
+    .from('page_content') as any)
+    .update(contentData)
+    .eq('id', id)
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error updating page content:', error)
+    throw error
+  }
+  
+  return data as PageContent
+}
+
+export async function createPageContent(contentData: Omit<PageContent, 'id' | 'created_at' | 'updated_at'>): Promise<PageContent> {
+  const { data, error } = await (supabase
+    .from('page_content') as any)
+    .insert([contentData])
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error creating page content:', error)
+    throw error
+  }
+  
+  return data as PageContent
+}
