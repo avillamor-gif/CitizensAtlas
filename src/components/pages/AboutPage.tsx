@@ -45,6 +45,13 @@ const AboutPage: React.FC<AboutPageProps> = ({ currentUser }) => {
     
     const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super-admin';
 
+    // Debug logging
+    useEffect(() => {
+        console.log('AboutPage - Current User:', currentUser);
+        console.log('AboutPage - Is Admin:', isAdmin);
+        console.log('AboutPage - Contents:', contents);
+    }, [currentUser, isAdmin, contents]);
+
     useEffect(() => {
         loadContent();
     }, []);

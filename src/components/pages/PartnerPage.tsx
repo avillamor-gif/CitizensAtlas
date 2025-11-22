@@ -19,6 +19,13 @@ const PartnerPage: React.FC<PartnerPageProps> = ({ currentUser }) => {
     
     const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super-admin';
 
+    // Debug logging
+    useEffect(() => {
+        console.log('PartnerPage - Current User:', currentUser);
+        console.log('PartnerPage - Is Admin:', isAdmin);
+        console.log('PartnerPage - Contents:', contents);
+    }, [currentUser, isAdmin, contents]);
+
     useEffect(() => {
         loadContent();
     }, []);
