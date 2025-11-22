@@ -150,44 +150,44 @@ export function LoginForm({
             </div>
           </form>
           <div className="relative hidden bg-gradient-to-br from-[#0d234f] via-[#3d5a80] to-[#98c1d9] md:block overflow-hidden">
-            {/* Animated Earth Background */}
+            {/* Wireframe Globe Background */}
             <div className="absolute inset-0 flex items-center justify-center">
-              {/* Rotating Earth */}
-              <div className="relative w-64 h-64 animate-spin-slow">
-                {/* Earth circle with gradient */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#4a90e2] via-[#2c5f8d] to-[#1a3a52] shadow-2xl">
-                  {/* Continents overlay - using CSS shapes */}
-                  <div className="absolute inset-0 rounded-full overflow-hidden opacity-40">
-                    {/* North America */}
-                    <div className="absolute top-[20%] left-[15%] w-16 h-20 bg-[#98c1d9] rounded-tl-full rounded-br-full transform -rotate-12"></div>
-                    {/* South America */}
-                    <div className="absolute top-[45%] left-[20%] w-10 h-16 bg-[#98c1d9] rounded-bl-full transform rotate-12"></div>
-                    {/* Africa */}
-                    <div className="absolute top-[30%] left-[45%] w-14 h-24 bg-[#98c1d9] rounded-tr-full rounded-bl-full"></div>
-                    {/* Europe */}
-                    <div className="absolute top-[15%] left-[45%] w-12 h-10 bg-[#98c1d9] rounded-full"></div>
-                    {/* Asia */}
-                    <div className="absolute top-[20%] right-[15%] w-20 h-20 bg-[#98c1d9] rounded-full"></div>
-                    {/* Australia */}
-                    <div className="absolute bottom-[20%] right-[20%] w-12 h-10 bg-[#98c1d9] rounded-full"></div>
-                  </div>
-                  
-                  {/* Latitude/Longitude lines */}
-                  <div className="absolute inset-0 rounded-full">
-                    <div className="absolute top-1/4 left-0 right-0 h-px bg-white opacity-20"></div>
-                    <div className="absolute top-1/2 left-0 right-0 h-px bg-white opacity-30"></div>
-                    <div className="absolute top-3/4 left-0 right-0 h-px bg-white opacity-20"></div>
-                  </div>
-                  
-                  {/* Shine effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white to-transparent opacity-20"></div>
+              {/* Main wireframe globe container */}
+              <div className="relative w-80 h-80">
+                {/* Animated rotating wireframe sphere */}
+                <div className="absolute inset-0 animate-spin-slow">
+                  {/* Vertical meridian lines */}
+                  <div className="absolute inset-0 border-2 border-white/20 rounded-full"></div>
+                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[30deg]"></div>
+                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[60deg]"></div>
+                  <div className="absolute inset-0 border-2 border-white/10 rounded-full transform rotate-[90deg]"></div>
+                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[120deg]"></div>
+                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[150deg]"></div>
                 </div>
                 
-                {/* Glow effect */}
-                <div className="absolute inset-[-20%] rounded-full bg-[#4a90e2] opacity-20 blur-2xl animate-pulse"></div>
+                {/* Horizontal latitude lines (non-rotating) */}
+                <div className="absolute inset-0">
+                  <div className="absolute top-[15%] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                  <div className="absolute top-[30%] left-[5%] right-[5%] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"></div>
+                  <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                  <div className="absolute top-[70%] left-[5%] right-[5%] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"></div>
+                  <div className="absolute top-[85%] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                </div>
+                
+                {/* Animated connection dots */}
+                <div className="absolute inset-0 animate-pulse">
+                  <div className="absolute top-[20%] left-[30%] w-2 h-2 bg-[#98c1d9] rounded-full shadow-lg"></div>
+                  <div className="absolute top-[40%] right-[25%] w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
+                  <div className="absolute bottom-[30%] left-[40%] w-2 h-2 bg-[#98c1d9] rounded-full shadow-lg"></div>
+                  <div className="absolute top-[60%] right-[35%] w-2 h-2 bg-[#98c1d9] rounded-full shadow-lg"></div>
+                  <div className="absolute bottom-[20%] left-[25%] w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
+                </div>
+                
+                {/* Outer glow effect */}
+                <div className="absolute inset-[-30%] rounded-full bg-[#4a90e2] opacity-10 blur-3xl"></div>
               </div>
               
-              {/* Orbiting dots representing satellites/data points */}
+              {/* Floating particles */}
               <div className="absolute inset-0 animate-spin-slower">
                 <div className="absolute top-[10%] left-1/2 w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
               </div>
@@ -199,7 +199,7 @@ export function LoginForm({
             {/* Logo and Text overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
               {/* Logo */}
-              <div className="mb-12 p-6 bg-white/10 backdrop-blur-sm rounded-2xl">
+              <div className="mb-12 p-6 rounded-2xl">
                 <img 
                   src="/gaia-logo.jpg" 
                   alt="GAIA Logo" 
