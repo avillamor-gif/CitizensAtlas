@@ -1,9 +1,34 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { User } from '@/types/types';
+import { getPageContent, updatePageContent, PageContent } from '@/lib/services/supabase-service';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
-const PageSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-    <div>
+interface AboutPageProps {
+  currentUser?: User | null;
+}
+
+const PageSection: React.FC<{ 
+  title: string; 
+  children: React.ReactNode;
+  content?: PageContent;
+  isAdmin?: boolean;
+  onEdit?: (content: PageContent) => void;
+}> = ({ title, children, content, isAdmin, onEdit }) => (
+    <div className="relative">
+        {isAdmin && content && onEdit && (
+            <button
+                onClick={() => onEdit(content)}
+                className="absolute -top-2 -right-2 bg-brand-light-blue text-white p-2 rounded hover:bg-brand-dark-blue transition-colors z-10"
+                title="Edit Content"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+            </button>
+        )}
         <h2 className="text-3xl font-extrabold text-brand-dark-blue mb-2">{title}</h2>
         <div className="w-16 h-1 bg-brand-dark-blue mb-4"></div>
         <div className="text-gray-700 text-lg leading-relaxed space-y-4">
@@ -12,7 +37,55 @@ const PageSection: React.FC<{ title: string; children: React.ReactNode }> = ({ t
     </div>
 );
 
-const AboutPage: React.FC = () => {
+const AboutPage: React.FC<AboutPageProps> = ({ currentUser }) => {
+    const [contents, setContents] = useState<PageContent[]>([]);
+    const [editingContent, setEditingContent] = useState<PageContent | null>(null);
+    const [editedText, setEditedText] = useState('');
+    const [saving, setSaving] = useState(false);
+    
+    const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super-admin';
+
+    useEffect(() => {
+        loadContent();
+    }, []);
+
+    const loadContent = async () => {
+        try {
+            const data = await getPageContent('about');
+            setContents(data);
+        } catch (error) {
+            console.error('Error loading page content:', error);
+        }
+    };
+
+    const handleEdit = (content: PageContent) => {
+        setEditingContent(content);
+        setEditedText(content.content);
+    };
+
+    const handleSave = async () => {
+        if (!editingContent) return;
+        
+        try {
+            setSaving(true);
+            await updatePageContent(editingContent.id, {
+                content: editedText,
+            });
+            
+            setContents(prev => prev.map(c => 
+                c.id === editingContent.id ? { ...c, content: editedText } : c
+            ));
+            setEditingContent(null);
+        } catch (error) {
+            console.error('Error saving content:', error);
+            alert('Failed to save changes. Please try again.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const getContent = (cardId: string) => contents.find(c => c.card_id === cardId);
+
     return (
         <div className="bg-white">
             <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
@@ -27,10 +100,32 @@ const AboutPage: React.FC = () => {
                 <div className="container mx-auto">
                     <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
                         <div>
-                            <PageSection title="Our Mission">
-                                <p>
-                                    The Citizens' Atlas is a collaborative, data-driven platform dedicated to mapping and exposing false solutions to the climate and waste crises. Our mission is to empower communities, activists, and policymakers with the tools, data, and stories needed to challenge harmful projects and advocate for genuine, just, and sustainable Zero Waste solutions.
-                                </p>
+                            <PageSection 
+                                title="Our Mission" 
+                                content={getContent('mission')} 
+                                isAdmin={isAdmin}
+                                onEdit={handleEdit}
+                            >
+                                {editingContent?.card_id === 'mission' ? (
+                                    <div className="space-y-4">
+                                        <Textarea
+                                            value={editedText}
+                                            onChange={(e) => setEditedText(e.target.value)}
+                                            rows={8}
+                                            className="w-full"
+                                        />
+                                        <div className="flex gap-3">
+                                            <Button onClick={handleSave} disabled={saving}>
+                                                {saving ? 'Saving...' : 'Save'}
+                                            </Button>
+                                            <Button variant="outline" onClick={() => setEditingContent(null)}>
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>{getContent('mission')?.content}</p>
+                                )}
                             </PageSection>
                         </div>
                         <div>
@@ -40,10 +135,32 @@ const AboutPage: React.FC = () => {
 
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div className="md:order-2">
-                            <PageSection title="Our Vision">
-                                <p>
-                                    We envision a world free from the toxic burden of waste incineration, chemical recycling, and other greenwashed technologies. We believe in a future where resources are valued, consumption is mindful, and communities—especially those most impacted by pollution and environmental injustice—are at the forefront of building circular, resilient, and equitable local economies.
-                                </p>
+                            <PageSection 
+                                title="Our Vision" 
+                                content={getContent('vision')} 
+                                isAdmin={isAdmin}
+                                onEdit={handleEdit}
+                            >
+                                {editingContent?.card_id === 'vision' ? (
+                                    <div className="space-y-4">
+                                        <Textarea
+                                            value={editedText}
+                                            onChange={(e) => setEditedText(e.target.value)}
+                                            rows={8}
+                                            className="w-full"
+                                        />
+                                        <div className="flex gap-3">
+                                            <Button onClick={handleSave} disabled={saving}>
+                                                {saving ? 'Saving...' : 'Save'}
+                                            </Button>
+                                            <Button variant="outline" onClick={() => setEditingContent(null)}>
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>{getContent('vision')?.content}</p>
+                                )}
                             </PageSection>
                         </div>
                         <div className="md:order-1">
@@ -54,16 +171,43 @@ const AboutPage: React.FC = () => {
             </div>
             
             <div className="bg-brand-dark-blue py-16 px-4 sm:px-8">
-                <div className="container mx-auto max-w-4xl text-center">
+                <div className="container mx-auto max-w-4xl text-center relative">
+                    {isAdmin && getContent('problem') && (
+                        <button
+                            onClick={() => handleEdit(getContent('problem')!)}
+                            className="absolute -top-2 right-4 bg-brand-light-blue text-white p-2 rounded hover:bg-brand-dark-blue transition-colors z-10"
+                            title="Edit Content"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                    )}
                     <h2 className="text-3xl font-extrabold text-white mb-2">The Problem We Address</h2>
                     <div className="w-16 h-1 bg-white mx-auto mb-4"></div>
                     <div className="text-lg leading-relaxed space-y-4 text-gray-200">
-                        <p>
-                            For decades, corporations and governments have promoted capital-intensive, high-tech "solutions" to waste management and climate change that fail to address the root causes of these problems. Projects like waste-to-energy incinerators, plastic-to-fuel schemes, and flawed carbon offsetting projects often receive massive public subsidies and private investment, yet they perpetuate pollution, harm public health, and distract from real solutions.
-                        </p>
-                        <p>
-                            These false solutions are frequently cloaked in the language of sustainability and progress, making it difficult for communities to recognize the threats they pose. Corruption, lack of transparency, and the exclusion of public participation in decision-making processes further entrench these harmful industries.
-                        </p>
+                        {editingContent?.card_id === 'problem' ? (
+                            <div className="space-y-4">
+                                <Textarea
+                                    value={editedText}
+                                    onChange={(e) => setEditedText(e.target.value)}
+                                    rows={10}
+                                    className="w-full text-gray-900"
+                                />
+                                <div className="flex gap-3 justify-center">
+                                    <Button onClick={handleSave} disabled={saving}>
+                                        {saving ? 'Saving...' : 'Save'}
+                                    </Button>
+                                    <Button variant="outline" onClick={() => setEditingContent(null)}>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            getContent('problem')?.content.split('\n\n').map((para, i) => (
+                                <p key={i}>{para}</p>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
@@ -72,13 +216,36 @@ const AboutPage: React.FC = () => {
                 <div className="container mx-auto">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div>
-                            <PageSection title="Our Approach">
-                                <p>
-                                    The Citizens' Atlas fights back with transparency. By crowdsourcing and verifying data on these projects, we create a living map that reveals the true scale and impact of false solutions around the globe. We track financial flows, identify the corporations and institutions involved, and document community resistance.
-                                </p>
-                                <p>
-                                    This platform is more than just a map—it's a resource hub, a storytelling platform, and a network for global solidarity. We provide case studies, research materials, and advocacy tools to support local campaigns and inform international policy debates.
-                                </p>
+                            <PageSection 
+                                title="Our Approach" 
+                                content={getContent('approach')} 
+                                isAdmin={isAdmin}
+                                onEdit={handleEdit}
+                            >
+                                {editingContent?.card_id === 'approach' ? (
+                                    <div className="space-y-4">
+                                        <Textarea
+                                            value={editedText}
+                                            onChange={(e) => setEditedText(e.target.value)}
+                                            rows={10}
+                                            className="w-full"
+                                        />
+                                        <div className="flex gap-3">
+                                            <Button onClick={handleSave} disabled={saving}>
+                                                {saving ? 'Saving...' : 'Save'}
+                                            </Button>
+                                            <Button variant="outline" onClick={() => setEditingContent(null)}>
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {getContent('approach')?.content.split('\n\n').map((para, i) => (
+                                            <p key={i}>{para}</p>
+                                        ))}
+                                    </>
+                                )}
                             </PageSection>
                         </div>
                         <div>

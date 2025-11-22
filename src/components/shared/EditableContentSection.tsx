@@ -19,7 +19,7 @@ const iconMap: Record<string, React.ReactNode> = {
   'globe': <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h10a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.707 4.5l-1.414 1.414M16.293 4.5l1.414 1.414M12 18.5a5 5 0 01-10 0" /></svg>,
 };
 
-interface FeatureCardProps {
+interface ContentCardProps {
   content: PageContent;
   onClick: () => void;
   onEditClick: () => void;
@@ -27,7 +27,7 @@ interface FeatureCardProps {
   isSelected: boolean;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ content, onClick, onEditClick, isAdmin, isSelected }) => (
+const ContentCard: React.FC<ContentCardProps> = ({ content, onClick, onEditClick, isAdmin, isSelected }) => (
   <div 
     className={`bg-white p-8 rounded-lg shadow-lg border-2 transition-all duration-300 relative cursor-pointer ${
       isSelected 
@@ -64,11 +64,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ content, onClick, onEditClick
   </div>
 );
 
-interface WhatWeDoPageProps {
+interface EditableContentSectionProps {
+  pageName: string;
   currentUser?: User | null;
+  cardsPerRow?: number;
 }
 
-const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
+export default function EditableContentSection({ pageName, currentUser, cardsPerRow = 3 }: EditableContentSectionProps) {
   const [contents, setContents] = useState<PageContent[]>([]);
   const [selectedContent, setSelectedContent] = useState<PageContent | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -80,12 +82,12 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
 
   useEffect(() => {
     loadContent();
-  }, []);
+  }, [pageName]);
 
   const loadContent = async () => {
     try {
       setLoading(true);
-      const data = await getPageContent('what-we-do');
+      const data = await getPageContent(pageName);
       setContents(data);
     } catch (error) {
       console.error('Error loading page content:', error);
@@ -96,7 +98,6 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
 
   const handleCardClick = (content: PageContent) => {
     if (selectedContent?.id === content.id) {
-      // Toggle off if clicking the same card
       setSelectedContent(null);
       setIsEditMode(false);
     } else {
@@ -121,7 +122,6 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
         content: editedContent.content,
       });
       
-      // Update local state
       setContents(prev => prev.map(c => c.id === editedContent.id ? editedContent : c));
       setSelectedContent(editedContent);
       setIsEditMode(false);
@@ -141,30 +141,29 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
 
   if (loading) {
     return (
-      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div className="py-16 px-4 sm:px-8">
+        <div className="container mx-auto text-center">
+          <p className="text-gray-600">Loading content...</p>
+        </div>
       </div>
     );
   }
 
+  // Group contents into rows
+  const rows: PageContent[][] = [];
+  for (let i = 0; i < contents.length; i += cardsPerRow) {
+    rows.push(contents.slice(i, i + cardsPerRow));
+  }
+
   return (
-    <div className="bg-gray-50">
-      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
-        <div>
-          <h1 className="text-5xl font-extrabold mb-4">What We Do</h1>
-          <p className="text-xl max-w-3xl mx-auto">
-            We provide data, tools, and stories to help communities fight for environmental justice and promote real Zero Waste solutions.
-          </p>
-        </div>
-      </div>
-      
-      <div className="py-16 px-4 sm:px-8">
-        <div className="container mx-auto space-y-8">
-          {/* First Section - First 3 cards */}
-          <div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-              {contents.slice(0, 3).map((content) => (
-                <FeatureCard 
+    <div className="py-16 px-4 sm:px-8">
+      <div className="container mx-auto space-y-8">
+        {rows.map((row, rowIndex) => (
+          <div key={rowIndex}>
+            {/* Cards Grid */}
+            <div className={`grid gap-8 ${cardsPerRow === 3 ? 'md:grid-cols-2 lg:grid-cols-3' : cardsPerRow === 2 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+              {row.map((content) => (
+                <ContentCard 
                   key={content.id}
                   content={content} 
                   onClick={() => handleCardClick(content)}
@@ -175,15 +174,15 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
               ))}
             </div>
 
-            {/* Content Panel for First Section */}
-            <div 
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                selectedContent && contents.slice(0, 3).find(c => c.id === selectedContent.id)
-                  ? 'max-h-[1000px] opacity-100' 
-                  : 'max-h-0 opacity-0'
-              }`}
-            >
-              {selectedContent && contents.slice(0, 3).find(c => c.id === selectedContent.id) && (
+            {/* Slide-down Content Panel */}
+            {row.some(c => c.id === selectedContent?.id) && selectedContent && (
+              <div 
+                className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                  selectedContent 
+                    ? 'max-h-[1000px] opacity-100 mt-8' 
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
                 <div className="bg-white rounded-lg shadow-2xl border-2 border-brand-light-blue p-8">
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-start gap-6 flex-1">
@@ -249,106 +248,11 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
                     )}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-
-          {/* Second Section - Last 3 cards */}
-          <div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-              {contents.slice(3).map((content) => (
-                <FeatureCard 
-                  key={content.id}
-                  content={content} 
-                  onClick={() => handleCardClick(content)}
-                  onEditClick={() => handleEditClick(content)}
-                  isAdmin={isAdmin}
-                  isSelected={selectedContent?.id === content.id}
-                />
-              ))}
-            </div>
-
-            {/* Content Panel for Second Section */}
-            <div 
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                selectedContent && contents.slice(3).find(c => c.id === selectedContent.id)
-                  ? 'max-h-[1000px] opacity-100' 
-                  : 'max-h-0 opacity-0'
-              }`}
-            >
-              {selectedContent && contents.slice(3).find(c => c.id === selectedContent.id) && (
-                <div className="bg-white rounded-lg shadow-2xl border-2 border-brand-light-blue p-8">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-start gap-6 flex-1">
-                      <div className="flex items-center justify-center h-20 w-20 rounded-full bg-brand-light-blue text-white flex-shrink-0">
-                        {iconMap[selectedContent.icon_name || 'document']}
-                      </div>
-                      <div className="flex-1">
-                        {isEditMode ? (
-                          <Input
-                            value={editedContent?.title || ''}
-                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
-                            className="text-3xl font-bold mb-2"
-                          />
-                        ) : (
-                          <h2 className="text-3xl font-bold text-brand-dark-blue mb-2">{selectedContent.title}</h2>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleClose}
-                      className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
-                      aria-label="Close"
-                    >
-                      <ChevronDownIcon className="w-8 h-8 transform rotate-180" />
-                    </button>
-                  </div>
-
-                  <div className="mt-6">
-                    {isEditMode ? (
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="content">Content</Label>
-                          <Textarea
-                            id="content"
-                            value={editedContent?.content || ''}
-                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
-                            rows={10}
-                            className="mt-2"
-                          />
-                        </div>
-                        <div className="flex gap-3 justify-end">
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setIsEditMode(false)}
-                            disabled={saving}
-                          >
-                            Cancel
-                          </Button>
-                          <Button 
-                            onClick={handleSave}
-                            disabled={saving}
-                          >
-                            {saving ? 'Saving...' : 'Save Changes'}
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="prose prose-lg max-w-none">
-                        <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
-                          {selectedContent.content}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
-};
-
-export default WhatWeDoPage;
+}
