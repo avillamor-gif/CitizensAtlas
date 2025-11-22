@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { User } from '@/types/types';
 import { getPageContent, updatePageContent, PageContent } from '@/lib/services/supabase-service';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { ChevronDownIcon } from '@/components/ui/icons';
 
 // Icon mapping
 const iconMap: Record<string, React.ReactNode> = {
@@ -22,19 +22,45 @@ const iconMap: Record<string, React.ReactNode> = {
 interface FeatureCardProps {
   content: PageContent;
   onClick: () => void;
+  onEditClick: () => void;
+  isAdmin: boolean;
+  isSelected: boolean;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ content, onClick }) => (
+const FeatureCard: React.FC<FeatureCardProps> = ({ content, onClick, onEditClick, isAdmin, isSelected }) => (
   <div 
-    className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 cursor-pointer hover:shadow-xl transition-shadow duration-300"
+    className={`bg-white p-8 rounded-lg shadow-lg border-2 transition-all duration-300 relative cursor-pointer ${
+      isSelected 
+        ? 'border-brand-light-blue bg-brand-light-blue/5' 
+        : 'border-gray-200 hover:border-brand-light-blue/50 hover:shadow-xl'
+    }`}
     onClick={onClick}
   >
-    <div className="flex items-center justify-center h-16 w-16 rounded-full bg-brand-light-blue text-white mb-6">
+    {isAdmin && (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEditClick();
+        }}
+        className="absolute top-4 right-4 text-gray-400 hover:text-brand-light-blue transition-colors"
+        title="Edit Content"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      </button>
+    )}
+    <div className={`flex items-center justify-center h-16 w-16 rounded-full transition-colors mb-6 ${
+      isSelected ? 'bg-brand-light-blue text-white' : 'bg-brand-light-blue/20 text-brand-light-blue'
+    }`}>
       {iconMap[content.icon_name || 'document']}
     </div>
-    <h3 className="text-2xl font-bold text-brand-dark-blue mb-3">{content.title}</h3>
+    <h3 className={`text-2xl font-bold mb-3 pr-8 transition-colors ${
+      isSelected ? 'text-brand-light-blue' : 'text-brand-dark-blue'
+    }`}>
+      {content.title}
+    </h3>
     <p className="text-gray-600 leading-relaxed line-clamp-3">{content.content}</p>
-    <p className="text-brand-light-blue text-sm mt-3 font-medium">Click to read more →</p>
   </div>
 );
 
@@ -69,12 +95,19 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
   };
 
   const handleCardClick = (content: PageContent) => {
-    setSelectedContent(content);
-    setIsEditMode(false);
+    if (selectedContent?.id === content.id) {
+      // Toggle off if clicking the same card
+      setSelectedContent(null);
+      setIsEditMode(false);
+    } else {
+      setSelectedContent(content);
+      setIsEditMode(false);
+    }
   };
 
-  const handleEditClick = () => {
-    setEditedContent({ ...selectedContent! });
+  const handleEditClick = (content: PageContent) => {
+    setSelectedContent(content);
+    setEditedContent({ ...content });
     setIsEditMode(true);
   };
 
@@ -126,91 +159,194 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
       </div>
       
       <div className="py-16 px-4 sm:px-8">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {contents.map((content) => (
-              <FeatureCard 
-                key={content.id} 
-                content={content} 
-                onClick={() => handleCardClick(content)}
-              />
-            ))}
+        <div className="container mx-auto space-y-8">
+          {/* First Section - First 3 cards */}
+          <div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              {contents.slice(0, 3).map((content) => (
+                <FeatureCard 
+                  key={content.id}
+                  content={content} 
+                  onClick={() => handleCardClick(content)}
+                  onEditClick={() => handleEditClick(content)}
+                  isAdmin={isAdmin}
+                  isSelected={selectedContent?.id === content.id}
+                />
+              ))}
+            </div>
+
+            {/* Content Panel for First Section */}
+            <div 
+              className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                selectedContent && contents.slice(0, 3).find(c => c.id === selectedContent.id)
+                  ? 'max-h-[1000px] opacity-100' 
+                  : 'max-h-0 opacity-0'
+              }`}
+            >
+              {selectedContent && contents.slice(0, 3).find(c => c.id === selectedContent.id) && (
+                <div className="bg-white rounded-lg shadow-2xl border-2 border-brand-light-blue p-8">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-start gap-6 flex-1">
+                      <div className="flex items-center justify-center h-20 w-20 rounded-full bg-brand-light-blue text-white flex-shrink-0">
+                        {iconMap[selectedContent.icon_name || 'document']}
+                      </div>
+                      <div className="flex-1">
+                        {isEditMode ? (
+                          <Input
+                            value={editedContent?.title || ''}
+                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
+                            className="text-3xl font-bold mb-2"
+                          />
+                        ) : (
+                          <h2 className="text-3xl font-bold text-brand-dark-blue mb-2">{selectedContent.title}</h2>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleClose}
+                      className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
+                      aria-label="Close"
+                    >
+                      <ChevronDownIcon className="w-8 h-8 transform rotate-180" />
+                    </button>
+                  </div>
+
+                  <div className="mt-6">
+                    {isEditMode ? (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="content">Content</Label>
+                          <Textarea
+                            id="content"
+                            value={editedContent?.content || ''}
+                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
+                            rows={10}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div className="flex gap-3 justify-end">
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setIsEditMode(false)}
+                            disabled={saving}
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            onClick={handleSave}
+                            disabled={saving}
+                          >
+                            {saving ? 'Saving...' : 'Save Changes'}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="prose prose-lg max-w-none">
+                        <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
+                          {selectedContent.content}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Second Section - Last 3 cards */}
+          <div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              {contents.slice(3).map((content) => (
+                <FeatureCard 
+                  key={content.id}
+                  content={content} 
+                  onClick={() => handleCardClick(content)}
+                  onEditClick={() => handleEditClick(content)}
+                  isAdmin={isAdmin}
+                  isSelected={selectedContent?.id === content.id}
+                />
+              ))}
+            </div>
+
+            {/* Content Panel for Second Section */}
+            <div 
+              className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                selectedContent && contents.slice(3).find(c => c.id === selectedContent.id)
+                  ? 'max-h-[1000px] opacity-100' 
+                  : 'max-h-0 opacity-0'
+              }`}
+            >
+              {selectedContent && contents.slice(3).find(c => c.id === selectedContent.id) && (
+                <div className="bg-white rounded-lg shadow-2xl border-2 border-brand-light-blue p-8">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-start gap-6 flex-1">
+                      <div className="flex items-center justify-center h-20 w-20 rounded-full bg-brand-light-blue text-white flex-shrink-0">
+                        {iconMap[selectedContent.icon_name || 'document']}
+                      </div>
+                      <div className="flex-1">
+                        {isEditMode ? (
+                          <Input
+                            value={editedContent?.title || ''}
+                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
+                            className="text-3xl font-bold mb-2"
+                          />
+                        ) : (
+                          <h2 className="text-3xl font-bold text-brand-dark-blue mb-2">{selectedContent.title}</h2>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleClose}
+                      className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
+                      aria-label="Close"
+                    >
+                      <ChevronDownIcon className="w-8 h-8 transform rotate-180" />
+                    </button>
+                  </div>
+
+                  <div className="mt-6">
+                    {isEditMode ? (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="content">Content</Label>
+                          <Textarea
+                            id="content"
+                            value={editedContent?.content || ''}
+                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
+                            rows={10}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div className="flex gap-3 justify-end">
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setIsEditMode(false)}
+                            disabled={saving}
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            onClick={handleSave}
+                            disabled={saving}
+                          >
+                            {saving ? 'Saving...' : 'Save Changes'}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="prose prose-lg max-w-none">
+                        <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
+                          {selectedContent.content}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Content Detail Modal */}
-      <Dialog open={!!selectedContent} onOpenChange={handleClose}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-3xl font-bold text-brand-dark-blue">
-                {isEditMode ? (
-                  <Input
-                    value={editedContent?.title || ''}
-                    onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
-                    className="text-2xl font-bold"
-                  />
-                ) : (
-                  selectedContent?.title
-                )}
-              </DialogTitle>
-              {isAdmin && !isEditMode && (
-                <Button 
-                  onClick={handleEditClick}
-                  variant="outline"
-                  size="sm"
-                  className="ml-4"
-                >
-                  Edit Content
-                </Button>
-              )}
-            </div>
-          </DialogHeader>
-          
-          <div className="mt-6">
-            <div className="flex items-center justify-center h-20 w-20 rounded-full bg-brand-light-blue text-white mb-6">
-              {iconMap[selectedContent?.icon_name || 'document']}
-            </div>
-            
-            {isEditMode ? (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="content">Content</Label>
-                  <Textarea
-                    id="content"
-                    value={editedContent?.content || ''}
-                    onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
-                    rows={10}
-                    className="mt-2"
-                  />
-                </div>
-                <div className="flex gap-3 justify-end">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setIsEditMode(false)}
-                    disabled={saving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={handleSave}
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="prose prose-lg max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedContent?.content}
-                </p>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

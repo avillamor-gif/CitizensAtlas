@@ -25,6 +25,12 @@ CREATE INDEX IF NOT EXISTS idx_page_content_order ON page_content(page_name, dis
 -- Enable Row Level Security
 ALTER TABLE page_content ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Anyone can read page content" ON page_content;
+DROP POLICY IF EXISTS "Admins can insert page content" ON page_content;
+DROP POLICY IF EXISTS "Admins can update page content" ON page_content;
+DROP POLICY IF EXISTS "Super admins can delete page content" ON page_content;
+
 -- Policy: Anyone can read page content
 CREATE POLICY "Anyone can read page content"
   ON page_content
@@ -75,6 +81,8 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_update_page_content_timestamp ON page_content;
 
 CREATE TRIGGER trigger_update_page_content_timestamp
   BEFORE UPDATE ON page_content
