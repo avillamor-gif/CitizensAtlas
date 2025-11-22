@@ -13,6 +13,12 @@ export default function About() {
   const router = useRouter()
   const { user: currentUser } = useAuth()
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('🔍 About Page Route - useAuth result:', { currentUser });
+    console.log('🔍 About Page Route - User role:', currentUser?.role);
+  }, [currentUser]);
+
   const handleNavigate = (page: Page) => {
     if (page === 'home') {
       router.push('/')

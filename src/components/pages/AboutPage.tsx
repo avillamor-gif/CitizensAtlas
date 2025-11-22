@@ -95,6 +95,18 @@ const AboutPage: React.FC<AboutPageProps> = ({ currentUser }) => {
 
     return (
         <div className="bg-white">
+            {/* Temporary Login Status Indicator */}
+            {isAdmin && (
+                <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
+                    ✅ Logged in as Admin - Edit buttons active
+                </div>
+            )}
+            {!currentUser && (
+                <div className="fixed top-20 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+                    ❌ Not logged in - Please login to see edit buttons
+                </div>
+            )}
+            
             <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
                 <div>
                     <h1 className="text-5xl font-extrabold mb-4">About the Citizens' Atlas</h1>
