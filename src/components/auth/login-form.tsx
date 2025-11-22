@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+
+const RotatingGlobe = dynamic(() => import('./RotatingGlobe'), { ssr: false });
 
 export function LoginForm({
   className,
@@ -150,50 +153,9 @@ export function LoginForm({
             </div>
           </form>
           <div className="relative hidden bg-gradient-to-br from-[#0d234f] via-[#3d5a80] to-[#98c1d9] md:block overflow-hidden">
-            {/* Wireframe Globe Background */}
+            {/* React Simple Maps Rotating Globe */}
             <div className="absolute inset-0 flex items-center justify-center">
-              {/* Main wireframe globe container */}
-              <div className="relative w-80 h-80">
-                {/* Animated rotating wireframe sphere */}
-                <div className="absolute inset-0 animate-spin-slow">
-                  {/* Vertical meridian lines */}
-                  <div className="absolute inset-0 border-2 border-white/20 rounded-full"></div>
-                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[30deg]"></div>
-                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[60deg]"></div>
-                  <div className="absolute inset-0 border-2 border-white/10 rounded-full transform rotate-[90deg]"></div>
-                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[120deg]"></div>
-                  <div className="absolute inset-0 border-2 border-white/15 rounded-full transform rotate-[150deg]"></div>
-                </div>
-                
-                {/* Horizontal latitude lines (non-rotating) */}
-                <div className="absolute inset-0">
-                  <div className="absolute top-[15%] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                  <div className="absolute top-[30%] left-[5%] right-[5%] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"></div>
-                  <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-                  <div className="absolute top-[70%] left-[5%] right-[5%] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"></div>
-                  <div className="absolute top-[85%] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                </div>
-                
-                {/* Animated connection dots */}
-                <div className="absolute inset-0 animate-pulse">
-                  <div className="absolute top-[20%] left-[30%] w-2 h-2 bg-[#98c1d9] rounded-full shadow-lg"></div>
-                  <div className="absolute top-[40%] right-[25%] w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
-                  <div className="absolute bottom-[30%] left-[40%] w-2 h-2 bg-[#98c1d9] rounded-full shadow-lg"></div>
-                  <div className="absolute top-[60%] right-[35%] w-2 h-2 bg-[#98c1d9] rounded-full shadow-lg"></div>
-                  <div className="absolute bottom-[20%] left-[25%] w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
-                </div>
-                
-                {/* Outer glow effect */}
-                <div className="absolute inset-[-30%] rounded-full bg-[#4a90e2] opacity-10 blur-3xl"></div>
-              </div>
-              
-              {/* Floating particles */}
-              <div className="absolute inset-0 animate-spin-slower">
-                <div className="absolute top-[10%] left-1/2 w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
-              </div>
-              <div className="absolute inset-0 animate-spin-reverse">
-                <div className="absolute bottom-[15%] left-1/2 w-2 h-2 bg-[#ee6c4d] rounded-full shadow-lg"></div>
-              </div>
+              <RotatingGlobe />
             </div>
             
             {/* Logo and Text overlay */}
