@@ -80,10 +80,10 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
 
   // Debug logging
   useEffect(() => {
-    console.log('WhatWeDoPage - Current User:', currentUser);
-    console.log('WhatWeDoPage - Is Admin:', isAdmin);
-    console.log('WhatWeDoPage - Contents:', contents);
-  }, [currentUser, isAdmin, contents]);
+    console.log('🔍 WhatWeDoPage - Current User:', currentUser);
+    console.log('🔍 WhatWeDoPage - User Role:', currentUser?.role);
+    console.log('🔍 WhatWeDoPage - Is Admin:', isAdmin);
+  }, [currentUser, isAdmin]);
 
   useEffect(() => {
     loadContent();
