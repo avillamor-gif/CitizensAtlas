@@ -78,6 +78,13 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
 
   const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super-admin';
 
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 WhatWeDoPage - Current User:', currentUser);
+    console.log('🔍 WhatWeDoPage - User Role:', currentUser?.role);
+    console.log('🔍 WhatWeDoPage - Is Admin:', isAdmin);
+  }, [currentUser, isAdmin]);
+
   useEffect(() => {
     loadContent();
   }, []);
