@@ -31,7 +31,6 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
   const [isSaving, setIsSaving] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [showPasswordSection, setShowPasswordSection] = useState(false)
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   
@@ -42,7 +41,6 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
   })
 
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   })
@@ -194,7 +192,7 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
     e.preventDefault()
     
     // Validate passwords
-    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+    if (!passwordData.newPassword || !passwordData.confirmPassword) {
       alert('Please fill in all password fields.')
       return
     }
@@ -206,11 +204,6 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
     
     if (passwordData.newPassword.length < 6) {
       alert('New password must be at least 6 characters long.')
-      return
-    }
-    
-    if (passwordData.newPassword === passwordData.currentPassword) {
-      alert('New password must be different from current password.')
       return
     }
 
@@ -228,7 +221,6 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
       
       // Clear password fields
       setPasswordData({
-        currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       })
@@ -405,27 +397,6 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
             <CollapsibleContent className="mt-4">
               <form onSubmit={handlePasswordChange} className="space-y-4 p-4 border rounded-lg">
                 <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Current Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="currentPassword"
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={passwordData.currentPassword}
-                      onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                      placeholder="Enter current password"
-                      className="pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="newPassword">New Password</Label>
                   <div className="relative">
                     <Input
@@ -473,7 +444,6 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
                     variant="outline"
                     onClick={() => {
                       setPasswordData({
-                        currentPassword: '',
                         newPassword: '',
                         confirmPassword: '',
                       })
