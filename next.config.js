@@ -1,7 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['example.com'], // Add any external image domains here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'srsjynjccivtjvordrlc.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
+    unoptimized: true, // Allow unoptimized images for external sources
   },
   env: {
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
