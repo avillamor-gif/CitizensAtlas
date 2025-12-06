@@ -691,29 +691,30 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                     Cancel
                                 </button>
                             )}
-                        <button 
-                            type="submit" 
-                            className="w-full sm:w-auto text-white font-bold py-2 px-4 sm:px-6 rounded-md transition-colors"
-                            style={{ backgroundColor: '#0d234f' }}
-                            onMouseEnter={(e) => {
-                                console.log('🖱️ Mouse entered submit button');
-                                e.currentTarget.style.backgroundColor = '#081629';
-                            }}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
-                            onClick={(e) => {
-                                console.log('🔘 Submit button clicked!', {
-                                    type: e.currentTarget.type,
-                                    disabled: e.currentTarget.disabled,
-                                    formValid: e.currentTarget.form?.checkValidity(),
-                                    itemType,
-                                    isEditMode
-                                });
-                            }}
-                            onMouseDown={() => console.log('⬇️ Mouse down on submit button')}
-                            onMouseUp={() => console.log('⬆️ Mouse up on submit button')}
-                        >
-                            {isEditMode ? `Update ${itemType}` : `Submit ${itemType}`}
-                        </button>
+                            <button 
+                                type="submit" 
+                                className="w-full sm:w-auto text-white font-bold py-2 px-4 sm:px-6 rounded-md transition-colors"
+                                style={{ backgroundColor: '#0d234f' }}
+                                onMouseEnter={(e) => {
+                                    console.log('🖱️ Mouse entered submit button');
+                                    e.currentTarget.style.backgroundColor = '#081629';
+                                }}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                onClick={(e) => {
+                                    console.log('🔘 Submit button clicked!', {
+                                        type: e.currentTarget.type,
+                                        disabled: e.currentTarget.disabled,
+                                        formValid: e.currentTarget.form?.checkValidity(),
+                                        itemType,
+                                        isEditMode
+                                    });
+                                }}
+                                onMouseDown={() => console.log('⬇️ Mouse down on submit button')}
+                                onMouseUp={() => console.log('⬆️ Mouse up on submit button')}
+                            >
+                                {isEditMode ? `Update ${itemType}` : `Submit ${itemType}`}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
