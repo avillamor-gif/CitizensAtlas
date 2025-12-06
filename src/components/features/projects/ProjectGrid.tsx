@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Project } from '@/types/types';
 import ViewToggle from '@/components/pages/ViewToggle';
 import ProjectList from './ProjectList';
+import { MagnifyingGlassIcon } from '@/components/ui/icons';
 
 const parseDetail = (details: string, key: string): string => {
     const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`));
@@ -45,13 +46,25 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [visibleCount, setVisibleCount] = useState(6);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         setVisibleCount(6);
-    }, [sortKey, sortOrder, projects]);
+    }, [sortKey, sortOrder, projects, searchQuery]);
+
+    const filteredProjects = useMemo(() => {
+        if (!searchQuery.trim()) return projects;
+        
+        const query = searchQuery.toLowerCase();
+        return projects.filter(project => 
+            project.title.toLowerCase().includes(query) ||
+            project.country.toLowerCase().includes(query) ||
+            project.corruptionType.toLowerCase().includes(query)
+        );
+    }, [projects, searchQuery]);
 
     const sortedProjects = useMemo(() => {
-        const sorted = [...projects].sort((a, b) => {
+        const sorted = [...filteredProjects].sort((a, b) => {
             let valA: any, valB: any;
             
             // Handle date sorting specially
@@ -73,7 +86,7 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
             return sortOrder === 'asc' ? comparison : comparison * -1;
         });
         return sorted;
-    }, [projects, sortKey, sortOrder]);
+    }, [filteredProjects, sortKey, sortOrder]);
 
     const projectsToShow = useMemo(() => {
         return sortedProjects.slice(0, visibleCount);
@@ -89,6 +102,34 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
     
     return (
         <div>
+            {/* Search Field */}
+            <div className="mb-6">
+                <div className="relative">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                        type="text"
+                        placeholder="Search by title, country, or false solution type..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-medium-blue focus:border-brand-medium-blue text-gray-700 placeholder-gray-400"
+                    />
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery('')}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            aria-label="Clear search"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
+                {searchQuery && (
+                    <p className="text-sm text-gray-600 mt-2">
+                        Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} matching "{searchQuery}"
+                    </p>
+                )}
+            </div>
+
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 {/* View Toggle on the left */}
                 <ViewToggle activeView={viewMode} setActiveView={setViewMode} />
