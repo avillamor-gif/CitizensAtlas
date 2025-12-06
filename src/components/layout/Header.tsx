@@ -111,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 activePage === 'about' 
                                     ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-200'
+                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             About
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 activePage === 'what-we-do' 
                                     ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-200'
+                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             What we do
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 activePage === 'map' 
                                     ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-200'
+                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             Map
@@ -141,7 +141,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 activePage === 'partner-with-us' 
                                     ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-200'
+                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             Partner with us
@@ -152,7 +152,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             {currentUser ? (
                                 <Link 
                                     href="/admin" 
-                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     <Avatar className="h-10 w-10">
@@ -169,7 +169,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             ) : (
                                 <Link 
                                     href="/auth/login"
-                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     <div className="p-2 bg-gray-100 rounded-full">
