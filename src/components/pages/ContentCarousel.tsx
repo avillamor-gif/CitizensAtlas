@@ -29,7 +29,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
                 )}
             </div>
             <div className="p-1">
-                <span className={`${item.tagColor} text-xs font-bold px-2 py-1 inline-block mb-2`}>{item.category}</span>
+                <span className="bg-yellow-400 text-xs font-bold px-2 py-1 inline-block mb-2">{item.category}</span>
                 <h4 className={`${hasBackground ? 'text-brand-dark-blue' : 'text-white'} font-bold group-hover:text-brand-light-blue transition-colors`}>{item.title}</h4>
             </div>
         </button>

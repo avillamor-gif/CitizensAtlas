@@ -26,7 +26,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                 )}
             </div>
             <div className="p-6 flex flex-col flex-grow">
-                 <span className={`${item.tagColor} text-xs font-bold px-2 py-1 inline-block mb-3 self-start`}>
+                 <span className="bg-yellow-400 text-xs font-bold px-2 py-1 inline-block mb-3 self-start">
                     {item.category}
                 </span>
                 <h3 className="text-xl font-bold text-brand-dark-blue mb-2">{item.title}</h3>

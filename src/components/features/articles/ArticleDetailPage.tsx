@@ -70,7 +70,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                 
                 <article>
                     <header className="mb-8">
-                        <span className={`${article.tagColor} text-sm font-bold px-3 py-1 inline-block mb-4`}>
+                        <span className="bg-yellow-400 text-sm font-bold px-3 py-1 inline-block mb-4">
                             {article.category}
                         </span>
                         <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-blue leading-tight">

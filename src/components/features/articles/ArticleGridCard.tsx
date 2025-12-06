@@ -26,7 +26,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                 )}
             </div>
             <div className="p-6 flex flex-col flex-grow">
-                <span className={`${item.tagColor} text-xs font-bold px-2 py-1 inline-block mb-3 self-start`}>
+                <span className="bg-yellow-400 text-xs font-bold px-2 py-1 inline-block mb-3 self-start">
                     {item.category}
                 </span>
                 <h3 className="text-lg font-bold text-brand-dark-blue mb-2 flex-grow">{item.title}</h3>
