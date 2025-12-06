@@ -104,8 +104,15 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
 
             {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
-                <div className="md:hidden fixed inset-0 top-[88px] bg-white z-50 shadow-lg animate-in slide-in-from-top">
-                    <nav className="flex flex-col p-6 space-y-1">
+                <>
+                    {/* Backdrop */}
+                    <div 
+                        className="md:hidden fixed inset-0 top-[88px] bg-black/50 z-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    />
+                    {/* Menu Content */}
+                    <div className="md:hidden fixed top-[88px] left-0 right-0 bg-white z-50 shadow-lg animate-in slide-in-from-top">
+                        <nav className="flex flex-col p-6 space-y-1">
                         <button
                             onClick={() => handleNavigation('about')}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
@@ -180,7 +187,8 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             )}
                         </div>
                     </nav>
-                </div>
+                    </div>
+                </>
             )}
         </>
     );
