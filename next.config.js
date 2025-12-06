@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true, // Use SWC for faster builds
   images: {
     remotePatterns: [
       {
@@ -20,6 +22,10 @@ const nextConfig = {
   },
   env: {
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  },
+  // Optimize build performance
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
   // Enable proper caching for better performance
   async headers() {

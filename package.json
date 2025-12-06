@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy": "git add -A && git commit -m 'Quick deploy' && git push origin main",
+    "deploy:msg": "git add -A && git commit && git push origin main"
   },
   "dependencies": {
     "@apollo/server": "^5.1.0",
