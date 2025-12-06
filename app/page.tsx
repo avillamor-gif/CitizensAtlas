@@ -28,8 +28,11 @@ const slugify = (text: string) =>
 export default function HomePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-brand-dark-blue to-brand-light-blue">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg font-semibold">Loading Citizens' Atlas...</p>
+        </div>
       </div>
     }>
       <HomePageContent />
@@ -74,45 +77,44 @@ function HomePageContent() {
       setDataLoading(true)
       console.log('🔄 Loading data from Supabase...')
       
-      // For the public homepage, always load published data only
-      // This ensures consistent behavior regardless of authentication state
-      // NOTE: Using getPublishedProjectsWithDetails for map (needs investment amounts from details field)
-      // Limit carousels to 10 items each for faster initial load
+      const startTime = Date.now()
+      
+      // Load critical data first (projects without details, recent content)
       const [
         projectsData,
         newsData,
         publicationsData,
         videosData,
-        newsCategoriesData,
-        publicationTypesData,
-        videoCategoriesData
       ] = await Promise.all([
-        dataService.getPublishedProjectsWithDetails(), // Full details for map
+        dataService.getPublishedProjects(), // Faster - no details field
         dataService.getPublishedNews(10), // Limit to 10 for homepage carousel
         dataService.getPublishedPublications(10), // Limit to 10 for homepage carousel
         dataService.getPublishedVideos(10), // Limit to 10 for homepage carousel
+      ])
+      
+      // Load categories in background (non-blocking)
+      Promise.all([
         dataService.getNewsCategories(),
         dataService.getPublicationTypes(),
         dataService.getVideoCategories()
-      ])
+      ]).then(([newsCategoriesData, publicationTypesData, videoCategoriesData]) => {
+        setNewsCategories(newsCategoriesData)
+        setPublicationTypes(publicationTypesData)
+        setVideoCategories(videoCategoriesData)
+      })
 
-      console.log('✅ Data loaded from Supabase:', {
+      const loadTime = Date.now() - startTime
+      console.log('✅ Data loaded from Supabase in', loadTime, 'ms:', {
         projects: projectsData.length,
         news: newsData.length,
         publications: publicationsData.length,
         videos: videosData.length,
-        newsCategories: newsCategoriesData.length,
-        publicationTypes: publicationTypesData.length,
-        videoCategories: videoCategoriesData.length
       })
 
       setProjects(projectsData)
       setNews(newsData)
       setPublications(publicationsData)
       setVideos(videosData)
-      setNewsCategories(newsCategoriesData)
-      setPublicationTypes(publicationTypesData)
-      setVideoCategories(videoCategoriesData)
     } catch (error) {
       console.error('❌ Failed to load data from Supabase:', error)
       alert('Failed to load data. Please refresh the page.')
