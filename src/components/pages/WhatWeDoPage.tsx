@@ -11,6 +11,23 @@ import { ChevronDownIcon } from '@/components/ui/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { X } from 'lucide-react';
 
+// Custom hook to detect mobile
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+};
+
 // Icon mapping with responsive sizes
 const iconMap: Record<string, React.ReactNode> = {
   'map-pin': <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
@@ -77,6 +94,7 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
   const [editedContent, setEditedContent] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const isMobile = useIsMobile();
 
   const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super-admin';
 
@@ -305,14 +323,16 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
       </div>
 
       {/* Mobile Modal */}
-      <Dialog open={!!selectedContent} onOpenChange={(open) => !open && handleClose()}>
-        <DialogContent className="lg:hidden max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="sr-only">Content Details</DialogTitle>
-          </DialogHeader>
-          {selectedContent && <ContentDetail content={selectedContent} />}
-        </DialogContent>
-      </Dialog>
+      {isMobile && (
+        <Dialog open={!!selectedContent} onOpenChange={(open) => !open && handleClose()}>
+          <DialogContent className="max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="sr-only">Content Details</DialogTitle>
+            </DialogHeader>
+            {selectedContent && <ContentDetail content={selectedContent} />}
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
