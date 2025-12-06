@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project, Article } from '@/types/types';
 import { AdminSidebar, AdminPage } from './AdminSidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { HamburgerMenu } from '@/components/ui/HamburgerMenu';
@@ -555,13 +555,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 currentUser={currentUser}
             />
             <SidebarInset className="flex flex-col">
-                <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-background px-4">
+                <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+                    <div className="flex items-center gap-2">
+                        <SidebarTrigger className="md:hidden" />
+                        <Separator orientation="vertical" className="h-4 md:hidden" />
+                    </div>
                     <Breadcrumb>
                         <BreadcrumbList>
-                            <BreadcrumbItem>
+                            <BreadcrumbItem className="hidden md:block">
                                 <BreadcrumbLink href="/admin">Admin</BreadcrumbLink>
                             </BreadcrumbItem>
-                            <BreadcrumbSeparator />
+                            <BreadcrumbSeparator className="hidden md:block" />
                             <BreadcrumbItem>
                                 <BreadcrumbPage>
                                     {activeAdminPage.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
@@ -569,7 +573,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
-                    <HamburgerMenu onNavigate={onNavigateToPublic} />
+                    <div className="ml-auto">
+                        <HamburgerMenu onNavigate={onNavigateToPublic} />
+                    </div>
                 </header>
                 <div className="flex-1 overflow-y-auto p-4 md:p-6">
                     {renderContent()}
