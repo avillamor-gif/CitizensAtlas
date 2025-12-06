@@ -75,7 +75,7 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
                         {onNavigate && page && (
                              <button
                                 onClick={() => onNavigate(page)}
-                                className={`text-sm font-semibold py-2 px-6 rounded-full border-2 transition ${borderColor} ${textColor} ${hoverColor}`}
+                                className={`text-xs sm:text-sm font-semibold py-1.5 px-3 sm:py-2 sm:px-6 rounded-full border-2 transition ${borderColor} ${textColor} ${hoverColor}`}
                             >
                                 Read All
                             </button>
