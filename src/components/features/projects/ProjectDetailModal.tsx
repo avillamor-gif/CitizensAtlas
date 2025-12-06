@@ -60,7 +60,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-sm font-bold text-gray-500 tracking-widest">{project.country}</p>
-                            <h2 className="text-2xl font-bold text-brand-dark-blue mt-1">{project.title}</h2>
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-brand-dark-blue mt-1">{project.title}</h2>
                             <p className="text-sm text-gray-600 mt-2">Approval Date: {project.date}</p>
                         </div>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none flex-shrink-0 ml-4">&times;</button>
