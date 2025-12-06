@@ -43,7 +43,7 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, filters, onFilterChange, filterOptions, currentUser }) => {
-    const [isDashboardVisible, setIsDashboardVisible] = useState(true);
+    const [isDashboardVisible, setIsDashboardVisible] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
     const openDetailModal = useCallback((project: Project) => {
