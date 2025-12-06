@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ChevronDownIcon } from '@/components/ui/icons';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { X } from 'lucide-react';
 
 // Icon mapping with responsive sizes
 const iconMap: Record<string, React.ReactNode> = {
@@ -139,6 +141,66 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
     setEditedContent(null);
   };
 
+  // Render content detail component
+  const ContentDetail = ({ content }: { content: PageContent }) => (
+    <div>
+      <div className="flex items-start gap-4 sm:gap-6 mb-6">
+        <div className="flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-brand-light-blue text-white flex-shrink-0">
+          {iconMap[content.icon_name || 'document']}
+        </div>
+        <div className="flex-1">
+          {isEditMode ? (
+            <Input
+              value={editedContent?.title || ''}
+              onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
+              className="text-2xl sm:text-3xl font-bold mb-2"
+            />
+          ) : (
+            <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark-blue mb-2">{content.title}</h2>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        {isEditMode ? (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="content">Content</Label>
+              <Textarea
+                id="content"
+                value={editedContent?.content || ''}
+                onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
+                rows={10}
+                className="mt-2"
+              />
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsEditMode(false)}
+                disabled={saving}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="prose prose-lg max-w-none">
+            <p className="text-gray-700 text-base sm:text-lg leading-relaxed whitespace-pre-wrap">
+              {content.content}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="bg-gray-50 min-h-screen flex items-center justify-center">
@@ -175,9 +237,9 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
               ))}
             </div>
 
-            {/* Content Panel for First Section */}
+            {/* Content Panel for First Section - Desktop only */}
             <div 
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${
+              className={`hidden lg:block transition-all duration-500 ease-in-out overflow-hidden ${
                 selectedContent && contents.slice(0, 3).find(c => c.id === selectedContent.id)
                   ? 'max-h-[2000px] opacity-100 mt-8' 
                   : 'max-h-0 opacity-0'
@@ -186,22 +248,7 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
               {selectedContent && contents.slice(0, 3).find(c => c.id === selectedContent.id) && (
                 <div className="bg-white rounded-lg shadow-2xl border-2 border-brand-light-blue p-6 sm:p-8">
                   <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-start gap-4 sm:gap-6 flex-1">
-                      <div className="flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-brand-light-blue text-white flex-shrink-0">
-                        {iconMap[selectedContent.icon_name || 'document']}
-                      </div>
-                      <div className="flex-1">
-                        {isEditMode ? (
-                          <Input
-                            value={editedContent?.title || ''}
-                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
-                            className="text-2xl sm:text-3xl font-bold mb-2"
-                          />
-                        ) : (
-                          <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark-blue mb-2">{selectedContent.title}</h2>
-                        )}
-                      </div>
-                    </div>
+                    <ContentDetail content={selectedContent} />
                     <button
                       onClick={handleClose}
                       className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
@@ -209,44 +256,6 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
                     >
                       <ChevronDownIcon className="w-6 h-6 sm:w-8 sm:h-8 transform rotate-180" />
                     </button>
-                  </div>
-
-                  <div className="mt-6">
-                    {isEditMode ? (
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="content">Content</Label>
-                          <Textarea
-                            id="content"
-                            value={editedContent?.content || ''}
-                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
-                            rows={10}
-                            className="mt-2"
-                          />
-                        </div>
-                        <div className="flex gap-3 justify-end">
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setIsEditMode(false)}
-                            disabled={saving}
-                          >
-                            Cancel
-                          </Button>
-                          <Button 
-                            onClick={handleSave}
-                            disabled={saving}
-                          >
-                            {saving ? 'Saving...' : 'Save Changes'}
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="prose prose-lg max-w-none">
-                        <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
-                          {selectedContent.content}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
@@ -268,9 +277,9 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
               ))}
             </div>
 
-            {/* Content Panel for Second Section */}
+            {/* Content Panel for Second Section - Desktop only */}
             <div 
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${
+              className={`hidden lg:block transition-all duration-500 ease-in-out overflow-hidden ${
                 selectedContent && contents.slice(3).find(c => c.id === selectedContent.id)
                   ? 'max-h-[2000px] opacity-100 mt-8' 
                   : 'max-h-0 opacity-0'
@@ -279,22 +288,7 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
               {selectedContent && contents.slice(3).find(c => c.id === selectedContent.id) && (
                 <div className="bg-white rounded-lg shadow-2xl border-2 border-brand-light-blue p-6 sm:p-8">
                   <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-start gap-4 sm:gap-6 flex-1">
-                      <div className="flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-brand-light-blue text-white flex-shrink-0">
-                        {iconMap[selectedContent.icon_name || 'document']}
-                      </div>
-                      <div className="flex-1">
-                        {isEditMode ? (
-                          <Input
-                            value={editedContent?.title || ''}
-                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, title: e.target.value } : null)}
-                            className="text-2xl sm:text-3xl font-bold mb-2"
-                          />
-                        ) : (
-                          <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark-blue mb-2">{selectedContent.title}</h2>
-                        )}
-                      </div>
-                    </div>
+                    <ContentDetail content={selectedContent} />
                     <button
                       onClick={handleClose}
                       className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
@@ -303,50 +297,22 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
                       <ChevronDownIcon className="w-6 h-6 sm:w-8 sm:h-8 transform rotate-180" />
                     </button>
                   </div>
-
-                  <div className="mt-6">
-                    {isEditMode ? (
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="content">Content</Label>
-                          <Textarea
-                            id="content"
-                            value={editedContent?.content || ''}
-                            onChange={(e) => setEditedContent(prev => prev ? { ...prev, content: e.target.value } : null)}
-                            rows={10}
-                            className="mt-2"
-                          />
-                        </div>
-                        <div className="flex gap-3 justify-end">
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setIsEditMode(false)}
-                            disabled={saving}
-                          >
-                            Cancel
-                          </Button>
-                          <Button 
-                            onClick={handleSave}
-                            disabled={saving}
-                          >
-                            {saving ? 'Saving...' : 'Save Changes'}
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="prose prose-lg max-w-none">
-                        <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
-                          {selectedContent.content}
-                        </p>
-                      </div>
-                    )}
-                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile Modal */}
+      <Dialog open={!!selectedContent} onOpenChange={(open) => !open && handleClose()}>
+        <DialogContent className="lg:hidden max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="sr-only">Content Details</DialogTitle>
+          </DialogHeader>
+          {selectedContent && <ContentDetail content={selectedContent} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
