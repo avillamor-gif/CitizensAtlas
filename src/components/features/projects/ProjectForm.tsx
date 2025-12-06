@@ -1157,7 +1157,7 @@ ${references}
                             <Input type="text" name="displacement" value={formData.displacement} onChange={handleInputChange} />
                         </FormField>
                     </div>
-                    <div className="p-6 flex justify-between items-center space-x-4 bg-gray-50 border-t rounded-b-lg">
+                    <div className="p-6 bg-gray-50 border-t rounded-b-lg space-y-4">
                         <div className="flex items-center space-x-3">
                             <Label className="text-sm font-medium text-gray-700">Publish Date (optional):</Label>
                             <DatePicker
@@ -1166,7 +1166,7 @@ ${references}
                                 placeholder="Leave empty to use today's date"
                             />
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4 justify-end">
                             {!isModal && (
                                 <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
                                     Back

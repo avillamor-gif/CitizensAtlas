@@ -658,7 +658,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         </div>
                     </FormField>
                 </div>
-                <div className="p-8 flex justify-between items-center space-x-4 bg-gray-50 border-t rounded-b-lg">
+                <div className="p-8 bg-gray-50 border-t rounded-b-lg space-y-4">
                     <div className="flex items-center space-x-3">
                         <Label className="text-sm font-medium text-gray-700">Publish Date:</Label>
                         <DatePicker
@@ -667,10 +667,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             placeholder="Select publish date"
                         />
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4 justify-between items-center">
                         {/* Save as Draft checkbox for admins/super-admins */}
                         {(userRole === 'admin' || userRole === 'super-admin') && !isEditMode && (
-                            <label className="flex items-center justify-center sm:justify-start sm:mr-auto">
+                            <label className="flex items-center justify-center sm:justify-start">
                                 <input
                                     type="checkbox"
                                     checked={saveAsDraft}
@@ -680,16 +680,17 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                 <span className="text-sm text-gray-700">Save as Draft (requires approval)</span>
                             </label>
                         )}
-                        {!isModal && (
-                            <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
-                                Back
-                            </button>
-                        )}
-                        {isModal && (
-                            <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
-                                Cancel
-                            </button>
-                        )}
+                        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            {!isModal && (
+                                <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
+                                    Back
+                                </button>
+                            )}
+                            {isModal && (
+                                <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
+                                    Cancel
+                                </button>
+                            )}
                         <button 
                             type="submit" 
                             className="w-full sm:w-auto text-white font-bold py-2 px-4 sm:px-6 rounded-md transition-colors"
