@@ -79,14 +79,14 @@ function HomePageContent() {
       
       const startTime = Date.now()
       
-      // Load critical data first (projects without details, recent content)
+      // Load critical data first (projects with details for map, recent content)
       const [
         projectsData,
         newsData,
         publicationsData,
         videosData,
       ] = await Promise.all([
-        dataService.getPublishedProjects(), // Faster - no details field
+        dataService.getPublishedProjectsWithDetails(), // Need details field for map visualization
         dataService.getPublishedNews(10), // Limit to 10 for homepage carousel
         dataService.getPublishedPublications(10), // Limit to 10 for homepage carousel
         dataService.getPublishedVideos(10), // Limit to 10 for homepage carousel
