@@ -667,10 +667,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             placeholder="Select publish date"
                         />
                     </div>
-                    <div className="flex space-x-4">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
                         {/* Save as Draft checkbox for admins/super-admins */}
                         {(userRole === 'admin' || userRole === 'super-admin') && !isEditMode && (
-                            <label className="flex items-center mr-auto">
+                            <label className="flex items-center justify-center sm:justify-start sm:mr-auto">
                                 <input
                                     type="checkbox"
                                     checked={saveAsDraft}
@@ -681,18 +681,18 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             </label>
                         )}
                         {!isModal && (
-                            <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                            <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
                                 Back
                             </button>
                         )}
                         {isModal && (
-                            <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                            <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
                                 Cancel
                             </button>
                         )}
                         <button 
                             type="submit" 
-                            className="text-white font-bold py-2 px-6 rounded-md transition-colors"
+                            className="w-full sm:w-auto text-white font-bold py-2 px-4 sm:px-6 rounded-md transition-colors"
                             style={{ backgroundColor: '#0d234f' }}
                             onMouseEnter={(e) => {
                                 console.log('🖱️ Mouse entered submit button');
