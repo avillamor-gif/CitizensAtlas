@@ -55,18 +55,18 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-start p-4 overflow-y-auto" onClick={onClose}>
-            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full my-8" onClick={(e) => e.stopPropagation()}>
-                <div className="p-6 border-b sticky top-0 bg-white rounded-t-lg">
+            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full my-8 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+                <div className="p-4 sm:p-6 border-b flex-shrink-0 bg-white rounded-t-lg">
                     <div className="flex justify-between items-start">
-                        <div>
+                        <div className="flex-1 min-w-0 pr-4">
                             <p className="text-sm font-bold text-gray-500 tracking-widest">{project.country}</p>
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-brand-dark-blue mt-1">{project.title}</h2>
+                            <h2 className="text-base sm:text-lg md:text-xl font-bold text-brand-dark-blue mt-1">{project.title}</h2>
                             <p className="text-sm text-gray-600 mt-2">Approval Date: {project.date}</p>
                         </div>
-                        <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none flex-shrink-0 ml-4">&times;</button>
+                        <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none flex-shrink-0">&times;</button>
                     </div>
                 </div>
-                <div className="p-6 max-h-[70vh] overflow-y-auto">
+                <div className="p-4 sm:p-6 overflow-y-auto flex-1">
                     <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
 
                     <SectionTitle>Project Information</SectionTitle>
@@ -110,8 +110,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     <DetailRow label="Notes" value={detailsMap.get('Notes')} />
                     <DetailRow label="References" value={detailsMap.get('References')} />
                 </div>
-                <div className="p-4 flex justify-end space-x-4 bg-gray-50 border-t rounded-b-lg sticky bottom-0">
-                    <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                <div className="p-4 flex justify-end bg-gray-50 border-t rounded-b-lg flex-shrink-0">
+                    <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
                         Close
                     </button>
                 </div>
