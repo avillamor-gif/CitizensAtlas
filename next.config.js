@@ -21,28 +21,24 @@ const nextConfig = {
   env: {
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   },
-  // Force cache invalidation
-  generateBuildId: async () => {
-    return `build-${Date.now()}-${Math.random().toString(36).substring(2)}`
-  },
-  // Add cache control headers
+  // Enable proper caching for better performance
   async headers() {
     return [
       {
-        source: '/_next/static/chunks/:path*',
+        source: '/_next/static/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
       {
-        source: '/_next/static/js/:path*',
+        source: '/api/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
           },
         ],
       },

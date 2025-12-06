@@ -314,15 +314,21 @@ export async function getNews() {
   }
 }
 
-export async function getPublishedNews() {
+export async function getPublishedNews(limit?: number) {
   try {
     const supabase = getSupabase()
     // Get all fields needed for display
-    const { data, error } = await supabase
+    let query = supabase
       .from('news')
       .select('*')
       .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
+    
+    if (limit) {
+      query = query.limit(limit)
+    }
+    
+    const { data, error } = await query
     
     if (error) throw error
     
@@ -537,15 +543,21 @@ export async function getPublications() {
   }
 }
 
-export async function getPublishedPublications() {
+export async function getPublishedPublications(limit?: number) {
   try {
     const supabase = getSupabase()
     // Get all fields needed for display
-    const { data, error } = await supabase
+    let query = supabase
       .from('publications')
       .select('*')
       .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
+    
+    if (limit) {
+      query = query.limit(limit)
+    }
+    
+    const { data, error } = await query
     
     if (error) throw error
     
@@ -721,15 +733,21 @@ export async function getVideos() {
   }
 }
 
-export async function getPublishedVideos() {
+export async function getPublishedVideos(limit?: number) {
   try {
     const supabase = getSupabase()
     // Get all fields needed for display
-    const { data, error } = await supabase
+    let query = supabase
       .from('videos')
       .select('*')
       .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
+    
+    if (limit) {
+      query = query.limit(limit)
+    }
+    
+    const { data, error } = await query
     
     if (error) throw error
     

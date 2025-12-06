@@ -77,6 +77,7 @@ function HomePageContent() {
       // For the public homepage, always load published data only
       // This ensures consistent behavior regardless of authentication state
       // NOTE: Using getPublishedProjectsWithDetails for map (needs investment amounts from details field)
+      // Limit carousels to 10 items each for faster initial load
       const [
         projectsData,
         newsData,
@@ -87,9 +88,9 @@ function HomePageContent() {
         videoCategoriesData
       ] = await Promise.all([
         dataService.getPublishedProjectsWithDetails(), // Full details for map
-        dataService.getPublishedNews(),
-        dataService.getPublishedPublications(), 
-        dataService.getPublishedVideos(),
+        dataService.getPublishedNews(10), // Limit to 10 for homepage carousel
+        dataService.getPublishedPublications(10), // Limit to 10 for homepage carousel
+        dataService.getPublishedVideos(10), // Limit to 10 for homepage carousel
         dataService.getNewsCategories(),
         dataService.getPublicationTypes(),
         dataService.getVideoCategories()

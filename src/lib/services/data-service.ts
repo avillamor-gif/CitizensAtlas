@@ -68,10 +68,10 @@ export async function getPublishedProjectsWithDetails(): Promise<Project[]> {
   return []
 }
 
-export async function getPublishedNews(): Promise<Article[]> {
+export async function getPublishedNews(limit?: number): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getPublishedNews()
+      return await supabaseService.getPublishedNews(limit)
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -82,16 +82,17 @@ export async function getPublishedNews(): Promise<Article[]> {
     const stored = localStorage.getItem('atlas_news')
     if (stored) {
       const news: Article[] = JSON.parse(stored)
-      return news.filter(n => n.status === 'published' || n.status === undefined)
+      const published = news.filter(n => n.status === 'published' || n.status === undefined)
+      return limit ? published.slice(0, limit) : published
     }
   }
   return []
 }
 
-export async function getPublishedPublications(): Promise<Article[]> {
+export async function getPublishedPublications(limit?: number): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getPublishedPublications()
+      return await supabaseService.getPublishedPublications(limit)
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -102,16 +103,17 @@ export async function getPublishedPublications(): Promise<Article[]> {
     const stored = localStorage.getItem('atlas_publications')
     if (stored) {
       const publications: Article[] = JSON.parse(stored)
-      return publications.filter(p => p.status === 'published' || p.status === undefined)
+      const published = publications.filter(p => p.status === 'published' || p.status === undefined)
+      return limit ? published.slice(0, limit) : published
     }
   }
   return []
 }
 
-export async function getPublishedVideos(): Promise<Article[]> {
+export async function getPublishedVideos(limit?: number): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      return await supabaseService.getPublishedVideos()
+      return await supabaseService.getPublishedVideos(limit)
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -122,7 +124,8 @@ export async function getPublishedVideos(): Promise<Article[]> {
     const stored = localStorage.getItem('atlas_videos')
     if (stored) {
       const videos: Article[] = JSON.parse(stored)
-      return videos.filter(v => v.status === 'published' || v.status === undefined)
+      const published = videos.filter(v => v.status === 'published' || v.status === undefined)
+      return limit ? published.slice(0, limit) : published
     }
   }
   return []
