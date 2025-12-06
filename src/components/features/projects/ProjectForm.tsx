@@ -660,15 +660,15 @@ ${references}
     const formContent = (
         <>
             {isModal && (
-                <div className="p-6 border-b">
+                <div className="p-4 sm:p-6 border-b flex-shrink-0">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit Project' : 'Add New Project'}</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit Project' : 'Add New Project'}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>
             )}
-            <form onSubmit={handleSubmit}>
-                <div className={isModal ? "p-8 space-y-6 max-h-[75vh] overflow-y-auto" : "p-8 space-y-6"}>
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                <div className={isModal ? "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" : "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
                     <SectionTitle isFirst={true}>Project Information</SectionTitle>
                     <FormField label="Project Name" required>
                         <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} required />
@@ -1166,18 +1166,18 @@ ${references}
                                 placeholder="Leave empty to use today's date"
                             />
                         </div>
-                        <div className="flex space-x-4">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
                             {!isModal && (
-                                <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                                <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
                                     Back
                                 </button>
                             )}
                             {isModal && (
-                                <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
+                                <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-300 transition-colors">
                                     Cancel
                                 </button>
                             )}
-                            <button type="submit" className="text-white font-bold py-2 px-6 rounded-md transition-colors"
+                            <button type="submit" className="w-full sm:w-auto text-white font-bold py-2 px-4 sm:px-6 rounded-md transition-colors"
                                 style={{ backgroundColor: '#0d234f' }}
                                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
@@ -1192,8 +1192,8 @@ ${references}
 
     if (isModal) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4" onClick={onClose}>
-                <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-2 sm:p-4" onClick={onClose}>
+                <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
                     {formContent}
                 </div>
             </div>

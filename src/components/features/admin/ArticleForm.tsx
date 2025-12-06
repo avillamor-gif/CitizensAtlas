@@ -390,15 +390,15 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     const formContent = (
         <>
             {isModal && (
-                <div className="p-8 border-b">
+                <div className="p-4 sm:p-6 md:p-8 border-b flex-shrink-0">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>
             )}
-            <form onSubmit={handleSubmit} onClick={() => console.log('📋 Form clicked')}>
-                <div className={isModal ? "p-8 space-y-6 max-h-[75vh] overflow-y-auto" : "p-8 space-y-6"}>
+            <form onSubmit={handleSubmit} onClick={() => console.log('📋 Form clicked')} className="flex flex-col flex-1 overflow-hidden">
+                <div className={isModal ? "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" : "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
                     <FormField label="Title" required>
                         <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>
@@ -721,8 +721,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
     if (isModal) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4" onClick={onClose}>
-                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-2 sm:p-4" onClick={onClose}>
+                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
                     {formContent}
                 </div>
             </div>
