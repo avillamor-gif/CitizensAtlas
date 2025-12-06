@@ -7,6 +7,8 @@ import ProjectForm from '@/components/features/projects/ProjectForm';
 import InteractiveMap from '@/components/features/map/InteractiveMap';
 import ProjectDetailModal from '@/components/features/projects/ProjectDetailModal';
 import FilterPanel from '@/components/pages/FilterPanel';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Filter } from 'lucide-react';
 
 const MapToggle: React.FC<{ active: 'Map' | 'Projects'; setActive: (view: 'Map' | 'Projects') => void; }> = ({ active, setActive }) => {
     return (
@@ -45,6 +47,17 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, filters, onFilterChange, filterOptions, currentUser }) => {
     const [isDashboardVisible, setIsDashboardVisible] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    // Count active filters
+    const activeFilterCount = Object.entries(filters).filter(([key, value]) => value !== 'all').length;
+
+    const clearAllFilters = () => {
+        onFilterChange('country', 'all');
+        onFilterChange('solutionType', 'all');
+        onFilterChange('ifi', 'all');
+        onFilterChange('projectStatus', 'all');
+    };
 
     const openDetailModal = useCallback((project: Project) => {
         setSelectedProject(project);
@@ -68,7 +81,44 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
 
                 {/* Sticky Toggle for Mobile */}
                 <div className="lg:hidden sticky top-[88px] z-30 bg-white pb-4 mb-4 border-b border-gray-200">
-                    <MapToggle active={activeView} setActive={setActiveView} />
+                    <div className="flex gap-2">
+                        <div className="flex-1">
+                            <MapToggle active={activeView} setActive={setActiveView} />
+                        </div>
+                        <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                            <SheetTrigger asChild>
+                                <button className="relative bg-brand-dark-blue text-white px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md">
+                                    <Filter className="w-4 h-4" />
+                                    <span>Filters</span>
+                                    {activeFilterCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                                            {activeFilterCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </SheetTrigger>
+                            <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
+                                <SheetHeader>
+                                    <SheetTitle className="text-brand-dark-blue">Filter Projects</SheetTitle>
+                                </SheetHeader>
+                                <div className="mt-6">
+                                    <FilterPanel 
+                                        filters={filters}
+                                        onFilterChange={onFilterChange}
+                                        filterOptions={filterOptions}
+                                    />
+                                    {activeFilterCount > 0 && (
+                                        <button
+                                            onClick={clearAllFilters}
+                                            className="w-full mt-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                                        >
+                                            Clear All Filters
+                                        </button>
+                                    )}
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -91,12 +141,20 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                         <div className="mb-4 hidden lg:block">
                             <MapToggle active={activeView} setActive={setActiveView} />
                         </div>
-                        <div className="bg-[#f7f8f9] p-6 border rounded-lg shadow-lg">
+                        <div className="bg-[#f7f8f9] p-6 border rounded-lg shadow-lg hidden lg:block">
                             <FilterPanel 
                                 filters={filters}
                                 onFilterChange={onFilterChange}
                                 filterOptions={filterOptions}
                             />
+                            {activeFilterCount > 0 && (
+                                <button
+                                    onClick={clearAllFilters}
+                                    className="w-full mt-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                >
+                                    Clear All Filters
+                                </button>
+                            )}
                         </div>
                         {activeView === 'Map' && (
                             <button 
