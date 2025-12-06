@@ -402,7 +402,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     <FormField label="Title" required>
                         <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>
-                    <div className="mb-16">
+                    <div className="mb-24">
                         <ReactQuill
                             theme="snow"
                             value={formData.description}
@@ -418,7 +418,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                 ],
                             }}
                             className="bg-white"
-                            style={{ height: '200px', marginBottom: '60px' }}
+                            style={{ height: '200px', marginBottom: '80px' }}
                             placeholder="Enter content..."
                         />
                     </div>
