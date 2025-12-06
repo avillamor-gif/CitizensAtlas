@@ -819,23 +819,25 @@ ${references}
                             <button type="button" onClick={() => addRepeatableRow('privateSectorBorrowers')} className="text-sm text-brand-medium-blue hover:underline">+ Add borrower</button>
                         </FormField>
                         <FormField label="Project description">
-                            <ReactQuill
-                                theme="snow"
-                                value={formData.projectDescription}
-                                onChange={(value) => setFormData(prev => ({ ...prev, projectDescription: value }))}
-                                modules={{
-                                    toolbar: [
-                                        [{ 'header': [1, 2, 3, false] }],
-                                        ['bold', 'italic', 'underline', 'strike'],
-                                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                                        ['link', 'image'],
-                                        ['clean']
-                                    ],
-                                }}
-                                className="bg-white"
-                                style={{ height: '200px', marginBottom: '50px' }}
-                            />
+                            <div className="mb-24">
+                                <ReactQuill
+                                    theme="snow"
+                                    value={formData.projectDescription}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, projectDescription: value }))}
+                                    modules={{
+                                        toolbar: [
+                                            [{ 'header': [1, 2, 3, false] }],
+                                            ['bold', 'italic', 'underline', 'strike'],
+                                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                            [{ 'indent': '-1'}, { 'indent': '+1' }],
+                                            ['link', 'image'],
+                                            ['clean']
+                                        ],
+                                    }}
+                                    className="bg-white"
+                                    style={{ height: '200px', marginBottom: '80px' }}
+                                />
+                            </div>
                         </FormField>
                         <FormField label="Project Status">
                             <Select value={formData.projectStatus || undefined} onValueChange={(value) => handleSelectChange('projectStatus', value)}>
