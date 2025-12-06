@@ -66,6 +66,11 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     </p>
                 </div>
 
+                {/* Sticky Toggle for Mobile */}
+                <div className="lg:hidden sticky top-[88px] z-30 bg-white pb-4 mb-4 border-b border-gray-200">
+                    <MapToggle active={activeView} setActive={setActiveView} />
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Left Column: Map or Projects */}
                     <div className="lg:col-span-3">
@@ -83,7 +88,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
 
                     {/* Right Column: Filters */}
                     <div className="lg:col-span-1">
-                        <div className="mb-4">
+                        <div className="mb-4 hidden lg:block">
                             <MapToggle active={activeView} setActive={setActiveView} />
                         </div>
                         <div className="bg-[#f7f8f9] p-6 border rounded-lg shadow-lg">
