@@ -104,7 +104,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
 
             {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
-                <div className="md:hidden fixed inset-0 top-[88px] bg-white z-30 shadow-lg animate-in slide-in-from-top">
+                <div className="md:hidden fixed inset-0 top-[88px] bg-white z-50 shadow-lg animate-in slide-in-from-top">
                     <nav className="flex flex-col p-6 space-y-1">
                         <button
                             onClick={() => handleNavigation('about')}
