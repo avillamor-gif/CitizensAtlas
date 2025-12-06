@@ -662,7 +662,7 @@ ${references}
             {isModal && (
                 <div className="p-4 sm:p-6 border-b flex-shrink-0">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl sm:text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit Project' : 'Add New Project'}</h2>
+                        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit Project' : 'Add New Project'}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>
