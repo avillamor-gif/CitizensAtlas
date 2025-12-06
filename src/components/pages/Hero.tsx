@@ -98,7 +98,9 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                                 onClick={() => setIsDashboardVisible(!isDashboardVisible)}
                                 className="mt-4 w-full bg-brand-dark-blue text-white p-4 rounded-lg shadow-md hover:bg-opacity-90 flex justify-between items-center transition-all duration-300"
                             >
-                                <span className="uppercase font-semibold tracking-wide">Show dashboard</span>
+                                <span className="uppercase font-semibold tracking-wide">
+                                    {isDashboardVisible ? 'Hide dashboard' : 'Show dashboard'}
+                                </span>
                                 <ChevronDownIcon className={`w-6 h-6 transform transition-transform ${isDashboardVisible ? 'rotate-180' : ''}`} />
                             </button>
                         )}
