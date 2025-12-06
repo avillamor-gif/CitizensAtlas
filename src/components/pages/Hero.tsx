@@ -96,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                         {activeView === 'Map' && (
                             <button 
                                 onClick={() => setIsDashboardVisible(!isDashboardVisible)}
-                                className="mt-4 w-full bg-brand-dark-blue text-white p-4 rounded-lg shadow-md hover:bg-opacity-90 flex justify-between items-center transition-all duration-300"
+                                className="mt-4 w-full bg-brand-dark-blue text-white p-4 rounded-lg shadow-md hover:bg-opacity-90 flex justify-center items-center gap-3 transition-all duration-300"
                             >
                                 <span className="uppercase font-semibold tracking-wide">
                                     {isDashboardVisible ? 'Hide dashboard' : 'Show dashboard'}
