@@ -136,3 +136,53 @@ src/components/features/
 - Types: `src/types/types.ts`
 - Admin dashboard: `app/admin/page.tsx` + `src/components/features/admin/AdminDashboard.tsx`
 - Map view: `src/components/features/map/MapView.tsx`
+
+
+## Mobile Responsiveness Patterns
+**Tailwind Breakpoints**: `sm:` (640px), `md:` (768px), `lg:` (1024px)
+- **Button layouts**: `flex-col sm:flex-row` + `w-full sm:w-auto` for mobile-first stacking
+- **Form spacing**: Use `space-y-4 sm:space-y-6` for responsive vertical rhythm
+- **Padding**: `p-4 sm:p-6 md:p-8` for scalable container padding
+- **ReactQuill editors**: Wrap in `<div className="mb-24">` + inline `marginBottom: '80px'` to prevent field overlap
+- **Modal sizing**: Always use `max-h-[95vh]` + `flex flex-col` structure for proper scrolling on mobile
+- **Submit button patterns**:
+  ```tsx
+  <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
+    <button className="w-full sm:w-auto px-4 sm:px-6 py-2">
+  ```
+
+## Form Component Conventions
+**ProjectForm & ArticleForm shared patterns**:
+- **Dynamic imports**: ReactQuill imported via `dynamic(() => import('react-quill'), { ssr: false })`
+- **FormField wrapper**: Reusable component with `label`, `children`, `required` props
+- **Status logic**: Contributors create as `draft`, admins/super-admins as `published`
+- **Edit mode detection**: `const isEditMode = Boolean(itemToEdit)`
+- **Date defaults**: New items default to `new Date().toISOString().split('T')[0]`
+- **Role-based UI**: Check `userRole === 'admin' || userRole === 'super-admin'` for conditional features
+- **File uploads**: Use `uploadImage()` and `uploadMultipleDocuments()` from `@/lib/supabase/storage`
+
+## Deployment Workflow
+**Vercel Setup**:
+- Repository: `albertobvillamor-dev/citizens-atlas` (lowercase required)
+- Build command: `npm run build` (from `vercel.json`)
+- Install: `npm install --legacy-peer-deps` (required for peer dependency conflicts)
+- **Manual deployment**: Use Vercel dashboard → "Deploy" button (bypasses Git author permissions)
+- **Auto-deploy issues**: GitHub webhook may need reconnection in Vercel Settings → Git
+- Project name must be lowercase: `citizens-atlas` (no uppercase letters allowed)
+
+## Testing & Validation
+```bash
+npm run type-check   # Must pass before deployment (tsc --noEmit)
+npm run lint         # ESLint validation
+npm run build        # Local build test
+```
+
+## Common Development Pitfalls
+1. **Never import from `supabase-service.ts` directly** - Always use `data-service.ts` wrapper
+2. **ReactQuill SSR issues** - Must use `dynamic()` import with `{ ssr: false }`
+3. **localStorage guards** - Always wrap with `typeof window !== 'undefined'`
+4. **Form button layouts** - Missing `flex-col sm:flex-row` causes mobile UI breaks
+5. **Content editor spacing** - ReactQuill needs both `className="mb-24"` wrapper AND inline `marginBottom`
+6. **Modal scrolling** - Requires `max-h-[95vh]` + `flex flex-col` + `overflow-y-auto flex-1` on content
+7. **Vercel project names** - Must be lowercase with only letters, digits, `.`, `_`, `-` (no `---` sequence)
+8. **Git author permissions** - Use Vercel dashboard for deployment if CLI shows permission errors
