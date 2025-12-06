@@ -66,7 +66,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none flex-shrink-0">&times;</button>
                     </div>
                 </div>
-                <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+                <div className="p-4 sm:p-6 pb-6 overflow-y-auto flex-1">
                     <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
 
                     <SectionTitle>Project Information</SectionTitle>
@@ -109,6 +109,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     <DetailRow label="Displacement" value={detailsMap.get('Displacement')} />
                     <DetailRow label="Notes" value={detailsMap.get('Notes')} />
                     <DetailRow label="References" value={detailsMap.get('References')} />
+                    <div className="pb-4"></div>
                 </div>
                 <div className="p-4 flex justify-end bg-gray-50 border-t rounded-b-lg flex-shrink-0">
                     <button type="button" onClick={onClose} className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
