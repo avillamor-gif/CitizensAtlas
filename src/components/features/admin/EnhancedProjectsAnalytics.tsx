@@ -148,7 +148,39 @@ const FrontendChartCard: React.FC<FrontendChartCardProps> = ({
 
 const COLORS = ['#3B82F6', '#10B981', '#FBBF24', '#A855F7', '#EF4444', '#6366F1', '#F97316', '#EC4899', '#14B8A6', '#F59E0B']
 
-const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: User | null }> = ({ projects, currentUser }) => {
+const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: User | null }> = ({ projects: initialProjects, currentUser }) => {
+  // State for full projects data (with details field for analytics)
+  const [fullProjects, setFullProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  
+  // Fetch full project data on mount (analytics needs details field)
+  useEffect(() => {
+    const fetchFullProjects = async () => {
+      try {
+        setLoading(true)
+        console.log('[Analytics] Fetching full project data for analytics...')
+        
+        // Import data service dynamically to avoid circular dependencies
+        const { getAllProjectsWithDetails } = await import('@/lib/services/supabase-service')
+        const fullData = await getAllProjectsWithDetails()
+        
+        console.log('[Analytics] Loaded', fullData.length, 'projects with full details')
+        setFullProjects(fullData)
+      } catch (error) {
+        console.error('[Analytics] Failed to load full project data:', error)
+        // Fallback to initial projects if fetch fails
+        setFullProjects(initialProjects)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchFullProjects()
+  }, []) // Only run once on mount
+  
+  // Use fullProjects for analytics
+  const projects = fullProjects
+  
   // Check if user has permission to toggle chart visibility (reactive to localStorage changes)
   const [canToggleChartVisibility, setCanToggleChartVisibility] = useState(
     hasPermission(currentUser?.role, 'Chart Visibility Toggle')
@@ -382,6 +414,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
       .filter(p => p.submittedAt)
       .reduce((acc, p) => {
         const date = new Date(p.submittedAt!)
+        if (isNaN(date.getTime())) return acc; // Skip invalid dates
         const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         acc[monthYear] = (acc[monthYear] || 0) + 1
         return acc
@@ -429,6 +462,18 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
     }
   }, [projects])
 
+  // Show loading state while fetching full project data
+  if (loading) {
+    return (
+      <div className="w-full space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0d234f]"></div>
+          <span className="ml-3 text-gray-600">Loading analytics data...</span>
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div className="w-full space-y-6">
       {/* Header */}

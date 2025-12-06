@@ -16,7 +16,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
     return (
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col sm:flex-row overflow-hidden group">
             <div className="sm:w-1/3 flex-shrink-0 h-48 sm:h-auto overflow-hidden relative">
-                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <img src={item.imageUrl || 'https://picsum.photos/400/300'} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 {isVideo && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all duration-300">
                         <div className="bg-white bg-opacity-90 rounded-full p-4 group-hover:scale-110 transition-transform duration-300">

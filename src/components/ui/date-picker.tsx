@@ -22,13 +22,16 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ value, onChange, placeholder = "Pick a date", className, disabled }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date | undefined>(
-    value ? new Date(value) : undefined
-  )
+  const [date, setDate] = React.useState<Date | undefined>(() => {
+    if (!value) return undefined;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? undefined : d;
+  })
 
   React.useEffect(() => {
     if (value) {
-      setDate(new Date(value))
+      const d = new Date(value);
+      setDate(isNaN(d.getTime()) ? undefined : d);
     } else {
       setDate(undefined)
     }
@@ -56,7 +59,7 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date", class
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>{placeholder}</span>}
+          {date && !isNaN(date.getTime()) ? format(date, "PPP") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

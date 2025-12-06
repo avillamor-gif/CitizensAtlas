@@ -160,7 +160,6 @@ export function hasPermission(
   feature: keyof RolePermissions
 ): boolean {
   if (!userRole) {
-    console.log('[hasPermission] No user role provided for feature:', feature);
     return false;
   }
 
@@ -185,15 +184,12 @@ export function hasPermission(
 
   const permission = permissionsSource.find(p => p.feature === feature)
   if (!permission) {
-    console.warn('[hasPermission] Permission not found for feature:', feature);
     return false;
   }
 
   // Map role to permission key
   const roleKey = userRole === 'super-admin' ? 'superAdmin' : userRole
   const hasAccess = permission[roleKey as keyof Permission] as boolean
-  
-  console.log(`[hasPermission] ${feature} for ${userRole} (${roleKey}):`, hasAccess);
   
   return hasAccess;
 }

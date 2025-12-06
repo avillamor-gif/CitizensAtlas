@@ -28,10 +28,12 @@ import AccountProfile from './AccountProfile';
 
 interface AdminDashboardProps {
     projects: Project[];
+    onLoadProjects?: () => Promise<void>;
     onAddProject: (projectData: Omit<Project, 'id'>) => void;
     onUpdateProject: (project: Project) => void;
     onDeleteProjects: (projectIds: number[]) => void;
     news: Article[];
+    onLoadNews?: () => Promise<void>;
     onAddNews: (articleData: Omit<Article, 'id' | 'slug'>) => void;
     onUpdateNews: (article: Omit<Article, 'slug'>) => void;
     onDeleteNews: (articleIds: number[]) => void;
@@ -40,6 +42,7 @@ interface AdminDashboardProps {
     onUpdateNewsCategory: (oldName: string, newName: string) => void;
     onDeleteNewsCategory: (categoryName: string) => void;
     publications: Article[];
+    onLoadPublications?: () => Promise<void>;
     onAddPublication: (articleData: Omit<Article, 'id' | 'slug'>) => void;
     onUpdatePublication: (article: Omit<Article, 'slug'>) => void;
     onDeletePublications: (articleIds: number[]) => void;
@@ -48,6 +51,7 @@ interface AdminDashboardProps {
     onUpdatePublicationType: (oldName: string, newName: string) => void;
     onDeletePublicationType: (typeName: string) => void;
     videos: Article[];
+    onLoadVideos?: () => Promise<void>;
     onAddVideo: (articleData: Omit<Article, 'id' | 'slug'>) => void;
     onUpdateVideo: (article: Omit<Article, 'slug'>) => void;
     onDeleteVideos: (articleIds: number[]) => void;
@@ -64,12 +68,12 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const { 
-        projects, onAddProject, onUpdateProject, onDeleteProjects,
-        news, onAddNews, onUpdateNews, onDeleteNews,
+        projects, onLoadProjects, onAddProject, onUpdateProject, onDeleteProjects,
+        news, onLoadNews, onAddNews, onUpdateNews, onDeleteNews,
         newsCategories, onAddNewsCategory, onUpdateNewsCategory, onDeleteNewsCategory,
-        publications, onAddPublication, onUpdatePublication, onDeletePublications,
+        publications, onLoadPublications, onAddPublication, onUpdatePublication, onDeletePublications,
         publicationTypes, onAddPublicationType, onUpdatePublicationType, onDeletePublicationType,
-        videos, onAddVideo, onUpdateVideo, onDeleteVideos,
+        videos, onLoadVideos, onAddVideo, onUpdateVideo, onDeleteVideos,
         videoCategories, onAddVideoCategory, onUpdateVideoCategory, onDeleteVideoCategory,
         onApproveDraft, onRejectDraft, onEditDraft,
         currentUser,
@@ -82,25 +86,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
 
-    // Debug: Log current user info
-    React.useEffect(() => {
-        console.log('🔍 [AdminDashboard] Current user:', currentUser);
-        console.log('📊 [AdminDashboard] Permissions source: Database role only (no localStorage)');
-        
-        if (!currentUser?.role) {
-            console.warn('⚠️ [AdminDashboard] No role found! Check if profile exists in database.');
-        } else {
-            console.log('✅ [AdminDashboard] User role found:', currentUser.role);
-            
-            // Test some permissions
-            console.log('🔍 [AdminDashboard] Testing permissions:');
-            console.log('- View/Edit Projects:', hasPermission(currentUser.role, 'View/Edit Projects'));
-            console.log('- View/Edit News:', hasPermission(currentUser.role, 'View/Edit News'));
-            console.log('- View/Edit Publications:', hasPermission(currentUser.role, 'View/Edit Publications'));
-            console.log('- View Analytics:', hasPermission(currentUser.role, 'View Analytics'));
-        }
-    }, [currentUser]);
-
     // Auto-redirect if user doesn't have permission for current page
     React.useEffect(() => {
         const checkAndRedirect = () => {
@@ -108,7 +93,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             
             // Don't redirect if we don't have user info yet (still loading)
             if (!userRole) {
-                console.log('[Dashboard] No user role yet, skipping permission check');
                 return;
             }
             
@@ -181,6 +165,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         window.addEventListener('role-permissions-updated', handlePermissionsUpdated);
         return () => window.removeEventListener('role-permissions-updated', handlePermissionsUpdated);
     }, [activeAdminPage, currentUser?.role]); // Only depend on role, not entire currentUser object
+
+    // Load data when switching to relevant pages
+    useEffect(() => {
+        const loadPageData = async () => {
+            try {
+                if (activeAdminPage === 'projects-list' || activeAdminPage === 'projects-edit' || activeAdminPage === 'projects-analytics') {
+                    await onLoadProjects?.()
+                } else if (activeAdminPage === 'news-list' || activeAdminPage === 'news-edit') {
+                    await onLoadNews?.()
+                } else if (activeAdminPage === 'publications-list' || activeAdminPage === 'publications-edit') {
+                    await onLoadPublications?.()
+                } else if (activeAdminPage === 'videos-list' || activeAdminPage === 'videos-edit') {
+                    await onLoadVideos?.()
+                } else if (activeAdminPage === 'pending-approvals') {
+                    // Load all data for Pending Approvals page
+                    console.log('📥 Loading all data for Pending Approvals...')
+                    await Promise.all([
+                        onLoadProjects?.(),
+                        onLoadNews?.(),
+                        onLoadPublications?.(),
+                        onLoadVideos?.()
+                    ])
+                    console.log('✅ All data loaded for Pending Approvals')
+                }
+            } catch (error) {
+                console.error('Error loading page data:', error)
+            }
+        }
+        
+        loadPageData()
+    }, [activeAdminPage])
 
     const testLogout = async () => {
         console.log('TEST: Logout button clicked in header');
@@ -342,7 +357,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                     <ProjectFormPage
                         onAddProject={onAddProject}
                         onProjectAdded={() => {
-                            setActiveAdminPage('projects-list');
+                            // Stay on form page after saving
                         }}
                         onBack={() => setActiveAdminPage('projects-list')}
                         userRole={currentUser?.role}
@@ -354,8 +369,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                     <ProjectFormPage
                         onUpdateProject={onUpdateProject}
                         onProjectAdded={() => {
-                            setProjectToEdit(null);
-                            setActiveAdminPage('projects-list');
+                            // Stay on form page after saving
                         }}
                         onBack={() => {
                             setProjectToEdit(null);

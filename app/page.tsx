@@ -76,6 +76,7 @@ function HomePageContent() {
       
       // For the public homepage, always load published data only
       // This ensures consistent behavior regardless of authentication state
+      // NOTE: Using getPublishedProjectsWithDetails for map (needs investment amounts from details field)
       const [
         projectsData,
         newsData,
@@ -85,7 +86,7 @@ function HomePageContent() {
         publicationTypesData,
         videoCategoriesData
       ] = await Promise.all([
-        dataService.getPublishedProjects(),
+        dataService.getPublishedProjectsWithDetails(), // Full details for map
         dataService.getPublishedNews(),
         dataService.getPublishedPublications(), 
         dataService.getPublishedVideos(),
@@ -242,9 +243,19 @@ function HomePageContent() {
       setNews(prevNews => [newArticle, ...prevNews])
       console.log('✅ News added with status:', newArticle.status, 'Article:', newArticle)
       
+      // Auto-add new category to database if it doesn't exist
       if (newsData.category && !newsCategories.includes(newsData.category)) {
-        setNewsCategories(prev => [...prev, newsData.category].sort())
+        try {
+          console.log('💾 Auto-adding new category to database:', newsData.category)
+          await dataService.createNewsCategory(newsData.category)
+          setNewsCategories(prev => [...prev, newsData.category].sort())
+        } catch (error) {
+          console.error('Failed to add category to database:', error)
+          // Still update local state even if database fails
+          setNewsCategories(prev => [...prev, newsData.category].sort())
+        }
       }
+      
       const message = currentUser?.role === 'contributor' 
         ? '✅ News submitted for approval!' 
         : '✅ News article added successfully!';
@@ -267,10 +278,28 @@ function HomePageContent() {
   }
 
   const handleUpdateNews = async (updatedArticleData: Omit<Article, 'slug'>) => {
-    console.log('Updating news:', updatedArticleData)
+    console.log('📝 [handleUpdateNews] Starting update process...')
+    console.log('📝 [handleUpdateNews] Updated article data:', {
+      id: updatedArticleData.id,
+      title: updatedArticleData.title,
+      category: updatedArticleData.category,
+      description: updatedArticleData.description?.substring(0, 100),
+      imageUrl: updatedArticleData.imageUrl,
+      tagColor: updatedArticleData.tagColor,
+      tags: updatedArticleData.tags,
+      allKeys: Object.keys(updatedArticleData)
+    })
     try {
       // Call the backend API to update the news
       const updatedArticle = await dataService.updateNews(updatedArticleData.id, updatedArticleData)
+      
+      console.log('✅ [handleUpdateNews] Got response from updateNews:', {
+        id: updatedArticle.id,
+        title: updatedArticle.title,
+        category: updatedArticle.category,
+        imageUrl: updatedArticle.imageUrl,
+        allKeys: Object.keys(updatedArticle)
+      })
       
       // Update local state with the result
       const finalArticle = { 
@@ -281,8 +310,17 @@ function HomePageContent() {
         prevNews.map(n => (n.id === finalArticle.id ? finalArticle : n))
       )
       
+      // Auto-add new category to database if it doesn't exist
       if (finalArticle.category && !newsCategories.includes(finalArticle.category)) {
-        setNewsCategories(prev => [...prev, finalArticle.category].sort())
+        try {
+          console.log('💾 Auto-adding new category to database:', finalArticle.category)
+          await dataService.createNewsCategory(finalArticle.category)
+          setNewsCategories(prev => [...prev, finalArticle.category].sort())
+        } catch (error) {
+          console.error('Failed to add category to database:', error)
+          // Still update local state even if database fails
+          setNewsCategories(prev => [...prev, finalArticle.category].sort())
+        }
       }
       
       alert('✅ News article updated successfully!')
@@ -309,9 +347,20 @@ function HomePageContent() {
       })
       
       setPublications(prevPublications => [newArticle, ...prevPublications])
+      
+      // Auto-add new publication type to database if it doesn't exist
       if (publicationData.category && !publicationTypes.includes(publicationData.category)) {
-        setPublicationTypes(prev => [...prev, publicationData.category].sort())
+        try {
+          console.log('💾 Auto-adding new publication type to database:', publicationData.category)
+          await dataService.createPublicationType(publicationData.category)
+          setPublicationTypes(prev => [...prev, publicationData.category].sort())
+        } catch (error) {
+          console.error('Failed to add publication type to database:', error)
+          // Still update local state even if database fails
+          setPublicationTypes(prev => [...prev, publicationData.category].sort())
+        }
       }
+      
       const message = currentUser?.role === 'contributor' 
         ? '✅ Publication submitted for approval!' 
         : '✅ Publication added successfully!';
@@ -348,8 +397,17 @@ function HomePageContent() {
         prevPublications.map(p => (p.id === finalArticle.id ? finalArticle : p))
       )
       
+      // Auto-add new publication type to database if it doesn't exist
       if (finalArticle.category && !publicationTypes.includes(finalArticle.category)) {
-        setPublicationTypes(prev => [...prev, finalArticle.category].sort())
+        try {
+          console.log('💾 Auto-adding new publication type to database:', finalArticle.category)
+          await dataService.createPublicationType(finalArticle.category)
+          setPublicationTypes(prev => [...prev, finalArticle.category].sort())
+        } catch (error) {
+          console.error('Failed to add publication type to database:', error)
+          // Still update local state even if database fails
+          setPublicationTypes(prev => [...prev, finalArticle.category].sort())
+        }
       }
       
       alert('✅ Publication updated successfully!')
@@ -387,9 +445,20 @@ function HomePageContent() {
       })
       
       setVideos(prevVideos => [newArticle, ...prevVideos])
+      
+      // Auto-add new video category to database if it doesn't exist
       if (videoData.category && !videoCategories.includes(videoData.category)) {
-        setVideoCategories(prev => [...prev, videoData.category].sort())
+        try {
+          console.log('💾 Auto-adding new video category to database:', videoData.category)
+          await dataService.createVideoCategory(videoData.category)
+          setVideoCategories(prev => [...prev, videoData.category].sort())
+        } catch (error) {
+          console.error('Failed to add video category to database:', error)
+          // Still update local state even if database fails
+          setVideoCategories(prev => [...prev, videoData.category].sort())
+        }
       }
+      
       const message = currentUser?.role === 'contributor' 
         ? '✅ Video submitted for approval!' 
         : '✅ Video added successfully!';
@@ -426,8 +495,17 @@ function HomePageContent() {
         prevVideos.map(v => (v.id === finalArticle.id ? finalArticle : v))
       )
       
+      // Auto-add new video category to database if it doesn't exist
       if (finalArticle.category && !videoCategories.includes(finalArticle.category)) {
-        setVideoCategories(prev => [...prev, finalArticle.category].sort())
+        try {
+          console.log('💾 Auto-adding new video category to database:', finalArticle.category)
+          await dataService.createVideoCategory(finalArticle.category)
+          setVideoCategories(prev => [...prev, finalArticle.category].sort())
+        } catch (error) {
+          console.error('Failed to add video category to database:', error)
+          // Still update local state even if database fails
+          setVideoCategories(prev => [...prev, finalArticle.category].sort())
+        }
       }
       
       alert('✅ Video updated successfully!')
@@ -443,107 +521,178 @@ function HomePageContent() {
   }
 
   // Video Category Handlers
-  const handleAddVideoCategory = (category: string) => {
+  const handleAddVideoCategory = async (category: string) => {
     if (category && !videoCategories.includes(category)) {
-      setVideoCategories(prev => [...prev, category].sort())
-      alert('✅ Video category added successfully!')
+      try {
+        console.log('💾 Adding video category to database:', category)
+        await dataService.createVideoCategory(category)
+        setVideoCategories(prev => [...prev, category].sort())
+        alert('✅ Video category added successfully!')
+      } catch (error) {
+        console.error('Failed to add video category:', error)
+        alert('❌ Failed to add video category. Please try again.')
+      }
     }
   }
 
-  const handleUpdateVideoCategory = (oldName: string, newName: string) => {
+  const handleUpdateVideoCategory = async (oldName: string, newName: string) => {
     if (newName && !videoCategories.includes(newName)) {
-      setVideoCategories(prev => 
-        prev.map(c => c === oldName ? newName : c).sort()
-      )
-      setVideos(prevVideos => 
-        prevVideos.map(video => 
-          video.category === oldName ? { ...video, category: newName } : video
+      try {
+        console.log('💾 Updating video category in database:', { oldName, newName })
+        await dataService.updateVideoCategory(oldName, newName)
+        
+        setVideoCategories(prev => 
+          prev.map(c => c === oldName ? newName : c).sort()
         )
-      )
-      alert('✅ Video category updated successfully!')
+        setVideos(prevVideos => 
+          prevVideos.map(video => 
+            video.category === oldName ? { ...video, category: newName } : video
+          )
+        )
+        alert('✅ Video category updated successfully!')
+      } catch (error) {
+        console.error('Failed to update video category:', error)
+        alert('❌ Failed to update video category. Please try again.')
+      }
     } else if (newName !== oldName) {
       alert(`Category "${newName}" already exists.`)
     }
   }
 
-  const handleDeleteVideoCategory = (categoryName: string) => {
+  const handleDeleteVideoCategory = async (categoryName: string) => {
     const isCategoryInUse = videos.some(video => video.category === categoryName)
     if (isCategoryInUse) {
       alert(`Cannot delete category "${categoryName}" as it's currently in use by one or more videos.`)
       return
     }
-    setVideoCategories(prev => prev.filter(c => c !== categoryName))
-    alert('✅ Video category deleted successfully!')
-  }
-
-  // News Category Handlers
-  const handleAddNewsCategory = (category: string) => {
-    if (category && !newsCategories.includes(category)) {
-      setNewsCategories(prev => [...prev, category].sort())
-      alert('✅ News category added successfully!')
+    
+    try {
+      console.log('💾 Deleting video category from database:', categoryName)
+      await dataService.deleteVideoCategory(categoryName)
+      setVideoCategories(prev => prev.filter(c => c !== categoryName))
+      alert('✅ Video category deleted successfully!')
+    } catch (error) {
+      console.error('Failed to delete video category:', error)
+      alert('❌ Failed to delete video category. Please try again.')
     }
   }
 
-  const handleUpdateNewsCategory = (oldName: string, newName: string) => {
+  // News Category Handlers
+  const handleAddNewsCategory = async (category: string) => {
+    if (category && !newsCategories.includes(category)) {
+      try {
+        console.log('💾 Adding news category to database:', category)
+        await dataService.createNewsCategory(category)
+        setNewsCategories(prev => [...prev, category].sort())
+        alert('✅ News category added successfully!')
+      } catch (error) {
+        console.error('Failed to add news category:', error)
+        alert('❌ Failed to add news category. Please try again.')
+      }
+    }
+  }
+
+  const handleUpdateNewsCategory = async (oldName: string, newName: string) => {
     if (newName && !newsCategories.includes(newName)) {
-      // Update category in the categories list
-      setNewsCategories(prev => 
-        prev.map(c => c === oldName ? newName : c).sort()
-      )
-      // Update category in all associated news articles
-      setNews(prevNews => 
-        prevNews.map(article => 
-          article.category === oldName ? { ...article, category: newName } : article
+      try {
+        console.log('💾 Updating news category in database:', { oldName, newName })
+        await dataService.updateNewsCategory(oldName, newName)
+        
+        // Update category in the categories list
+        setNewsCategories(prev => 
+          prev.map(c => c === oldName ? newName : c).sort()
         )
-      )
-      alert('✅ News category updated successfully!')
+        
+        // Update category in all associated news articles
+        setNews(prevNews => 
+          prevNews.map(article => 
+            article.category === oldName ? { ...article, category: newName } : article
+          )
+        )
+        
+        alert('✅ News category updated successfully!')
+      } catch (error) {
+        console.error('Failed to update news category:', error)
+        alert('❌ Failed to update news category. Please try again.')
+      }
     } else if (newName !== oldName) {
       alert(`Category "${newName}" already exists.`)
     }
   }
 
-  const handleDeleteNewsCategory = (categoryName: string) => {
+  const handleDeleteNewsCategory = async (categoryName: string) => {
     const isCategoryInUse = news.some(article => article.category === categoryName)
     if (isCategoryInUse) {
       alert(`Cannot delete category "${categoryName}" as it's currently in use by one or more articles.`)
       return
     }
-    setNewsCategories(prev => prev.filter(c => c !== categoryName))
-    alert('✅ News category deleted successfully!')
-  }
-
-  // Publication Type Handlers
-  const handleAddPublicationType = (type: string) => {
-    if (type && !publicationTypes.includes(type)) {
-      setPublicationTypes(prev => [...prev, type].sort())
-      alert('✅ Publication type added successfully!')
+    
+    try {
+      console.log('💾 Deleting news category from database:', categoryName)
+      await dataService.deleteNewsCategory(categoryName)
+      setNewsCategories(prev => prev.filter(c => c !== categoryName))
+      alert('✅ News category deleted successfully!')
+    } catch (error) {
+      console.error('Failed to delete news category:', error)
+      alert('❌ Failed to delete news category. Please try again.')
     }
   }
 
-  const handleUpdatePublicationType = (oldName: string, newName: string) => {
+  // Publication Type Handlers
+  const handleAddPublicationType = async (type: string) => {
+    if (type && !publicationTypes.includes(type)) {
+      try {
+        console.log('💾 Adding publication type to database:', type)
+        await dataService.createPublicationType(type)
+        setPublicationTypes(prev => [...prev, type].sort())
+        alert('✅ Publication type added successfully!')
+      } catch (error) {
+        console.error('Failed to add publication type:', error)
+        alert('❌ Failed to add publication type. Please try again.')
+      }
+    }
+  }
+
+  const handleUpdatePublicationType = async (oldName: string, newName: string) => {
     if (newName && !publicationTypes.includes(newName)) {
-      setPublicationTypes(prev => 
-        prev.map(t => t === oldName ? newName : t).sort()
-      )
-      setPublications(prevPubs => 
-        prevPubs.map(pub => 
-          pub.category === oldName ? { ...pub, category: newName } : pub
+      try {
+        console.log('💾 Updating publication type in database:', { oldName, newName })
+        await dataService.updatePublicationType(oldName, newName)
+        
+        setPublicationTypes(prev => 
+          prev.map(t => t === oldName ? newName : t).sort()
         )
-      )
-      alert('✅ Publication type updated successfully!')
+        setPublications(prevPubs => 
+          prevPubs.map(pub => 
+            pub.category === oldName ? { ...pub, category: newName } : pub
+          )
+        )
+        alert('✅ Publication type updated successfully!')
+      } catch (error) {
+        console.error('Failed to update publication type:', error)
+        alert('❌ Failed to update publication type. Please try again.')
+      }
     } else if (newName !== oldName) {
       alert(`Publication type "${newName}" already exists.`)
     }
   }
 
-  const handleDeletePublicationType = (typeName: string) => {
+  const handleDeletePublicationType = async (typeName: string) => {
     const isTypeInUse = publications.some(pub => pub.category === typeName)
     if (isTypeInUse) {
       alert(`Cannot delete type "${typeName}" as it's currently in use by one or more publications.`)
       return
     }
-    setPublicationTypes(prev => prev.filter(t => t !== typeName))
-    alert('✅ Publication type deleted successfully!')
+    
+    try {
+      console.log('💾 Deleting publication type from database:', typeName)
+      await dataService.deletePublicationType(typeName)
+      setPublicationTypes(prev => prev.filter(t => t !== typeName))
+      alert('✅ Publication type deleted successfully!')
+    } catch (error) {
+      console.error('Failed to delete publication type:', error)
+      alert('❌ Failed to delete publication type. Please try again.')
+    }
   }
 
   // Draft Approval Handlers

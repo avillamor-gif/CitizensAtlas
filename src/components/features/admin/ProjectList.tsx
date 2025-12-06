@@ -133,14 +133,20 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onAddProject, onUpd
                         </thead>
                         <tbody>
                             {paginatedItems.map(project => {
-                                const status = project.details.match(/\*\*Project Status:\*\*(.*)/)?.[1]?.trim() || 'N/A';
-                                const displayDate = project.publishDate || (project.submittedAt 
-                                    ? new Date(project.submittedAt).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short', 
-                                        day: 'numeric'
-                                    })
-                                    : 'N/A');
+                                // Status is now a direct field in the optimized query
+                                let displayDate = 'N/A';
+                                if (project.publishDate) {
+                                    displayDate = project.publishDate;
+                                } else if (project.submittedAt) {
+                                    const date = new Date(project.submittedAt);
+                                    if (!isNaN(date.getTime())) {
+                                        displayDate = date.toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short', 
+                                            day: 'numeric'
+                                        });
+                                    }
+                                }
                                 return (
                                     <tr key={project.id} className={`border-b transition-colors ${selectedItems.includes(project.id) ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
                                         <td className="px-6 py-4">

@@ -19,7 +19,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
             className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-yellow rounded-lg"
         >
             <div className="bg-gray-300 h-40 mb-2 overflow-hidden rounded-lg relative">
-                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+                <img src={item.imageUrl || 'https://picsum.photos/400/300'} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
                 {isVideo && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all duration-300">
                         <div className="bg-white bg-opacity-90 rounded-full p-3 group-hover:scale-110 transition-transform duration-300">

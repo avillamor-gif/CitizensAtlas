@@ -93,7 +93,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                     ) : (
                         <div className="mb-8">
                             <img 
-                                src={article.imageUrl} 
+                                src={article.imageUrl || 'https://picsum.photos/800/500'} 
                                 alt={article.title}
                                 className="w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
                             />

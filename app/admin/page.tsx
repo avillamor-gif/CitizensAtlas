@@ -19,48 +19,149 @@ export default function Admin() {
   const [videoCategories, setVideoCategories] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
+  
+  // Track what data has been loaded to prevent redundant fetches
+  const [loadedData, setLoadedData] = useState({
+    projects: false,
+    news: false,
+    publications: false,
+    videos: false,
+    categories: false
+  })
 
   // Load data when component mounts or user changes
   useEffect(() => {
     if (!authLoading) {
-      loadData()
+      // Only load categories initially - they're small and always needed
+      loadCategories()
     }
   }, [authLoading, user])
 
-  const loadData = async () => {
+  const loadCategories = async () => {
+    if (loadedData.categories) return // Already loaded
+    
     try {
-      console.log('📥 Admin: Loading data...')
-      console.log('🔍 Admin: Environment check:', {
-        hasURL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-        hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL,
-        keyPrefix: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20)
-      })
-      console.log('🔍 Admin: Current user:', { 
-        id: user?.id, 
-        email: user?.email, 
-        role: user?.role,
-        hasAuthToken: !!localStorage.getItem('atlas-auth-token')
-      })
-      
+      console.log('📥 Admin: Loading categories...')
       setLoading(true)
       setLoadError(null)
       
-      // Create timeout promise
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Data loading timeout after 15 seconds')), 15000)
-      })
-      
-      // Race between data loading and timeout
-      const dataPromise = Promise.all([
-        DataService.getProjects(),
-        DataService.getNews(),
-        DataService.getPublications(),
-        DataService.getVideos(),
+      const [newsCatsData, pubTypesData, videoCatsData] = await Promise.all([
         DataService.getNewsCategories(),
         DataService.getPublicationTypes(),
         DataService.getVideoCategories()
       ])
+
+      setNewsCategories(newsCatsData)
+      setPublicationTypes(pubTypesData)
+      setVideoCategories(videoCatsData)
+      setLoadedData(prev => ({ ...prev, categories: true }))
+      
+      console.log('✅ Admin: Categories loaded', {
+        newsCategories: newsCatsData.length,
+        publicationTypes: pubTypesData.length,
+        videoCategories: videoCatsData.length
+      })
+    } catch (error) {
+      console.error('❌ Admin: Error loading categories:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Load projects on-demand
+  const loadProjects = async () => {
+    if (loadedData.projects) return // Already loaded
+    
+    try {
+      console.log('📥 Admin: Loading projects...')
+      const projectsData = await DataService.getProjects()
+      setProjects(projectsData)
+      setLoadedData(prev => ({ ...prev, projects: true }))
+      console.log('✅ Admin: Projects loaded:', projectsData.length)
+    } catch (error) {
+      console.error('❌ Admin: Error loading projects:', error)
+      throw error
+    }
+  }
+
+  // Load news on-demand
+  const loadNews = async () => {
+    if (loadedData.news) return // Already loaded
+    
+    try {
+      console.log('📥 Admin: Loading news...')
+      const newsData = await DataService.getNews()
+      setNews(newsData)
+      setLoadedData(prev => ({ ...prev, news: true }))
+      console.log('✅ Admin: News loaded:', newsData.length)
+    } catch (error) {
+      console.error('❌ Admin: Error loading news:', error)
+      throw error
+    }
+  }
+
+  // Load publications on-demand
+  const loadPublications = async () => {
+    if (loadedData.publications) return // Already loaded
+    
+    try {
+      console.log('📥 Admin: Loading publications...')
+      const publicationsData = await DataService.getPublications()
+      setPublications(publicationsData)
+      setLoadedData(prev => ({ ...prev, publications: true }))
+      console.log('✅ Admin: Publications loaded:', publicationsData.length)
+    } catch (error) {
+      console.error('❌ Admin: Error loading publications:', error)
+      throw error
+    }
+  }
+
+  // Load videos on-demand
+  const loadVideos = async () => {
+    if (loadedData.videos) return // Already loaded
+    
+    try {
+      console.log('📥 Admin: Loading videos...')
+      const videosData = await DataService.getVideos()
+      setVideos(videosData)
+      setLoadedData(prev => ({ ...prev, videos: true }))
+      console.log('✅ Admin: Videos loaded:', videosData.length)
+    } catch (error) {
+      console.error('❌ Admin: Error loading videos:', error)
+      throw error
+    }
+  }
+
+  // Reload specific data type after mutation
+  const reloadData = async (type: 'projects' | 'news' | 'publications' | 'videos' | 'categories') => {
+    setLoadedData(prev => ({ ...prev, [type]: false }))
+    
+    switch (type) {
+      case 'projects':
+        await loadProjects()
+        break
+      case 'news':
+        await loadNews()
+        break
+      case 'publications':
+        await loadPublications()
+        break
+      case 'videos':
+        await loadVideos()
+        break
+      case 'categories':
+        await loadCategories()
+        break
+    }
+  }
+
+  const loadData = async () => {
+    // This function now loads ALL data - used for initial load or full refresh
+    // In normal operation, use specific load functions instead
+    try {
+      console.log('� Admin: Loading all data...')
+      setLoading(true)
+      setLoadError(null)
       
       const [
         projectsData,
@@ -70,15 +171,15 @@ export default function Admin() {
         newsCatsData,
         pubTypesData,
         videoCatsData
-      ] = await Promise.race([dataPromise, timeoutPromise]) as [
-        Project[],
-        Article[],
-        Article[],
-        Article[],
-        string[],
-        string[],
-        string[]
-      ]
+      ] = await Promise.all([
+        DataService.getProjects(),
+        DataService.getNews(),
+        DataService.getPublications(),
+        DataService.getVideos(),
+        DataService.getNewsCategories(),
+        DataService.getPublicationTypes(),
+        DataService.getVideoCategories()
+      ])
 
       setProjects(projectsData)
       setNews(newsData)
@@ -87,31 +188,20 @@ export default function Admin() {
       setNewsCategories(newsCatsData)
       setPublicationTypes(pubTypesData)
       setVideoCategories(videoCatsData)
-      
-      console.log('✅ Admin: Data loaded successfully', {
-        projects: projectsData.length,
-        news: newsData.length,
-        publications: publicationsData.length,
-        videos: videosData.length,
-        categories: newsCatsData.length,
-        types: pubTypesData.length,
-        videoCategories: videoCatsData.length
+      setLoadedData({
+        projects: true,
+        news: true,
+        publications: true,
+        videos: true,
+        categories: true
       })
+      
+      console.log('✅ Admin: All data loaded')
     } catch (error) {
       console.error('❌ Admin: Error loading data:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to load data'
       setLoadError(errorMessage)
-      
-      // Set empty data on error so dashboard can still render
-      setProjects([])
-      setNews([])
-      setPublications([])
-      setVideos([])
-      setNewsCategories([])
-      setPublicationTypes([])
-      setVideoCategories([])
     } finally {
-      // Always clear loading state, even on error
       setLoading(false)
     }
   }
@@ -160,7 +250,7 @@ export default function Admin() {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center max-w-md p-6">
-          <div className="text-blue-600 mb-4">
+          <div className="mb-4" style={{ color: '#102447' }}>
             <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
@@ -169,7 +259,10 @@ export default function Admin() {
           <p className="text-gray-600 mb-4">Please log in with an admin account to access the dashboard.</p>
           <button
             onClick={() => router.push('/?showLogin=true')}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="w-full px-4 py-2 text-white rounded-md transition-colors"
+            style={{ backgroundColor: '#102447' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0a1830'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#102447'}
           >
             Go to Login
           </button>
@@ -214,12 +307,13 @@ export default function Admin() {
       <AdminDashboard 
         onNavigateToPublic={handleNavigateFromPath}
         projects={projects}
+        onLoadProjects={loadProjects}
         onAddProject={async (projectData) => {
           try {
             console.log('📤 Admin page: Creating project...')
             await DataService.createProject(projectData)
-            console.log('✅ Admin page: Project created, reloading data...')
-            await loadData()
+            console.log('✅ Admin page: Project created, reloading projects...')
+            await reloadData('projects')
             alert('✅ Project created successfully!')
           } catch (error) {
             console.error('❌ Admin page: Error creating project:', error)
@@ -229,20 +323,36 @@ export default function Admin() {
         }}
         onUpdateProject={async (project) => {
           await DataService.updateProject(project.id, project)
-          await loadData()
+          await reloadData('projects')
         }}
         onDeleteProjects={async (projectIds) => {
           await DataService.deleteProjects(projectIds)
-          await loadData()
+          await reloadData('projects')
         }}
         news={news}
+        onLoadNews={loadNews}
         onAddNews={async (articleData) => {
           try {
             console.log('📤 Admin page: Creating news...')
-            const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            console.log('📋 ArticleData received (FULL):', {
+              title: articleData.title,
+              category: articleData.category,
+              description: articleData.description?.substring(0, 100) + '...',
+              imageUrl: articleData.imageUrl,
+              tagColor: articleData.tagColor,
+              tags: articleData.tags,
+              publishDate: articleData.publishDate,
+              status: articleData.status,
+              submittedBy: articleData.submittedBy,
+              submittedAt: articleData.submittedAt,
+              allKeys: Object.keys(articleData)
+            })
+            const baseSlug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            const slug = `${baseSlug}-${Date.now()}`
+            console.log('📝 Data being sent to DataService.createNews:', { ...articleData, slug })
             await DataService.createNews({ ...articleData, slug })
-            console.log('✅ Admin page: News created, reloading data...')
-            await loadData()
+            console.log('✅ Admin page: News created, reloading news...')
+            await reloadData('news')
             alert('✅ News created successfully!')
           } catch (error) {
             console.error('❌ Admin page: Error creating news:', error)
@@ -252,33 +362,35 @@ export default function Admin() {
         }}
         onUpdateNews={async (article) => {
           await DataService.updateNews(article.id!, article)
-          await loadData()
+          await reloadData('news')
         }}
         onDeleteNews={async (articleIds) => {
           await DataService.deleteNews(articleIds)
-          await loadData()
+          await reloadData('news')
         }}
         newsCategories={newsCategories}
         onAddNewsCategory={async (category) => {
           await DataService.createNewsCategory(category)
-          await loadData()
+          await reloadData('categories')
         }}
         onUpdateNewsCategory={async (oldName, newName) => {
           await DataService.updateNewsCategory(oldName, newName)
-          await loadData()
+          await reloadData('categories')
         }}
         onDeleteNewsCategory={async (categoryName) => {
           await DataService.deleteNewsCategory(categoryName)
-          await loadData()
+          await reloadData('categories')
         }}
         publications={publications}
+        onLoadPublications={loadPublications}
         onAddPublication={async (articleData) => {
           try {
             console.log('📤 Admin page: Creating publication...')
-            const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            const baseSlug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            const slug = `${baseSlug}-${Date.now()}`
             await DataService.createPublication({ ...articleData, slug })
-            console.log('✅ Admin page: Publication created, reloading data...')
-            await loadData()
+            console.log('✅ Admin page: Publication created, reloading publications...')
+            await reloadData('publications')
             alert('✅ Publication created successfully!')
           } catch (error) {
             console.error('❌ Admin page: Error creating publication:', error)
@@ -288,33 +400,35 @@ export default function Admin() {
         }}
         onUpdatePublication={async (article) => {
           await DataService.updatePublication(article.id!, article)
-          await loadData()
+          await reloadData('publications')
         }}
         onDeletePublications={async (articleIds) => {
           await DataService.deletePublications(articleIds)
-          await loadData()
+          await reloadData('publications')
         }}
         publicationTypes={publicationTypes}
         onAddPublicationType={async (type) => {
           await DataService.createPublicationType(type)
-          await loadData()
+          await reloadData('categories')
         }}
         onUpdatePublicationType={async (oldName, newName) => {
           await DataService.updatePublicationType(oldName, newName)
-          await loadData()
+          await reloadData('categories')
         }}
         onDeletePublicationType={async (typeName) => {
           await DataService.deletePublicationType(typeName)
-          await loadData()
+          await reloadData('categories')
         }}
         videos={videos}
+        onLoadVideos={loadVideos}
         onAddVideo={async (articleData) => {
           try {
             console.log('📤 Admin page: Creating video...')
-            const slug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            const baseSlug = articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            const slug = `${baseSlug}-${Date.now()}`
             await DataService.createVideo({ ...articleData, slug })
-            console.log('✅ Admin page: Video created, reloading data...')
-            await loadData()
+            console.log('✅ Admin page: Video created, reloading videos...')
+            await reloadData('videos')
             alert('✅ Video created successfully!')
           } catch (error) {
             console.error('❌ Admin page: Error creating video:', error)
@@ -324,59 +438,60 @@ export default function Admin() {
         }}
         onUpdateVideo={async (article) => {
           await DataService.updateVideo(article.id!, article)
-          await loadData()
+          await reloadData('videos')
         }}
         onDeleteVideos={async (articleIds) => {
           await DataService.deleteVideos(articleIds)
-          await loadData()
+          await reloadData('videos')
         }}
         videoCategories={videoCategories}
         onAddVideoCategory={async (category) => {
           await DataService.createVideoCategory(category)
-          await loadData()
+          await reloadData('categories')
         }}
         onUpdateVideoCategory={async (oldName, newName) => {
           await DataService.updateVideoCategory(oldName, newName)
-          await loadData()
+          await reloadData('categories')
         }}
         onDeleteVideoCategory={async (categoryName) => {
           await DataService.deleteVideoCategory(categoryName)
-          await loadData()
+          await reloadData('categories')
         }}
         onApproveDraft={async (item) => {
           try {
             console.log('✅ Admin: Approving draft:', item)
             
-            // Update the item's status to 'published' based on its type
             switch (item.type) {
               case 'project':
                 const project = projects.find(p => p.id === item.id)
                 if (project) {
                   await DataService.updateProject(item.id, { ...project, status: 'published' })
+                  await reloadData('projects')
                 }
                 break
               case 'news':
                 const newsItem = news.find(n => n.id === item.id)
                 if (newsItem) {
                   await DataService.updateNews(item.id, { ...newsItem, status: 'published' })
+                  await reloadData('news')
                 }
                 break
               case 'publication':
                 const publication = publications.find(p => p.id === item.id)
                 if (publication) {
                   await DataService.updatePublication(item.id, { ...publication, status: 'published' })
+                  await reloadData('publications')
                 }
                 break
               case 'video':
                 const video = videos.find(v => v.id === item.id)
                 if (video) {
                   await DataService.updateVideo(item.id, { ...video, status: 'published' })
+                  await reloadData('videos')
                 }
                 break
             }
             
-            // Reload data to reflect the changes
-            await loadData()
             alert(`✅ "${item.title}" has been approved and published!`)
           } catch (error) {
             console.error('❌ Admin: Error approving draft:', error)
@@ -387,24 +502,25 @@ export default function Admin() {
           try {
             console.log('🗑️ Admin: Rejecting/deleting draft:', item)
             
-            // Delete the item based on its type
             switch (item.type) {
               case 'project':
                 await DataService.deleteProjects([item.id])
+                await reloadData('projects')
                 break
               case 'news':
                 await DataService.deleteNews([item.id])
+                await reloadData('news')
                 break
               case 'publication':
                 await DataService.deletePublications([item.id])
+                await reloadData('publications')
                 break
               case 'video':
                 await DataService.deleteVideos([item.id])
+                await reloadData('videos')
                 break
             }
             
-            // Reload data to reflect the changes
-            await loadData()
             alert(`🗑️ "${item.title}" has been rejected and deleted.`)
           } catch (error) {
             console.error('❌ Admin: Error rejecting draft:', error)

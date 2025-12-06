@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Select,
   SelectContent,
@@ -332,6 +333,7 @@ const emptyFormState = {
 };
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, projectToEdit, isModal = true, onAddProject, onUpdateProject, prefilledLocation, userRole = 'contributor' }) => {
+    const { user } = useAuth();
     const isEditMode = Boolean(projectToEdit);
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
     const [formData, setFormData] = useState({ ...emptyFormState, publishDate: today });
@@ -620,8 +622,18 @@ ${references}
             latitude: parseFloat(latitude) || 0,
             longitude: parseFloat(longitude) || 0,
             status: (userRole === 'admin' || userRole === 'super-admin') ? 'published' as const : 'draft' as const,
+            submittedBy: user?.email || 'unknown',
+            submittedAt: new Date().toISOString(),
         };
 
+        console.log('🔍 ProjectForm Debug:', {
+            user: user,
+            userRole: userRole,
+            userEmail: user?.email,
+            status: projectData.status,
+            submittedBy: projectData.submittedBy,
+            submittedAt: projectData.submittedAt
+        });
         console.log('Project data to save:', projectData);
 
         if (isEditMode && projectToEdit && onUpdateProject) {

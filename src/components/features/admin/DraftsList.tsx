@@ -49,7 +49,12 @@ const DraftsList: React.FC<DraftsListProps> = ({
     console.log('  Draft News:', news.filter(n => n.status === 'draft').length);
     console.log('  All Drafts:', allDrafts.length);
     console.log('  Filter Type:', filterType);
-    console.log('  News items:', news.map(n => ({ id: n.id, title: n.title, status: n.status })));
+    
+    // Detailed status breakdown for ALL news items
+    console.log('  📰 NEWS STATUS BREAKDOWN:');
+    news.forEach(n => {
+      console.log(`    ID ${n.id}: status="${n.status}" (type: ${typeof n.status}) - "${n.title?.substring(0, 30)}..."`);
+    });
 
     const {
         paginatedItems,
@@ -155,7 +160,7 @@ const DraftsList: React.FC<DraftsListProps> = ({
                                     <tr key={`${item.type}-${item.id}`} className={`border-b transition-colors ${selectedItems.includes(item.id) ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
                                         <td className="px-6 py-4 font-medium max-w-sm truncate">{item.title}</td>
                                         <td className="px-6 py-4">{item.submittedBy || 'Unknown'}</td>
-                                        <td className="px-6 py-4">{item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}</td>
+                                        <td className="px-6 py-4">{item.submittedAt ? (() => { const d = new Date(item.submittedAt); return isNaN(d.getTime()) ? 'Invalid Date' : d.toLocaleDateString(); })() : 'N/A'}</td>
                                         <td className="px-6 py-4 font-semibold capitalize">
                                             {item.type === 'project' && 'Projects'}
                                             {item.type === 'news' && 'News Updates'}

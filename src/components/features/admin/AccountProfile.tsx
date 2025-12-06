@@ -176,10 +176,26 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
         avatar_url: formData.avatar_url,
       })
 
+      // Update the cached profile in localStorage to reflect changes immediately
+      const cachedProfile = localStorage.getItem('atlas-user-profile')
+      if (cachedProfile) {
+        const profile = JSON.parse(cachedProfile)
+        profile.full_name = formData.full_name
+        profile.avatar_url = formData.avatar_url
+        localStorage.setItem('atlas-user-profile', JSON.stringify(profile))
+      }
+
+      // Dispatch a custom event to trigger auth context refresh
+      window.dispatchEvent(new CustomEvent('profile-updated', {
+        detail: {
+          full_name: formData.full_name,
+          avatar_url: formData.avatar_url
+        }
+      }))
+
       alert('Profile updated successfully!')
       
-      // Reload the page to refresh the auth context and update all avatars
-      window.location.reload()
+      // No page reload - stay on the current page
     } catch (error) {
       console.error('Error updating profile:', error)
       alert('Failed to update profile. Please try again.')

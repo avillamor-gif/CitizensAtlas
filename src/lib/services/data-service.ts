@@ -16,23 +16,12 @@ import * as supabaseService from './supabase-service'
 
 // Check if Supabase is configured
 const isSupabaseConfigured = () => {
-  const configured = !!(
+  return !!(
     typeof window !== 'undefined' &&
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
     process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://your-project-id.supabase.co'
   )
-  
-  if (typeof window !== 'undefined') {
-    console.log('🔍 Supabase configuration check:', {
-      configured,
-      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      url: process.env.NEXT_PUBLIC_SUPABASE_URL
-    })
-  }
-  
-  return configured
 }
 
 // ============================================
@@ -41,8 +30,28 @@ const isSupabaseConfigured = () => {
 export async function getPublishedProjects(): Promise<Project[]> {
   if (isSupabaseConfigured()) {
     try {
-      console.log('🌍 [Data Service] Getting published projects for public view')
       return await supabaseService.getPublishedProjects()
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage - filter published only
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_projects')
+    if (stored) {
+      const projects: Project[] = JSON.parse(stored)
+      return projects.filter(p => p.status === 'published' || p.status === undefined)
+    }
+  }
+  return []
+}
+
+// Get published projects WITH FULL DETAILS (for public map)
+export async function getPublishedProjectsWithDetails(): Promise<Project[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getPublishedProjectsWithDetails()
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
     }
@@ -62,7 +71,6 @@ export async function getPublishedProjects(): Promise<Project[]> {
 export async function getPublishedNews(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      console.log('🌍 [Data Service] Getting published news for public view')
       return await supabaseService.getPublishedNews()
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
@@ -83,7 +91,6 @@ export async function getPublishedNews(): Promise<Article[]> {
 export async function getPublishedPublications(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      console.log('🌍 [Data Service] Getting published publications for public view')
       return await supabaseService.getPublishedPublications()
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
@@ -104,7 +111,6 @@ export async function getPublishedPublications(): Promise<Article[]> {
 export async function getPublishedVideos(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
     try {
-      console.log('🌍 [Data Service] Getting published videos for public view')
       return await supabaseService.getPublishedVideos()
     } catch (error) {
       console.warn('Supabase error, falling back to localStorage:', error)
@@ -218,6 +224,21 @@ export async function deleteProjects(ids: number[]): Promise<void> {
   if (typeof window !== 'undefined') {
     localStorage.setItem('atlas_projects', JSON.stringify(filtered))
   }
+}
+
+// Get single project with full details (for editing)
+export async function getProjectById(id: number): Promise<Project | null> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getProjectById(id)
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage
+  const projects = await getProjects()
+  return projects.find(p => p.id === id) || null
 }
 
 // ============================================
@@ -352,6 +373,21 @@ export async function deleteNews(ids: number[]): Promise<void> {
   }
 }
 
+// Get single news article with full details (for editing)
+export async function getNewsById(id: number): Promise<Article | null> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getNewsById(id)
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage
+  const news = await getNews()
+  return news.find(n => n.id === id) || null
+}
+
 // ============================================
 // PUBLICATIONS
 // ============================================
@@ -478,6 +514,21 @@ export async function deletePublications(ids: number[]): Promise<void> {
     }))
     localStorage.setItem('atlas_publications', JSON.stringify(minimalPubs))
   }
+}
+
+// Get single publication with full details (for editing)
+export async function getPublicationById(id: number): Promise<Article | null> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getPublicationById(id)
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage
+  const publications = await getPublications()
+  return publications.find(p => p.id === id) || null
 }
 
 export async function incrementDownloadCount(id: number): Promise<void> {
@@ -610,6 +661,21 @@ export async function deleteVideos(ids: number[]): Promise<void> {
   if (typeof window !== 'undefined') {
     localStorage.setItem('atlas_videos', JSON.stringify(filtered))
   }
+}
+
+// Get single video with full details (for editing)
+export async function getVideoById(id: number): Promise<Article | null> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getVideoById(id)
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage
+  const videos = await getVideos()
+  return videos.find(v => v.id === id) || null
 }
 
 // ============================================

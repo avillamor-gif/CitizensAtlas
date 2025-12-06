@@ -204,10 +204,10 @@ function AcceptInviteContent() {
       console.log('⏳ Waiting for auth state to propagate...');
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('🔄 Redirecting to dashboard...');
+      console.log('🔄 Redirecting to admin dashboard...');
       
-      // Redirect to admin dashboard
-      router.push('/?admin=true');
+      // Redirect to dedicated admin page
+      router.push('/admin');
     } catch (err: any) {
       console.error('Accept invite error:', err);
       setError(err.message || 'Failed to accept invitation');

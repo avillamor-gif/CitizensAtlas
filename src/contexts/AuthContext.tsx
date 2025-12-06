@@ -216,14 +216,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('🔄 Auth state change:', event, session ? 'Session exists' : 'No session');
         
         // Only handle specific events that require action
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          console.log('✅ Handling auth event:', event);
+        if (event === 'SIGNED_IN') {
+          console.log('✅ Handling auth event: SIGNED_IN');
           setSession(session);
           setSupabaseUser(session?.user ?? null);
           
           if (session?.user) {
             await fetchUserProfile(session.user);
           }
+        } else if (event === 'TOKEN_REFRESHED') {
+          // On token refresh, just update session without re-fetching profile
+          console.log('🔄 Token refreshed, updating session only (keeping cached profile)');
+          setSession(session);
+          setSupabaseUser(session?.user ?? null);
+          // Don't fetch profile again - use cached data
         } else if (event === 'SIGNED_OUT') {
           console.log('🚪 User signed out');
           setSession(null);
@@ -240,11 +246,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setupAuthListener();
     initializeAuth();
 
+    // Listen for profile updates from AccountProfile component
+    const handleProfileUpdate = (event: CustomEvent) => {
+      if (user) {
+        const updatedUser = {
+          ...user,
+          full_name: event.detail.full_name,
+          avatar_url: event.detail.avatar_url,
+          name: event.detail.full_name || user.name,
+        };
+        setUser(updatedUser);
+        console.log('✅ AuthContext: Profile updated from event', updatedUser);
+      }
+    };
+
+    window.addEventListener('profile-updated', handleProfileUpdate as EventListener);
+
     return () => {
       mounted = false;
       if (authSubscription) {
         authSubscription.unsubscribe();
       }
+      window.removeEventListener('profile-updated', handleProfileUpdate as EventListener);
     };
   }, []);
 
@@ -281,15 +304,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       console.log('🚪 Signing out...');
-      setUserWithPersistence(null); // Clear user from state and localStorage
+      
+      // Clear Supabase auth session first
+      await supabase.auth.signOut();
+      
+      // Clear all auth-related data from localStorage
+      localStorage.removeItem('atlas-auth-token');
+      localStorage.removeItem('atlas-user-profile');
+      
+      // Clear state
+      setUserWithPersistence(null);
       setSupabaseUser(null);
       setSession(null);
-      await supabase.auth.signOut();
-      console.log('✅ Signed out successfully');
-      // Redirect to home page
+      
+      console.log('✅ Signed out successfully - all data cleared');
+      
+      // Force redirect to home page
       window.location.href = '/';
     } catch (error) {
       console.error('❌ Sign out error:', error);
+      // Even if there's an error, try to clear local state and redirect
+      localStorage.removeItem('atlas-auth-token');
+      localStorage.removeItem('atlas-user-profile');
+      setUser(null);
+      setSupabaseUser(null);
+      setSession(null);
+      window.location.href = '/';
     }
   };
 

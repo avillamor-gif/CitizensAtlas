@@ -53,24 +53,6 @@ export function NavUser({
       .slice(0, 2)
   }
 
-  const handleLogout = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    
-    console.log('NavUser: Logout clicked')
-    
-    try {
-      await signOut()
-      console.log('NavUser: signOut completed')
-    } catch (error) {
-      console.error('NavUser: Error logging out:', error)
-    }
-    
-    // Always redirect after logout attempt
-    console.log('NavUser: Redirecting to home...')
-    window.location.href = '/'
-  }
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -124,16 +106,8 @@ export function NavUser({
             <DropdownMenuItem 
               onSelect={async (e) => {
                 e.preventDefault();
-                console.log('NavUser: Logout menu item clicked');
-                try {
-                  await signOut();
-                  console.log('NavUser: signOut completed');
-                } catch (error) {
-                  console.error('NavUser: Error logging out:', error);
-                }
-                // Always redirect after logout attempt
-                console.log('NavUser: Redirecting to home...');
-                window.location.href = '/';
+                console.log('NavUser: Logout clicked - calling signOut...');
+                await signOut(); // signOut handles everything including redirect
               }}
               className="cursor-pointer"
             >

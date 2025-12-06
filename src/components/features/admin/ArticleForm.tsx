@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Select,
   SelectContent,
@@ -55,11 +56,13 @@ const emptyFormState = {
 const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, itemToEdit, itemType, categories, onAddCategory, isModal = true, userRole = 'contributor' }) => {
     console.log('🎨 [ArticleForm] Component mounted/updated:', { itemType, isModal, userRole, hasItemToEdit: !!itemToEdit });
     
+    const { user } = useAuth();
     const isEditMode = Boolean(itemToEdit);
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
     const [formData, setFormData] = useState({ ...emptyFormState, publishDate: today });
     const [showAddCategory, setShowAddCategory] = useState(false);
     const [newCategory, setNewCategory] = useState('');
+    const [saveAsDraft, setSaveAsDraft] = useState(false); // New state for draft override
     
     // State for managing news categories (like ProjectForm)
     const [newsCategories, setNewsCategories] = useState<string[]>(categories || ['Breaking News', 'Politics', 'Environment', 'N/A']);
@@ -78,10 +81,20 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
     useEffect(() => {
         if (isEditMode && itemToEdit) {
+            console.log('🔄 [ArticleForm useEffect] Loading item to edit:', {
+                id: itemToEdit.id,
+                title: itemToEdit.title,
+                category: itemToEdit.category,
+                imageUrl: itemToEdit.imageUrl,
+                description: itemToEdit.description?.substring(0, 100),
+                tagColor: itemToEdit.tagColor,
+                tags: itemToEdit.tags,
+                allKeys: Object.keys(itemToEdit)
+            });
             setFormData({
                 title: itemToEdit.title,
                 description: itemToEdit.description || '',
-                category: itemToEdit.category,
+                category: itemToEdit.category || '', // Ensure always string, never undefined
                 imageUrl: itemToEdit.imageUrl,
                 tagColor: itemToEdit.tagColor,
                 tags: itemToEdit.tags || [],
@@ -90,6 +103,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 imageFile: null,
                 docFiles: null,
             });
+            console.log('✅ [ArticleForm useEffect] Form data set with category:', itemToEdit.category);
         } else {
             setFormData({ ...emptyFormState, publishDate: today });
         }
@@ -225,13 +239,18 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
         console.log('🚀 [handleSubmit] START - Form submission triggered!', { itemType, isEditMode, userRole });
         e.preventDefault();
         console.log('✋ [handleSubmit] preventDefault() called');
-        console.log('📊 [handleSubmit] Form data:', {
+        console.log('📊 [handleSubmit] Current formData state:', {
             title: formData.title,
             category: formData.category,
+            categoryLength: formData.category?.length,
+            categoryType: typeof formData.category,
             hasImage: !!formData.imageUrl || !!formData.imageFile,
             videoUrl: formData.videoUrl,
             tags: formData.tags,
-            publishDate: formData.publishDate
+            tagColor: formData.tagColor,
+            publishDate: formData.publishDate,
+            description: formData.description?.substring(0, 50) + '...',
+            allKeys: Object.keys(formData)
         });
         
         try {
@@ -293,8 +312,35 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 tags: formData.tags,
                 publishDate: formData.publishDate,
                 videoUrl: formData.videoUrl || undefined,
-                status: (userRole === 'admin' || userRole === 'super-admin') ? 'published' as const : 'draft' as const,
+                // Override logic: use draft if checkbox is checked, otherwise use role-based logic
+                status: (saveAsDraft || (userRole !== 'admin' && userRole !== 'super-admin')) ? 'draft' as const : 'published' as const,
+                submittedBy: user?.email || 'unknown',
+                submittedAt: new Date().toISOString(),
             };
+
+            console.log('📦 [handleSubmit] articleData built:', {
+                title: articleData.title,
+                category: articleData.category,
+                categoryExists: articleData.category !== undefined && articleData.category !== null && articleData.category !== '',
+                categoryValue: `"${articleData.category}"`,
+                description: articleData.description?.substring(0, 50),
+                imageUrl: articleData.imageUrl,
+                tagColor: articleData.tagColor,
+                tags: articleData.tags,
+                publishDate: articleData.publishDate,
+                status: articleData.status,
+                allKeys: Object.keys(articleData)
+            });
+
+            console.log('🔍 ArticleForm Debug:', {
+                user: user,
+                userRole: userRole,
+                userEmail: user?.email,
+                saveAsDraft: saveAsDraft,
+                finalStatus: articleData.status,
+                submittedBy: articleData.submittedBy,
+                submittedAt: articleData.submittedAt
+            });
 
             // Only add document fields for Publications
             if (itemType === 'Publication') {
@@ -309,10 +355,28 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             console.log('Article data to save:', articleData);
 
             if (isEditMode && itemToEdit) {
-                console.log('Calling onUpdate');
+                console.log('📤 [ArticleForm] Calling onUpdate with:', {
+                    id: itemToEdit.id,
+                    title: articleData.title,
+                    category: articleData.category,
+                    imageUrl: articleData.imageUrl,
+                    description: articleData.description?.substring(0, 100),
+                    tagColor: articleData.tagColor,
+                    tags: articleData.tags,
+                    allKeys: Object.keys({ ...articleData, id: itemToEdit.id })
+                });
                 onUpdate({ ...articleData, id: itemToEdit.id });
             } else {
-                console.log('Calling onSubmit');
+                console.log('📤 [ArticleForm] Calling onSubmit with:', {
+                    title: articleData.title,
+                    category: articleData.category,
+                    categoryValue: `"${articleData.category}"`,
+                    imageUrl: articleData.imageUrl,
+                    description: articleData.description?.substring(0, 100),
+                    tagColor: articleData.tagColor,
+                    tags: articleData.tags,
+                    allKeys: Object.keys(articleData)
+                });
                 onSubmit(articleData);
             }
         } catch (error) {
@@ -362,7 +426,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         {itemType === 'Publication' || itemType === 'Video' ? (
                             <>
                                 <Select 
-                                    value={formData.category || undefined} 
+                                    value={formData.category || ''} 
                                     onValueChange={(value) => handleSelectChange('category', value)}
                                     required
                                 >
@@ -419,7 +483,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         ) : (
                             <>
                                 <Select 
-                                    value={formData.category || undefined} 
+                                    value={formData.category || ''} 
                                     onValueChange={(value) => handleSelectChange('category', value)}
                                     required
                                 >
@@ -604,6 +668,18 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         />
                     </div>
                     <div className="flex space-x-4">
+                        {/* Save as Draft checkbox for admins/super-admins */}
+                        {(userRole === 'admin' || userRole === 'super-admin') && !isEditMode && (
+                            <label className="flex items-center mr-auto">
+                                <input
+                                    type="checkbox"
+                                    checked={saveAsDraft}
+                                    onChange={(e) => setSaveAsDraft(e.target.checked)}
+                                    className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-sm text-gray-700">Save as Draft (requires approval)</span>
+                            </label>
+                        )}
                         {!isModal && (
                             <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">
                                 Back

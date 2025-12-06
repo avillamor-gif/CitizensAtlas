@@ -16,7 +16,46 @@ const supabase = getSupabase()
 // PROJECTS
 // ============================================
 
+// Get all projects WITH FULL DETAILS (for analytics)
+// NOTE: This fetches ALL fields including details - only use for analytics
+export async function getAllProjectsWithDetails() {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    // Fetch ALL fields for analytics (includes details field)
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=*&order=id.desc`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('[Supabase] Loaded', data.length, 'projects with full details for analytics')
+    return data as Project[]
+  } catch (error) {
+    console.error('Error in getAllProjectsWithDetails:', error)
+    throw error
+  }
+}
+
 // Get all projects (authenticated users only - for admin panel)
+// OPTIMIZED: Only fetch fields needed for list view, not full content
 export async function getProjects() {
   const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
   if (!authData) {
@@ -31,7 +70,9 @@ export async function getProjects() {
   }
   
   try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=*&order=id.desc`, {
+    // Only select fields needed for table display - exclude large content fields
+    const fields = 'id,title,country,status,submittedBy,submittedAt,publishDate,latitude,longitude'
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=${fields}&order=id.desc`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'apikey': SUPABASE_ANON_KEY
@@ -54,19 +95,39 @@ export async function getProjects() {
 export async function getPublishedProjects() {
   try {
     const supabase = getSupabase()
+    // OPTIMIZED: Server-side filtering + selective fields for faster queries
     const { data, error } = await supabase
       .from('projects')
-      .select('*')
+      .select('id,title,country,status,submittedBy,submittedAt,publishDate,latitude,longitude')
+      .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
     
     if (error) throw error
     
-    // Filter published projects client-side
-    const publishedProjects = (data || []).filter((p: any) => p.status === 'published' || p.status === undefined || p.status === null)
-    
-    return publishedProjects as Project[]
+    return (data || []) as Project[]
   } catch (error) {
     console.error('Error in getPublishedProjects:', error)
+    throw error
+  }
+}
+
+// Get published projects WITH FULL DETAILS (for public map with investment amounts)
+export async function getPublishedProjectsWithDetails() {
+  try {
+    const supabase = getSupabase()
+    // Fetch ALL fields for map visualization (includes details field for investment amounts)
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .or('status.eq.published,status.is.null')
+      .order('id', { ascending: false })
+    
+    if (error) throw error
+    
+    console.log('[Supabase] Loaded', data?.length || 0, 'published projects with full details for map')
+    return (data || []) as Project[]
+  } catch (error) {
+    console.error('Error in getPublishedProjectsWithDetails:', error)
     throw error
   }
 }
@@ -163,6 +224,42 @@ export async function deleteProjects(ids: number[]) {
   if (error) throw error
 }
 
+// Get single project with full details (for editing)
+export async function getProjectById(id: number) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    // Fetch ALL fields for a single project
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${id}&select=*`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    return Array.isArray(data) ? data[0] : data
+  } catch (error) {
+    console.error('Error in getProjectById:', error)
+    throw error
+  }
+}
+
 // ============================================
 // NEWS
 // ============================================
@@ -180,6 +277,8 @@ export async function getNews() {
   }
   
   try {
+    // Get all fields for admin editing
+    console.log('🔍 [getNews] Fetching news with auth token...')
     const response = await fetch(`${SUPABASE_URL}/rest/v1/news?select=*&order=id.desc`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -187,12 +286,27 @@ export async function getNews() {
       }
     })
     
+    console.log('📡 [getNews] Response:', response.status, response.statusText)
+    
     if (!response.ok) {
       const errorText = await response.text()
+      console.error('❌ [getNews] Error response:', errorText)
       throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
     
     const data = await response.json()
+    console.log('✅ [getNews] Fetched items:', data.length)
+    console.log('📋 [getNews] Status breakdown:', {
+      total: data.length,
+      published: data.filter((n: any) => n.status === 'published').length,
+      draft: data.filter((n: any) => n.status === 'draft').length,
+      null: data.filter((n: any) => !n.status).length,
+      draftItems: data.filter((n: any) => n.status === 'draft').map((n: any) => ({
+        id: n.id,
+        title: n.title,
+        submittedBy: n.submittedBy
+      }))
+    })
     return data as Article[]
   } catch (error) {
     console.error('Error in getNews:', error)
@@ -203,17 +317,16 @@ export async function getNews() {
 export async function getPublishedNews() {
   try {
     const supabase = getSupabase()
+    // Get all fields needed for display
     const { data, error } = await supabase
       .from('news')
       .select('*')
+      .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
     
     if (error) throw error
     
-    // Filter published news client-side
-    const publishedNews = (data || []).filter((n: any) => n.status === 'published' || n.status === undefined || n.status === null)
-    
-    return publishedNews as Article[]
+    return (data || []) as Article[]
   } catch (error) {
     console.error('Error in getPublishedNews:', error)
     throw error
@@ -234,6 +347,21 @@ export async function createNews(article: Omit<Article, 'id'>) {
   }
   
   try {
+    console.log('📝 [createNews] Full article data being sent:', {
+      title: article.title,
+      slug: article.slug,
+      category: article.category,
+      description: article.description?.substring(0, 100) + '...',
+      imageUrl: article.imageUrl,
+      tagColor: article.tagColor,
+      tags: article.tags,
+      publishDate: article.publishDate,
+      status: article.status,
+      submittedBy: article.submittedBy,
+      submittedAt: article.submittedAt
+    })
+    console.log('🔍 [createNews] Article keys:', Object.keys(article))
+    
     const response = await fetch(`${SUPABASE_URL}/rest/v1/news`, {
       method: 'POST',
       headers: {
@@ -245,15 +373,28 @@ export async function createNews(article: Omit<Article, 'id'>) {
       body: JSON.stringify(article)
     })
     
+    console.log('📡 [createNews] Response status:', response.status, response.statusText)
+    
     if (!response.ok) {
       const errorText = await response.text()
+      console.error('❌ [createNews] Error response:', errorText)
       throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
     
     const data = await response.json()
+    console.log('✅ [createNews] Response data received:', {
+      id: data?.id || (Array.isArray(data) ? data[0]?.id : 'NO ID'),
+      title: data?.title || (Array.isArray(data) ? data[0]?.title : 'NO TITLE'),
+      category: data?.category || (Array.isArray(data) ? data[0]?.category : 'NO CATEGORY'),
+      imageUrl: data?.imageUrl || (Array.isArray(data) ? data[0]?.imageUrl : 'NO IMAGE'),
+      tags: data?.tags || (Array.isArray(data) ? data[0]?.tags : 'NO TAGS'),
+      status: data?.status || (Array.isArray(data) ? data[0]?.status : 'NO STATUS'),
+      allKeys: Object.keys(Array.isArray(data) ? data[0] : data)
+    })
+    
     return Array.isArray(data) ? data[0] : data
   } catch (error) {
-    console.error('Error in createNews:', error)
+    console.error('💥 [createNews] Exception:', error)
     throw error
   }
 }
@@ -272,6 +413,17 @@ export async function updateNews(id: number, updates: Partial<Article>) {
   }
   
   try {
+    console.log('📝 [updateNews] Updating news ID:', id)
+    console.log('📝 [updateNews] Updates object:', {
+      title: updates.title,
+      category: updates.category,
+      description: updates.description?.substring(0, 100),
+      imageUrl: updates.imageUrl,
+      tagColor: updates.tagColor,
+      tags: updates.tags,
+      allKeys: Object.keys(updates)
+    })
+    
     const response = await fetch(`${SUPABASE_URL}/rest/v1/news?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
@@ -289,6 +441,13 @@ export async function updateNews(id: number, updates: Partial<Article>) {
     }
     
     const data = await response.json()
+    console.log('✅ [updateNews] Response:', {
+      id: data[0]?.id,
+      title: data[0]?.title,
+      category: data[0]?.category,
+      imageUrl: data[0]?.imageUrl,
+      allKeys: Object.keys(data[0] || {})
+    })
     return Array.isArray(data) ? data[0] : data
   } catch (error) {
     console.error('Error in updateNews:', error)
@@ -303,6 +462,41 @@ export async function deleteNews(ids: number[]) {
     .in('id', ids)
   
   if (error) throw error
+}
+
+// Get single news article with full details (for editing)
+export async function getNewsById(id: number) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/news?id=eq.${id}&select=*`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    return Array.isArray(data) ? data[0] : data
+  } catch (error) {
+    console.error('Error in getNewsById:', error)
+    throw error
+  }
 }
 
 // ============================================
@@ -322,6 +516,7 @@ export async function getPublications() {
   }
   
   try {
+    // Get all fields for admin editing
     const response = await fetch(`${SUPABASE_URL}/rest/v1/publications?select=*&order=id.desc`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -345,17 +540,16 @@ export async function getPublications() {
 export async function getPublishedPublications() {
   try {
     const supabase = getSupabase()
+    // Get all fields needed for display
     const { data, error } = await supabase
       .from('publications')
       .select('*')
+      .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
     
     if (error) throw error
     
-    // Filter published publications client-side
-    const publishedPublications = (data || []).filter((p: any) => p.status === 'published' || p.status === undefined || p.status === null)
-    
-    return publishedPublications as Article[]
+    return (data || []) as Article[]
   } catch (error) {
     console.error('Error in getPublishedPublications:', error)
     throw error
@@ -447,6 +641,41 @@ export async function deletePublications(ids: number[]) {
   if (error) throw error
 }
 
+// Get single publication with full details (for editing)
+export async function getPublicationById(id: number) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/publications?id=eq.${id}&select=*`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    return Array.isArray(data) ? data[0] : data
+  } catch (error) {
+    console.error('Error in getPublicationById:', error)
+    throw error
+  }
+}
+
 export async function incrementDownloadCount(id: number) {
   const { data, error } = await (supabase.rpc as any)('increment_download_count', { publication_id: id })
   
@@ -471,6 +700,7 @@ export async function getVideos() {
   }
   
   try {
+    // Get all fields for admin editing
     const response = await fetch(`${SUPABASE_URL}/rest/v1/videos?select=*&order=id.desc`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -494,17 +724,16 @@ export async function getVideos() {
 export async function getPublishedVideos() {
   try {
     const supabase = getSupabase()
+    // Get all fields needed for display
     const { data, error } = await supabase
       .from('videos')
       .select('*')
+      .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
     
     if (error) throw error
     
-    // Filter published videos client-side
-    const publishedVideos = (data || []).filter((v: any) => v.status === 'published' || v.status === undefined || v.status === null)
-    
-    return publishedVideos as Article[]
+    return (data || []) as Article[]
   } catch (error) {
     console.error('Error in getPublishedVideos:', error)
     throw error
@@ -594,6 +823,41 @@ export async function deleteVideos(ids: number[]) {
     .in('id', ids)
   
   if (error) throw error
+}
+
+// Get single video with full details (for editing)
+export async function getVideoById(id: number) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/videos?id=eq.${id}&select=*`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    return Array.isArray(data) ? data[0] : data
+  } catch (error) {
+    console.error('Error in getVideoById:', error)
+    throw error
+  }
 }
 
 // ============================================
