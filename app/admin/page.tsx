@@ -4,13 +4,14 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminDashboard } from '@/components/features/admin'
 import { useAuth } from '@/contexts/AuthContext'
-import { Project, Article } from '@/types/types'
+import { Project, Article, ProjectBrief } from '@/types/types'
 import * as DataService from '@/lib/services/data-service'
 
 export default function Admin() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
+  const [projectBriefs, setProjectBriefs] = useState<ProjectBrief[]>([])
   const [news, setNews] = useState<Article[]>([])
   const [publications, setPublications] = useState<Article[]>([])
   const [videos, setVideos] = useState<Article[]>([])
@@ -23,6 +24,7 @@ export default function Admin() {
   // Track what data has been loaded to prevent redundant fetches
   const [loadedData, setLoadedData] = useState({
     projects: false,
+    projectBriefs: false,
     news: false,
     publications: false,
     videos: false,
@@ -69,17 +71,40 @@ export default function Admin() {
   }
 
   // Load projects on-demand
-  const loadProjects = async () => {
-    if (loadedData.projects) return // Already loaded
+  const loadProjects = async (forceReload = false) => {
+    if (loadedData.projects && !forceReload) return // Already loaded
     
     try {
-      console.log('📥 Admin: Loading projects...')
+      console.log('📥 Admin: Loading projects... (forceReload:', forceReload, ')')
       const projectsData = await DataService.getProjects()
+      console.log('📊 Admin: Received', projectsData.length, 'projects from data service')
       setProjects(projectsData)
       setLoadedData(prev => ({ ...prev, projects: true }))
-      console.log('✅ Admin: Projects loaded:', projectsData.length)
+      console.log('✅ Admin: Projects state updated with', projectsData.length, 'projects')
     } catch (error) {
       console.error('❌ Admin: Error loading projects:', error)
+      throw error
+    }
+  }
+
+  // Load project briefs on-demand
+  const loadProjectBriefs = async (forceReload = false) => {
+    if (loadedData.projectBriefs && !forceReload) {
+      console.log('⏭️  Admin: Skipping project briefs load (already loaded, forceReload:', forceReload, ')')
+      return // Already loaded
+    }
+    
+    try {
+      console.log('📥 Admin: Loading project briefs... (forceReload:', forceReload, ')')
+      const briefsData = await DataService.getProjectBriefs()
+      console.log('📊 Admin: Received', briefsData.length, 'project briefs from data service')
+      console.log('📋 Admin: Brief IDs:', briefsData.map(b => b.id))
+      console.log('📋 Admin: Brief names:', briefsData.map(b => b.project_name))
+      setProjectBriefs(briefsData)
+      setLoadedData(prev => ({ ...prev, projectBriefs: true }))
+      console.log('✅ Admin: Project briefs state updated with', briefsData.length, 'briefs')
+    } catch (error) {
+      console.error('❌ Admin: Error loading project briefs:', error)
       throw error
     }
   }
@@ -133,12 +158,13 @@ export default function Admin() {
   }
 
   // Reload specific data type after mutation
-  const reloadData = async (type: 'projects' | 'news' | 'publications' | 'videos' | 'categories') => {
-    setLoadedData(prev => ({ ...prev, [type]: false }))
-    
+  const reloadData = async (type: 'projects' | 'projectBriefs' | 'news' | 'publications' | 'videos' | 'categories') => {
     switch (type) {
       case 'projects':
-        await loadProjects()
+        await loadProjects(true)
+        break
+      case 'projectBriefs':
+        await loadProjectBriefs(true)
         break
       case 'news':
         await loadNews()
@@ -311,9 +337,12 @@ export default function Admin() {
         onAddProject={async (projectData) => {
           try {
             console.log('📤 Admin page: Creating project...')
-            await DataService.createProject(projectData)
-            console.log('✅ Admin page: Project created, reloading projects...')
+            console.log('📋 Project data:', projectData)
+            const newProject = await DataService.createProject(projectData)
+            console.log('✅ Admin page: Project created with ID:', newProject.id)
+            console.log('🔄 Admin page: Current projects count before reload:', projects.length)
             await reloadData('projects')
+            console.log('🔄 Admin page: Current projects count after reload:', projects.length)
             alert('✅ Project created successfully!')
           } catch (error) {
             console.error('❌ Admin page: Error creating project:', error)
@@ -328,6 +357,29 @@ export default function Admin() {
         onDeleteProjects={async (projectIds) => {
           await DataService.deleteProjects(projectIds)
           await reloadData('projects')
+        }}
+        projectBriefs={projectBriefs}
+        onLoadProjectBriefs={loadProjectBriefs}
+        onAddProjectBrief={async (briefData) => {
+          try {
+            console.log('📤 Admin page: Creating project brief...')
+            const newBrief = await DataService.createProjectBrief(briefData)
+            console.log('✅ Admin page: Project brief created with ID:', newBrief.id)
+            await reloadData('projectBriefs')
+            alert('✅ Project brief created successfully!')
+          } catch (error) {
+            console.error('❌ Admin page: Error creating project brief:', error)
+            alert('❌ Failed to create project brief. Please check console for details.')
+            throw error
+          }
+        }}
+        onUpdateProjectBrief={async (brief) => {
+          await DataService.updateProjectBrief(brief.id!, brief)
+          await reloadData('projectBriefs')
+        }}
+        onDeleteProjectBriefs={async (briefIds) => {
+          await DataService.deleteProjectBriefs(briefIds)
+          await reloadData('projectBriefs')
         }}
         news={news}
         onLoadNews={loadNews}

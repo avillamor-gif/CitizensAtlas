@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useMemo, useState, useEffect } from 'react'
-import { Project, Filters, User } from '@/types/types'
+import { Project, Filters, User, ProjectBrief } from '@/types/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Bar, BarChart, Pie, PieChart, Cell, XAxis, YAxis, ResponsiveContainer, LabelList, Line, LineChart, CartesianGrid } from 'recharts'
 import { getSolutionTypeColor, getIfiAbbreviation, countryNameToCode } from '@/lib/constants'
 import { getChartVisibilitySettings } from '@/lib/services/supabase-service'
+import * as DataService from '@/lib/services/data-service'
 
 // Chart visibility settings type
 interface ChartVisibilitySettings {
@@ -33,6 +34,14 @@ const parseCurrency = (currencyString: string): number => {
   if (!currencyString) return 0
   const numberString = currencyString.replace(/[$,€]/g, '').replace(/,/g, '')
   return parseFloat(numberString) || 0
+}
+
+// Format amount for display
+const formatAmount = (num: number) => {
+  if (num >= 1_000_000_000) return `$${(num / 1_000_000_000).toFixed(2)}B`
+  if (num >= 1_000_000) return `$${(num / 1_000_000).toFixed(2)}M`
+  if (num >= 1_000) return `$${(num / 1_000).toFixed(0)}K`
+  return `$${num.toLocaleString()}`
 }
 
 // Horizontal Bar Chart Component
@@ -205,6 +214,7 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
     submissionTrend: true,
   })
   const [isLoadingSettings, setIsLoadingSettings] = useState(true)
+  const [projectBriefs, setProjectBriefs] = useState<ProjectBrief[]>([])
 
   // Load chart visibility settings from database
   useEffect(() => {
@@ -241,6 +251,22 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
     
     loadSettings()
   }, [])
+
+  // Fetch project briefs when component mounts
+  useEffect(() => {
+    const loadProjectBriefs = async () => {
+      try {
+        const briefs = await DataService.getPublishedProjectBriefs()
+        console.log('📋 Loaded project briefs:', briefs)
+        setProjectBriefs(briefs)
+      } catch (error) {
+        console.error('Failed to load project briefs:', error)
+        setProjectBriefs([])
+      }
+    }
+
+    loadProjectBriefs()
+  }, []) // Load once on mount
 
   const dashboardData = useMemo(() => {
     if (!projects || projects.length === 0) {
@@ -487,12 +513,69 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
               <p className="text-2xl font-extrabold text-brand-dark-blue">
                 {filters.country.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
               </p>
+              <div className="mt-3 pt-3 border-t border-brand-dark-blue/20">
+                <p className="text-sm text-brand-dark-blue/80 mb-1">Total Cases</p>
+                <p className="text-3xl font-bold text-brand-dark-blue">
+                  {projects.filter(p => 
+                    p.country?.toUpperCase() === filters.country.toUpperCase() && 
+                    (p.status === 'published' || !p.status)
+                  ).length}
+                </p>
+              </div>
+              {(() => {
+                const matchingBriefs = projectBriefs.filter(brief => 
+                  brief.country?.toUpperCase() === filters.country.toUpperCase() &&
+                  (brief.status === 'published' || !brief.status)
+                )
+                console.log('🔍 Checking briefs for country:', filters.country)
+                console.log('🔍 All project briefs:', projectBriefs)
+                console.log('🔍 Matching briefs:', matchingBriefs)
+                
+                return matchingBriefs.length > 0 && (
+                  <button
+                    onClick={() => {
+                      const country = encodeURIComponent(filters.country);
+                      window.location.href = `/country-project-briefs?country=${country}`;
+                    }}
+                    className="mt-4 w-full bg-brand-dark-blue text-white font-semibold py-2 px-4 rounded hover:bg-brand-medium-blue transition-colors"
+                  >
+                    PROJECT BRIEFS
+                  </button>
+                )
+              })()}
             </div>
           </>
         ) : (
-          <div className="text-center text-gray-500 p-4">
-            <h4 className="font-bold text-brand-dark-blue mb-2">Geographic Filter</h4>
-            <p>Showing projects for all countries.</p>
+          <div className="relative z-10 text-center p-4">
+            <h4 className="font-bold text-brand-dark-blue mb-2">Currently Viewing</h4>
+            <p className="text-2xl font-extrabold text-brand-dark-blue">
+              {filters.country === 'all' ? 'ALL COUNTRIES' : filters.country.toUpperCase()}
+            </p>
+            <div className="mt-3 pt-3 border-t border-brand-dark-blue/20">
+              <p className="text-sm text-brand-dark-blue/80 mb-1">Total Cases</p>
+              <p className="text-3xl font-bold text-brand-dark-blue">
+                {projects.filter(p => p.status === 'published' || !p.status).length}
+              </p>
+            </div>
+            {(() => {
+              const matchingBriefs = projectBriefs.filter(brief => 
+                filters.country !== 'all' && 
+                brief.country?.toUpperCase() === filters.country.toUpperCase() &&
+                (brief.status === 'published' || !brief.status)
+              )
+              
+              return matchingBriefs.length > 0 && (
+                <button
+                  onClick={() => {
+                    const country = encodeURIComponent(filters.country);
+                    window.location.href = `/country-project-briefs?country=${country}`;
+                  }}
+                  className="mt-4 w-full bg-brand-dark-blue text-white font-semibold py-2 px-4 rounded hover:bg-brand-medium-blue transition-colors"
+                >
+                  PROJECT BRIEFS
+                </button>
+              )
+            })()}
           </div>
         )}
       </Card>

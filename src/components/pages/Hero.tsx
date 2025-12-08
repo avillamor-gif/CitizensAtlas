@@ -52,6 +52,13 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
     // Count active filters
     const activeFilterCount = Object.entries(filters).filter(([key, value]) => value !== 'all').length;
 
+    // Auto-show dashboard when filters are applied
+    React.useEffect(() => {
+        if (activeFilterCount > 0) {
+            setIsDashboardVisible(true);
+        }
+    }, [activeFilterCount]);
+
     const clearAllFilters = () => {
         onFilterChange('country', 'all');
         onFilterChange('solutionType', 'all');

@@ -11,7 +11,7 @@
  * - Automatic fallback if Supabase is down
  */
 
-import { Project, Article } from '@/types/types'
+import { Project, Article, ProjectBrief } from '@/types/types'
 import * as supabaseService from './supabase-service'
 
 // Check if Supabase is configured
@@ -163,19 +163,10 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function createProject(project: Omit<Project, 'id'>): Promise<Project> {
   if (isSupabaseConfigured()) {
-    try {
-      console.log('🚀 Attempting to create project in Supabase:', { title: project.title })
-      const result = await supabaseService.createProject(project)
-      console.log('✅ Project created successfully in Supabase:', result.id)
-      return result
-    } catch (error) {
-      console.error('❌ Supabase createProject FAILED:', error)
-      console.error('Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        name: error instanceof Error ? error.name : 'Unknown',
-        fullError: error
-      })
-    }
+    console.log('🚀 Attempting to create project in Supabase:', { title: project.title })
+    const result = await supabaseService.createProject(project)
+    console.log('✅ Project created successfully in Supabase:', result.id)
+    return result
   }
   
   // Fallback to localStorage - return project with generated ID
@@ -924,4 +915,171 @@ export async function updateUserProfile(userId: string, profileData: { full_name
   }
   
   throw new Error('Profile updates require Supabase configuration')
+}
+
+// ============================================
+// PROJECT BRIEFS
+// ============================================
+
+// Public - get published briefs only
+export async function getPublishedProjectBriefs(): Promise<ProjectBrief[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getPublishedProjectBriefs()
+    } catch (error) {
+      console.warn('Supabase error, falling back to empty array:', error)
+    }
+  }
+  
+  // Fallback to localStorage - filter published only
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_project_briefs')
+    if (stored) {
+      const briefs: ProjectBrief[] = JSON.parse(stored)
+      return briefs.filter(b => b.status === 'published' || b.status === undefined)
+    }
+  }
+  return []
+}
+
+// Authenticated - get all briefs
+export async function getProjectBriefs(): Promise<ProjectBrief[]> {
+  // Check authentication
+  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('atlas-auth-token')
+  
+  if (!isAuthenticated) {
+    throw new Error('Authentication required to access all project briefs')
+  }
+  
+  if (isSupabaseConfigured()) {
+    try {
+      console.log('🔍 DataService: Fetching project briefs from Supabase...')
+      const briefs = await supabaseService.getProjectBriefs()
+      console.log('📦 DataService: Supabase returned', briefs.length, 'briefs')
+      console.log('📦 DataService: Brief IDs from Supabase:', briefs.map(b => b.id))
+      return briefs
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+  
+  // Fallback to localStorage - return all
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_project_briefs')
+    if (stored) {
+      const briefs = JSON.parse(stored)
+      console.log('📦 DataService: localStorage returned', briefs.length, 'briefs')
+      return briefs
+    }
+  }
+  console.log('📦 DataService: No briefs found, returning empty array')
+  return []
+}
+
+// Create project brief
+export async function createProjectBrief(brief: Omit<ProjectBrief, 'id'>): Promise<ProjectBrief> {
+  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('atlas-auth-token')
+  
+  if (!isAuthenticated) {
+    throw new Error('Authentication required')
+  }
+  
+  if (isSupabaseConfigured()) {
+    return await supabaseService.createProjectBrief(brief)
+  }
+  
+  // Fallback to localStorage
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_project_briefs')
+    const briefs: ProjectBrief[] = stored ? JSON.parse(stored) : []
+    
+    const newBrief: ProjectBrief = {
+      ...brief,
+      id: Date.now(),
+    }
+    
+    briefs.push(newBrief)
+    localStorage.setItem('atlas_project_briefs', JSON.stringify(briefs))
+    return newBrief
+  }
+  
+  throw new Error('Unable to create project brief')
+}
+
+// Update project brief
+export async function updateProjectBrief(id: number, updates: Partial<ProjectBrief>): Promise<ProjectBrief> {
+  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('atlas-auth-token')
+  
+  if (!isAuthenticated) {
+    throw new Error('Authentication required')
+  }
+  
+  if (isSupabaseConfigured()) {
+    return await supabaseService.updateProjectBrief(id, updates)
+  }
+  
+  // Fallback to localStorage
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_project_briefs')
+    const briefs: ProjectBrief[] = stored ? JSON.parse(stored) : []
+    
+    const index = briefs.findIndex(b => b.id === id)
+    if (index === -1) {
+      throw new Error('Project brief not found')
+    }
+    
+    const updated = { ...briefs[index], ...updates }
+    briefs[index] = updated
+    localStorage.setItem('atlas_project_briefs', JSON.stringify(briefs))
+    return updated
+  }
+  
+  throw new Error('Unable to update project brief')
+}
+
+// Delete project briefs
+export async function deleteProjectBriefs(ids: number[]): Promise<void> {
+  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('atlas-auth-token')
+  
+  if (!isAuthenticated) {
+    throw new Error('Authentication required')
+  }
+  
+  if (isSupabaseConfigured()) {
+    await supabaseService.deleteProjectBriefs(ids)
+    return
+  }
+  
+  // Fallback to localStorage
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_project_briefs')
+    if (stored) {
+      const briefs: ProjectBrief[] = JSON.parse(stored)
+      const filtered = briefs.filter(b => !ids.includes(b.id!))
+      localStorage.setItem('atlas_project_briefs', JSON.stringify(filtered))
+    }
+  }
+}
+
+// Get single project brief by ID
+export async function getProjectBriefById(id: number): Promise<ProjectBrief | null> {
+  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('atlas-auth-token')
+  
+  if (!isAuthenticated) {
+    throw new Error('Authentication required')
+  }
+  
+  if (isSupabaseConfigured()) {
+    return await supabaseService.getProjectBriefById(id)
+  }
+  
+  // Fallback to localStorage
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_project_briefs')
+    if (stored) {
+      const briefs: ProjectBrief[] = JSON.parse(stored)
+      return briefs.find(b => b.id === id) || null
+    }
+  }
+  return null
 }

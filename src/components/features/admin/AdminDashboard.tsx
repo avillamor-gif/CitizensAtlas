@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Project, Article } from '@/types/types';
+import { Project, Article, ProjectBrief } from '@/types/types';
 import { AdminSidebar, AdminPage } from './AdminSidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -20,6 +20,8 @@ import ProjectFormPage from './ProjectFormPage';
 import NewsFormPage from './NewsFormPage';
 import PublicationFormPage from './PublicationFormPage';
 import VideoFormPage from './VideoFormPage';
+import ProjectBriefList from './ProjectBriefList';
+import ProjectBriefForm from './ProjectBriefForm';
 import DraftsList from './DraftsList';
 import BatchUpload from './BatchUpload';
 import TeamManagement from './TeamManagement';
@@ -32,6 +34,11 @@ interface AdminDashboardProps {
     onAddProject: (projectData: Omit<Project, 'id'>) => void;
     onUpdateProject: (project: Project) => void;
     onDeleteProjects: (projectIds: number[]) => void;
+    projectBriefs: ProjectBrief[];
+    onLoadProjectBriefs?: () => Promise<void>;
+    onAddProjectBrief: (briefData: Omit<ProjectBrief, 'id'>) => void;
+    onUpdateProjectBrief: (brief: ProjectBrief) => void;
+    onDeleteProjectBriefs: (briefIds: number[]) => void;
     news: Article[];
     onLoadNews?: () => Promise<void>;
     onAddNews: (articleData: Omit<Article, 'id' | 'slug'>) => void;
@@ -69,6 +76,7 @@ interface AdminDashboardProps {
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const { 
         projects, onLoadProjects, onAddProject, onUpdateProject, onDeleteProjects,
+        projectBriefs, onLoadProjectBriefs, onAddProjectBrief, onUpdateProjectBrief, onDeleteProjectBriefs,
         news, onLoadNews, onAddNews, onUpdateNews, onDeleteNews,
         newsCategories, onAddNewsCategory, onUpdateNewsCategory, onDeleteNewsCategory,
         publications, onLoadPublications, onAddPublication, onUpdatePublication, onDeletePublications,
@@ -82,6 +90,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [activeAdminPage, setActiveAdminPage] = useState<AdminPage>('projects-list');
     const { signOut } = useAuth();
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
+    const [projectBriefToEdit, setProjectBriefToEdit] = useState<ProjectBrief | null>(null);
     const [newsToEdit, setNewsToEdit] = useState<Article | null>(null);
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
@@ -172,6 +181,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             try {
                 if (activeAdminPage === 'projects-list' || activeAdminPage === 'projects-edit' || activeAdminPage === 'projects-analytics') {
                     await onLoadProjects?.()
+                } else if (activeAdminPage === 'project-briefs-list' || activeAdminPage === 'project-briefs-edit' || activeAdminPage === 'project-briefs-add') {
+                    // Load both project briefs AND projects (for country dropdown)
+                    await Promise.all([
+                        onLoadProjectBriefs?.(),
+                        onLoadProjects?.()
+                    ])
                 } else if (activeAdminPage === 'news-list' || activeAdminPage === 'news-edit') {
                     await onLoadNews?.()
                 } else if (activeAdminPage === 'publications-list' || activeAdminPage === 'publications-edit') {
@@ -393,6 +408,58 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             case 'projects-analytics':
                 if (!canViewAnalytics) return <AccessDenied />;
                 return <EnhancedProjectsAnalytics projects={projects} currentUser={currentUser} />;
+            
+            // Project Briefs
+            case 'project-briefs-list':
+                if (!canViewProjects) return <AccessDenied />;
+                return (
+                    <ProjectBriefList
+                        briefs={projectBriefs}
+                        onEdit={(brief) => {
+                            setProjectBriefToEdit(brief);
+                            setActiveAdminPage('project-briefs-edit');
+                        }}
+                        onDelete={onDeleteProjectBriefs}
+                    />
+                );
+            case 'project-briefs-add':
+                if (!canViewProjects) return <AccessDenied />;
+                return (
+                    <ProjectBriefForm
+                        onSave={(briefData) => {
+                            onAddProjectBrief(briefData);
+                            setActiveAdminPage('project-briefs-list');
+                        }}
+                        onCancel={() => setActiveAdminPage('project-briefs-list')}
+                        userRole={currentUser?.role}
+                        userId={currentUser?.id}
+                        countries={Array.from(new Set(projects.map(p => p.country?.trim()).filter(Boolean))).map(c => c.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '))}
+                    />
+                );
+            case 'project-briefs-edit':
+                if (!canViewProjects) return <AccessDenied />;
+                if (!projectBriefToEdit) {
+                    setActiveAdminPage('project-briefs-list');
+                    return null;
+                }
+                return (
+                    <ProjectBriefForm
+                        briefToEdit={projectBriefToEdit}
+                        onSave={(briefData) => {
+                            onUpdateProjectBrief({ ...briefData, id: projectBriefToEdit.id! });
+                            setProjectBriefToEdit(null);
+                            setActiveAdminPage('project-briefs-list');
+                        }}
+                        onCancel={() => {
+                            setProjectBriefToEdit(null);
+                            setActiveAdminPage('project-briefs-list');
+                        }}
+                        userRole={currentUser?.role}
+                        userId={currentUser?.id}
+                        countries={Array.from(new Set(projects.map(p => p.country?.trim()).filter(Boolean))).map(c => c.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '))}
+                    />
+                );
+            
             case 'news-add':
                 if (!canViewNews) return <AccessDenied />;
                 return (

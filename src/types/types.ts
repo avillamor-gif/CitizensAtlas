@@ -65,6 +65,29 @@ export interface Project {
     submittedAt?: string;
 }
 
+export interface ProjectBrief {
+    id: number;
+    project_name: string;
+    project_type?: string;
+    location: string;
+    financing_amount?: string;
+    financiers?: string;
+    financial_instruments?: string;
+    other_partners_involved?: string;
+    timeline_and_status?: string;
+    safeguard_categories?: string;
+    negative_impacts?: string;
+    reprisals?: string;
+    advocacy_timeline?: string;
+    other_information?: string;
+    country?: string;
+    status?: 'draft' | 'published';
+    submitted_by?: string;
+    submitted_at?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface Filters {
   country: string;
   solutionType: string;

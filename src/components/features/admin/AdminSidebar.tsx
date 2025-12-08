@@ -15,6 +15,7 @@ import {
   List,
   Tags,
   ChevronRight,
+  Briefcase,
 } from "lucide-react"
 
 import { NavMainAdmin } from "./NavMainAdmin"
@@ -41,7 +42,7 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
 
-export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
+export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'project-briefs-list' | 'project-briefs-add' | 'project-briefs-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
 
 interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   activePage: AdminPage;
@@ -119,6 +120,25 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
           page: "projects-analytics" as AdminPage,
           icon: BarChart3,
         }] : []),
+      ],
+    });
+    
+    // Project Briefs submenu
+    navItems.push({
+      title: "Project Briefs",
+      icon: Briefcase,
+      isActive: activePage.startsWith('project-briefs'),
+      items: [
+        {
+          title: "Briefs List",
+          page: "project-briefs-list" as AdminPage,
+          icon: List,
+        },
+        {
+          title: "Add Brief",
+          page: "project-briefs-add" as AdminPage,
+          icon: Plus,
+        },
       ],
     });
   }

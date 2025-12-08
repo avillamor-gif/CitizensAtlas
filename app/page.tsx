@@ -880,12 +880,32 @@ function HomePageContent() {
         return match ? match[1].trim() : ''
     }
 
-    const countries = ['all', ...Array.from(new Set(projectCardsData.map(p => p.country)))]
-    const solutionTypes = ['all', ...Array.from(new Set(projectCardsData.flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()))))]
-    const ifis = ['all', ...Array.from(new Set(projectCardsData.map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A'))))]
-    const projectStatuses = ['all', ...Array.from(new Set(projectCardsData.map(p => parseDetail(p.details, 'Project Status'))))].filter(status => status && status !== 'N/A')
+    // Helper to convert to title case
+    const toTitleCase = (str: string) => {
+        return str
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')
+    }
+
+    // Get unique countries from published projects only, normalize to title case, and sort alphabetically
+    const uniqueCountries = Array.from(
+        new Set(
+            projects
+                .filter(p => p.status === 'published' || p.status === undefined)
+                .map(p => p.country)
+                .filter(c => c) // Remove empty values
+                .map(c => toTitleCase(c))
+        )
+    ).sort((a, b) => a.localeCompare(b))
+    
+    const countries = ['all', ...uniqueCountries]
+    const solutionTypes = ['all', ...Array.from(new Set(projects.flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()))))]
+    const ifis = ['all', ...Array.from(new Set(projects.map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A'))))]
+    const projectStatuses = ['all', ...Array.from(new Set(projects.map(p => parseDetail(p.details, 'Project Status'))))].filter(status => status && status !== 'N/A')
     return { countries, solutionTypes, ifis, projectStatuses }
-  }, [])
+  }, [projects])
 
   const filteredProjects = useMemo(() => {
     const parseDetail = (details: string, key: string) => {
@@ -893,10 +913,19 @@ function HomePageContent() {
         return match ? match[1].trim() : ''
     }
 
+    // Helper to convert to title case
+    const toTitleCase = (str: string) => {
+        return str
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')
+    }
+
     return projects.filter(project => {
       // Only show published projects in public view
       const publishedMatch = project.status === 'published' || project.status === undefined
-      const countryMatch = filters.country === 'all' || project.country === filters.country
+      const countryMatch = filters.country === 'all' || toTitleCase(project.country || '') === filters.country
       const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType)
       const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi
       const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus

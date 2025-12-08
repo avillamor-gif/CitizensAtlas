@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-import { Project, Article } from '@/types/types'
+import { Project, Article, ProjectBrief } from '@/types/types'
 
 // Get environment variables
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -145,8 +145,15 @@ export async function createProject(project: Omit<Project, 'id'>) {
     throw new Error('No access token found in stored auth data')
   }
   
-  // Remove any ID field to prevent conflicts
-  const { id, ...projectDataWithoutId } = project as any
+  // Remove any ID field to prevent conflicts - be extra sure
+  const projectDataWithoutId = { ...project }
+  delete (projectDataWithoutId as any).id
+  
+  console.log('📤 Sending to Supabase (no ID):', { 
+    title: projectDataWithoutId.title,
+    hasId: 'id' in projectDataWithoutId,
+    keys: Object.keys(projectDataWithoutId)
+  })
   
   try {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/projects`, {
@@ -162,11 +169,13 @@ export async function createProject(project: Omit<Project, 'id'>) {
     
     if (!response.ok) {
       const errorText = await response.text()
+      console.error('❌ Supabase response error:', response.status, errorText)
       throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
     
     const data = await response.json()
     const createdProject = Array.isArray(data) ? data[0] : data
+    console.log('✅ Project created with ID:', createdProject.id)
     
     return createdProject as Project
   } catch (error) {
@@ -1146,4 +1155,200 @@ export async function createPageContent(contentData: Omit<PageContent, 'id' | 'c
   }
   
   return data as PageContent
+}
+
+// ============================================
+// PROJECT BRIEFS
+// ============================================
+
+export async function getProjectBriefs() {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    console.log('🌐 Supabase Service: Fetching project briefs from', `${SUPABASE_URL}/rest/v1/project_briefs`)
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/project_briefs?select=*&order=id.desc`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ Supabase Service: HTTP error', response.status, errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log('✅ Supabase Service: Received', data.length, 'briefs from database')
+    console.log('📋 Supabase Service: First brief:', data[0])
+    return data as ProjectBrief[]
+  } catch (error) {
+    console.error('Error in getProjectBriefs:', error)
+    throw error
+  }
+}
+
+export async function getPublishedProjectBriefs() {
+  try {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('project_briefs')
+      .select('*')
+      .or('status.eq.published,status.is.null')
+      .order('id', { ascending: false })
+    
+    if (error) {
+      console.error('Error fetching published project briefs:', error)
+      throw error
+    }
+    
+    return (data || []) as ProjectBrief[]
+  } catch (error) {
+    console.error('Error in getPublishedProjectBriefs:', error)
+    throw error
+  }
+}
+
+export async function createProjectBrief(brief: Omit<ProjectBrief, 'id'>) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  const briefDataWithoutId = { ...brief }
+  delete (briefDataWithoutId as any).id
+  
+  // Debug: Log the exact field names being sent
+  console.log('🔍 Supabase Service - Field names in briefDataWithoutId:', Object.keys(briefDataWithoutId))
+  console.log('🔍 Supabase Service - Full data:', JSON.stringify(briefDataWithoutId, null, 2))
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/project_briefs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(briefDataWithoutId)
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    const createdBrief = Array.isArray(data) ? data[0] : data
+    
+    return createdBrief as ProjectBrief
+  } catch (error) {
+    console.error('Error creating project brief:', error)
+    throw error
+  }
+}
+
+export async function updateProjectBrief(id: number, updates: Partial<ProjectBrief>) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/project_briefs?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(updates)
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    const updatedBrief = Array.isArray(data) ? data[0] : data
+    
+    return updatedBrief as ProjectBrief
+  } catch (error) {
+    console.error('Error updating project brief:', error)
+    throw error
+  }
+}
+
+export async function deleteProjectBriefs(ids: number[]) {
+  const { error } = await supabase
+    .from('project_briefs')
+    .delete()
+    .in('id', ids)
+  
+  if (error) {
+    console.error('Error deleting project briefs:', error)
+    throw error
+  }
+}
+
+export async function getProjectBriefById(id: number) {
+  const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
+  if (!authData) {
+    throw new Error('No authentication token found')
+  }
+  
+  const parsedAuth = JSON.parse(authData)
+  const accessToken = parsedAuth.access_token
+  
+  if (!accessToken) {
+    throw new Error('No access token found in stored auth data')
+  }
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/project_briefs?id=eq.${id}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    
+    const data = await response.json()
+    return data[0] as ProjectBrief || null
+  } catch (error) {
+    console.error('Error fetching project brief:', error)
+    throw error
+  }
 }

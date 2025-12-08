@@ -157,7 +157,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onAddProject, onUpd
                                             />
                                         </td>
                                         <td className="px-6 py-4 font-medium max-w-sm truncate">{project.title}</td>
-                                        <td className="px-6 py-4 uppercase">{project.country}</td>
+                                        <td className="px-6 py-4 capitalize">{project.country?.toLowerCase()}</td>
                                         <td className="px-6 py-4">{displayDate}</td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

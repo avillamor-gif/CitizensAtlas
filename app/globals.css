@@ -109,3 +109,15 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Style links in project briefs content */
+.prose a {
+  @apply text-blue-600 underline decoration-blue-600 hover:text-blue-800 hover:decoration-blue-800;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+
+.prose a:visited {
+  @apply text-purple-600 decoration-purple-600;
+}
