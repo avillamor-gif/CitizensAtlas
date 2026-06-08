@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { AdminDashboard } from '@/components/features/admin'
-import { Home, AboutPage, WhatWeDoPage, PartnerPage } from '@/components/pages'
+import { Home, AboutPage, WhatWeDoPage, PartnerPage, ResourcesPage } from '@/components/pages'
 import { MapPage } from '@/components/features/map'
 import { ArticleListPage, ArticleDetailPage } from '@/components/features/articles'
 import { projectCardsData, getIfiAbbreviation, newsData as initialNewsData, publicationsData as initialPublicationsData, videosData } from '@/lib/constants'
@@ -1144,6 +1144,8 @@ function HomePageContent() {
         )
       case 'partner-with-us':
         return <PartnerPage />
+      case 'resources':
+        return <ResourcesPage />
       case 'news':
         return <ArticleListPage title="Latest News" items={publishedNews} onViewArticle={handleViewArticle} />
       case 'videos':
