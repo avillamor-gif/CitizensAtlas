@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { Project, Article } from '@/types/types';
+import { Project, Article, ProjectBrief } from '@/types/types';
 
 interface ParseResult<T> {
   data: T[];
@@ -264,6 +264,73 @@ export function parseVideosExcel(file: File): Promise<ParseResult<Omit<Article, 
         });
 
         resolve({ data: videos, errors, warnings });
+      } catch (error) {
+        resolve({ 
+          data: [], 
+          errors: [`Failed to parse Excel file: ${error instanceof Error ? error.message : 'Unknown error'}`], 
+          warnings: [] 
+        });
+      }
+    };
+
+    reader.readAsBinaryString(file);
+  });
+}
+
+// Parse Project Briefs Excel file
+export function parseProjectBriefsExcel(file: File): Promise<ParseResult<Omit<ProjectBrief, 'id'>>> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        const briefs: Omit<ProjectBrief, 'id'>[] = [];
+        const errors: string[] = [];
+        const warnings: string[] = [];
+
+        jsonData.forEach((row: any, index: number) => {
+          const rowNum = index + 2;
+
+          // Required fields validation
+          if (!row['Project Name*']) {
+            errors.push(`Row ${rowNum}: Project Name is required`);
+            return;
+          }
+          if (!row['Location*']) {
+            errors.push(`Row ${rowNum}: Location is required`);
+            return;
+          }
+          if (!row['Country*']) {
+            errors.push(`Row ${rowNum}: Country is required`);
+            return;
+          }
+
+          briefs.push({
+            project_name: row['Project Name*'],
+            project_type: row['Project Type'] || '',
+            location: row['Location*'],
+            country: row['Country*'],
+            financing_amount: row['Financing Amount'] || '',
+            financiers: row['Financiers'] || '',
+            financial_instruments: row['Financial Instruments'] || '',
+            other_partners_involved: row['Other Partners Involved'] || '',
+            timeline_and_status: row['Timeline and Status'] || '',
+            safeguard_categories: row['Safeguard Categories'] || '',
+            negative_impacts: row['Negative Impacts'] || '',
+            reprisals: row['Reprisals'] || '',
+            advocacy_timeline: row['Advocacy Timeline'] || '',
+            other_information: row['Other Information'] || '',
+            status: row['Status'] === 'draft' ? 'draft' : 'published',
+            submitted_at: new Date().toISOString(),
+          });
+        });
+
+        resolve({ data: briefs, errors, warnings });
       } catch (error) {
         resolve({ 
           data: [], 

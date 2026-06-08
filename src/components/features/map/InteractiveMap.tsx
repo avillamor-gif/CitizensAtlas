@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useMemo, useState } from 'react';
-import Map, { Marker, Popup } from 'react-map-gl/maplibre';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import Map, { Marker, Popup, Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
@@ -63,6 +63,24 @@ interface InteractiveMapProps {
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad }) => {
     const [popupInfo, setPopupInfo] = useState<Project | null>(null);
+    const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
+    const mapRef = useRef<any>(null);
+
+    // Calculate projects per country for choropleth
+    const countryProjectCounts = useMemo(() => {
+        const counts: Record<string, number> = {};
+        projects.forEach(project => {
+            const country = project.country?.trim().toUpperCase();
+            if (country) {
+                counts[country] = (counts[country] || 0) + 1;
+            }
+        });
+        return counts;
+    }, [projects]);
+
+    const maxProjectCount = useMemo(() => {
+        return Math.max(...Object.values(countryProjectCounts), 1);
+    }, [countryProjectCounts]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
@@ -73,50 +91,116 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
         };
     }, [projects]);
 
-    const markers = useMemo(() => projects.map(project => {
-        const amount = parseProjectAmount(project.details);
-        const size = calculateBubbleSize(amount, minAmount, maxAmount);
-        const colorClass = getSolutionTypeColor(project.corruptionType, 'tailwind');
-        
-        // Convert Tailwind color class to actual color
-        const colorMap: Record<string, string> = {
-            'bg-red-500': '#ef4444',
-            'bg-blue-500': '#3b82f6',
-            'bg-green-500': '#22c55e',
-            'bg-yellow-500': '#eab308',
-            'bg-purple-500': '#a855f7',
-            'bg-orange-500': '#f97316',
-            'bg-pink-500': '#ec4899',
-            'bg-indigo-500': '#6366f1',
-            'bg-teal-500': '#14b8a6',
-        };
-        const bgColor = colorMap[colorClass] || '#3b82f6';
+    const markers = useMemo(() => {
+        return projects.map(project => {
+            const amount = parseProjectAmount(project.details);
+            const size = calculateBubbleSize(amount, minAmount, maxAmount);
+            const colorClass = getSolutionTypeColor(project.corruptionType, 'tailwind');
+            
+            // Convert Tailwind color class to actual color
+            const colorMap: Record<string, string> = {
+                'bg-red-500': '#ef4444',
+                'bg-blue-500': '#3b82f6',
+                'bg-green-500': '#22c55e',
+                'bg-yellow-500': '#eab308',
+                'bg-purple-500': '#a855f7',
+                'bg-orange-500': '#f97316',
+                'bg-pink-500': '#ec4899',
+                'bg-indigo-500': '#6366f1',
+                'bg-teal-500': '#14b8a6',
+            };
+            const bgColor = colorMap[colorClass] || '#3b82f6';
 
-        return {
-            ...project,
-            size,
-            amount,
-            bgColor
-        };
-    }), [projects, minAmount, maxAmount]);
+            return {
+                ...project,
+                size,
+                amount,
+                bgColor
+            };
+        });
+    }, [projects, minAmount, maxAmount]);
+
+    // Calculate center point based on all projects
+    const mapCenter = useMemo(() => {
+        if (projects.length === 0) {
+            return { longitude: 0, latitude: 20, zoom: 1.5 };
+        }
+
+        const validProjects = projects.filter(p => 
+            p.latitude && p.longitude && 
+            !isNaN(p.latitude) && !isNaN(p.longitude)
+        );
+
+        if (validProjects.length === 0) {
+            return { longitude: 0, latitude: 20, zoom: 1.5 };
+        }
+
+        // Calculate bounds of all projects
+        const latitudes = validProjects.map(p => p.latitude);
+        const longitudes = validProjects.map(p => p.longitude);
+        
+        const minLat = Math.min(...latitudes);
+        const maxLat = Math.max(...latitudes);
+        const minLng = Math.min(...longitudes);
+        const maxLng = Math.max(...longitudes);
+
+        // Calculate center
+        const avgLat = (minLat + maxLat) / 2;
+        const avgLng = (minLng + maxLng) / 2;
+
+        // Calculate zoom to fit all points with padding
+        const latRange = maxLat - minLat;
+        const lngRange = maxLng - minLng;
+        
+        // Add 20% padding to ensure all bubbles are visible
+        const paddedLatRange = latRange * 1.4;
+        const paddedLngRange = lngRange * 1.4;
+        const maxRange = Math.max(paddedLatRange, paddedLngRange);
+
+        // Calculate zoom level based on range
+        let zoom = 1.5;
+        if (validProjects.length === 1) {
+            zoom = 6; // Single project
+        } else if (maxRange < 0.5) {
+            zoom = 9;
+        } else if (maxRange < 1) {
+            zoom = 8;
+        } else if (maxRange < 2) {
+            zoom = 7;
+        } else if (maxRange < 5) {
+            zoom = 6;
+        } else if (maxRange < 10) {
+            zoom = 5;
+        } else if (maxRange < 20) {
+            zoom = 4;
+        } else if (maxRange < 40) {
+            zoom = 3;
+        } else if (maxRange < 80) {
+            zoom = 2;
+        } else {
+            zoom = 1.5;
+        }
+
+        return { longitude: avgLng, latitude: avgLat, zoom };
+    }, [projects]);
 
     return (
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full overflow-hidden">
             <Map
-                initialViewState={{
-                    longitude: 20,
-                    latitude: 30,
-                    zoom: 1.5
-                }}
+                ref={mapRef}
+                initialViewState={mapCenter}
                 style={{ width: '100%', height: '100%' }}
                 mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-                onLoad={() => {
+                onLoad={(e) => {
+                    const map = e.target;
+                    
                     if (onMapLoad) {
                         onMapLoad();
                     }
                 }}
                 onClick={(e) => {
                     setPopupInfo(null);
+                    setCountryPopup(null);
                     // If onMapClick is provided and user clicks on empty map area (not a marker)
                     if (onMapClick && e.lngLat) {
                         onMapClick({
@@ -126,6 +210,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
             >
+                {/* Bubble markers for projects */}
                 {markers.map((project) => (
                     <Marker
                         key={`marker-${project.id}`}
@@ -191,6 +276,26 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                             >
                                 View Full Details
                             </button>
+                        </div>
+                    </Popup>
+                )}
+
+                {countryPopup && (
+                    <Popup
+                        longitude={countryPopup.lng}
+                        latitude={countryPopup.lat}
+                        anchor="bottom"
+                        onClose={() => setCountryPopup(null)}
+                        closeOnClick={false}
+                        maxWidth="280px"
+                        closeButton={true}
+                    >
+                        <div className="font-sans p-4">
+                            <p className="font-bold text-lg text-brand-dark-blue mb-2">{countryPopup.country}</p>
+                            <p className="text-sm text-gray-700">
+                                <span className="font-semibold text-2xl text-brand-dark-blue">{countryPopup.count}</span>
+                                {' '}project{countryPopup.count !== 1 ? 's' : ''} submitted
+                            </p>
                         </div>
                     </Popup>
                 )}

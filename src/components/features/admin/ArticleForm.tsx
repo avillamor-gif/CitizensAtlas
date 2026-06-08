@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 import { Article } from '@/types/types';
 import { uploadImage, uploadMultipleDocuments, validateImageFile, validateDocumentFile } from '@/lib/supabase/storage';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 
 // Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 interface ArticleFormProps {
     onClose: () => void;

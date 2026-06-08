@@ -82,7 +82,6 @@ export default function Map() {
           filterOptions={filterOptions}
         />
       </main>
-      <Footer />
     </div>
   )
 }

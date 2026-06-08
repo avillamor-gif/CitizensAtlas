@@ -8,6 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
+// Add global styles for links in project briefs
+const globalStyles = `
+  .project-brief-content a {
+    color: #dc2626 !important;
+    text-decoration: underline !important;
+  }
+  .project-brief-content a:hover {
+    color: #991b1b !important;
+  }
+`
+
 // Helper function to parse currency
 const parseCurrency = (currencyString: string): number => {
   if (!currencyString) return 0
@@ -44,12 +55,12 @@ function CountryProjectBriefsContent() {
 
       try {
         setLoading(true)
-        // Fetch all published project briefs
-        const allBriefs = await DataService.getProjectBriefs()
+        // Fetch published project briefs (no auth required)
+        const allBriefs = await DataService.getPublishedProjectBriefs()
         
-        // Filter by country (case-insensitive) and published status
+        // Filter by country (case-insensitive)
         const countryBriefs = allBriefs.filter(
-          b => b.country?.toUpperCase() === country.toUpperCase() && b.status === 'published'
+          b => b.country?.toUpperCase() === country.toUpperCase()
         )
         
         setBriefs(countryBriefs)
@@ -80,7 +91,7 @@ function CountryProjectBriefsContent() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 font-medium mb-4">{error}</p>
-          <Button onClick={() => router.back()}>Go Back</Button>
+          <Button onClick={() => router.push('/')}>Back to Home</Button>
         </div>
       </div>
     )
@@ -91,7 +102,7 @@ function CountryProjectBriefsContent() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-700 font-medium mb-4">No country specified</p>
-          <Button onClick={() => router.back()}>Go Back</Button>
+          <Button onClick={() => router.push('/')}>Back to Home</Button>
         </div>
       </div>
     )
@@ -105,6 +116,7 @@ function CountryProjectBriefsContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <style>{globalStyles}</style>
       {/* Page Header */}
       <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
         <div>
@@ -113,7 +125,7 @@ function CountryProjectBriefsContent() {
           </h1>
           <Button 
             variant="ghost" 
-            onClick={() => router.back()}
+            onClick={() => router.push('/?page=map')}
             className="mt-4 text-white border-2 border-white hover:bg-white hover:text-brand-dark-blue"
           >
             ← Back to Map
@@ -138,7 +150,7 @@ function CountryProjectBriefsContent() {
                     <div className="inline-block bg-black text-white px-4 py-2 text-sm font-bold uppercase tracking-wider">
                       {brief.country}
                     </div>
-                    <h2 className="text-4xl sm:text-5xl font-black uppercase leading-tight">
+                    <h2 className="text-4xl sm:text-5xl font-black uppercase leading-tight w-full md:w-1/2">
                       {brief.project_name}
                     </h2>
                   </div>
@@ -285,7 +297,7 @@ function BriefFieldRow({
       <div className="md:col-span-2">
         {isHtml ? (
           <div 
-            className={`text-sm leading-relaxed prose prose-sm max-w-none ${highlight ? 'text-blue-900 font-semibold' : 'text-gray-900'}`}
+            className={`project-brief-content text-sm leading-relaxed prose prose-sm max-w-none ${highlight ? 'text-blue-900 font-semibold' : 'text-gray-900'}`}
             style={{
               wordBreak: 'break-word'
             }}

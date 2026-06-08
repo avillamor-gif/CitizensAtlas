@@ -12,38 +12,14 @@ interface ArticleCardProps {
     isVideo?: boolean;
 }
 
-const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewArticle, isVideo = false }) => {
-    const [imageError, setImageError] = React.useState(false);
-    
-    // More robust image URL handling
-    const getImageUrl = () => {
-        if (imageError) return 'https://placehold.co/400x300/cbd5e1/475569?text=Image+Unavailable';
-        if (!item.imageUrl) return 'https://placehold.co/400x300/cbd5e1/475569?text=No+Image';
-        // Ensure Supabase URLs are properly formatted
-        if (item.imageUrl.includes('supabase')) {
-            return item.imageUrl;
-        }
-        return item.imageUrl;
-    };
-    
-    return (
+const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewArticle, isVideo = false }) => (
     <div className="flex-shrink-0 w-72">
         <button 
             onClick={() => onViewArticle(item)}
             className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-yellow rounded-lg"
         >
             <div className="bg-gray-300 h-40 mb-2 overflow-hidden rounded-lg relative">
-                <img 
-                    src={getImageUrl()} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                        console.error('Image load error for:', item.title, item.imageUrl);
-                        setImageError(true);
-                    }}
-                    loading="lazy"
-                    crossOrigin="anonymous"
-                />
+                <img src={item.imageUrl || 'https://picsum.photos/400/300'} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
                 {isVideo && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all duration-300">
                         <div className="bg-white bg-opacity-90 rounded-full p-3 group-hover:scale-110 transition-transform duration-300">
@@ -58,7 +34,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
             </div>
         </button>
     </div>
-);};
+);
 
 interface ContentCarouselProps {
     title: string;

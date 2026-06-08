@@ -24,8 +24,8 @@ const RoleManagement: React.FC = () => {
     // Default permissions structure
     const defaultPermissions = {
       contributor: ['View/Edit Projects', 'View/Edit News', 'View/Edit Publications', 'View/Edit Videos', 'View Analytics', 'Manage Categories/Types'],
-      admin: ['View/Edit Projects', 'View/Edit News', 'View/Edit Publications', 'View/Edit Videos', 'View Analytics', 'Manage Categories/Types', 'Batch Upload', 'Pending Approvals', 'Chart Visibility Toggle'],
-      superAdmin: ['View/Edit Projects', 'View/Edit News', 'View/Edit Publications', 'View/Edit Videos', 'View Analytics', 'Manage Categories/Types', 'Batch Upload', 'Pending Approvals', 'Chart Visibility Toggle', 'Team Management', 'Role Management'],
+      admin: ['View/Edit Projects', 'View/Edit Project Briefs', 'View/Edit News', 'View/Edit Publications', 'View/Edit Videos', 'View Analytics', 'Manage Categories/Types', 'Batch Upload', 'Pending Approvals', 'Chart Visibility Toggle'],
+      superAdmin: ['View/Edit Projects', 'View/Edit Project Briefs', 'View/Edit News', 'View/Edit Publications', 'View/Edit Videos', 'View Analytics', 'Manage Categories/Types', 'Batch Upload', 'Pending Approvals', 'Chart Visibility Toggle', 'Team Management', 'Role Management'],
     }
     
     // Load custom permissions from localStorage if they exist
@@ -34,6 +34,7 @@ const RoleManagement: React.FC = () => {
 
     const initialPermissions: Permission[] = [
       { feature: 'View/Edit Projects', description: 'Access to view, create, and edit project entries', contributor: permsToUse.contributor.includes('View/Edit Projects'), admin: permsToUse.admin.includes('View/Edit Projects'), superAdmin: permsToUse.superAdmin.includes('View/Edit Projects') },
+      { feature: 'View/Edit Project Briefs', description: 'Access to view, create, and edit project briefs (Policy Briefs)', contributor: permsToUse.contributor.includes('View/Edit Project Briefs'), admin: permsToUse.admin.includes('View/Edit Project Briefs'), superAdmin: permsToUse.superAdmin.includes('View/Edit Project Briefs') },
       { feature: 'View/Edit News', description: 'Manage news updates and articles', contributor: permsToUse.contributor.includes('View/Edit News'), admin: permsToUse.admin.includes('View/Edit News'), superAdmin: permsToUse.superAdmin.includes('View/Edit News') },
       { feature: 'View/Edit Publications', description: 'Manage publication documents and resources', contributor: permsToUse.contributor.includes('View/Edit Publications'), admin: permsToUse.admin.includes('View/Edit Publications'), superAdmin: permsToUse.superAdmin.includes('View/Edit Publications') },
       { feature: 'View/Edit Videos', description: 'Manage video content and categories', contributor: permsToUse.contributor.includes('View/Edit Videos'), admin: permsToUse.admin.includes('View/Edit Videos'), superAdmin: permsToUse.superAdmin.includes('View/Edit Videos') },
@@ -43,7 +44,7 @@ const RoleManagement: React.FC = () => {
       { feature: 'Pending Approvals', description: 'Review and approve draft submissions', contributor: permsToUse.contributor.includes('Pending Approvals'), admin: permsToUse.admin.includes('Pending Approvals'), superAdmin: permsToUse.superAdmin.includes('Pending Approvals') },
       { feature: 'Chart Visibility Toggle', description: 'Control which analytics charts appear on the public dashboard', contributor: permsToUse.contributor.includes('Chart Visibility Toggle'), admin: permsToUse.admin.includes('Chart Visibility Toggle'), superAdmin: permsToUse.superAdmin.includes('Chart Visibility Toggle') },
       { feature: 'Team Management', description: 'Manage user accounts and assign roles', contributor: permsToUse.contributor.includes('Team Management'), admin: permsToUse.admin.includes('Team Management'), superAdmin: permsToUse.superAdmin.includes('Team Management') },
-      { feature: 'Role Management', description: 'View and edit role permission structure', contributor: permsToUse.contributor.includes('Role Management'), admin: permsToUse.admin.includes('Role Management'), superAdmin: permsToUse.superAdmin.includes('Role Management') },
+      { feature: 'Role Management', description: 'View and understand role permission structure', contributor: permsToUse.contributor.includes('Role Management'), admin: permsToUse.admin.includes('Role Management'), superAdmin: permsToUse.superAdmin.includes('Role Management') },
     ]
     setPermissions(initialPermissions)
   }, [])

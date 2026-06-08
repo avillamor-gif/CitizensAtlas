@@ -106,6 +106,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             }
             
             const canViewProjects = hasPermission(userRole, 'View/Edit Projects');
+            const canViewProjectBriefs = hasPermission(userRole, 'View/Edit Project Briefs');
             const canViewNews = hasPermission(userRole, 'View/Edit News');
             const canViewPublications = hasPermission(userRole, 'View/Edit Publications');
             const canViewVideos = hasPermission(userRole, 'View/Edit Videos');
@@ -123,6 +124,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             if (activeAdminPage === 'account-profile') {
                 hasAccess = true;
             } else if (activeAdminPage.startsWith('projects') && !canViewProjects) {
+                hasAccess = false;
+            } else if (activeAdminPage.startsWith('project-briefs') && !canViewProjectBriefs) {
                 hasAccess = false;
             } else if (activeAdminPage.startsWith('news') && !canViewNews) {
                 hasAccess = false;
@@ -148,6 +151,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             if (!hasAccess) {
                 const getFirstAccessiblePage = (): AdminPage => {
                     if (canViewProjects) return 'projects-list';
+                    if (canViewProjectBriefs) return 'project-briefs-list';
                     if (canViewNews) return 'news-list';
                     if (canViewPublications) return 'publications-list';
                     if (canViewVideos) return 'videos-list';
@@ -248,6 +252,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         
         // Permission checks for each page
         const canViewProjects = hasPermission(userRole, 'View/Edit Projects');
+        const canViewProjectBriefs = hasPermission(userRole, 'View/Edit Project Briefs');
         const canViewNews = hasPermission(userRole, 'View/Edit News');
         const canViewPublications = hasPermission(userRole, 'View/Edit Publications');
         const canViewVideos = hasPermission(userRole, 'View/Edit Videos');
@@ -261,6 +266,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         // Find first accessible page for redirect
         const getFirstAccessiblePage = (): AdminPage => {
             if (canViewProjects) return 'projects-list';
+            if (canViewProjectBriefs) return 'project-briefs-list';
             if (canViewNews) return 'news-list';
             if (canViewPublications) return 'publications-list';
             if (canViewVideos) return 'videos-list';
@@ -411,7 +417,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             
             // Project Briefs
             case 'project-briefs-list':
-                if (!canViewProjects) return <AccessDenied />;
+                if (!canViewProjectBriefs) return <AccessDenied />;
                 return (
                     <ProjectBriefList
                         briefs={projectBriefs}
@@ -423,7 +429,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                     />
                 );
             case 'project-briefs-add':
-                if (!canViewProjects) return <AccessDenied />;
+                if (!canViewProjectBriefs) return <AccessDenied />;
                 return (
                     <ProjectBriefForm
                         onSave={(briefData) => {
@@ -437,7 +443,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                     />
                 );
             case 'project-briefs-edit':
-                if (!canViewProjects) return <AccessDenied />;
+                if (!canViewProjectBriefs) return <AccessDenied />;
                 if (!projectBriefToEdit) {
                     setActiveAdminPage('project-briefs-list');
                     return null;

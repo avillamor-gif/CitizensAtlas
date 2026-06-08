@@ -20,6 +20,16 @@ const supabase = createClient()
 export async function uploadImage(file: File, bucket: string = 'images'): Promise<string> {
   console.log('📤 [uploadImage] START', { fileName: file.name, fileSize: file.size, fileType: file.type, bucket })
   
+  // Check file size (warn if > 5MB)
+  const maxSize = 10 * 1024 * 1024 // 10MB hard limit
+  if (file.size > maxSize) {
+    throw new Error(`Image file too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 10MB. Please compress the image and try again.`)
+  }
+  
+  if (file.size > 5 * 1024 * 1024) {
+    console.warn('⚠️ [uploadImage] Large file detected:', (file.size / 1024 / 1024).toFixed(2), 'MB')
+  }
+  
   // Generate unique filename with timestamp
   const fileExt = file.name.split('.').pop()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
@@ -27,11 +37,11 @@ export async function uploadImage(file: File, bucket: string = 'images'): Promis
   
   console.log('📤 [uploadImage] Generated filename:', filePath)
 
-  // Create timeout promise
+  // Create timeout promise (60 seconds for larger images and slower connections)
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => {
-      reject(new Error('Image upload timeout after 15 seconds'))
-    }, 15000)
+      reject(new Error('Image upload timeout after 60 seconds. Please check your connection and try again.'))
+    }, 60000)
   })
 
   // Create upload promise

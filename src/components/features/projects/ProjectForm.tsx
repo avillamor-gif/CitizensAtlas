@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MapGL, { Marker } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 
 // Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 interface ProjectFormProps {
     onClose: () => void;

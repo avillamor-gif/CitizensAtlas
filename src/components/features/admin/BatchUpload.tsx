@@ -2,20 +2,22 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { 
     generateProjectsTemplate, 
+    generateProjectBriefsTemplate,
     generateNewsTemplate, 
     generatePublicationsTemplate, 
     generateVideosTemplate 
 } from '@/lib/services/excel-templates';
 import { 
     parseProjectsExcel, 
+    parseProjectBriefsExcel,
     parseNewsExcel, 
     parsePublicationsExcel, 
     parseVideosExcel 
 } from '@/lib/services/excel-parser';
-import { createProject, createNews, createPublication, createVideo } from '@/lib/services/data-service';
+import { createProject, createProjectBrief, createNews, createPublication, createVideo } from '@/lib/services/data-service';
 import { ArrowUpTrayIcon, DownloadIcon } from '@/components/ui/icons';
 
-type ContentType = 'projects' | 'news' | 'publications' | 'videos';
+type ContentType = 'projects' | 'project-briefs' | 'news' | 'publications' | 'videos';
 
 interface BatchUploadProps {
     onSuccess?: () => void;
@@ -37,6 +39,10 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
             case 'projects':
                 generateProjectsTemplate();
                 filename = 'projects_template.xlsx';
+                break;
+            case 'project-briefs':
+                generateProjectBriefsTemplate();
+                filename = 'project_briefs_template.xlsx';
                 break;
             case 'news':
                 generateNewsTemplate();
@@ -73,6 +79,9 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                 case 'projects':
                     result = await parseProjectsExcel(selectedFile);
                     break;
+                case 'project-briefs':
+                    result = await parseProjectBriefsExcel(selectedFile);
+                    break;
                 case 'news':
                     result = await parseNewsExcel(selectedFile);
                     break;
@@ -105,6 +114,9 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                     switch (contentType) {
                         case 'projects':
                             await createProject(item);
+                            break;
+                        case 'project-briefs':
+                            await createProjectBrief(item);
                             break;
                         case 'news':
                             await createNews(item);
@@ -157,8 +169,8 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                     Select Content Type
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {(['projects', 'news', 'publications', 'videos'] as ContentType[]).map((type) => (
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {(['projects', 'project-briefs', 'news', 'publications', 'videos'] as ContentType[]).map((type) => (
                         <button
                             key={type}
                             onClick={() => {
@@ -172,7 +184,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                             }`}
                             style={contentType === type ? { backgroundColor: '#0d234f', borderColor: '#0d234f' } : {}}
                         >
-                            <div className="font-medium capitalize">{type}</div>
+                            <div className="font-medium capitalize">{type.replace('-', ' ')}</div>
                         </button>
                     ))}
                 </div>

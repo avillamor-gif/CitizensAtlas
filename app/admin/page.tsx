@@ -110,11 +110,11 @@ export default function Admin() {
   }
 
   // Load news on-demand
-  const loadNews = async () => {
-    if (loadedData.news) return // Already loaded
+  const loadNews = async (forceReload = false) => {
+    if (loadedData.news && !forceReload) return // Already loaded
     
     try {
-      console.log('📥 Admin: Loading news...')
+      console.log('📥 Admin: Loading news... (forceReload:', forceReload, ')')
       const newsData = await DataService.getNews()
       setNews(newsData)
       setLoadedData(prev => ({ ...prev, news: true }))
@@ -126,11 +126,11 @@ export default function Admin() {
   }
 
   // Load publications on-demand
-  const loadPublications = async () => {
-    if (loadedData.publications) return // Already loaded
+  const loadPublications = async (forceReload = false) => {
+    if (loadedData.publications && !forceReload) return // Already loaded
     
     try {
-      console.log('📥 Admin: Loading publications...')
+      console.log('📥 Admin: Loading publications... (forceReload:', forceReload, ')')
       const publicationsData = await DataService.getPublications()
       setPublications(publicationsData)
       setLoadedData(prev => ({ ...prev, publications: true }))
@@ -142,11 +142,11 @@ export default function Admin() {
   }
 
   // Load videos on-demand
-  const loadVideos = async () => {
-    if (loadedData.videos) return // Already loaded
+  const loadVideos = async (forceReload = false) => {
+    if (loadedData.videos && !forceReload) return // Already loaded
     
     try {
-      console.log('📥 Admin: Loading videos...')
+      console.log('📥 Admin: Loading videos... (forceReload:', forceReload, ')')
       const videosData = await DataService.getVideos()
       setVideos(videosData)
       setLoadedData(prev => ({ ...prev, videos: true }))
@@ -167,13 +167,13 @@ export default function Admin() {
         await loadProjectBriefs(true)
         break
       case 'news':
-        await loadNews()
+        await loadNews(true)
         break
       case 'publications':
-        await loadPublications()
+        await loadPublications(true)
         break
       case 'videos':
-        await loadVideos()
+        await loadVideos(true)
         break
       case 'categories':
         await loadCategories()

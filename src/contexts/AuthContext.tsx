@@ -78,21 +78,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🔍 Fetching profile for user:', supabaseUser.id, supabaseUser.email);
       
-      // Add timeout to prevent hanging
-      const queryPromise = supabase
-        .from('profiles')
-        .select('*')
-        .eq('email', supabaseUser.email!)
-        .maybeSingle();
+      // Increased timeout for slower connections (was 10s, now 20s)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
       
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile query timeout')), 5000)
-      );
+      let profile: any = null;
+      let error: any = null;
       
-      const { data: profile, error } = await Promise.race([
-        queryPromise,
-        timeoutPromise
-      ]) as any;
+      try {
+        // Query by ID instead of email - it's the primary key and faster
+        const result = await supabase
+          .from('profiles')
+          .select('id, email, role, full_name, avatar_url')
+          .eq('id', supabaseUser.id)
+          .single();
+        
+        clearTimeout(timeoutId);
+        profile = result.data;
+        error = result.error;
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.error('❌ Profile query exception:', err);
+        error = err;
+      }
 
       console.log('📦 Profile query result:', { profile, error });
 

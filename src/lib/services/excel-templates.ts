@@ -165,3 +165,50 @@ export function generateVideosTemplate() {
   
   XLSX.writeFile(wb, 'videos-upload-template.xlsx');
 }
+
+// Generate Excel template for Project Briefs
+export function generateProjectBriefsTemplate() {
+  const headers = [
+    'Project Name*',
+    'Project Type',
+    'Location*',
+    'Country*',
+    'Financing Amount',
+    'Financiers',
+    'Financial Instruments',
+    'Other Partners Involved',
+    'Timeline and Status',
+    'Safeguard Categories',
+    'Negative Impacts',
+    'Reprisals',
+    'Advocacy Timeline',
+    'Other Information',
+    'Status',
+  ];
+
+  const exampleRow = [
+    'Metro Manila Rail Project',
+    'Infrastructure',
+    'Metro Manila',
+    'Philippines',
+    '2.5 billion USD',
+    'Asian Development Bank, World Bank',
+    'Loans, Grants',
+    'Department of Transportation, Private Contractors',
+    'Phase 1: 2024-2026, Phase 2: 2027-2029',
+    'Environmental Assessment Required',
+    'Displacement of 500 families, Air quality concerns',
+    'Community leaders received threats',
+    '2023: Initial complaints filed, 2024: Legal action initiated',
+    'Additional context and relevant information',
+    'published',
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow]);
+  ws['!cols'] = headers.map(() => ({ wch: 25 }));
+  
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Project Briefs');
+  
+  XLSX.writeFile(wb, 'project-briefs-upload-template.xlsx');
+}

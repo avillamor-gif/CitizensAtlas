@@ -66,7 +66,7 @@ const StatCard: React.FC<{
       {icon}
     </CardHeader>
     <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
+      <div className="text-xl sm:text-2xl font-bold">{value}</div>
       {trend && (
         <p className="text-xs text-muted-foreground mt-1">
           <TrendingUp className="inline h-3 w-3 mr-1" />
@@ -108,8 +108,8 @@ const FrontendChartCard: React.FC<FrontendChartCardProps> = ({
     <CardHeader>
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-          {description && <CardDescription className="mt-1.5">{description}</CardDescription>}
+          <CardTitle className="text-base sm:text-lg font-semibold">{title}</CardTitle>
+          {description && <CardDescription className="text-xs sm:text-sm mt-1.5">{description}</CardDescription>}
         </div>
         {isSuperAdmin && (
           <DropdownMenu>
@@ -478,14 +478,14 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
     <div className="w-full space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Projects Analytics</h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Projects Analytics</h2>
+        <p className="text-xs sm:text-sm text-gray-600 mt-1">
           Comprehensive analysis of {analyticsData.totalProjects} projects across {analyticsData.countryCount} countries
         </p>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Projects"
           value={analyticsData.totalProjects.toLocaleString()}
@@ -513,7 +513,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
       </div>
 
       {/* Charts Grid */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
         {/* Projects by Country */}
         <FrontendChartCard 
           chartId="topCountries"
@@ -523,12 +523,12 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[250px]">
+          <ChartContainer config={{}} className="h-[200px] sm:h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analyticsData.projectsByCountryData} layout="vertical" margin={{ left: 80, right: 15, top: 5, bottom: 5 }}>
+              <BarChart data={analyticsData.projectsByCountryData} layout="vertical" margin={{ left: 60, right: 10, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                 <XAxis type="number" />
-                <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 9 }} />
+                <YAxis dataKey="name" type="category" width={55} tick={{ fontSize: 8 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="projects" fill="#3B82F6" radius={[0, 4, 4, 0]} barSize={16} />
               </BarChart>
@@ -546,7 +546,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <div className="flex flex-col items-center w-full h-full">
-            <div className="relative w-full h-[180px]">
+            <div className="relative w-full h-[160px] sm:h-[180px]">
               {/* Center Total Display */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
                 <span className="text-3xl font-extrabold text-brand-dark-blue">{analyticsData.totalProjects}</span>
@@ -616,14 +616,14 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analyticsData.investmentByCountryData} margin={{ left: 0, right: 5, top: 5, bottom: 5 }}>
+              <BarChart data={analyticsData.investmentByCountryData} margin={{ left: -5, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fontSize: 8 } as any} 
-                  height={60} 
+                  tick={{ fontSize: 7 } as any} 
+                  height={50} 
                   angle={-45}
                   textAnchor="end"
                 />
@@ -644,9 +644,9 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={analyticsData.projectsOverTimeData} margin={{ left: -25, right: 5, top: 5, bottom: 5 }}>
+              <LineChart data={analyticsData.projectsOverTimeData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" tick={{ fontSize: 9 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 9 }} />
@@ -673,11 +673,11 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analyticsData.projectsByIFIData} margin={{ left: -25, right: 5, top: 5, bottom: 5 }}>
+              <BarChart data={analyticsData.projectsByIFIData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-45} textAnchor="end" height={60} />
+                <XAxis dataKey="name" tick={{ fontSize: 7 }} angle={-45} textAnchor="end" height={50} />
                 <YAxis tick={{ fontSize: 9 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="projects" fill="#F97316" radius={[4, 4, 0, 0]} />
@@ -695,11 +695,11 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analyticsData.investmentByIFIData} margin={{ left: -25, right: 5, top: 5, bottom: 5 }}>
+              <BarChart data={analyticsData.investmentByIFIData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-45} textAnchor="end" height={60} />
+                <XAxis dataKey="name" tick={{ fontSize: 7 }} angle={-45} textAnchor="end" height={50} />
                 <YAxis tick={{ fontSize: 9 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="investment" fill="#6366F1" radius={[4, 4, 0, 0]} />
@@ -717,7 +717,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -726,7 +726,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={85}
+                  outerRadius={70}
                   label
                 >
                   {analyticsData.projectsByRegionData.map((entry, index) => (
@@ -748,7 +748,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -757,7 +757,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={85}
+                  outerRadius={70}
                   label
                 >
                   {analyticsData.gaiaSupportData.map((entry, index) => {
@@ -786,7 +786,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[220px]">
+          <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -795,7 +795,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={85}
+                  outerRadius={70}
                   label
                 >
                   {analyticsData.projectsByStatusData.map((entry, index) => (
@@ -817,12 +817,12 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           onToggleVisibility={handleToggleVisibility}
           isSuperAdmin={canToggleChartVisibility}
         >
-          <ChartContainer config={{}} className="h-[250px]">
+          <ChartContainer config={{}} className="h-[200px] sm:h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analyticsData.communityActionsData} layout="vertical" margin={{ left: 80, right: 15, top: 5, bottom: 5 }}>
+              <BarChart data={analyticsData.communityActionsData} layout="vertical" margin={{ left: 60, right: 10, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                 <XAxis type="number" tick={{ fontSize: 9 }} />
-                <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 8 }} />
+                <YAxis dataKey="name" type="category" width={55} tick={{ fontSize: 7 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="value" fill="#EC4899" radius={[0, 4, 4, 0]} barSize={16} />
               </BarChart>
@@ -840,11 +840,11 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           {analyticsData.submissionTrendData.length > 0 ? (
-            <ChartContainer config={{}} className="h-[220px]">
+            <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={analyticsData.submissionTrendData} margin={{ left: -25, right: 5, top: 5, bottom: 5 }}>
+                <LineChart data={analyticsData.submissionTrendData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" tick={{ fontSize: 8 }} angle={-45} textAnchor="end" height={55} />
+                  <XAxis dataKey="date" tick={{ fontSize: 7 }} angle={-45} textAnchor="end" height={50} />
                   <YAxis allowDecimals={false} tick={{ fontSize: 9 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Line

@@ -127,6 +127,31 @@ function HomePageContent() {
     loadDataFromSupabase()
   }, [])
 
+  // Reload data when returning to the page (e.g., from browser back button)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && !dataLoading) {
+        console.log('🔄 Page visible again, reloading data...')
+        loadDataFromSupabase()
+      }
+    }
+
+    const handleFocus = () => {
+      if (!dataLoading) {
+        console.log('🔄 Window focused, reloading data...')
+        loadDataFromSupabase()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [dataLoading])
+
   // Handle browser back/forward navigation
   useEffect(() => {
     if (!searchParams) return

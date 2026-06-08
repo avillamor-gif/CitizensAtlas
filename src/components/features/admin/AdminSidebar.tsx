@@ -85,6 +85,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   
   // Check permissions based on database role
   const canViewProjects = hasPermission(userRole, 'View/Edit Projects');
+  const canViewProjectBriefs = hasPermission(userRole, 'View/Edit Project Briefs');
   const canViewNews = hasPermission(userRole, 'View/Edit News');
   const canViewPublications = hasPermission(userRole, 'View/Edit Publications');
   const canViewVideos = hasPermission(userRole, 'View/Edit Videos');
@@ -122,8 +123,10 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
         }] : []),
       ],
     });
-    
-    // Project Briefs submenu
+  }
+  
+  // Project Briefs section (admin and super-admin only)
+  if (canViewProjectBriefs) {
     navItems.push({
       title: "Project Briefs",
       icon: Briefcase,

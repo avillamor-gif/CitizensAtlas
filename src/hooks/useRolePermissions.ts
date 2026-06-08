@@ -10,6 +10,7 @@ interface Permission {
 
 interface RolePermissions {
   'View/Edit Projects': boolean
+  'View/Edit Project Briefs': boolean
   'View/Edit News': boolean
   'View/Edit Publications': boolean
   'View/Edit Videos': boolean
@@ -27,6 +28,13 @@ const DEFAULT_PERMISSIONS: Permission[] = [
     feature: 'View/Edit Projects',
     description: 'Access to view, create, and edit project entries',
     contributor: true,
+    admin: true,
+    superAdmin: true,
+  },
+  {
+    feature: 'View/Edit Project Briefs',
+    description: 'Access to view, create, and edit project briefs (Policy Briefs)',
+    contributor: false,
     admin: true,
     superAdmin: true,
   },
@@ -105,6 +113,7 @@ const DEFAULT_PERMISSIONS: Permission[] = [
 export function useRolePermissions(userRole?: 'super-admin' | 'admin' | 'contributor'): RolePermissions {
   const [permissions, setPermissions] = useState<RolePermissions>({
     'View/Edit Projects': false,
+    'View/Edit Project Briefs': false,
     'View/Edit News': false,
     'View/Edit Publications': false,
     'View/Edit Videos': false,

@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic'
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(
-  () => import('react-quill').then((mod) => mod.default),
+  () => import('react-quill-new').then((mod) => mod.default),
   { 
     ssr: false,
     loading: () => <div className="h-40 border rounded-md bg-gray-50 animate-pulse" />
@@ -87,7 +87,7 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
 
   // Load ReactQuill CSS and set mounted state
   useEffect(() => {
-    import('react-quill/dist/quill.snow.css')
+    import('react-quill-new/dist/quill.snow.css')
     setMounted(true)
   }, [])
 
@@ -141,7 +141,7 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
               {countries.length > 0 ? (
-                countries.sort().map((country) => (
+                Array.from(new Set(countries)).sort().map((country) => (
                   <SelectItem key={country} value={country}>
                     {country}
                   </SelectItem>

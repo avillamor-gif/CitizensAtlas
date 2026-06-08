@@ -51,7 +51,10 @@ export default function RootLayout({
           crossOrigin="" 
         />
       </head>
-      <body className="bg-gray-50 font-sans min-h-screen">
+      <body 
+        className="bg-gray-50 font-sans min-h-screen"
+        suppressHydrationWarning
+      >
         <AuthProvider>
           {children}
         </AuthProvider>

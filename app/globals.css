@@ -1,8 +1,8 @@
+@import url('https://rsms.me/inter/inter.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://rsms.me/inter/inter.css');
 
 body {
   font-family: 'Inter', sans-serif;
@@ -120,4 +120,18 @@ body {
 
 .prose a:visited {
   @apply text-purple-600 decoration-purple-600;
+}
+
+/* Slide-up animation for mobile filter modal */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
 }

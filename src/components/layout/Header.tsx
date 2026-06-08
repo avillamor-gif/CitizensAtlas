@@ -79,10 +79,10 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                         ) : (
                             <Link 
                                 href="/auth/login"
-                                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                className="p-2 rounded-full bg-brand-dark-blue hover:bg-opacity-90 transition-colors"
                                 title="Login"
                             >
-                                <UserIcon className="w-6 h-6 text-gray-700" />
+                                <UserIcon className="w-6 h-6 text-white" />
                             </Link>
                         )}
                     </nav>
