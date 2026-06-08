@@ -893,9 +893,12 @@ ${references}
                         </div>
                     )}
                     
-                    {console.log('🎨 Rendering Selects - formData.region:', formData.region, 'formData.country:', formData.country)}
-                    {console.log('🎨 Available countries for region:', formData.region, ':', availableCountries)}
-                    {console.log('🎨 isLoadingData:', isLoadingData)}
+                    {(() => {
+                      console.log('🎨 Rendering Selects - formData.region:', formData.region, 'formData.country:', formData.country)
+                      console.log('🎨 Available countries for region:', formData.region, ':', availableCountries)
+                      console.log('🎨 isLoadingData:', isLoadingData)
+                      return null
+                    })()}
                     
                     {isLoadingData ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

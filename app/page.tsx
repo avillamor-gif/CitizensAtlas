@@ -8,7 +8,7 @@ import { Home, AboutPage, WhatWeDoPage, PartnerPage } from '@/components/pages'
 import { MapPage } from '@/components/features/map'
 import { ArticleListPage, ArticleDetailPage } from '@/components/features/articles'
 import { projectCardsData, getIfiAbbreviation, newsData as initialNewsData, publicationsData as initialPublicationsData, videosData } from '@/lib/constants'
-import { Project, Filters, Article, Page, User } from '@/types/types'
+import { Project, Filters, Article, Page, User, ProjectBrief } from '@/types/types'
 import { notifyAdminOfNewSubmission, notifyContributorOfStatus } from '@/utils/notifications'
 import * as dataService from '@/lib/services/data-service'
 import { updateProject, updateNews, updatePublication, updateVideo } from '@/lib/services/data-service'
@@ -51,6 +51,7 @@ function HomePageContent() {
 
   // Initialize state - will be loaded from Supabase
   const [projects, setProjects] = useState<Project[]>([])
+  const [projectBriefs, setProjectBriefs] = useState<ProjectBrief[]>([])
   const [news, setNews] = useState<Article[]>([])
   const [publications, setPublications] = useState<Article[]>([])
   const [videos, setVideos] = useState<Article[]>([])
@@ -120,6 +121,31 @@ function HomePageContent() {
       alert('Failed to load data. Please refresh the page.')
     } finally {
       setDataLoading(false)
+    }
+  }
+
+  // Load individual data functions for AdminDashboard
+  const loadProjects = async () => {
+    try {
+      console.log('🔄 Reloading projects...')
+      const projectsData = await dataService.getPublishedProjectsWithDetails()
+      setProjects(projectsData)
+      console.log('✅ Projects reloaded:', projectsData.length)
+    } catch (error) {
+      console.error('❌ Failed to reload projects:', error)
+      alert('Failed to reload projects. Please try again.')
+    }
+  }
+
+  const loadProjectBriefs = async () => {
+    try {
+      console.log('🔄 Reloading project briefs...')
+      const briefsData = await dataService.getProjectBriefs?.() || []
+      setProjectBriefs(briefsData)
+      console.log('✅ Project briefs reloaded:', briefsData.length)
+    } catch (error) {
+      console.error('❌ Failed to reload project briefs:', error)
+      alert('Failed to reload project briefs. Please try again.')
     }
   }
 
@@ -254,6 +280,67 @@ function HomePageContent() {
     console.log('Deleting projects:', projectIds)
     setProjects(prevProjects => prevProjects.filter(p => !projectIds.includes(p.id)))
     alert(`✅ ${projectIds.length} project(s) deleted successfully!`)
+  }
+
+  // ProjectBrief Handlers
+  const handleAddProjectBrief = async (briefData: Omit<ProjectBrief, 'id'>) => {
+    try {
+      console.log('🚀 [handleAddProjectBrief] Starting project brief creation...')
+      console.log('📝 Brief data:', briefData)
+      
+      const briefToSave: Omit<ProjectBrief, 'id'> = {
+        ...briefData,
+        status: (currentUser?.role === 'contributor' ? 'draft' : 'published') as 'draft' | 'published',
+        submitted_by: currentUser?.name || currentUser?.email || 'Anonymous',
+      }
+      
+      const newBrief = await dataService.createProjectBrief(briefToSave)
+      
+      console.log('✅ Project brief saved successfully:', newBrief)
+      
+      setProjectBriefs(prevBriefs => [newBrief, ...prevBriefs])
+      
+      const message = currentUser?.role === 'contributor' 
+        ? '✅ Project brief submitted for approval!' 
+        : '✅ Project brief added successfully!';
+      alert(message)
+      
+      // Send notification to admin if contributor submitted
+      if (currentUser?.role === 'contributor') {
+        notifyAdminOfNewSubmission({
+          contributorName: currentUser.name || currentUser.email,
+          contributorEmail: currentUser.email,
+          contentType: 'project',
+          contentTitle: briefData.project_name,
+          submittedAt: new Date().toISOString(),
+        }).catch(error => console.error('Failed to send notification:', error))
+      }
+    } catch (error) {
+      console.error('❌ Failed to add project brief:', error)
+      alert('❌ Failed to add project brief. Check console for details.')
+    }
+  }
+
+  const handleUpdateProjectBrief = async (updatedBrief: ProjectBrief) => {
+    console.log('Updating project brief:', updatedBrief)
+    try {
+      const result = await dataService.updateProjectBrief(updatedBrief.id, updatedBrief)
+      
+      setProjectBriefs(prevBriefs => 
+        prevBriefs.map(b => b.id === result.id ? result : b)
+      )
+      
+      alert('✅ Project brief updated successfully!')
+    } catch (error) {
+      console.error('Failed to update project brief:', error)
+      alert('❌ Failed to update project brief. Please try again.')
+    }
+  }
+
+  const handleDeleteProjectBriefs = (briefIds: number[]) => {
+    console.log('Deleting project briefs:', briefIds)
+    setProjectBriefs(prevBriefs => prevBriefs.filter(b => !briefIds.includes(b.id)))
+    alert(`✅ ${briefIds.length} project brief(s) deleted successfully!`)
   }
 
   // News Handlers
@@ -977,9 +1064,15 @@ function HomePageContent() {
       return (
         <AdminDashboard 
           projects={projects}
+          onLoadProjects={loadProjects}
           onAddProject={handleAddProject}
           onUpdateProject={handleUpdateProject}
           onDeleteProjects={handleDeleteProjects}
+          projectBriefs={projectBriefs}
+          onLoadProjectBriefs={loadProjectBriefs}
+          onAddProjectBrief={handleAddProjectBrief}
+          onUpdateProjectBrief={handleUpdateProjectBrief}
+          onDeleteProjectBriefs={handleDeleteProjectBriefs}
           news={news}
           onAddNews={handleAddNews}
           onUpdateNews={handleUpdateNews}

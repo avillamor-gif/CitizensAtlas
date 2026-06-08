@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ProjectBrief } from '@/types/types'
 import dynamic from 'next/dynamic'
 
 // Dynamically import ReactQuill to avoid SSR issues
@@ -20,25 +21,25 @@ const ReactQuill = dynamic(
 
 interface ProjectBriefFormData {
   project_name: string
-  project_type: string
+  project_type?: string
   location: string
-  country: string
-  financing_amount: string
-  financiers: string
-  financial_instruments: string
-  other_partners_involved: string
-  timeline_and_status: string
-  safeguard_categories: string
-  negative_impacts: string
-  reprisals: string
-  advocacy_timeline: string
-  other_information: string
+  country?: string
+  financing_amount?: string
+  financiers?: string
+  financial_instruments?: string
+  other_partners_involved?: string
+  timeline_and_status?: string
+  safeguard_categories?: string
+  negative_impacts?: string
+  reprisals?: string
+  advocacy_timeline?: string
+  other_information?: string
 }
 
 interface ProjectBriefFormProps {
   onCancel: () => void
   onSave: (data: ProjectBriefFormData) => void
-  briefToEdit?: ProjectBriefFormData | null
+  briefToEdit?: ProjectBrief | ProjectBriefFormData | null
   userRole?: 'contributor' | 'admin' | 'super-admin'
   userId?: string
   countries?: string[]
@@ -87,7 +88,12 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
 
   // Load ReactQuill CSS and set mounted state
   useEffect(() => {
-    import('react-quill-new/dist/quill.snow.css')
+    try {
+      require('react-quill-new/dist/quill.snow.css')
+    } catch (e) {
+      // CSS may not be available in some environments
+      console.warn('Could not load ReactQuill CSS:', e)
+    }
     setMounted(true)
   }, [])
 
