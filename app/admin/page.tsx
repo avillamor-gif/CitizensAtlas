@@ -216,6 +216,7 @@ export default function Admin() {
       setVideoCategories(videoCatsData)
       setLoadedData({
         projects: true,
+        projectBriefs: true,
         news: true,
         publications: true,
         videos: true,
