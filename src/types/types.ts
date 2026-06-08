@@ -3,7 +3,7 @@
 
 
 // FIX: Moved Page type here from App.tsx to resolve a circular dependency issue.
-export type Page = 'home' | 'about' | 'what-we-do' | 'map' | 'partner-with-us' | 'news' | 'videos' | 'publications' | 'admin';
+export type Page = 'home' | 'about' | 'what-we-do' | 'map' | 'partner-with-us' | 'news' | 'videos' | 'publications' | 'resources' | 'admin';
 
 export type UserRole = 'super-admin' | 'admin' | 'contributor';
 

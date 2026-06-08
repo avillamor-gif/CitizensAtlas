@@ -63,6 +63,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                     <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
                         <NavButton page="about" activePage={activePage} onNavigate={onNavigate}>About</NavButton>
                         <NavButton page="what-we-do" activePage={activePage} onNavigate={onNavigate}>What we do</NavButton>
+                        <NavButton page="resources" activePage={activePage} onNavigate={onNavigate}>Resources</NavButton>
                         <NavButton page="map" activePage={activePage} onNavigate={onNavigate}>Map</NavButton>
                         <NavButton page="partner-with-us" activePage={activePage} onNavigate={onNavigate}>Partner with us</NavButton>
                         
@@ -132,6 +133,16 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                             }`}
                         >
                             What we do
+                        </button>
+                        <button
+                            onClick={() => handleNavigation('resources')}
+                            className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
+                                activePage === 'resources' 
+                                    ? 'bg-brand-dark-blue text-white' 
+                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                            }`}
+                        >
+                            Resources
                         </button>
                         <button
                             onClick={() => handleNavigation('map')}
