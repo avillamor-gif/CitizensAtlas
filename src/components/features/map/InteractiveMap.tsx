@@ -62,7 +62,6 @@ interface InteractiveMapProps {
 }
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad }) => {
-    const [popupInfo, setPopupInfo] = useState<Project | null>(null);
     const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
     const mapRef = useRef<any>(null);
 
@@ -199,7 +198,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
                 onClick={(e) => {
-                    setPopupInfo(null);
                     setCountryPopup(null);
                     // If onMapClick is provided and user clicks on empty map area (not a marker)
                     if (onMapClick && e.lngLat) {
@@ -219,7 +217,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         anchor="center"
                         onClick={(e) => {
                             e.originalEvent.stopPropagation();
-                            setPopupInfo(project);
+                            onMarkerClick(project);
                         }}
                     >
                         <div
@@ -242,43 +240,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         </div>
                     </Marker>
                 ))}
-
-                {popupInfo && (
-                    <Popup
-                        longitude={popupInfo.longitude}
-                        latitude={popupInfo.latitude}
-                        anchor="bottom"
-                        onClose={() => setPopupInfo(null)}
-                        closeOnClick={false}
-                        maxWidth="320px"
-                        closeButton={true}
-                    >
-                        <div className="font-sans p-3 pt-2">
-                            <p className="font-bold text-base text-brand-dark-blue mb-2">{popupInfo.country}</p>
-                            <p className="text-xs text-gray-800 whitespace-normal mb-2" title={popupInfo.title}>
-                                {popupInfo.title}
-                            </p>
-                            <div className="space-y-1 mb-3">
-                                <p className="text-xs text-gray-600">
-                                    <span className="font-semibold">Amount:</span> {parseDetail(popupInfo.details, 'Total Project Amount') || 'N/A'}
-                                </p>
-                                <p className="text-xs text-gray-600">
-                                    <span className="font-semibold">False Solution:</span> {popupInfo.corruptionType || 'N/A'}
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => {
-                                    onMarkerClick(popupInfo);
-                                    setPopupInfo(null);
-                                }}
-                                className="w-full text-white text-xs font-semibold py-2 px-3 rounded hover:opacity-90 transition-opacity"
-                                style={{ backgroundColor: '#0d234f' }}
-                            >
-                                View Full Details
-                            </button>
-                        </div>
-                    </Popup>
-                )}
 
                 {countryPopup && (
                     <Popup
