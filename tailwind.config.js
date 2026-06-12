@@ -84,6 +84,9 @@ module.exports = {
   				from: { transform: 'rotate(360deg)' },
   				to: { transform: 'rotate(0deg)' },
   			},
+  		},
+  		transitionDuration: {
+  			'300': '300ms',
   		}
   	}
   },
