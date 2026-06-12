@@ -6,6 +6,7 @@ import { Project } from '@/types/types';
 interface ProjectDetailModalProps {
     project: Project | null;
     onClose: () => void;
+    isSidePanel?: boolean;
 }
 
 const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => {
@@ -52,7 +53,7 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
 };
 
 
-const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose }) => {
+const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose, isSidePanel = false }) => {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         'Project Information': true,
         'Financials': false,
@@ -167,6 +168,53 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
         },
     ];
 
+    // Side panel layout (for map page split view)
+    if (isSidePanel) {
+        return (
+            <div className="hidden md:flex md:w-[35%] bg-white border-l border-gray-200 flex-col overflow-hidden">
+                <div className="p-3 sm:p-4 border-b flex-shrink-0 bg-white sticky top-0 z-10">
+                    <div className="flex justify-between items-start gap-3">
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
+                            <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                            <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
+                        </div>
+                        <button 
+                            onClick={onClose} 
+                            className="text-gray-500 hover:text-gray-800 text-2xl leading-none flex-shrink-0 pt-1"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                </div>
+                <div className="flex-1 overflow-y-auto p-3 sm:p-4 pb-20">
+                    <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
+
+                    <div className="mt-4">
+                        {sections.map((section) => (
+                            <AccordionItem
+                                key={section.title}
+                                section={section}
+                                isOpen={openSections[section.title]}
+                                onToggle={() => toggleSection(section.title)}
+                            />
+                        ))}
+                    </div>
+                </div>
+                <div className="p-3 sm:p-4 flex justify-end bg-gray-50 border-t flex-shrink-0">
+                    <button 
+                        type="button" 
+                        onClick={onClose} 
+                        className="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-2 px-4 sm:px-6 rounded text-sm hover:bg-gray-300 transition-colors"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Overlay layout (for other pages/modals)
     return (
         <>
             {project && (
