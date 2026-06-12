@@ -57,7 +57,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
     return (
         <div className="flex w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-101px)] bg-white">
             {/* Map Container - shrinks when details panel is open */}
-            <div className={`flex-1 relative transition-all duration-500 ease-in-out overflow-hidden ${
+            <div className={`flex-1 relative overflow-hidden transition-smooth-slide ${
                 selectedProject ? 'md:flex-[0_0_65%]' : 'flex-1'
             }`}>
                 {isMapLoading && (

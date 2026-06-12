@@ -8,6 +8,22 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* Custom smooth easing for split-view transitions */
+@keyframes smoothSlide {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@layer utilities {
+  .transition-smooth-slide {
+    transition: all 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+}
+
 /* Fix MapLibre popup close button position */
 .maplibregl-popup-close-button {
   font-size: 20px;

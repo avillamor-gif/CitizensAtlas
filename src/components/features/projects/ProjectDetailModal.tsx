@@ -221,7 +221,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                 <div className="fixed inset-0 bg-black bg-opacity-30 z-40" onClick={onClose} />
             )}
             <div 
-                className={`fixed inset-y-0 right-0 w-full sm:w-96 lg:w-[35%] bg-white shadow-2xl z-50 overflow-y-auto transition-transform duration-500 ease-in-out ${
+                className={`fixed inset-y-0 right-0 w-full sm:w-96 lg:w-[35%] bg-white shadow-2xl z-50 overflow-y-auto transition-smooth-slide ${
                     project ? 'translate-x-0' : 'translate-x-full'
                 }`}
                 onClick={(e) => e.stopPropagation()}
