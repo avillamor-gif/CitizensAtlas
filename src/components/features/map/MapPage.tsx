@@ -55,10 +55,10 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
     };
 
     return (
-        <div className="flex w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-101px)]">
-            {/* Map Container */}
-            <div className={`relative transition-all duration-300 ease-out ${
-                selectedProject ? 'w-full md:w-[65%]' : 'w-full'
+        <div className="flex w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-101px)] bg-white">
+            {/* Map Container - shrinks when details panel is open */}
+            <div className={`flex-1 relative transition-all duration-300 ease-out overflow-hidden ${
+                selectedProject ? 'md:flex-[0_0_65%]' : 'flex-1'
             }`}>
                 {isMapLoading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-20">
@@ -211,7 +211,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
                 )}
             </div>
 
-            {/* Project Details Panel - Desktop Only */}
+            {/* Project Details Panel - Desktop Only - Fixed 35% width */}
             {selectedProject && (
                 <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} isSidePanel={true} />
             )}

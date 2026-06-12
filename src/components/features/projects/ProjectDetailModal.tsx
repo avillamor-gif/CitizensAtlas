@@ -171,7 +171,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
     // Side panel layout (for map page split view)
     if (isSidePanel) {
         return (
-            <div className="hidden md:flex md:w-[35%] bg-white border-l border-gray-200 flex-col overflow-hidden">
+            <div className="flex-[0_0_35%] bg-white border-l border-gray-200 flex flex-col overflow-hidden">
                 <div className="p-3 sm:p-4 border-b flex-shrink-0 bg-white sticky top-0 z-10">
                     <div className="flex justify-between items-start gap-3">
                         <div className="flex-1 min-w-0">
