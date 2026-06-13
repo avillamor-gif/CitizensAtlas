@@ -86,11 +86,13 @@ function HomePageContent() {
         newsData,
         publicationsData,
         videosData,
+        projectBriefsData,
       ] = await Promise.all([
         dataService.getPublishedProjectsWithDetails(), // Need details field for map visualization
         dataService.getPublishedNews(10), // Limit to 10 for homepage carousel
         dataService.getPublishedPublications(10), // Limit to 10 for homepage carousel
         dataService.getPublishedVideos(10), // Limit to 10 for homepage carousel
+        dataService.getPublishedProjectBriefs(), // Load all published project briefs
       ])
       
       // Load categories in background (non-blocking)
@@ -110,9 +112,11 @@ function HomePageContent() {
         news: newsData.length,
         publications: publicationsData.length,
         videos: videosData.length,
+        projectBriefs: projectBriefsData.length,
       })
 
       setProjects(projectsData)
+      setProjectBriefs(projectBriefsData)
       setNews(newsData)
       setPublications(publicationsData)
       setVideos(videosData)
@@ -1122,6 +1126,7 @@ function HomePageContent() {
             activeView={activeView}
             setActiveView={setActiveView}
             newsData={publishedNews}
+            projectBriefsData={projectBriefs}
             publicationsData={publishedPublications}
             videosData={publishedVideos}
             onNavigate={handleNavigate}
@@ -1162,6 +1167,7 @@ function HomePageContent() {
             activeView={activeView}
             setActiveView={setActiveView}
             newsData={publishedNews}
+            projectBriefsData={projectBriefs}
             publicationsData={publishedPublications}
             videosData={publishedVideos}
             onNavigate={handleNavigate}

@@ -4,7 +4,7 @@ import ContentCarousel from '@/components/pages/ContentCarousel';
 import Newsletter from '@/components/pages/Newsletter';
 import Collaborate from '@/components/pages/Collaborate';
 // FIX: Import Page type from types.ts to fix circular dependency
-import { Project, Filters, FilterOptions, Article, Page, User } from '@/types/types';
+import { Project, Filters, FilterOptions, Article, Page, User, ProjectBrief } from '@/types/types';
 
 interface HomeProps {
     projects: Project[];
@@ -16,6 +16,7 @@ interface HomeProps {
     // FIX: Removed stray '>' character
     setActiveView: (view: 'Map' | 'Projects') => void;
     newsData: Article[];
+    projectBriefsData: ProjectBrief[];
     publicationsData: Article[];
     videosData: Article[];
     onNavigate: (page: Page) => void;
@@ -24,6 +25,19 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = (props) => {
+    // Convert ProjectBrief to Article format for display
+    const projectBriefsAsArticles: Article[] = props.projectBriefsData.map((brief, index) => ({
+        id: brief.id,
+        slug: `project-brief-${brief.id}`,
+        category: brief.project_type || 'Project Brief',
+        title: brief.project_name,
+        description: `${brief.location}${brief.financing_amount ? ` - ${brief.financing_amount}` : ''}`,
+        imageUrl: 'https://picsum.photos/400/300?random=' + index,
+        tagColor: '#FFEB3B',
+        publishDate: brief.created_at || brief.submitted_at,
+        status: brief.status || 'published',
+    }));
+
     return (
         <>
             <Hero
@@ -38,6 +52,9 @@ const Home: React.FC<HomeProps> = (props) => {
             />
             <div className="bg-brand-section-blue">
             <ContentCarousel title="LATEST NEWS" items={props.newsData} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
+            </div>
+            <div className="bg-brand-section-blue">
+            <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
             </div>
             <Collaborate />
             <div className="bg-brand-section-blue">
