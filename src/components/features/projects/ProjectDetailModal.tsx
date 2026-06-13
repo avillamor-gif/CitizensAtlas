@@ -179,12 +179,15 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
                             {detailsMap.get('Project Status') && (
                                 <div className="mt-2">
-                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-blink">
                                         {detailsMap.get('Project Status')}
                                     </span>
                                 </div>
                             )}
                             <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
+                            {detailsMap.get('Start Date') && (
+                                <p className="text-xs text-gray-600">Start Date: {detailsMap.get('Start Date')}</p>
+                            )}
                         </div>
                         <button 
                             onClick={onClose} 
@@ -240,12 +243,15 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
                             {detailsMap.get('Project Status') && (
                                 <div className="mt-2">
-                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-blink">
                                         {detailsMap.get('Project Status')}
                                     </span>
                                 </div>
                             )}
                             <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
+                            {detailsMap.get('Start Date') && (
+                                <p className="text-xs text-gray-600">Start Date: {detailsMap.get('Start Date')}</p>
+                            )}
                         </div>
                         <button 
                             onClick={onClose} 
