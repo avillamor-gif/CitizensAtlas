@@ -54,10 +54,19 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
 
 
 const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose, isSidePanel = false }) => {
+    const getStatusColor = (status: string | undefined): string => {
+        if (!status) return 'bg-gray-500';
+        const statusLower = status.toLowerCase().trim();
+        if (statusLower.includes('proposed')) return 'bg-amber-500';
+        if (statusLower.includes('active')) return 'bg-green-500';
+        if (statusLower.includes('canceled') || statusLower.includes('cancelled')) return 'bg-red-500';
+        if (statusLower.includes('inactive')) return 'bg-gray-500';
+        return 'bg-blue-500';
+    };
+
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         'Project Information': true,
         'Financials': false,
-        'Status & Dates': false,
         'Safeguards & Documents': false,
         'Community & Actions': false,
         'Additional Information': false,
@@ -125,16 +134,6 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             ),
         },
         {
-            title: 'Status & Dates',
-            content: (
-                <div className="grid grid-cols-1 gap-2">
-                    <DetailRow label="Project Status" value={detailsMap.get('Project Status')} />
-                    <DetailRow label="Start date" value={detailsMap.get('Start Date')} />
-                    <DetailRow label="End date" value={detailsMap.get('End Date')} />
-                </div>
-            ),
-        },
-        {
             title: 'Safeguards & Documents',
             content: (
                 <>
@@ -179,7 +178,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
                             {detailsMap.get('Project Status') && (
                                 <div className="mt-2">
-                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-blink">
+                                    <span className={`inline-block ${getStatusColor(detailsMap.get('Project Status'))} text-white text-xs font-bold px-3 py-1 rounded-full animate-blink`}>
                                         {detailsMap.get('Project Status')}
                                     </span>
                                 </div>
@@ -243,7 +242,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
                             {detailsMap.get('Project Status') && (
                                 <div className="mt-2">
-                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-blink">
+                                    <span className={`inline-block ${getStatusColor(detailsMap.get('Project Status'))} text-white text-xs font-bold px-3 py-1 rounded-full animate-blink`}>
                                         {detailsMap.get('Project Status')}
                                     </span>
                                 </div>
