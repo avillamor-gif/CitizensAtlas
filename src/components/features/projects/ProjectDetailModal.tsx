@@ -58,9 +58,9 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
         if (!status) return 'bg-gray-500';
         const statusLower = status.toLowerCase().trim();
         if (statusLower.includes('proposed')) return 'bg-amber-500';
+        if (statusLower.includes('inactive')) return 'bg-gray-500';
         if (statusLower.includes('active')) return 'bg-green-500';
         if (statusLower.includes('canceled') || statusLower.includes('cancelled')) return 'bg-red-500';
-        if (statusLower.includes('inactive')) return 'bg-gray-500';
         return 'bg-blue-500';
     };
 
