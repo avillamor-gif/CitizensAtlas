@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Header, Footer } from '@/components/layout'
+import { Header } from '@/components/layout'
 import { MapPage } from '@/components/features/map'
 import { Page, Filters, Project } from '@/types/types'
 import { projectCardsData, getIfiAbbreviation } from '@/lib/constants'
