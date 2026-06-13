@@ -177,6 +177,13 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                            {detailsMap.get('Project Status') && (
+                                <div className="mt-2">
+                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                        {detailsMap.get('Project Status')}
+                                    </span>
+                                </div>
+                            )}
                             <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
                         </div>
                         <button 
@@ -231,6 +238,13 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                            {detailsMap.get('Project Status') && (
+                                <div className="mt-2">
+                                    <span className="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                        {detailsMap.get('Project Status')}
+                                    </span>
+                                </div>
+                            )}
                             <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
                         </div>
                         <button 
