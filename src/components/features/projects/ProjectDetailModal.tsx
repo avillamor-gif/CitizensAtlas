@@ -57,7 +57,9 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
 
 const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose, onEdit, isSidePanel = false }) => {
     const { user } = useAuth();
-    const isAdmin = user?.role === 'super-admin' || user?.role === 'admin';
+    const isAuthorized = !!user && (user.role === 'super-admin' || user.role === 'admin');
+    
+    console.log('🔍 ProjectDetailModal Debug:', { user, isAuthorized, hasOnEdit: !!onEdit, isSidePanel });
     
     const getStatusColor = (status: string | undefined): string => {
         if (!status) return 'bg-gray-500';
@@ -232,8 +234,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         ))}
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 flex justify-end gap-2 bg-gray-50 border-t flex-shrink-0">
-                    {isAdmin && onEdit && (
+                <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-end gap-2 bg-gray-50 border-t flex-shrink-0">
+                    {isAuthorized && onEdit && (
                         <button 
                             type="button" 
                             onClick={() => onEdit(project!)} 
@@ -312,8 +314,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         ))}
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 flex justify-end gap-2 bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%]">
-                    {isAdmin && onEdit && (
+                <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-end gap-2 bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%]">
+                    {isAuthorized && onEdit && (
                         <button 
                             type="button" 
                             onClick={() => onEdit(project!)} 
