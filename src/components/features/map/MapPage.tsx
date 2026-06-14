@@ -3,6 +3,7 @@ import InteractiveMap from './InteractiveMap';
 import FilterPanel from '@/components/pages/FilterPanel';
 import { Project, Filters, FilterOptions, ProjectBrief } from '@/types/types';
 import ProjectDetailModal from '@/components/features/projects/ProjectDetailModal';
+import ProjectForm from '@/components/features/projects/ProjectForm';
 import { countryNameToCode } from '@/lib/constants';
 import * as DataService from '@/lib/services/data-service';
 
@@ -15,6 +16,7 @@ interface MapPageProps {
 
 const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, filterOptions }) => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(true);
     const [projectBriefs, setProjectBriefs] = useState<ProjectBrief[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -44,8 +46,8 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
     };
 
     const handleEditProject = useCallback((project: Project) => {
-        // TODO: Implement edit functionality
-        console.log('Edit project:', project);
+        setProjectToEdit(project);
+        setSelectedProject(null); // Close the details modal
     }, []);
 
     const handleMapLoad = () => {
@@ -57,6 +59,18 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
         onFilterChange('solutionType', 'all');
         onFilterChange('ifi', 'all');
         onFilterChange('projectStatus', 'all');
+    };
+
+    const handleUpdateProject = async (updatedProject: Project) => {
+        try {
+            // Update the project in the database
+            await DataService.updateProject(updatedProject);
+            alert('✅ Project updated successfully!');
+            setProjectToEdit(null);
+        } catch (error) {
+            console.error('Failed to update project:', error);
+            alert('❌ Failed to update project. Please try again.');
+        }
     };
 
     return (
@@ -217,8 +231,20 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
             </div>
 
             {/* Project Details Panel - Desktop Only - Fixed 35% width */}
-            {selectedProject && (
+            {selectedProject && !projectToEdit && (
                 <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} isSidePanel={true} />
+            )}
+
+            {/* Project Edit Form */}
+            {projectToEdit && (
+                <ProjectForm
+                    projectToEdit={projectToEdit}
+                    onClose={() => setProjectToEdit(null)}
+                    onProjectAdded={() => setProjectToEdit(null)}
+                    onUpdateProject={handleUpdateProject}
+                    isModal={true}
+                    userRole="admin"
+                />
             )}
         </div>
     );

@@ -4,11 +4,12 @@ import ProjectGrid from '@/components/features/projects/ProjectGrid';
 import { ChevronDownIcon, PlusIcon, MinusIcon, ShareIcon, MagnifyingGlassIcon } from '@/components/ui/icons';
 import { Project, Filters, FilterOptions, User } from '@/types/types';
 import ProjectForm from '@/components/features/projects/ProjectForm';
-import InteractiveMap from '@/components/features/map/InteractiveMap';
 import ProjectDetailModal from '@/components/features/projects/ProjectDetailModal';
+import InteractiveMap from '@/components/features/map/InteractiveMap';
 import FilterPanel from '@/components/pages/FilterPanel';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Filter } from 'lucide-react';
+import * as DataService from '@/lib/services/data-service';
 
 const MapToggle: React.FC<{ active: 'Map' | 'Projects'; setActive: (view: 'Map' | 'Projects') => void; }> = ({ active, setActive }) => {
     return (
@@ -47,6 +48,7 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, filters, onFilterChange, filterOptions, currentUser }) => {
     const [isDashboardVisible, setIsDashboardVisible] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     // Count active filters
@@ -75,9 +77,21 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
     };
 
     const handleEditProject = useCallback((project: Project) => {
-        // TODO: Implement edit functionality
-        console.log('Edit project:', project);
+        setProjectToEdit(project);
+        setSelectedProject(null); // Close the details modal
     }, []);
+
+    const handleUpdateProject = async (updatedProject: Project) => {
+        try {
+            // Update the project in the database
+            await DataService.updateProject(updatedProject);
+            alert('✅ Project updated successfully!');
+            setProjectToEdit(null);
+        } catch (error) {
+            console.error('Failed to update project:', error);
+            alert('❌ Failed to update project. Please try again.');
+        }
+    };
 
     return (
         <section className="bg-white py-12 px-4 sm:px-8 lg:px-16">
@@ -188,7 +202,19 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     </div>
                 )}
             </div>
-            <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} />
+            {selectedProject && !projectToEdit && (
+                <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} />
+            )}
+            {projectToEdit && (
+                <ProjectForm
+                    projectToEdit={projectToEdit}
+                    onClose={() => setProjectToEdit(null)}
+                    onProjectAdded={() => setProjectToEdit(null)}
+                    onUpdateProject={handleUpdateProject}
+                    isModal={true}
+                    userRole="admin"
+                />
+            )}
         </section>
     );
 };
