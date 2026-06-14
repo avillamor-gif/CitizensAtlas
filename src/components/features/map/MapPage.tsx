@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import InteractiveMap from './InteractiveMap';
 import FilterPanel from '@/components/pages/FilterPanel';
 import { Project, Filters, FilterOptions, ProjectBrief } from '@/types/types';
 import ProjectDetailModal from '@/components/features/projects/ProjectDetailModal';
 import ProjectForm from '@/components/features/projects/ProjectForm';
-import { countryNameToCode } from '@/lib/constants';
+import { countryNameToCode, getIfiAbbreviation } from '@/lib/constants';
 import * as DataService from '@/lib/services/data-service';
 
 interface MapPageProps {
@@ -89,6 +89,24 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
         }
     };
 
+    // Filter projects based on local filters state
+    const filteredProjects = useMemo(() => {
+        const parseDetail = (details: string, key: string) => {
+            const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`));
+            return match ? match[1].trim() : '';
+        };
+
+        return projects.filter((project: Project) => {
+            const publishedMatch = project.status === 'published' || project.status === undefined;
+            const countryMatch = filters.country === 'all' || project.country === filters.country;
+            const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType);
+            const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi;
+            const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus;
+
+            return publishedMatch && countryMatch && solutionMatch && ifiMatch && statusMatch;
+        });
+    }, [projects, filters]);
+
     return (
         <div className="flex w-full h-[calc(100dvh-56px)] md:h-[calc(100vh-80px)] bg-white">
             {/* Map Container - shrinks when details panel is open */}
@@ -103,7 +121,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
                         </div>
                     </div>
                 )}
-                <InteractiveMap projects={projects} onMarkerClick={openDetailModal} onMapLoad={handleMapLoad} />
+                <InteractiveMap projects={filteredProjects} onMarkerClick={openDetailModal} onMapLoad={handleMapLoad} />
                 
                 {/* Currently Viewing Card */}
                 <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-blue-50 p-2 md:p-3 rounded-lg shadow-lg z-10 w-[140px] md:w-[200px]">
@@ -124,9 +142,8 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
                                 <div className="mt-1 md:mt-2 pt-1 md:pt-2 border-t border-brand-dark-blue/20">
                                     <p className="text-[9px] md:text-xs text-brand-dark-blue/80 mb-0.5">Total Cases</p>
                                     <p className="text-sm md:text-lg font-bold text-brand-dark-blue">
-                                        {projects.filter(p => 
-                                            p.country?.toUpperCase() === filters.country.toUpperCase() && 
-                                            (p.status === 'published' || !p.status)
+                                        {filteredProjects.filter(p => 
+                                            p.country?.toUpperCase() === filters.country.toUpperCase()
                                         ).length}
                                     </p>
                                 </div>
@@ -159,7 +176,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
                             <div className="mt-2 pt-2 border-t border-brand-dark-blue/20">
                                 <p className="text-xs text-brand-dark-blue/80 mb-0.5">Total Cases</p>
                                 <p className="text-lg font-bold text-brand-dark-blue">
-                                    {projects.filter(p => p.status === 'published' || !p.status).length}
+                                    {filteredProjects.length}
                                 </p>
                             </div>
                             {(() => {
