@@ -84,7 +84,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
     const handleUpdateProject = async (updatedProject: Project) => {
         try {
             // Update the project in the database
-            await DataService.updateProject(updatedProject);
+            await DataService.updateProject(updatedProject.id, updatedProject);
             alert('✅ Project updated successfully!');
             setProjectToEdit(null);
         } catch (error) {

@@ -64,7 +64,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
     const handleUpdateProject = async (updatedProject: Project) => {
         try {
             // Update the project in the database
-            await DataService.updateProject(updatedProject);
+            await DataService.updateProject(updatedProject.id, updatedProject);
             alert('✅ Project updated successfully!');
             setProjectToEdit(null);
         } catch (error) {
