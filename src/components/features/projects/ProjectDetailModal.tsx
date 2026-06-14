@@ -12,7 +12,7 @@ interface ProjectDetailModalProps {
 const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => {
     if (!value || value.trim() === 'N/A' || value.trim() === '') return null;
     return (
-        <div className="mb-3">
+        <div className="mb-1">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
             <p className="text-sm text-gray-800 whitespace-pre-wrap">{value}</p>
         </div>
@@ -33,7 +33,7 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
         <div className="border-b border-gray-200">
             <button
                 onClick={onToggle}
-                className="w-full px-0 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors"
+                className="w-full px-3 sm:px-4 py-3 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors"
             >
                 <h3 className="text-sm font-bold text-brand-dark-blue text-left">{section.title}</h3>
                 <svg
@@ -47,7 +47,7 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
             </button>
-            {isOpen && <div className="pb-3 pt-0">{section.content}</div>}
+            {isOpen && <div className="pb-3 pt-0 px-3 sm:px-4">{section.content}</div>}
         </div>
     );
 };
@@ -205,7 +205,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         </button>
                     </div>
                 </div>
-                <div className="flex-1 overflow-y-auto p-3 sm:p-4 pb-20">
+                <div className="flex-1 overflow-y-auto px-0 py-3 sm:py-4 pb-20">
                     <div className="mt-4">
                         {sections.map((section) => (
                             <AccordionItem
@@ -276,7 +276,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         </button>
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 pb-20">
+                <div className="px-0 py-3 sm:py-4 pb-20">
                     <div className="mt-4">
                         {sections.map((section) => (
                             <AccordionItem
