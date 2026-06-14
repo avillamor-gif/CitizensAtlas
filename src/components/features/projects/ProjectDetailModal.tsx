@@ -176,17 +176,23 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
-                            {detailsMap.get('Project Status') && (
-                                <div className="mt-2">
-                                    <span className={`inline-block ${getStatusColor(detailsMap.get('Project Status'))} text-white text-xs font-bold px-3 py-1 rounded-full animate-blink`}>
-                                        {detailsMap.get('Project Status')}
-                                    </span>
-                                </div>
-                            )}
-                            <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
-                            {detailsMap.get('Start Date') && (
-                                <p className="text-xs text-gray-600">Start Date: {detailsMap.get('Start Date')}</p>
-                            )}
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                                {detailsMap.get('Project Status') && (
+                                    <>
+                                        <span className={`${getStatusColor(detailsMap.get('Project Status'))} text-white font-bold px-2 py-0.5 rounded-full animate-blink`}>
+                                            {detailsMap.get('Project Status')}
+                                        </span>
+                                        <span className="text-gray-400">|</span>
+                                    </>
+                                )}
+                                <span>Approval: {project.date}</span>
+                                {detailsMap.get('Start Date') && (
+                                    <>
+                                        <span className="text-gray-400">|</span>
+                                        <span>Start: {detailsMap.get('Start Date')}</span>
+                                    </>
+                                )}
+                            </div>
                         </div>
                         <button 
                             onClick={onClose} 
@@ -240,17 +246,23 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
                             <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
-                            {detailsMap.get('Project Status') && (
-                                <div className="mt-2">
-                                    <span className={`inline-block ${getStatusColor(detailsMap.get('Project Status'))} text-white text-xs font-bold px-3 py-1 rounded-full animate-blink`}>
-                                        {detailsMap.get('Project Status')}
-                                    </span>
-                                </div>
-                            )}
-                            <p className="text-xs text-gray-600 mt-1.5">Approval Date: {project.date}</p>
-                            {detailsMap.get('Start Date') && (
-                                <p className="text-xs text-gray-600">Start Date: {detailsMap.get('Start Date')}</p>
-                            )}
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                                {detailsMap.get('Project Status') && (
+                                    <>
+                                        <span className={`${getStatusColor(detailsMap.get('Project Status'))} text-white font-bold px-2 py-0.5 rounded-full animate-blink`}>
+                                            {detailsMap.get('Project Status')}
+                                        </span>
+                                        <span className="text-gray-400">|</span>
+                                    </>
+                                )}
+                                <span>Approval: {project.date}</span>
+                                {detailsMap.get('Start Date') && (
+                                    <>
+                                        <span className="text-gray-400">|</span>
+                                        <span>Start: {detailsMap.get('Start Date')}</span>
+                                    </>
+                                )}
+                            </div>
                         </div>
                         <button 
                             onClick={onClose} 
