@@ -7,7 +7,7 @@ import Image from '@tiptap/extension-image';
 import { useEffect } from 'react';
 
 interface TiptapEditorProps {
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   placeholder?: string;
   height?: string;
@@ -15,7 +15,7 @@ interface TiptapEditorProps {
 }
 
 export const TiptapEditor = ({
-  value,
+  value = '',
   onChange,
   placeholder = 'Enter content...',
   height = '300px',
