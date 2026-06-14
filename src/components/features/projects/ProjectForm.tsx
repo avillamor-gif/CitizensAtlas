@@ -1035,7 +1035,7 @@ ${references}
                             <button type="button" onClick={() => addRepeatableRow('privateSectorBorrowers')} className="text-sm text-brand-medium-blue hover:underline">+ Add borrower</button>
                         </FormField>
                         <FormField label="Project description">
-                            <div className="mb-24">
+                            <div className="mb-24 relative z-20">
                                 <ReactQuill
                                     theme="snow"
                                     value={formData.projectDescription}
@@ -1051,7 +1051,7 @@ ${references}
                                         ],
                                     }}
                                     className="bg-white"
-                                    style={{ height: '200px', marginBottom: '80px' }}
+                                    style={{ height: '300px', marginBottom: '80px' }}
                                 />
                             </div>
                         </FormField>
