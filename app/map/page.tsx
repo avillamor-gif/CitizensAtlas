@@ -84,7 +84,7 @@ export default function Map() {
       />
       <main className="flex-grow overflow-hidden w-full">
         <MapPage 
-          projects={filteredProjects}
+          projects={projectCardsData}
           filterOptions={filterOptions}
         />
       </main>
