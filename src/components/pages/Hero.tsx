@@ -93,6 +93,19 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         }
     };
 
+    const handleMarkerClick = useCallback((project: Project) => {
+        // Show the detail modal
+        openDetailModal(project);
+        
+        // Auto-reveal the dashboard
+        setIsDashboardVisible(true);
+        
+        // Auto-filter by the project's country if not already filtered
+        if (project.country && filters.country === 'all') {
+            onFilterChange('country', project.country);
+        }
+    }, [filters.country, onFilterChange]);
+
     return (
         <section className="bg-white py-12 px-4 sm:px-8 lg:px-16">
             <div className="container mx-auto">
@@ -154,7 +167,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                            <div className="relative border rounded-lg shadow-lg overflow-hidden h-[400px] md:h-[600px] bg-gray-200">
                                 <InteractiveMap 
                                     projects={projects} 
-                                    onMarkerClick={openDetailModal}
+                                    onMarkerClick={handleMarkerClick}
                                 />
                             </div>
                         ) : (
