@@ -26,16 +26,16 @@ const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ lab
     const cleanedValue = sanitizeHtml(value);
     
     return (
-        <div className="mb-2">
+        <div className="mb-2 w-full overflow-hidden">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
             {/* Check if content has HTML tags (like links) */}
             {value.includes('<a ') ? (
                 <div 
-                    className="text-sm text-gray-800 [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800"
+                    className="text-sm text-gray-800 break-words w-full overflow-x-hidden [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800 [&_a]:break-words"
                     dangerouslySetInnerHTML={{ __html: cleanedValue }}
                 />
             ) : (
-                <p className="text-sm text-gray-800 break-words">{cleanedValue}</p>
+                <p className="text-sm text-gray-800 break-words w-full">{cleanedValue}</p>
             )}
         </div>
     );

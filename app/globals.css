@@ -247,3 +247,16 @@ body {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+
+/* Ensure links and text don't overflow in containers */
+a {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Ensure all text content wraps properly in narrow containers */
+p, div, span {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
