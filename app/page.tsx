@@ -1179,7 +1179,7 @@ function HomePageContent() {
 
   if (!mounted) return null
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className={`flex flex-col min-h-screen ${activePage === 'map' ? 'h-screen overflow-hidden' : ''}`}>
       {!isAdminView && (
         <Header 
           activePage={activePage} 
@@ -1190,7 +1190,7 @@ function HomePageContent() {
       <main className="flex-grow">
         {renderContent()}
       </main>
-      {!isAdminView && <Footer />}
+      {!isAdminView && activePage !== 'map' && <Footer />}
     </div>
   )
 }
