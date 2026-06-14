@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { MapPage } from '@/components/features/map'
@@ -9,6 +9,14 @@ import { projectCardsData, getIfiAbbreviation } from '@/lib/constants'
 
 export default function Map() {
   const router = useRouter()
+
+  // Prevent body scrolling on map page
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [])
 
   const [filters, setFilters] = useState<Filters>({
     country: 'all',
@@ -69,12 +77,12 @@ export default function Map() {
   }, [filters])
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden w-full">
       <Header 
         activePage="map"
         onNavigate={handleNavigate}
       />
-      <main className="flex-grow overflow-hidden">
+      <main className="flex-grow overflow-hidden w-full">
         <MapPage 
           projects={filteredProjects}
           filters={filters}
