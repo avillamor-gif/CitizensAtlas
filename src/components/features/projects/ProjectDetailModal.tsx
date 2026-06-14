@@ -11,23 +11,32 @@ interface ProjectDetailModalProps {
     isSidePanel?: boolean;
 }
 
-// Helper function to decode HTML entities and strip tags
-const decodeHtmlEntities = (html: string): string => {
+// Helper function to decode HTML entities while preserving tags
+const sanitizeHtml = (html: string): string => {
+    // Decode HTML entities
     const textarea = document.createElement('textarea');
     textarea.innerHTML = html;
-    const text = textarea.value;
-    // Remove HTML tags
-    return text.replace(/<[^>]*>/g, '').trim();
+    return textarea.value;
 };
 
 const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => {
     if (!value || value.trim() === 'N/A' || value.trim() === '') return null;
-    // Decode HTML entities and strip tags for proper display
-    const cleanedValue = decodeHtmlEntities(value);
+    
+    // Sanitize and decode HTML entities while preserving links
+    const cleanedValue = sanitizeHtml(value);
+    
     return (
         <div className="mb-2">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
-            <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{cleanedValue}</p>
+            {/* Check if content has HTML tags (like links) */}
+            {value.includes('<a ') ? (
+                <div 
+                    className="text-sm text-gray-800 [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800"
+                    dangerouslySetInnerHTML={{ __html: cleanedValue }}
+                />
+            ) : (
+                <p className="text-sm text-gray-800 break-words">{cleanedValue}</p>
+            )}
         </div>
     );
 };

@@ -168,16 +168,15 @@ body {
 .ql-container {
   font-size: 1rem;
   word-wrap: break-word;
-  word-break: break-word;
   overflow-wrap: break-word;
 }
 
 .ql-editor {
   min-height: 200px;
-  white-space: pre-wrap;
+  white-space: normal;
   word-wrap: break-word;
-  word-break: break-word;
   overflow-wrap: break-word;
+  word-break: normal;
 }
 
 /* Fix toolbar visibility inside scrollable containers */
