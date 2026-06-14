@@ -193,6 +193,9 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                                     </>
                                 )}
                             </div>
+                            <div className="mt-2">
+                                <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
+                            </div>
                         </div>
                         <button 
                             onClick={onClose} 
@@ -203,8 +206,6 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     </div>
                 </div>
                 <div className="flex-1 overflow-y-auto p-3 sm:p-4 pb-20">
-                    <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
-
                     <div className="mt-4">
                         {sections.map((section) => (
                             <AccordionItem
@@ -263,6 +264,9 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                                     </>
                                 )}
                             </div>
+                            <div className="mt-2">
+                                <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
+                            </div>
                         </div>
                         <button 
                             onClick={onClose} 
@@ -273,8 +277,6 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     </div>
                 </div>
                 <div className="p-3 sm:p-4 pb-20">
-                    <DetailRow label="False Solution Type(s)" value={project.corruptionType} />
-
                     <div className="mt-4">
                         {sections.map((section) => (
                             <AccordionItem
