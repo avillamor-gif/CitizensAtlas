@@ -12,7 +12,7 @@ interface ProjectDetailModalProps {
 const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => {
     if (!value || value.trim() === 'N/A' || value.trim() === '') return null;
     return (
-        <div className="mb-1">
+        <div className="mb-2">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
             <p className="text-sm text-gray-800 whitespace-pre-wrap">{value}</p>
         </div>
@@ -112,7 +112,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             title: 'Project Information',
             content: (
                 <>
-                    <div className="flex gap-3 text-xs mb-3">
+                    <div className="flex gap-3 text-xs mb-2">
                         {detailsMap.get('Region') && <span><span className="font-bold text-gray-500">Region:</span> {detailsMap.get('Region')}</span>}
                         {project.country && <span><span className="font-bold text-gray-500">Country:</span> {project.country}</span>}
                         {detailsMap.get('City') && <span><span className="font-bold text-gray-500">City:</span> {detailsMap.get('City')}</span>}
