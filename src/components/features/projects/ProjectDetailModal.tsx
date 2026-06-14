@@ -11,12 +11,23 @@ interface ProjectDetailModalProps {
     isSidePanel?: boolean;
 }
 
+// Helper function to decode HTML entities and strip tags
+const decodeHtmlEntities = (html: string): string => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+    const text = textarea.value;
+    // Remove HTML tags
+    return text.replace(/<[^>]*>/g, '').trim();
+};
+
 const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => {
     if (!value || value.trim() === 'N/A' || value.trim() === '') return null;
+    // Decode HTML entities and strip tags for proper display
+    const cleanedValue = decodeHtmlEntities(value);
     return (
         <div className="mb-2">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
-            <p className="text-sm text-gray-800 whitespace-pre-wrap">{value}</p>
+            <p className="text-sm text-gray-800 whitespace-pre-wrap">{cleanedValue}</p>
         </div>
     );
 };
