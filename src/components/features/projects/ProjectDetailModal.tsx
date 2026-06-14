@@ -66,9 +66,10 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
 
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         'Project Information': true,
-        'Financials': false,
-        'Safeguards & Documents': false,
-        'Community & Actions': false,
+        'Financial Information': false,
+        'Environmental and Social Safeguards': false,
+        'Just Transition Indicators': false,
+        'Community Opposition & Actions': false,
         'Additional Information': false,
     });
 
@@ -122,7 +123,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             ),
         },
         {
-            title: 'Financials',
+            title: 'Financial Information',
             content: (
                 <>
                     <DetailRow label="International financial institution (IFI)" value={detailsMap.get('IFI')} />
@@ -134,7 +135,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             ),
         },
         {
-            title: 'Safeguards & Documents',
+            title: 'Environmental and Social Safeguards',
             content: (
                 <>
                     <DetailRow label="Environmental" value={detailsMap.get('Environmental Category')} />
@@ -143,7 +144,17 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             ),
         },
         {
-            title: 'Community & Actions',
+            title: 'Just Transition Indicators',
+            content: (
+                <>
+                    <DetailRow label="Gender concerns" value={detailsMap.get('Gender Concerns')} />
+                    <DetailRow label="Waste workers" value={detailsMap.get('Waste Workers')} />
+                    <DetailRow label="Displacement" value={detailsMap.get('Displacement')} />
+                </>
+            ),
+        },
+        {
+            title: 'Community Opposition & Actions',
             content: (
                 <>
                     <DetailRow label="Groups in opposition" value={detailsMap.get('Groups in Opposition')} />
@@ -157,9 +168,6 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             title: 'Additional Information',
             content: (
                 <>
-                    <DetailRow label="Gender concerns" value={detailsMap.get('Gender Concerns')} />
-                    <DetailRow label="Waste workers" value={detailsMap.get('Waste Workers')} />
-                    <DetailRow label="Displacement" value={detailsMap.get('Displacement')} />
                     <DetailRow label="Notes" value={detailsMap.get('Notes')} />
                     <DetailRow label="References" value={detailsMap.get('References')} />
                 </>
