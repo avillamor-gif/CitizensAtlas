@@ -1120,8 +1120,6 @@ function HomePageContent() {
           <Home
             projects={filteredProjects}
             onAddProject={handleAddProject}
-            filters={filters}
-            onFilterChange={handleFilterChange}
             filterOptions={filterOptions}
             activeView={activeView}
             setActiveView={setActiveView}
@@ -1142,8 +1140,6 @@ function HomePageContent() {
         return (
           <MapPage
             projects={filteredProjects}
-            filters={filters}
-            onFilterChange={handleFilterChange}
             filterOptions={filterOptions}
           />
         )
@@ -1161,8 +1157,6 @@ function HomePageContent() {
         return <Home
             projects={filteredProjects}
             onAddProject={handleAddProject}
-            filters={filters}
-            onFilterChange={handleFilterChange}
             filterOptions={filterOptions}
             activeView={activeView}
             setActiveView={setActiveView}

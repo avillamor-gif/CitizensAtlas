@@ -9,17 +9,31 @@ import * as DataService from '@/lib/services/data-service';
 
 interface MapPageProps {
     projects: Project[];
-    filters: Filters;
-    onFilterChange: (filterName: keyof Filters, value: string) => void;
     filterOptions: FilterOptions;
 }
 
-const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, filterOptions }) => {
+const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
+    // Independent filters state for Map page - not shared with homepage
+    const [filters, setFilters] = useState<Filters>({
+        country: 'all',
+        solutionType: 'all',
+        ifi: 'all',
+        projectStatus: 'all',
+    });
+
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(true);
     const [projectBriefs, setProjectBriefs] = useState<ProjectBrief[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    // Local filter change handler
+    const onFilterChange = useCallback((filterName: keyof Filters, value: string) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterName]: value,
+        }));
+    }, []);
 
     // Fetch project briefs when component mounts
     useEffect(() => {
@@ -54,12 +68,14 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
         setIsMapLoading(false);
     };
 
-    const handleClearFilters = () => {
-        onFilterChange('country', 'all');
-        onFilterChange('solutionType', 'all');
-        onFilterChange('ifi', 'all');
-        onFilterChange('projectStatus', 'all');
-    };
+    const handleClearFilters = useCallback(() => {
+        setFilters({
+            country: 'all',
+            solutionType: 'all',
+            ifi: 'all',
+            projectStatus: 'all',
+        });
+    }, []);
 
     const handleUpdateProject = async (updatedProject: Project) => {
         try {

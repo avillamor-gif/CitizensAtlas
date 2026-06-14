@@ -85,8 +85,6 @@ export default function Map() {
       <main className="flex-grow overflow-hidden w-full">
         <MapPage 
           projects={filteredProjects}
-          filters={filters}
-          onFilterChange={handleFilterChange}
           filterOptions={filterOptions}
         />
       </main>

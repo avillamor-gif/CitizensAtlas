@@ -39,17 +39,31 @@ interface HeroProps {
     setActiveView: (view: 'Map' | 'Projects') => void;
     projects: Project[];
     onAddProject: (project: Omit<Project, 'id'>) => void;
-    filters: Filters;
-    onFilterChange: (filterName: keyof Filters, value: string) => void;
     filterOptions: FilterOptions;
     currentUser?: User | null;
 }
 
-const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, filters, onFilterChange, filterOptions, currentUser }) => {
+const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, filterOptions, currentUser }) => {
+    // Independent filters state for homepage map - not shared with Map page
+    const [filters, setFilters] = useState<Filters>({
+        country: 'all',
+        solutionType: 'all',
+        ifi: 'all',
+        projectStatus: 'all',
+    });
+
     const [isDashboardVisible, setIsDashboardVisible] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    // Local filter change handler
+    const onFilterChange = useCallback((filterName: keyof Filters, value: string) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterName]: value,
+        }));
+    }, []);
 
     // Count active filters
     const activeFilterCount = Object.entries(filters).filter(([key, value]) => value !== 'all').length;
@@ -61,12 +75,14 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         }
     }, [activeFilterCount]);
 
-    const clearAllFilters = () => {
-        onFilterChange('country', 'all');
-        onFilterChange('solutionType', 'all');
-        onFilterChange('ifi', 'all');
-        onFilterChange('projectStatus', 'all');
-    };
+    const clearAllFilters = useCallback(() => {
+        setFilters({
+            country: 'all',
+            solutionType: 'all',
+            ifi: 'all',
+            projectStatus: 'all',
+        });
+    }, []);
 
     const openDetailModal = useCallback((project: Project) => {
         setSelectedProject(project);
@@ -102,9 +118,12 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         
         // Auto-filter by the project's country if not already filtered
         if (project.country && filters.country === 'all') {
-            onFilterChange('country', project.country);
+            setFilters(prev => ({
+                ...prev,
+                country: project.country,
+            }));
         }
-    }, [filters.country, onFilterChange]);
+    }, [filters.country, openDetailModal]);
 
     return (
         <section className="bg-white py-12 px-4 sm:px-8 lg:px-16">

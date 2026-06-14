@@ -4,13 +4,11 @@ import ContentCarousel from '@/components/pages/ContentCarousel';
 import Newsletter from '@/components/pages/Newsletter';
 import Collaborate from '@/components/pages/Collaborate';
 // FIX: Import Page type from types.ts to fix circular dependency
-import { Project, Filters, FilterOptions, Article, Page, User, ProjectBrief } from '@/types/types';
+import { Project, FilterOptions, Article, Page, User, ProjectBrief } from '@/types/types';
 
 interface HomeProps {
     projects: Project[];
     onAddProject: (projectData: Omit<Project, 'id'>) => void;
-    filters: Filters;
-    onFilterChange: (filterName: keyof Filters, value: string) => void;
     filterOptions: FilterOptions;
     activeView: 'Map' | 'Projects';
     // FIX: Removed stray '>' character
@@ -43,8 +41,6 @@ const Home: React.FC<HomeProps> = (props) => {
             <Hero
             projects={props.projects}
             onAddProject={props.onAddProject}
-            filters={props.filters}
-            onFilterChange={props.onFilterChange}
             filterOptions={props.filterOptions}
             activeView={props.activeView}
             setActiveView={props.setActiveView}
