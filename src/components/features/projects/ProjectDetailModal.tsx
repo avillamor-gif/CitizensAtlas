@@ -112,10 +112,12 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             title: 'Project Information',
             content: (
                 <>
-                    <div className="flex gap-3 text-xs mb-2">
-                        {detailsMap.get('Region') && <span><span className="font-bold text-gray-500">Region:</span> {detailsMap.get('Region')}</span>}
-                        {project.country && <span><span className="font-bold text-gray-500">Country:</span> {project.country}</span>}
-                        {detailsMap.get('City') && <span><span className="font-bold text-gray-500">City:</span> {detailsMap.get('City')}</span>}
+                    <div className="mb-2">
+                        <div className="flex gap-3 text-xs">
+                            {detailsMap.get('Region') && <span><span className="font-bold text-gray-500 uppercase">Region:</span> {detailsMap.get('Region')}</span>}
+                            {project.country && <span><span className="font-bold text-gray-500 uppercase">Country:</span> {project.country}</span>}
+                            {detailsMap.get('City') && <span><span className="font-bold text-gray-500 uppercase">City:</span> {detailsMap.get('City')}</span>}
+                        </div>
                     </div>
                     <DetailRow label="Project Number" value={detailsMap.get('Project Number')} />
                     <DetailRow label="Project description" value={detailsMap.get('Project Description')} />
