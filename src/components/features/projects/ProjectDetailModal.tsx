@@ -47,7 +47,7 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
             </button>
-            {isOpen && <div className="pb-3 pt-0 px-3 sm:px-4">{section.content}</div>}
+            {isOpen && <div className="pb-3 pt-3 px-3 sm:px-4">{section.content}</div>}
         </div>
     );
 };
@@ -205,8 +205,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         </button>
                     </div>
                 </div>
-                <div className="flex-1 overflow-y-auto px-0 py-3 sm:py-4 pb-20">
-                    <div className="mt-4">
+                <div className="flex-1 overflow-y-auto px-0 pb-20">
+                    <div>
                         {sections.map((section) => (
                             <AccordionItem
                                 key={section.title}
@@ -276,8 +276,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         </button>
                     </div>
                 </div>
-                <div className="px-0 py-3 sm:py-4 pb-20">
-                    <div className="mt-4">
+                <div className="px-0 pb-20">
+                    <div>
                         {sections.map((section) => (
                             <AccordionItem
                                 key={section.title}
