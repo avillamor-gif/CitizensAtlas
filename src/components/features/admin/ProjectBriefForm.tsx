@@ -8,16 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ProjectBrief } from '@/types/types'
-import dynamic from 'next/dynamic'
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(
-  () => import('react-quill-new').then((mod) => mod.default),
-  { 
-    ssr: false,
-    loading: () => <div className="h-40 border rounded-md bg-gray-50 animate-pulse" />
-  }
-)
+import { TiptapEditor } from '@/components/ui/tiptap-editor'
 
 interface ProjectBriefFormData {
   project_name: string
@@ -86,14 +77,8 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
     }
   )
 
-  // Load ReactQuill CSS and set mounted state
+  // Set mounted state
   useEffect(() => {
-    try {
-      require('react-quill-new/dist/quill.snow.css')
-    } catch (e) {
-      // CSS may not be available in some environments
-      console.warn('Could not load ReactQuill CSS:', e)
-    }
     setMounted(true)
   }, [])
 
@@ -263,108 +248,44 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
               {/* Negative impacts of the project */}
               <FormField label="Negative impacts of the project">
                 <div className="mb-24">
-                  {mounted ? (
-                    <ReactQuill
-                      theme="snow"
-                      value={formData.negative_impacts}
-                      onChange={(value) => handleQuillChange('negative_impacts', value)}
-                      modules={{
-                        toolbar: [
-                          [{ 'header': [1, 2, 3, false] }],
-                          ['bold', 'italic', 'underline', 'strike'],
-                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                          [{ 'indent': '-1'}, { 'indent': '+1' }],
-                          ['link'],
-                          ['clean']
-                        ],
-                    }}
-                    className="bg-white"
-                    style={{ height: '200px', marginBottom: '80px' }}
+                  <TiptapEditor
+                    value={formData.negative_impacts}
+                    onChange={(value) => handleQuillChange('negative_impacts', value)}
+                    height="200px"
                   />
-                  ) : (
-                    <div className="h-52 border rounded-md bg-gray-50 animate-pulse" />
-                  )}
                 </div>
               </FormField>
 
               {/* Reprisals associated with the project */}
               <FormField label="Reprisals associated with the project (including articles in the press)">
                 <div className="mb-24">
-                  {mounted ? (
-                    <ReactQuill
-                    theme="snow"
+                  <TiptapEditor
                     value={formData.reprisals}
                     onChange={(value) => handleQuillChange('reprisals', value)}
-                    modules={{
-                      toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        ['link'],
-                        ['clean']
-                      ],
-                    }}
-                    className="bg-white"
-                    style={{ height: '200px', marginBottom: '80px' }}
+                    height="200px"
                   />
-                  ) : (
-                    <div className="h-52 border rounded-md bg-gray-50 animate-pulse" />
-                  )}
                 </div>
               </FormField>
 
               {/* Short timeline of advocacy activities */}
               <FormField label="Short timeline of advocacy activities and response of the bank (CSO lobbying, community actions such as petitions to the local govt, bank, etc)">
                 <div className="mb-24">
-                  {mounted ? (
-                    <ReactQuill
-                    theme="snow"
+                  <TiptapEditor
                     value={formData.advocacy_timeline}
                     onChange={(value) => handleQuillChange('advocacy_timeline', value)}
-                    modules={{
-                      toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        ['link'],
-                        ['clean']
-                      ],
-                    }}
-                    className="bg-white"
-                    style={{ height: '200px', marginBottom: '80px' }}
+                    height="200px"
                   />
-                  ) : (
-                    <div className="h-52 border rounded-md bg-gray-50 animate-pulse" />
-                  )}
                 </div>
               </FormField>
 
               {/* Any other information */}
               <FormField label="Any other information and links to project documents">
                 <div className="mb-24">
-                  {mounted ? (
-                    <ReactQuill
-                    theme="snow"
+                  <TiptapEditor
                     value={formData.other_information}
                     onChange={(value) => handleQuillChange('other_information', value)}
-                    modules={{
-                      toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        ['link'],
-                        ['clean']
-                      ],
-                    }}
-                    className="bg-white"
-                    style={{ height: '200px', marginBottom: '80px' }}
+                    height="200px"
                   />
-                  ) : (
-                    <div className="h-52 border rounded-md bg-gray-50 animate-pulse" />
-                  )}
                 </div>
               </FormField>
             </div>

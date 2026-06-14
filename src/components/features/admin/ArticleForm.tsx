@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill-new/dist/quill.snow.css';
 import { Article } from '@/types/types';
 import { uploadImage, uploadMultipleDocuments, validateImageFile, validateDocumentFile } from '@/lib/supabase/storage';
 import { Input } from '@/components/ui/input';
@@ -8,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
+import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import {
   Select,
   SelectContent,
@@ -15,9 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 interface ArticleFormProps {
     onClose: () => void;
@@ -403,22 +399,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>
                     <div className="mb-24">
-                        <ReactQuill
-                            theme="snow"
+                        <TiptapEditor
                             value={formData.description}
                             onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
-                            modules={{
-                                toolbar: [
-                                    [{ 'header': [1, 2, 3, false] }],
-                                    ['bold', 'italic', 'underline', 'strike'],
-                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                    [{ 'indent': '-1'}, { 'indent': '+1' }],
-                                    ['link', 'image'],
-                                    ['clean']
-                                ],
-                            }}
-                            className="bg-white"
-                            style={{ height: '200px', marginBottom: '80px' }}
+                            height="200px"
                             placeholder="Enter content..."
                         />
                     </div>

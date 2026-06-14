@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import MapGL, { Marker } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import dynamic from 'next/dynamic';
-import 'react-quill-new/dist/quill.snow.css';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { MagnifyingGlassIcon } from '@/components/ui/icons';
+import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import {
   Select,
   SelectContent,
@@ -17,9 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 interface ProjectFormProps {
     onClose: () => void;
@@ -1036,22 +1032,10 @@ ${references}
                         </FormField>
                         <FormField label="Project description">
                             <div className="mb-24 relative z-20">
-                                <ReactQuill
-                                    theme="snow"
+                                <TiptapEditor
                                     value={formData.projectDescription}
                                     onChange={(value) => setFormData(prev => ({ ...prev, projectDescription: value }))}
-                                    modules={{
-                                        toolbar: [
-                                            [{ 'header': [1, 2, 3, false] }],
-                                            ['bold', 'italic', 'underline', 'strike'],
-                                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                            [{ 'indent': '-1'}, { 'indent': '+1' }],
-                                            ['link', 'image'],
-                                            ['clean']
-                                        ],
-                                    }}
-                                    className="bg-white"
-                                    style={{ height: '300px', marginBottom: '80px' }}
+                                    height="300px"
                                 />
                             </div>
                         </FormField>
