@@ -35,7 +35,7 @@ export const TiptapEditor = ({
     },
     editorProps: {
       attributes: {
-        class: `prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl focus:outline-none ${className}`,
+        class: `prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl focus:outline-none p-4 ${className}`,
       },
     },
   });
@@ -176,7 +176,7 @@ export const TiptapEditor = ({
       </div>
 
       {/* Editor */}
-      <div style={{ height }} className="overflow-y-auto bg-white">
+      <div style={{ height }} className="overflow-y-auto bg-white p-2">
         <EditorContent editor={editor} />
       </div>
     </div>
