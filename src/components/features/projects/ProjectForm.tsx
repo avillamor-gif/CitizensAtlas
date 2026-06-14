@@ -807,7 +807,7 @@ ${references}
                         <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} required />
                     </FormField>
                     <FormField label="Project Number">
-                        <Input type="number" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
+                        <Input type="text" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
                     </FormField>
                     
                     {/* Map Picker - Only show in Admin page form (not in modal) */}
