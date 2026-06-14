@@ -59,8 +59,6 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
     const { user } = useAuth();
     const isAuthorized = !!user && (user.role === 'super-admin' || user.role === 'admin');
     
-    console.log('🔍 ProjectDetailModal Debug:', { user, isAuthorized, hasOnEdit: !!onEdit, isSidePanel });
-    
     const getStatusColor = (status: string | undefined): string => {
         if (!status) return 'bg-gray-500';
         const statusLower = status.toLowerCase().trim();
