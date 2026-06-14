@@ -27,7 +27,7 @@ const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ lab
     return (
         <div className="mb-2">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
-            <p className="text-sm text-gray-800 whitespace-pre-wrap">{cleanedValue}</p>
+            <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{cleanedValue}</p>
         </div>
     );
 };
