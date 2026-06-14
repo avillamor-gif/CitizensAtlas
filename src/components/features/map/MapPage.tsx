@@ -83,7 +83,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
 
         return projects.filter((project: Project) => {
             const publishedMatch = project.status === 'published' || project.status === undefined;
-            const countryMatch = filters.country === 'all' || project.country === filters.country;
+            const countryMatch = filters.country === 'all' || (project.country?.toLowerCase().trim() === filters.country.toLowerCase().trim());
             const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType);
             const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi;
             const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus;
