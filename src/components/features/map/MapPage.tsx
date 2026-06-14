@@ -43,6 +43,11 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
         setSelectedProject(null);
     };
 
+    const handleEditProject = useCallback((project: Project) => {
+        // TODO: Implement edit functionality
+        console.log('Edit project:', project);
+    }, []);
+
     const handleMapLoad = () => {
         setIsMapLoading(false);
     };
@@ -213,7 +218,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filters, onFilterChange, fi
 
             {/* Project Details Panel - Desktop Only - Fixed 35% width */}
             {selectedProject && (
-                <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} isSidePanel={true} />
+                <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} isSidePanel={true} />
             )}
         </div>
     );

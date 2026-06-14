@@ -74,6 +74,11 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         setSelectedProject(null);
     };
 
+    const handleEditProject = useCallback((project: Project) => {
+        // TODO: Implement edit functionality
+        console.log('Edit project:', project);
+    }, []);
+
     return (
         <section className="bg-white py-12 px-4 sm:px-8 lg:px-16">
             <div className="container mx-auto">
@@ -183,7 +188,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     </div>
                 )}
             </div>
-            <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} />
+            <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} />
         </section>
     );
 };
