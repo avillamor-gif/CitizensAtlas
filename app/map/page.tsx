@@ -4,11 +4,14 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { MapPage } from '@/components/features/map'
-import { Page, Filters, Project } from '@/types/types'
-import { projectCardsData, getIfiAbbreviation } from '@/lib/constants'
+import { Page, Project } from '@/types/types'
+import { getIfiAbbreviation } from '@/lib/constants'
+import * as dataService from '@/lib/services/data-service'
 
 export default function Map() {
   const router = useRouter()
+  const [projects, setProjects] = useState<Project[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   // Prevent body scrolling on map page
   useEffect(() => {
@@ -18,12 +21,23 @@ export default function Map() {
     }
   }, [])
 
-  const [filters, setFilters] = useState<Filters>({
-    country: 'all',
-    solutionType: 'all',
-    ifi: 'all',
-    projectStatus: 'all'
-  })
+  // Fetch projects from database
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setIsLoading(true)
+        const projectsData = await dataService.getPublishedProjectsWithDetails()
+        setProjects(projectsData)
+      } catch (error) {
+        console.error('Failed to load projects:', error)
+        setProjects([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadProjects()
+  }, [])
 
   const handleNavigate = (page: Page) => {
     if (page === 'home') {
@@ -33,13 +47,6 @@ export default function Map() {
     }
   }
 
-  const handleFilterChange = (filterName: keyof Filters, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterName]: value
-    }))
-  }
-
   const filterOptions = useMemo(() => {
     const parseDetail = (details: string, key: string) => {
       const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`))
@@ -47,14 +54,14 @@ export default function Map() {
     }
 
     // Only include countries that have published projects and are not empty
-    const countries = ['all', ...Array.from(new Set(projectCardsData
+    const countries = ['all', ...Array.from(new Set(projects
       .filter(p => p.status === 'published' || p.status === undefined)
       .map(p => p.country)
       .filter(c => c && c.trim() !== '')
     )).sort()]
-    const solutionTypes = ['all', ...Array.from(new Set(projectCardsData.flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
-    const ifis = ['all', ...Array.from(new Set(projectCardsData.map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
-    const projectStatuses = ['all', ...Array.from(new Set(projectCardsData.map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
+    const solutionTypes = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
+    const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
+    const projectStatuses = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
 
     return {
       countries,
@@ -62,24 +69,7 @@ export default function Map() {
       ifis,
       projectStatuses
     }
-  }, [])
-
-  const filteredProjects = useMemo(() => {
-    const parseDetail = (details: string, key: string) => {
-      const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`))
-      return match ? match[1].trim() : ''
-    }
-
-    return projectCardsData.filter((project: Project) => {
-      const publishedMatch = project.status === 'published' || project.status === undefined
-      const countryMatch = filters.country === 'all' || project.country === filters.country
-      const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType)
-      const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi
-      const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus
-
-      return publishedMatch && countryMatch && solutionMatch && ifiMatch && statusMatch
-    })
-  }, [filters])
+  }, [projects])
 
   return (
     <div className="flex flex-col h-screen overflow-hidden w-full">
@@ -89,7 +79,7 @@ export default function Map() {
       />
       <main className="flex-grow overflow-hidden w-full">
         <MapPage 
-          projects={projectCardsData}
+          projects={projects}
           filterOptions={filterOptions}
         />
       </main>
