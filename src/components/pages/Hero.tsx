@@ -10,6 +10,7 @@ import FilterPanel from '@/components/pages/FilterPanel';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Filter } from 'lucide-react';
 import * as DataService from '@/lib/services/data-service';
+import { getIfiAbbreviation } from '@/lib/constants';
 
 const MapToggle: React.FC<{ active: 'Map' | 'Projects'; setActive: (view: 'Map' | 'Projects') => void; }> = ({ active, setActive }) => {
     return (
@@ -125,6 +126,24 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         }
     }, [filters.country, openDetailModal]);
 
+    // Filter projects based on local filters state
+    const filteredProjects = React.useMemo(() => {
+        const parseDetail = (details: string, key: string) => {
+            const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`));
+            return match ? match[1].trim() : '';
+        };
+
+        return projects.filter((project: Project) => {
+            const publishedMatch = project.status === 'published' || project.status === undefined;
+            const countryMatch = filters.country === 'all' || (project.country?.toLowerCase().trim() === filters.country.toLowerCase().trim());
+            const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType);
+            const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi;
+            const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus;
+
+            return publishedMatch && countryMatch && solutionMatch && ifiMatch && statusMatch;
+        });
+    }, [projects, filters]);
+
     return (
         <section className="bg-white py-12 px-4 sm:px-8 lg:px-16">
             <div className="container mx-auto">
@@ -185,12 +204,12 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                         {activeView === 'Map' ? (
                            <div className="relative border rounded-lg shadow-lg overflow-hidden h-[400px] md:h-[600px] bg-gray-200">
                                 <InteractiveMap 
-                                    projects={projects} 
+                                    projects={filteredProjects} 
                                     onMarkerClick={handleMarkerClick}
                                 />
                             </div>
                         ) : (
-                            <ProjectGrid projects={projects} onProjectSelect={openDetailModal} />
+                            <ProjectGrid projects={filteredProjects} onProjectSelect={openDetailModal} />
                         )}
                     </div>
 
@@ -230,7 +249,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
 
                 {activeView === 'Map' && (
                     <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isDashboardVisible ? 'max-h-[1000px] opacity-100 mt-8' : 'max-h-0 opacity-0'}`}>
-                       <DashboardV2 projects={projects} filters={filters} currentUser={currentUser} />
+                       <DashboardV2 projects={filteredProjects} filters={filters} currentUser={currentUser} />
                     </div>
                 )}
             </div>
