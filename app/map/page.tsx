@@ -46,10 +46,15 @@ export default function Map() {
       return match ? match[1].trim() : ''
     }
 
-    const countries = ['all', ...Array.from(new Set(projectCardsData.map(p => p.country)))]
-    const solutionTypes = ['all', ...Array.from(new Set(projectCardsData.flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()))))]
-    const ifis = ['all', ...Array.from(new Set(projectCardsData.map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A'))))]
-    const projectStatuses = ['all', ...Array.from(new Set(projectCardsData.map(p => parseDetail(p.details, 'Project Status'))))].filter(status => status && status !== 'N/A')
+    // Only include countries that have published projects and are not empty
+    const countries = ['all', ...Array.from(new Set(projectCardsData
+      .filter(p => p.status === 'published' || p.status === undefined)
+      .map(p => p.country)
+      .filter(c => c && c.trim() !== '')
+    )).sort()]
+    const solutionTypes = ['all', ...Array.from(new Set(projectCardsData.flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
+    const ifis = ['all', ...Array.from(new Set(projectCardsData.map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
+    const projectStatuses = ['all', ...Array.from(new Set(projectCardsData.map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
 
     return {
       countries,

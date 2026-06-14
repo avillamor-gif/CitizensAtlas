@@ -1017,9 +1017,9 @@ function HomePageContent() {
     ).sort((a, b) => a.localeCompare(b))
     
     const countries = ['all', ...uniqueCountries]
-    const solutionTypes = ['all', ...Array.from(new Set(projects.flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()))))]
-    const ifis = ['all', ...Array.from(new Set(projects.map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A'))))]
-    const projectStatuses = ['all', ...Array.from(new Set(projects.map(p => parseDetail(p.details, 'Project Status'))))].filter(status => status && status !== 'N/A')
+    const solutionTypes = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
+    const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
+    const projectStatuses = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
     return { countries, solutionTypes, ifis, projectStatuses }
   }, [projects])
 
