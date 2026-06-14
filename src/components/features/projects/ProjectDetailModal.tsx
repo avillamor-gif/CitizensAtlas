@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { XMarkIcon, ArrowsPointingOutIcon, ArrowTopRightOnSquareIcon } from '@/components/ui/icons';
 import { Project } from '@/types/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProjectDetailModalProps {
     project: Project | null;
     onClose: () => void;
+    onEdit?: (project: Project) => void;
     isSidePanel?: boolean;
 }
 
@@ -53,7 +55,10 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
 };
 
 
-const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose, isSidePanel = false }) => {
+const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose, onEdit, isSidePanel = false }) => {
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'super-admin' || user?.role === 'admin';
+    
     const getStatusColor = (status: string | undefined): string => {
         if (!status) return 'bg-gray-500';
         const statusLower = status.toLowerCase().trim();
@@ -227,7 +232,16 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         ))}
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 flex justify-end bg-gray-50 border-t flex-shrink-0">
+                <div className="p-3 sm:p-4 flex justify-end gap-2 bg-gray-50 border-t flex-shrink-0">
+                    {isAdmin && onEdit && (
+                        <button 
+                            type="button" 
+                            onClick={() => onEdit(project!)} 
+                            className="w-full sm:w-auto bg-brand-dark-blue text-white font-bold py-2 px-4 sm:px-6 rounded text-sm hover:bg-brand-medium-blue transition-colors"
+                        >
+                            Edit
+                        </button>
+                    )}
                     <button 
                         type="button" 
                         onClick={onClose} 
@@ -298,7 +312,16 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         ))}
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 flex justify-end bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%]">
+                <div className="p-3 sm:p-4 flex justify-end gap-2 bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%]">
+                    {isAdmin && onEdit && (
+                        <button 
+                            type="button" 
+                            onClick={() => onEdit(project!)} 
+                            className="w-full sm:w-auto bg-brand-dark-blue text-white font-bold py-2 px-4 sm:px-6 rounded text-sm hover:bg-brand-medium-blue transition-colors"
+                        >
+                            Edit
+                        </button>
+                    )}
                     <button 
                         type="button" 
                         onClick={onClose} 
