@@ -3,6 +3,7 @@ import MapGL, { Marker } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
+import { InputField } from '@/components/ui/input-field';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -835,7 +836,7 @@ ${references}
                                                 }
                                             }}
                                             placeholder="Search for a location..."
-                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-medium-blue focus:border-brand-medium-blue"
+                                            className="w-full pl-9 pr-3 py-2 text-base md:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-medium-blue focus:border-brand-medium-blue"
                                         />
                                         {isSearching && (
                                             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -1271,7 +1272,7 @@ ${references}
                                 </div>
                             </div>
                         </div>
-                        <FormField label="Key documents"><input type="file" name="keyDocuments" onChange={handleFileChange} multiple className={inputClass} /></FormField>
+                        <FormField label="Key documents"><InputField type="file" name="keyDocuments" onChange={handleFileChange} multiple /></FormField>
                         
                         <SectionTitle>Community & Actions</SectionTitle>
                         <div>

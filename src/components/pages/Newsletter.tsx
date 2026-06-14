@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
+import { InputField } from '@/components/ui/input-field';
 
 const Newsletter: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -88,39 +89,32 @@ const Newsletter: React.FC = () => {
 
                 <form className="text-left" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-1">First name <span className="text-red-500">*</span></label>
-                            <input 
-                                type="text" 
-                                id="first-name" 
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
-                                required
-                                disabled={loading}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 mb-1">Last name <span className="text-red-500">*</span></label>
-                            <input 
-                                type="text" 
-                                id="last-name" 
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
-                                required
-                                disabled={loading}
-                            />
-                        </div>
+                        <InputField
+                            type="text"
+                            id="first-name"
+                            label="First name"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            required
+                            disabled={loading}
+                        />
+                        <InputField
+                            type="text"
+                            id="last-name"
+                            label="Last name"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            required
+                            disabled={loading}
+                        />
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address <span className="text-red-500">*</span></label>
-                        <input 
-                            type="email" 
-                            id="email" 
+                        <InputField
+                            type="email"
+                            id="email"
+                            label="Email address"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue"
                             required
                             disabled={loading}
                         />

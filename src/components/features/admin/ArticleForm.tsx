@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Article } from '@/types/types';
 import { uploadImage, uploadMultipleDocuments, validateImageFile, validateDocumentFile } from '@/lib/supabase/storage';
 import { Input } from '@/components/ui/input';
+import { InputField } from '@/components/ui/input-field';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -659,9 +660,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                     type="checkbox"
                                     checked={saveAsDraft}
                                     onChange={(e) => setSaveAsDraft(e.target.checked)}
-                                    className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    className="h-4 w-4 rounded border-gray-300 text-brand-medium-blue focus:ring-2 focus:ring-brand-medium-blue focus:border-brand-medium-blue"
                                 />
-                                <span className="text-sm text-gray-700">Save as Draft (requires approval)</span>
+                                <span className="ml-2 text-sm text-gray-700">Save as Draft (requires approval)</span>
                             </label>
                         )}
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
