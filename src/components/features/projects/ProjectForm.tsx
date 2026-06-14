@@ -898,16 +898,19 @@ ${references}
                     })()}
                     
                     {isLoadingData ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField label="Region">
                                 <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 animate-pulse h-[42px]"></div>
                             </FormField>
                             <FormField label="Country">
                                 <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 animate-pulse h-[42px]"></div>
                             </FormField>
+                            <FormField label="City/ies">
+                                <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 animate-pulse h-[42px]"></div>
+                            </FormField>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField label="Region">
                                 <Select value={formData.region || ''} onValueChange={(value) => handleSelectChange('region', value)}>
                                     <SelectTrigger>
@@ -934,6 +937,16 @@ ${references}
                                         ))}
                                     </SelectContent>
                                 </Select>
+                            </FormField>
+                            <FormField label="City/ies">
+                                <Input 
+                                    type="text" 
+                                    name="city" 
+                                    value={formData.city} 
+                                    onChange={handleInputChange} 
+                                    placeholder="e.g., Mumbai, Delhi" 
+                                    disabled={!formData.country}
+                                />
                             </FormField>
                         </div>
                     )}
