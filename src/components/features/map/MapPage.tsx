@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import InteractiveMap from './InteractiveMap';
 import FilterPanel from '@/components/pages/FilterPanel';
-import { Project, Filters, FilterOptions, ProjectBrief } from '@/types/types';
+import { Project, Filters, FilterOptions } from '@/types/types';
 import ProjectDetailModal from '@/components/features/projects/ProjectDetailModal';
 import ProjectForm from '@/components/features/projects/ProjectForm';
 import { countryNameToCode, getIfiAbbreviation } from '@/lib/constants';
@@ -24,7 +24,6 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(true);
-    const [projectBriefs, setProjectBriefs] = useState<ProjectBrief[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     // Local filter change handler
@@ -35,21 +34,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
         }));
     }, []);
 
-    // Fetch project briefs when component mounts
-    useEffect(() => {
-        const loadProjectBriefs = async () => {
-            try {
-                const briefs = await DataService.getPublishedProjectBriefs();
-                console.log('🗺️ [MapPage] Loaded project briefs:', briefs);
-                setProjectBriefs(briefs);
-            } catch (error) {
-                console.error('Failed to load project briefs:', error);
-                setProjectBriefs([]);
-            }
-        };
 
-        loadProjectBriefs();
-    }, []);
 
     const openDetailModal = useCallback((project: Project) => {
         setSelectedProject(project);
@@ -147,24 +132,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
                                         ).length}
                                     </p>
                                 </div>
-                                {(() => {
-                                    const matchingBriefs = projectBriefs.filter(brief => 
-                                        brief.country?.toUpperCase() === filters.country.toUpperCase() &&
-                                        (brief.status === 'published' || !brief.status)
-                                    )
-                                    
-                                    return matchingBriefs.length > 0 && (
-                                        <button
-                                            onClick={() => {
-                                                const country = encodeURIComponent(filters.country);
-                                                window.location.href = `/country-project-briefs?country=${country}`;
-                                            }}
-                                            className="mt-1 md:mt-2 w-full bg-brand-dark-blue text-white font-semibold py-1 md:py-1.5 px-2 md:px-3 rounded hover:bg-brand-medium-blue transition-colors text-[9px] md:text-xs"
-                                        >
-                                            PROJECT BRIEFS
-                                        </button>
-                                    )
-                                })()}
+
                             </div>
                         </div>
                     ) : (
@@ -179,25 +147,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
                                     {filteredProjects.length}
                                 </p>
                             </div>
-                            {(() => {
-                                const matchingBriefs = projectBriefs.filter(brief => 
-                                    filters.country !== 'all' && 
-                                    brief.country?.toUpperCase() === filters.country.toUpperCase() &&
-                                    (brief.status === 'published' || !brief.status)
-                                )
-                                
-                                return matchingBriefs.length > 0 && (
-                                    <button
-                                        onClick={() => {
-                                            const country = encodeURIComponent(filters.country);
-                                            window.location.href = `/country-project-briefs?country=${country}`;
-                                        }}
-                                        className="mt-2 w-full bg-brand-dark-blue text-white font-semibold py-1.5 px-3 rounded hover:bg-brand-medium-blue transition-colors text-xs"
-                                    >
-                                        PROJECT BRIEFS
-                                    </button>
-                                )
-                            })()}
+
                         </div>
                     )}
                 </div>
