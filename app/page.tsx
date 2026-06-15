@@ -87,24 +87,24 @@ function HomePageContent() {
         publicationsData,
         videosData,
         projectBriefsData,
+        newsCategoriesData,
+        publicationTypesData,
+        videoCategoriesData,
       ] = await Promise.all([
-        dataService.getPublishedProjectsWithDetails(), // Need details field for map visualization
-        dataService.getPublishedNews(10), // Limit to 10 for homepage carousel
-        dataService.getPublishedPublications(10), // Limit to 10 for homepage carousel
-        dataService.getPublishedVideos(10), // Limit to 10 for homepage carousel
-        dataService.getPublishedProjectBriefs(), // Load all published project briefs
-      ])
-      
-      // Load categories in background (non-blocking)
-      Promise.all([
+        dataService.getPublishedProjectsWithDetails(),
+        dataService.getPublishedNews(10),
+        dataService.getPublishedPublications(10),
+        dataService.getPublishedVideos(10),
+        dataService.getPublishedProjectBriefs(),
         dataService.getNewsCategories(),
         dataService.getPublicationTypes(),
-        dataService.getVideoCategories()
-      ]).then(([newsCategoriesData, publicationTypesData, videoCategoriesData]) => {
-        setNewsCategories(newsCategoriesData)
-        setPublicationTypes(publicationTypesData)
-        setVideoCategories(videoCategoriesData)
-      })
+        dataService.getVideoCategories(),
+      ])
+      
+      // Set category data immediately
+      setNewsCategories(newsCategoriesData)
+      setPublicationTypes(publicationTypesData)
+      setVideoCategories(videoCategoriesData)
 
       const loadTime = Date.now() - startTime
       console.log('✅ Data loaded from Supabase in', loadTime, 'ms:', {
@@ -125,6 +125,27 @@ function HomePageContent() {
       alert('Failed to load data. Please refresh the page.')
     } finally {
       setDataLoading(false)
+    }
+  }
+
+  // Utility function to ensure publication type exists in both database and state
+  const ensurePublicationType = async (type: string): Promise<boolean> => {
+    if (!type || publicationTypes.includes(type)) {
+      return true // Already exists
+    }
+
+    try {
+      console.log('💾 Ensuring publication type exists:', type)
+      await dataService.createPublicationType(type)
+      setPublicationTypes(prev => {
+        const updated = [...prev, type].sort()
+        console.log('✅ Publication type added to state:', type)
+        return updated
+      })
+      return true
+    } catch (error) {
+      console.error('❌ Failed to ensure publication type:', type, error)
+      return false
     }
   }
 
@@ -467,16 +488,11 @@ function HomePageContent() {
       
       setPublications(prevPublications => [newArticle, ...prevPublications])
       
-      // Auto-add new publication type to database if it doesn't exist
-      if (publicationData.category && !publicationTypes.includes(publicationData.category)) {
-        try {
-          console.log('💾 Auto-adding new publication type to database:', publicationData.category)
-          await dataService.createPublicationType(publicationData.category)
-          setPublicationTypes(prev => [...prev, publicationData.category].sort())
-        } catch (error) {
-          console.error('Failed to add publication type to database:', error)
-          // Still update local state even if database fails
-          setPublicationTypes(prev => [...prev, publicationData.category].sort())
+      // Ensure new publication type exists BEFORE showing success
+      if (publicationData.category) {
+        const typeAdded = await ensurePublicationType(publicationData.category)
+        if (!typeAdded) {
+          console.warn('⚠️ Failed to add publication type, but publication was created')
         }
       }
       
@@ -516,16 +532,11 @@ function HomePageContent() {
         prevPublications.map(p => (p.id === finalArticle.id ? finalArticle : p))
       )
       
-      // Auto-add new publication type to database if it doesn't exist
-      if (finalArticle.category && !publicationTypes.includes(finalArticle.category)) {
-        try {
-          console.log('💾 Auto-adding new publication type to database:', finalArticle.category)
-          await dataService.createPublicationType(finalArticle.category)
-          setPublicationTypes(prev => [...prev, finalArticle.category].sort())
-        } catch (error) {
-          console.error('Failed to add publication type to database:', error)
-          // Still update local state even if database fails
-          setPublicationTypes(prev => [...prev, finalArticle.category].sort())
+      // Ensure new publication type exists BEFORE showing success
+      if (finalArticle.category) {
+        const typeAdded = await ensurePublicationType(finalArticle.category)
+        if (!typeAdded) {
+          console.warn('⚠️ Failed to add publication type, but publication was updated')
         }
       }
       
@@ -759,16 +770,24 @@ function HomePageContent() {
 
   // Publication Type Handlers
   const handleAddPublicationType = async (type: string) => {
-    if (type && !publicationTypes.includes(type)) {
-      try {
-        console.log('💾 Adding publication type to database:', type)
-        await dataService.createPublicationType(type)
-        setPublicationTypes(prev => [...prev, type].sort())
+    if (!type) return
+    
+    if (publicationTypes.includes(type)) {
+      alert(`Publication type "${type}" already exists.`)
+      return
+    }
+    
+    try {
+      console.log('💾 Adding publication type to database:', type)
+      const success = await ensurePublicationType(type)
+      if (success) {
         alert('✅ Publication type added successfully!')
-      } catch (error) {
-        console.error('Failed to add publication type:', error)
+      } else {
         alert('❌ Failed to add publication type. Please try again.')
       }
+    } catch (error) {
+      console.error('Failed to add publication type:', error)
+      alert('❌ Failed to add publication type. Please try again.')
     }
   }
 
