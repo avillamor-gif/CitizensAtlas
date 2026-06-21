@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1">
                         <button onClick={() => handleNavigation('home')} className="text-left">
-                            <h1 className="text-brand-dark-blue text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Sora', sans-serif", fontVariant: 'small-caps'}}>
+                            <h1 className="text-brand-dark-blue text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Sora', sans-serif", fontVariantCaps: 'small-caps'}}>
                                 CITIZENS' ATLAS
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-600 leading-tight">on False Solutions to Climate and Circularity</p>
