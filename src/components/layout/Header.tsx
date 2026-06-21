@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
 
     return (
         <>
-            <header className="bg-white py-2.5 px-4 sm:px-6 lg:px-16 shadow-md sticky top-0 z-40">
+            <header className="bg-white py-2.5 px-4 sm:px-6 lg:px-16 shadow-md sticky top-0 z-40" style={{fontFamily: "'Sora', sans-serif", fontVariant: 'small-caps'}}>
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1">
                         <button onClick={() => handleNavigation('home')} className="text-left">
