@@ -130,7 +130,7 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
   return (
     <div>
       {/* Blue banner */}
-      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[240px] flex flex-col justify-center items-center">
+      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
         <div>
           <h1 className="text-5xl font-extrabold mb-4">Publications</h1>
           <p className="text-xl max-w-3xl mx-auto">
