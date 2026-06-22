@@ -10,11 +10,12 @@ interface ArticleListPageProps {
     items: Article[];
     onViewArticle: (article: Article) => void;
     onIncrementDownload?: (articleId: number) => void;
+    filterBar?: React.ReactNode;
 }
 
 const ITEMS_PER_PAGE = 9;
 
-const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewArticle, onIncrementDownload }) => {
+const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewArticle, onIncrementDownload, filterBar }) => {
     const [view, setView] = useState<'grid' | 'list'>('grid');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -33,12 +34,22 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
     return (
         <div className="bg-white py-12 px-4 sm:px-8 lg:px-16">
             <div className="container mx-auto">
-                <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
-                    <div>
-                        <h1 className="text-4xl font-extrabold text-brand-dark-blue">{title}</h1>
-                        <div className="w-16 h-1 bg-brand-dark-blue mt-2"></div>
+                <div className="mb-8">
+                    <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                        <div>
+                            <h1 className="text-4xl font-extrabold text-brand-dark-blue">{title}</h1>
+                            <div className="w-16 h-1 bg-brand-dark-blue mt-2"></div>
+                        </div>
+                        {!filterBar && <ViewToggle activeView={view} setActiveView={setView} />}
                     </div>
-                    <ViewToggle activeView={view} setActiveView={setView} />
+                    {filterBar && (
+                        <>
+                            <div className="mt-6">{filterBar}</div>
+                            <div className="flex justify-end mt-4">
+                                <ViewToggle activeView={view} setActiveView={setView} />
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {view === 'grid' ? (

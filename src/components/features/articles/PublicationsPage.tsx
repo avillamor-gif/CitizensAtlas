@@ -63,82 +63,78 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
     setYearFilter('all');
   };
 
-  return (
-    <div>
-      {/* Filter bar */}
-      <div className="bg-white px-4 sm:px-8 lg:px-16 pt-8 pb-4">
-        <div className="container mx-auto flex flex-col md:flex-row gap-3 items-start md:items-center flex-wrap">
-          <Input
-            placeholder="Search publications..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full md:w-64 h-11"
-          />
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-full md:w-48 h-11">
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map(cat => (
-                <SelectItem key={cat} value={cat}>
-                  {cat === 'all' ? 'All Categories' : cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {tags.length > 1 && (
-            <Select value={tagFilter} onValueChange={setTagFilter}>
-              <SelectTrigger className="w-full md:w-48 h-11">
-                <SelectValue placeholder="All Tags" />
-              </SelectTrigger>
-              <SelectContent>
-                {tags.map(tag => (
-                  <SelectItem key={tag} value={tag}>
-                    {tag === 'all' ? 'All Tags' : tag}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-          {years.length > 1 && (
-            <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger className="w-full md:w-36 h-11">
-                <SelectValue placeholder="All Years" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map(year => (
-                  <SelectItem key={year} value={year}>
-                    {year === 'all' ? 'All Years' : year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-          {hasActiveFilters && (
-            <button
-              onClick={handleClearFilters}
-              className="text-sm font-semibold text-brand-dark-blue hover:text-brand-medium-blue underline whitespace-nowrap"
-            >
-              Clear Filters
-            </button>
-          )}
-        </div>
-        {hasActiveFilters && (
-          <div className="container mx-auto mt-2">
-            <p className="text-sm text-gray-500">
-              Showing {filtered.length} of {items.length} publications
-            </p>
-          </div>
-        )}
-      </div>
-
-      <ArticleListPage
-        title="Publications"
-        items={filtered}
-        onViewArticle={onViewArticle}
-        onIncrementDownload={onIncrementDownload}
+  const filterBar = (
+    <div className="flex flex-col md:flex-row gap-3 items-start md:items-center flex-wrap">
+      <Input
+        placeholder="Search publications..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        className="w-full md:w-64 h-11"
       />
+      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+        <SelectTrigger className="w-full md:w-48 h-11">
+          <SelectValue placeholder="All Categories" />
+        </SelectTrigger>
+        <SelectContent>
+          {categories.map(cat => (
+            <SelectItem key={cat} value={cat}>
+              {cat === 'all' ? 'All Categories' : cat}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {tags.length > 1 && (
+        <Select value={tagFilter} onValueChange={setTagFilter}>
+          <SelectTrigger className="w-full md:w-48 h-11">
+            <SelectValue placeholder="All Tags" />
+          </SelectTrigger>
+          <SelectContent>
+            {tags.map(tag => (
+              <SelectItem key={tag} value={tag}>
+                {tag === 'all' ? 'All Tags' : tag}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+      {years.length > 1 && (
+        <Select value={yearFilter} onValueChange={setYearFilter}>
+          <SelectTrigger className="w-full md:w-36 h-11">
+            <SelectValue placeholder="All Years" />
+          </SelectTrigger>
+          <SelectContent>
+            {years.map(year => (
+              <SelectItem key={year} value={year}>
+                {year === 'all' ? 'All Years' : year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+      {hasActiveFilters && (
+        <button
+          onClick={handleClearFilters}
+          className="text-sm font-semibold text-brand-dark-blue hover:text-brand-medium-blue underline whitespace-nowrap"
+        >
+          Clear Filters
+        </button>
+      )}
+      {hasActiveFilters && (
+        <p className="text-sm text-gray-500 w-full">
+          Showing {filtered.length} of {items.length} publications
+        </p>
+      )}
     </div>
+  );
+
+  return (
+    <ArticleListPage
+      title="Publications"
+      items={filtered}
+      onViewArticle={onViewArticle}
+      onIncrementDownload={onIncrementDownload}
+      filterBar={filterBar}
+    />
   );
 };
 
