@@ -86,7 +86,7 @@ export default function Publications() {
   if (selectedArticle) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header activePage="publications" onNavigate={() => {}} />
+        <Header />
         <main className="flex-grow">
           <ArticleDetailPage
             article={selectedArticle}
@@ -101,7 +101,7 @@ export default function Publications() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header activePage="publications" onNavigate={() => {}} />
+      <Header />
       <main className="flex-grow bg-white py-12 px-4 sm:px-8 lg:px-16">
         <div className="container mx-auto">
           {/* Filter bar */}

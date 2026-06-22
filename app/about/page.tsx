@@ -1,30 +1,15 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { AboutPage } from '@/components/pages'
-import { Page } from '@/types/types'
 
 export const dynamic = 'force-dynamic'
 
 export default function About() {
-  const router = useRouter()
-
-  const handleNavigate = (page: Page) => {
-    if (page === 'home') {
-      router.push('/')
-    } else {
-      router.push(`/${page}`)
-    }
-  }
-
   return (
     <div className="flex flex-col min-h-screen">
-      <Header 
-        activePage="about"
-        onNavigate={handleNavigate}
-      />
+      <Header />
       <main className="flex-grow">
         <AboutPage />
       </main>

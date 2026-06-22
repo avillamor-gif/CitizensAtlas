@@ -1,5 +1,6 @@
 
 import React, { useRef } from 'react';
+import Link from 'next/link';
 import { Article } from '@/types/types';
 import { ArrowLeftIcon, ArrowRightIcon, PlayIcon } from '@/components/ui/icons';
 // FIX: Corrected import path for Page type. It's now imported from `../types` to avoid circular dependencies.
@@ -72,13 +73,13 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
                         <div className={`w-16 h-1 mt-2 ${hasBackground ? 'bg-white' : 'bg-brand-dark-blue'}`}></div>
                     </div>
                     <div className="flex items-center space-x-4">
-                        {onNavigate && page && (
-                             <button
-                                onClick={() => onNavigate(page)}
+                        {page && (
+                             <Link
+                                href={`/${page}`}
                                 className={`text-xs sm:text-sm font-semibold py-1.5 px-3 sm:py-2 sm:px-6 rounded-full border-2 transition ${borderColor} ${textColor} ${hoverColor}`}
                             >
                                 Read All
-                            </button>
+                            </Link>
                         )}
                         <div className="hidden md:flex items-center space-x-2">
                              <button

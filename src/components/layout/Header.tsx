@@ -2,32 +2,48 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-// FIX: Import Page from types.ts to fix circular dependency
+import { usePathname } from 'next/navigation';
 import { Page, User } from '@/types/types';
 import { UserIcon } from '@/components/ui/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Menu, X } from 'lucide-react';
 
 interface HeaderProps {
-    activePage: Page;
-    onNavigate: (page: Page) => void;
     currentUser?: User;
+    // Kept for backward compat — no longer used for navigation
+    activePage?: Page;
+    onNavigate?: (page: Page) => void;
 }
 
-const NavButton: React.FC<{ page: Page; activePage: Page; onNavigate: (page: Page) => void; children: React.ReactNode }> = ({ page, activePage, onNavigate, children }) => {
-    const isActive = page === activePage;
-    return (
-        <button
-            onClick={() => onNavigate(page)}
-            className={`font-medium pb-1 transition-colors duration-200 ${isActive ? 'text-brand-dark-blue border-b-2 border-brand-dark-blue' : 'text-gray-700 hover:text-brand-dark-blue'}`}
-        >
-            {children}
-        </button>
-    );
+const pageToPath: Record<string, string> = {
+    about: '/about',
+    'what-we-do': '/what-we-do',
+    publications: '/publications',
+    map: '/map',
+    'partner-with-us': '/partner-with-us',
+    news: '/news',
+    videos: '/videos',
 };
 
-const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) => {
+const NavLink: React.FC<{ href: string; isActive: boolean; children: React.ReactNode }> = ({ href, isActive, children }) => (
+    <Link
+        href={href}
+        className={`font-medium pb-1 transition-colors duration-200 ${isActive ? 'text-brand-dark-blue border-b-2 border-brand-dark-blue' : 'text-gray-700 hover:text-brand-dark-blue'}`}
+    >
+        {children}
+    </Link>
+);
+
+const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
+    const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const isActive = (page: string) => {
+        const path = pageToPath[page];
+        // Use pathname for path-based pages, fall back to activePage prop for SPA usage
+        if (path) return pathname === path || activePage === page;
+        return activePage === page;
+    };
 
     // Get user initials for avatar fallback
     const getInitials = (name?: string) => {
@@ -40,32 +56,27 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
             .slice(0, 2);
     };
 
-    const handleNavigation = (page: Page) => {
-        onNavigate(page);
-        setIsMobileMenuOpen(false); // Close mobile menu on navigation
-    };
-
     return (
         <>
             <header className="bg-white py-2.5 px-4 sm:px-6 lg:px-16 shadow-md sticky top-0 z-40">
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1">
-                        <button onClick={() => handleNavigation('home')} className="text-left">
+                        <Link href="/" className="text-left block">
                             <h1 className="text-brand-dark-blue text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Sora', sans-serif", fontVariantCaps: 'small-caps'}}>
                                 CITIZENS' ATLAS
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-600 leading-tight">on False Solutions to Climate and Circularity</p>
                             <div className="w-1/3 h-0.5 bg-brand-dark-blue mt-0.5"></div>
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
-                        <NavButton page="about" activePage={activePage} onNavigate={onNavigate}>About</NavButton>
-                        <NavButton page="what-we-do" activePage={activePage} onNavigate={onNavigate}>What we do</NavButton>
-                        <NavButton page="publications" activePage={activePage} onNavigate={onNavigate}>Publications</NavButton>
-                        <NavButton page="map" activePage={activePage} onNavigate={onNavigate}>Map</NavButton>
-                        <NavButton page="partner-with-us" activePage={activePage} onNavigate={onNavigate}>Partner with us</NavButton>
+                        <NavLink href="/about" isActive={isActive('about')}>About</NavLink>
+                        <NavLink href="/what-we-do" isActive={isActive('what-we-do')}>What we do</NavLink>
+                        <NavLink href="/publications" isActive={isActive('publications')}>Publications</NavLink>
+                        <NavLink href="/map" isActive={isActive('map')}>Map</NavLink>
+                        <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
                         
                         {/* User Avatar or Login Link */}
                         {currentUser ? (
@@ -114,56 +125,61 @@ const Header: React.FC<HeaderProps> = ({ activePage, onNavigate, currentUser }) 
                     {/* Menu Content */}
                     <div className="md:hidden fixed top-[88px] left-0 right-0 bg-white z-50 shadow-lg animate-in slide-in-from-top">
                         <nav className="flex flex-col p-6 space-y-1">
-                        <button
-                            onClick={() => handleNavigation('about')}
+                        <Link
+                            href="/about"
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
-                                activePage === 'about' 
+                                isActive('about')
                                     ? 'bg-brand-dark-blue text-white' 
                                     : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             About
-                        </button>
-                        <button
-                            onClick={() => handleNavigation('what-we-do')}
+                        </Link>
+                        <Link
+                            href="/what-we-do"
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
-                                activePage === 'what-we-do' 
+                                isActive('what-we-do')
                                     ? 'bg-brand-dark-blue text-white' 
                                     : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             What we do
-                        </button>
-                        <button
-                            onClick={() => handleNavigation('publications')}
+                        </Link>
+                        <Link
+                            href="/publications"
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
-                                activePage === 'publications' 
+                                isActive('publications')
                                     ? 'bg-brand-dark-blue text-white' 
                                     : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             Publications
-                        </button>
-                        <button
-                            onClick={() => handleNavigation('map')}
+                        </Link>
+                        <Link
+                            href="/map"
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
-                                activePage === 'map' 
+                                isActive('map')
                                     ? 'bg-brand-dark-blue text-white' 
                                     : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             Map
-                        </button>
-                        <button
-                            onClick={() => handleNavigation('partner-with-us')}
+                        </Link>
+                        <Link
+                            href="/partner-with-us"
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
-                                activePage === 'partner-with-us' 
+                                isActive('partner-with-us')
                                     ? 'bg-brand-dark-blue text-white' 
                                     : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                             }`}
                         >
                             Partner with us
-                        </button>
+                        </Link>
 
                         {/* Mobile User Section */}
                         <div className="pt-4 border-t border-gray-200">

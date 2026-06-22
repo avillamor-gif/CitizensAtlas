@@ -4,9 +4,8 @@ import React, { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { AdminDashboard } from '@/components/features/admin'
-import { Home, AboutPage, WhatWeDoPage, PartnerPage } from '@/components/pages'
-import { MapPage } from '@/components/features/map'
-import { ArticleListPage, ArticleDetailPage, PublicationsPage } from '@/components/features/articles'
+import { Home } from '@/components/pages'
+import { ArticleDetailPage, PublicationsPage } from '@/components/features/articles'
 import { projectCardsData, getIfiAbbreviation, newsData as initialNewsData, publicationsData as initialPublicationsData, videosData } from '@/lib/constants'
 import { Project, Filters, Article, Page, User, ProjectBrief } from '@/types/types'
 import { notifyAdminOfNewSubmission, notifyContributorOfStatus } from '@/utils/notifications'
@@ -203,13 +202,28 @@ function HomePageContent() {
     }
   }, [dataLoading])
 
-  // Handle browser back/forward navigation
+  // Handle browser back/forward navigation + redirect old ?page= bookmarks
   useEffect(() => {
     if (!searchParams) return
     
     const page = searchParams.get('page') as Page | null
     const articleSlug = searchParams.get('article')
     const admin = searchParams.get('admin')
+
+    // Redirect old ?page= bookmarks to proper paths
+    const redirectPages: Partial<Record<Page, string>> = {
+      about: '/about',
+      'what-we-do': '/what-we-do',
+      map: '/map',
+      'partner-with-us': '/partner-with-us',
+      news: '/news',
+      videos: '/videos',
+      publications: '/publications',
+    }
+    if (page && redirectPages[page] && !articleSlug) {
+      router.replace(redirectPages[page]!)
+      return
+    }
 
     if (admin === 'true') {
       setIsAdminView(true)
@@ -226,11 +240,7 @@ function HomePageContent() {
         }
       } else {
         setActiveArticle(null)
-        if (page) {
-          setActivePage(page)
-        } else {
-          setActivePage('home')
-        }
+        setActivePage('home')
       }
     }
   }, [searchParams, news, publications, videos])
@@ -1133,75 +1143,36 @@ function HomePageContent() {
       return <ArticleDetailPage article={activeArticle} onBack={handleReturnToList} sourcePage={articleSource} />
     }
 
-    switch (activePage) {
-      case 'home':
-        return (
-          <Home
-            projects={filteredProjects}
-            onAddProject={handleAddProject}
-            filterOptions={filterOptions}
-            activeView={activeView}
-            setActiveView={setActiveView}
-            newsData={publishedNews}
-            projectBriefsData={projectBriefs}
-            publicationsData={publishedPublications}
-            videosData={publishedVideos}
-            onNavigate={handleNavigate}
-            onViewArticle={handleViewArticle}
-            currentUser={currentUser ?? undefined}
-          />
-        )
-      case 'about':
-        return <AboutPage />
-      case 'what-we-do':
-        return <WhatWeDoPage />
-      case 'map':
-        return (
-          <MapPage
-            projects={filteredProjects}
-            filterOptions={filterOptions}
-          />
-        )
-      case 'partner-with-us':
-        return <PartnerPage />
-      case 'news':
-        return <ArticleListPage title="Latest News" items={publishedNews} onViewArticle={handleViewArticle} />
-      case 'videos':
-        return <ArticleListPage title="Videos" items={publishedVideos} onViewArticle={handleViewArticle} />
-      case 'publications':
-        return <PublicationsPage items={publishedPublications} onViewArticle={handleViewArticle} onIncrementDownload={handleIncrementDownloadCount} />
-      default:
-        return <Home
-            projects={filteredProjects}
-            onAddProject={handleAddProject}
-            filterOptions={filterOptions}
-            activeView={activeView}
-            setActiveView={setActiveView}
-            newsData={publishedNews}
-            projectBriefsData={projectBriefs}
-            publicationsData={publishedPublications}
-            videosData={publishedVideos}
-            onNavigate={handleNavigate}
-            onViewArticle={handleViewArticle}
-            currentUser={currentUser ?? undefined}
-          />
-    }
+    return (
+      <Home
+        projects={filteredProjects}
+        onAddProject={handleAddProject}
+        filterOptions={filterOptions}
+        activeView={activeView}
+        setActiveView={setActiveView}
+        newsData={publishedNews}
+        projectBriefsData={projectBriefs}
+        publicationsData={publishedPublications}
+        videosData={publishedVideos}
+        onNavigate={handleNavigate}
+        onViewArticle={handleViewArticle}
+        currentUser={currentUser ?? undefined}
+      />
+    )
   }
 
   if (!mounted) return null
   return (
-    <div className={`flex flex-col min-h-screen ${activePage === 'map' ? 'h-screen overflow-hidden' : ''}`}>
+    <div className="flex flex-col min-h-screen">
       {!isAdminView && (
         <Header 
-          activePage={activePage} 
-          onNavigate={handleNavigate}
           currentUser={currentUser ?? undefined}
         />
       )}
       <main className="flex-grow">
         {renderContent()}
       </main>
-      {!isAdminView && activePage !== 'map' && <Footer />}
+      {!isAdminView && <Footer />}
     </div>
   )
 }

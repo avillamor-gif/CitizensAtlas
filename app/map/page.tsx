@@ -1,15 +1,13 @@
 'use client'
 
 import React, { useState, useMemo, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { MapPage } from '@/components/features/map'
-import { Page, Project } from '@/types/types'
+import { Project } from '@/types/types'
 import { getIfiAbbreviation } from '@/lib/constants'
 import * as dataService from '@/lib/services/data-service'
 
 export default function Map() {
-  const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -39,14 +37,6 @@ export default function Map() {
     loadProjects()
   }, [])
 
-  const handleNavigate = (page: Page) => {
-    if (page === 'home') {
-      router.push('/')
-    } else {
-      router.push(`/${page}`)
-    }
-  }
-
   const filterOptions = useMemo(() => {
     const parseDetail = (details: string, key: string) => {
       const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`))
@@ -73,10 +63,7 @@ export default function Map() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden w-full">
-      <Header 
-        activePage="map"
-        onNavigate={handleNavigate}
-      />
+      <Header />
       <main className="flex-grow overflow-hidden w-full">
         <MapPage 
           projects={projects}
