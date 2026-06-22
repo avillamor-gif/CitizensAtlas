@@ -6,7 +6,7 @@ import { Header, Footer } from '@/components/layout'
 import { AdminDashboard } from '@/components/features/admin'
 import { Home, AboutPage, WhatWeDoPage, PartnerPage } from '@/components/pages'
 import { MapPage } from '@/components/features/map'
-import { ArticleListPage, ArticleDetailPage } from '@/components/features/articles'
+import { ArticleListPage, ArticleDetailPage, PublicationsPage } from '@/components/features/articles'
 import { projectCardsData, getIfiAbbreviation, newsData as initialNewsData, publicationsData as initialPublicationsData, videosData } from '@/lib/constants'
 import { Project, Filters, Article, Page, User, ProjectBrief } from '@/types/types'
 import { notifyAdminOfNewSubmission, notifyContributorOfStatus } from '@/utils/notifications'
@@ -1169,7 +1169,7 @@ function HomePageContent() {
       case 'videos':
         return <ArticleListPage title="Videos" items={publishedVideos} onViewArticle={handleViewArticle} />
       case 'publications':
-        return <ArticleListPage title="Publications" items={publishedPublications} onViewArticle={handleViewArticle} onIncrementDownload={handleIncrementDownloadCount} />
+        return <PublicationsPage items={publishedPublications} onViewArticle={handleViewArticle} onIncrementDownload={handleIncrementDownloadCount} />
       default:
         return <Home
             projects={filteredProjects}
