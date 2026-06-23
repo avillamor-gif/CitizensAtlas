@@ -50,7 +50,7 @@ const Home: React.FC<HomeProps> = (props) => {
             <ContentCarousel title="LATEST NEWS" items={props.newsData} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
             </div>
             <div className="bg-white">
-            <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
+            <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} />
             </div>
             <Collaborate />
             <div className="bg-brand-section-blue">
