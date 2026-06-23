@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Header, Footer } from '@/components/layout'
-import { ArticleListPage, ArticleDetailPage } from '@/components/features/articles'
+import { NewsPage, ArticleDetailPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
 
@@ -40,11 +40,7 @@ export default function News() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading news...</div>
           </div>
         ) : (
-          <ArticleListPage
-            title="Latest News"
-            items={news}
-            onViewArticle={setSelectedArticle}
-          />
+          <NewsPage items={news} onViewArticle={setSelectedArticle} />
         )}
       </main>
       <Footer />

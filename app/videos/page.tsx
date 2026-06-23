@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Header, Footer } from '@/components/layout'
-import { ArticleListPage, ArticleDetailPage } from '@/components/features/articles'
+import { VideosPage, ArticleDetailPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
 
@@ -40,11 +40,7 @@ export default function Videos() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading videos...</div>
           </div>
         ) : (
-          <ArticleListPage
-            title="Videos"
-            items={videos}
-            onViewArticle={setSelectedVideo}
-          />
+          <VideosPage items={videos} onViewArticle={setSelectedVideo} />
         )}
       </main>
       <Footer />
