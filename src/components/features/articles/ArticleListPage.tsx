@@ -46,12 +46,12 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
                         </div>
                     )}
                     {filterBar && (
-                        <>
-                            <div className="mt-6">{filterBar}</div>
-                            <div className="flex justify-end mt-4">
+                        <div className="flex flex-col md:flex-row md:items-center gap-3 mt-6">
+                            <div className="flex-1">{filterBar}</div>
+                            <div className="flex-shrink-0">
                                 <ViewToggle activeView={view} setActiveView={setView} />
                             </div>
-                        </>
+                        </div>
                     )}
                     {hideTitle && !filterBar && (
                         <div className="flex justify-end">
