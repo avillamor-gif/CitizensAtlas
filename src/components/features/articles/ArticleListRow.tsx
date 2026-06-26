@@ -1,6 +1,7 @@
 import React from 'react';
 import { Article } from '@/types/types';
 import { PlayIcon } from '@/components/ui/icons';
+import { toPlainText } from '@/lib/utils';
 
 interface ArticleListRowProps {
     item: Article;
@@ -41,7 +42,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                 </div>
                 <h3 className="text-xl font-bold text-brand-dark-blue mb-2">{item.title}</h3>
                 <p className="text-gray-600 line-clamp-4 flex-grow mb-4">
-                    {item.description}
+                    {toPlainText(item.description)}
                 </p>
                 <span className="text-sm font-bold text-brand-light-blue hover:underline mt-auto self-start text-left">
                     Read More &rarr;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Article } from '@/types/types';
 import { PlayIcon } from '@/components/ui/icons';
+import { toPlainText } from '@/lib/utils';
 
 interface ArticleGridCardProps {
     item: Article;
@@ -41,7 +42,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                 </div>
                 <h3 className="text-lg font-bold text-brand-dark-blue mb-2 flex-grow">{item.title}</h3>
                 <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                    {item.description}
+                    {toPlainText(item.description)}
                 </p>
                 <span className="text-sm font-bold text-brand-light-blue hover:underline mt-auto self-start text-left">
                     Read More &rarr;
