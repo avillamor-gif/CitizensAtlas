@@ -59,7 +59,6 @@ export const TiptapEditor = ({
             'table',
             'wordcount',
             'help',
-            'paste',
           ],
           toolbar:
             'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat code fullscreen',
