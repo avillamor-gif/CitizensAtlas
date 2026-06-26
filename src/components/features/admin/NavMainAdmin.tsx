@@ -40,9 +40,9 @@ export function NavMainAdmin({
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
-            key={item.title}
+            key={`${item.title}-${item.isActive ? 'active' : 'inactive'}`}
             asChild
-            open={Boolean(item.isActive)}
+            defaultOpen={Boolean(item.isActive)}
             className="group/collapsible"
           >
             <SidebarMenuItem>
