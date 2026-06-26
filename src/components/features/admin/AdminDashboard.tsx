@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Project, Article, ProjectBrief } from '@/types/types';
 import { AdminSidebar, AdminPage } from './AdminSidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
@@ -82,7 +82,6 @@ interface AdminDashboardProps {
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const PUBLICATION_EDIT_ID_KEY = 'atlas_admin_publication_edit_id';
     const router = useRouter();
-    const searchParams = useSearchParams();
     const pathname = usePathname();
     const { 
         projects, onLoadProjects, onAddProject, onUpdateProject, onDeleteProjects,
@@ -123,29 +122,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     // Restore last active admin page after refresh.
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        const pageFromUrl = searchParams.get('page');
+
+        const pathPage = pathname.split('/').filter(Boolean).pop() ?? null;
+        const pageFromUrl = pathPage === 'admin' ? null : pathPage;
         if (isAdminPage(pageFromUrl)) {
             setActiveAdminPage(pageFromUrl);
             return;
         }
+
         const savedPage = window.localStorage.getItem('atlas_admin_active_page') as AdminPage | null;
         if (savedPage) {
             setActiveAdminPage(savedPage);
         }
-    }, [searchParams]);
+    }, [pathname]);
 
     // Persist active admin page so refresh returns to the same section.
     useEffect(() => {
         if (typeof window === 'undefined') return;
         window.localStorage.setItem('atlas_admin_active_page', activeAdminPage);
 
-        const currentPageInUrl = searchParams.get('page');
-        if (currentPageInUrl !== activeAdminPage) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set('page', activeAdminPage);
-            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        const targetPath = `/admin/${activeAdminPage}`;
+        if (pathname !== targetPath) {
+            router.replace(targetPath, { scroll: false });
         }
-    }, [activeAdminPage, pathname, router, searchParams]);
+    }, [activeAdminPage, pathname, router]);
 
     // Auto-redirect if user doesn't have permission for current page
     React.useEffect(() => {

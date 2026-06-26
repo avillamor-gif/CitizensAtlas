@@ -1056,26 +1056,38 @@ function HomePageContent() {
 
   // Navigation handlers
   const handleNavigate = (page: Page) => {
-      router.push(`?page=${page}`)
+      const pageToPath: Record<Page, string> = {
+        home: '/',
+        about: '/about',
+        'what-we-do': '/what-we-do',
+        map: '/map',
+        'partner-with-us': '/partner-with-us',
+        news: '/news',
+        videos: '/videos',
+        publications: '/publications',
+        resources: '/resources',
+        admin: '/admin',
+        'active-fight-sites': '/active-fight-sites'
+      }
+      router.push(pageToPath[page] || '/')
   }
   
   const handleNavigateFromPath = (path: string) => {
-    // Convert URL paths to Page types
-    const pathToPageMap: Record<string, Page> = {
-      '/': 'home',
-      '/about': 'about',
-      '/what-we-do': 'what-we-do',
-      '/map': 'map',
-      '/partner': 'partner-with-us'
-    };
-    
-    const page = pathToPageMap[path];
-    if (page) {
-      setIsAdminView(false);
-      handleNavigate(page);
+    const pathToRouteMap: Record<string, string> = {
+      '/': '/',
+      '/about': '/about',
+      '/what-we-do': '/what-we-do',
+      '/map': '/map',
+      '/partner': '/partner-with-us'
+    }
+
+    const route = pathToRouteMap[path]
+    if (route) {
+      setIsAdminView(false)
+      router.push(route)
     } else {
       // Fallback - just go to home
-      router.push('/');
+      router.push('/')
     }
   }
   
@@ -1104,10 +1116,23 @@ function HomePageContent() {
   }
 
   const handleReturnToList = () => {
+      const pageToPath: Record<Page, string> = {
+        home: '/',
+        about: '/about',
+        'what-we-do': '/what-we-do',
+        map: '/map',
+        'partner-with-us': '/partner-with-us',
+        news: '/news',
+        videos: '/videos',
+        publications: '/publications',
+        resources: '/resources',
+        admin: '/admin',
+        'active-fight-sites': '/active-fight-sites'
+      }
       if (articleSource === 'home') {
           router.push('/')
       } else {
-          router.push(`?page=${articleSource}`)
+        router.push(pageToPath[articleSource] || '/')
       }
   }
 

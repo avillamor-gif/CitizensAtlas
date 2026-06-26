@@ -61,7 +61,7 @@ export async function notifyAdminOfNewSubmission(
         
         <p>Please log in to the admin dashboard to review and approve or reject this submission.</p>
         
-        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}?admin=true&page=drafts-${notification.contentType}s" 
+        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/pending-approvals" 
            style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">
           Review Submission
         </a>
@@ -208,7 +208,7 @@ export async function notifyAdminOfMultipleSubmissions(
           </div>
         `).join('')}
         
-        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}?admin=true&page=drafts-projects" 
+        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/pending-approvals" 
            style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">
           Review All Submissions
         </a>

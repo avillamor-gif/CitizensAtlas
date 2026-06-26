@@ -125,7 +125,7 @@ function CountryProjectBriefsContent() {
           </h1>
           <Button 
             variant="ghost" 
-            onClick={() => router.push('/?page=map')}
+            onClick={() => router.push('/map')}
             className="mt-4 text-white border-2 border-white hover:bg-white hover:text-brand-dark-blue"
           >
             ← Back to Map

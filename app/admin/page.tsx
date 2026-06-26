@@ -252,13 +252,13 @@ export default function Admin() {
 
   // Handle navigation from hamburger menu
   const handleNavigateFromPath = (path: string) => {
-    // Navigate to the main app with the page parameter
+    // Navigate to clean public routes
     const pathToPageMap: Record<string, string> = {
       '/': '/',
-      '/about': '/?page=about',
-      '/what-we-do': '/?page=what-we-do',
-      '/map': '/?page=map',
-      '/partner': '/?page=partner-with-us'
+      '/about': '/about',
+      '/what-we-do': '/what-we-do',
+      '/map': '/map',
+      '/partner': '/partner-with-us'
     }
     
     const targetUrl = pathToPageMap[path]
