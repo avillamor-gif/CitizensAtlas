@@ -12,6 +12,7 @@ import { notifyAdminOfNewSubmission, notifyContributorOfStatus } from '@/utils/n
 import * as dataService from '@/lib/services/data-service'
 import { updateProject, updateNews, updatePublication, updateVideo } from '@/lib/services/data-service'
 import { useAuth } from '@/contexts/AuthContext'
+import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 const slugify = (text: string) =>
   text
@@ -1087,17 +1088,20 @@ function HomePageContent() {
   }, [projects, filters])
 
   // Filter published content for public views
-  const publishedNews = useMemo(() => 
-    news.filter(n => n.status === 'published' || n.status === undefined)
-  , [news])
+  const publishedNews = useMemo(() => {
+    const filtered = news.filter(n => n.status === 'published' || n.status === undefined)
+    return reconstructArticleSlugs(filtered)
+  }, [news])
   
-  const publishedPublications = useMemo(() => 
-    publications.filter(p => p.status === 'published' || p.status === undefined)
-  , [publications])
+  const publishedPublications = useMemo(() => {
+    const filtered = publications.filter(p => p.status === 'published' || p.status === undefined)
+    return reconstructArticleSlugs(filtered)
+  }, [publications])
   
-  const publishedVideos = useMemo(() => 
-    videos.filter(v => v.status === 'published' || v.status === undefined)
-  , [videos])
+  const publishedVideos = useMemo(() => {
+    const filtered = videos.filter(v => v.status === 'published' || v.status === undefined)
+    return reconstructArticleSlugs(filtered)
+  }, [videos])
 
   const renderContent = () => {
     if (isAdminView) {

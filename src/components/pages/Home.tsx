@@ -3,7 +3,7 @@ import Hero from '@/components/pages/Hero';
 import ContentCarousel from '@/components/pages/ContentCarousel';
 import Newsletter from '@/components/pages/Newsletter';
 import Collaborate from '@/components/pages/Collaborate';
-import { slugify } from '@/lib/constants';
+import { reconstructArticleSlugs, projectBriefsToArticles } from '@/lib/utils/slug-utils';
 // FIX: Import Page type from types.ts to fix circular dependency
 import { Project, FilterOptions, Article, Page, User, ProjectBrief } from '@/types/types';
 
@@ -24,35 +24,13 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = (props) => {
-    // Convert ProjectBrief to Article format for display
-    const projectBriefsAsArticles: Article[] = props.projectBriefsData.map((brief, index) => ({
-        id: brief.id,
-        slug: `${slugify(brief.project_name)}-${brief.id}`,
-        category: brief.project_type || 'Active Fight Site',
-        title: brief.project_name,
-        description: `${brief.location}${brief.financing_amount ? ` - ${brief.financing_amount}` : ''}`,
-        imageUrl: 'https://picsum.photos/400/300?random=' + index,
-        tagColor: '#FFEB3B',
-        publishDate: brief.created_at || brief.submitted_at,
-        status: brief.status || 'published',
-        country: brief.country, // Store country for navigation
-    }));
+    // Convert ProjectBriefs to Articles with SEO-friendly slugs
+    const projectBriefsAsArticles = projectBriefsToArticles(props.projectBriefsData);
 
-    // Reconstruct slugs for news, publications, and videos with IDs
-    const newsWithSlugs = props.newsData.map(article => ({
-        ...article,
-        slug: `${slugify(article.title)}-${article.id}`
-    }));
-
-    const publicationsWithSlugs = props.publicationsData.map(article => ({
-        ...article,
-        slug: `${slugify(article.title)}-${article.id}`
-    }));
-
-    const videosWithSlugs = props.videosData.map(article => ({
-        ...article,
-        slug: `${slugify(article.title)}-${article.id}`
-    }));
+    // Reconstruct slugs for all articles with SEO-friendly format
+    const newsWithSlugs = reconstructArticleSlugs(props.newsData);
+    const publicationsWithSlugs = reconstructArticleSlugs(props.publicationsData);
+    const videosWithSlugs = reconstructArticleSlugs(props.videosData);
 
     return (
         <>
