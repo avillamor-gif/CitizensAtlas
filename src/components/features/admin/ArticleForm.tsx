@@ -421,14 +421,16 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     <FormField label="Title" required>
                         <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>
-                    <div className="mb-24">
-                        <TiptapEditor
-                            value={formData.description}
-                            onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
-                            height="200px"
-                            placeholder="Enter content..."
-                        />
-                    </div>
+                    <FormField label="Description" required>
+                        <div className="mb-24">
+                            <TiptapEditor
+                                value={formData.description}
+                                onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+                                height="200px"
+                                placeholder="Enter content..."
+                            />
+                        </div>
+                    </FormField>
                     <FormField label={itemType === 'Publication' ? 'Publication Type' : itemType === 'Video' ? 'Video Category' : 'Category'} required>
                         {itemType === 'Publication' || itemType === 'Video' ? (
                             <>
