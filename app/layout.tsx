@@ -2,6 +2,7 @@ import React from 'react'
 import './globals.css'
 import type { Metadata } from 'next'
 import { AuthProvider } from '@/contexts/AuthContext'
+import ConsoleNoiseFilter from '@/components/shared/ConsoleNoiseFilter'
 
 export const metadata: Metadata = {
   title: "Citizens' Atlas - Mapping False Solutions in Climate Action",
@@ -56,6 +57,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AuthProvider>
+          <ConsoleNoiseFilter />
           {children}
         </AuthProvider>
       </body>
