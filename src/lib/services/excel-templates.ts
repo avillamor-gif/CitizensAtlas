@@ -27,6 +27,14 @@ export function generateProjectsTemplate() {
     'Links to Actions (comma-separated)',
     'Environmental Categories (comma-separated)',
     'Social Safeguard (comma-separated)',
+    'Active GAIA Support',
+    'Notes',
+    'References',
+    'Gender Concerns',
+    'Waste Workers',
+    'Displacement',
+    'Publish Date',
+    'Status',
   ];
 
   const exampleRow = [
@@ -54,6 +62,14 @@ export function generateProjectsTemplate() {
     'https://example.com/action1, https://example.com/action2',
     'Category A, Category B',
     'Involuntary Resettlement, Indigenous Peoples',
+    'Yes',
+    'Community groups reported repeated consultation gaps.',
+    'https://example.com/report, https://example.com/investigation',
+    'Women-led households face disproportionate care burdens.',
+    'Waste pickers may lose access to livelihoods.',
+    'Potential relocation of nearby communities.',
+    '2024-11-15',
+    'published',
   ];
 
   const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow]);

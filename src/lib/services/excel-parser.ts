@@ -7,6 +7,18 @@ interface ParseResult<T> {
   warnings: string[];
 }
 
+const getRowValue = (row: Record<string, any>, keys: string[]): string => {
+  for (const key of keys) {
+    const value = row[key];
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      return String(value).trim();
+    }
+  }
+  return '';
+};
+
+const getCsvValue = (row: Record<string, any>, keys: string[]): string => getRowValue(row, keys);
+
 // Parse Projects Excel file
 export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project, 'id'>>> {
   return new Promise((resolve) => {
@@ -26,54 +38,95 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
         jsonData.forEach((row: any, index: number) => {
           const rowNum = index + 2; // +2 because Excel starts at 1 and we have headers
 
+          const projectName = getRowValue(row, ['Project Name*', 'Project Name', 'Title']);
+          const country = getRowValue(row, ['Country*', 'Country']);
+          const corruptionType = getCsvValue(row, ['Corruption Type*', 'Corruption Type', 'False Solution Type*', 'False Solution Type', 'False Solutions']);
+          const region = getRowValue(row, ['Region']);
+          const city = getRowValue(row, ['City']);
+          const projectNumber = getRowValue(row, ['Project Number']);
+          const totalProjectAmount = getRowValue(row, ['Total Project Amount', 'Project Amount']);
+          const ifi = getRowValue(row, ['IFI']);
+          const fundingSource = getRowValue(row, ['Funding Source']);
+          const sector = getRowValue(row, ['Sector']);
+          const owner = getRowValue(row, ['Owner']);
+          const privateSectorBorrowers = getCsvValue(row, ['Private Sector Borrowers (comma-separated)', 'Private Sector Borrowers']);
+          const projectDescription = getRowValue(row, ['Project Description', 'Description']);
+          const projectStatus = getRowValue(row, ['Project Status']);
+          const approvalDate = getRowValue(row, ['Approval Date']);
+          const startDate = getRowValue(row, ['Start Date']);
+          const endDate = getRowValue(row, ['End Date']);
+          const groupsInOpposition = getCsvValue(row, ['Groups in Opposition (comma-separated)', 'Groups in Opposition']);
+          const typesOfActions = getCsvValue(row, ['Types of Actions (comma-separated)', 'Types of Actions']);
+          const linksToActions = getCsvValue(row, ['Links to Actions (comma-separated)', 'Links to Actions']);
+          const environmental = getCsvValue(row, ['Environmental Categories (comma-separated)', 'Environmental Category', 'Environmental']);
+          const socialSafeguard = getCsvValue(row, ['Social Safeguard (comma-separated)', 'Social Safeguard', 'Social Safeguards']);
+          const activeGaiASupport = getRowValue(row, ['Active GAIA Support', 'Active GAIA support?', 'GAIA Support']);
+          const notes = getRowValue(row, ['Notes']);
+          const references = getRowValue(row, ['References']);
+          const genderConcerns = getRowValue(row, ['Gender Concerns']);
+          const wasteWorkers = getRowValue(row, ['Waste Workers']);
+          const displacement = getRowValue(row, ['Displacement']);
+          const publishDate = getRowValue(row, ['Publish Date']);
+          const status = getRowValue(row, ['Status']);
+
           // Required fields validation
-          if (!row['Project Name*']) {
+          if (!projectName) {
             errors.push(`Row ${rowNum}: Project Name is required`);
             return;
           }
-          if (!row['Country*']) {
+          if (!country) {
             errors.push(`Row ${rowNum}: Country is required`);
             return;
           }
-          if (!row['Corruption Type*']) {
+          if (!corruptionType) {
             errors.push(`Row ${rowNum}: Corruption Type is required`);
             return;
           }
 
-          // Build details string (this matches your ProjectForm format)
+          // Build details string to match ProjectForm exactly.
           const details = `
-Region: ${row['Region'] || ''}
-City: ${row['City'] || ''}
-Project Number: ${row['Project Number'] || ''}
-Total Project Amount: ${row['Total Project Amount'] || '0'}
-IFI: ${row['IFI'] || ''}
-Funding Source: ${row['Funding Source'] || ''}
-Sector: ${row['Sector'] || ''}
-Owner: ${row['Owner'] || ''}
-Private Sector Borrowers: ${row['Private Sector Borrowers (comma-separated)'] || ''}
-Project Description:
-${row['Project Description'] || ''}
-Project Status: ${row['Project Status'] || 'Proposed'}
-Approval Date: ${row['Approval Date'] || ''}
-Start Date: ${row['Start Date'] || ''}
-End Date: ${row['End Date'] || ''}
-Groups in Opposition: ${row['Groups in Opposition (comma-separated)'] || ''}
-Types of Actions: ${row['Types of Actions (comma-separated)'] || ''}
-Links to Actions: ${row['Links to Actions (comma-separated)'] || ''}
-Environmental: ${row['Environmental Categories (comma-separated)'] || ''}
-Social Safeguard: ${row['Social Safeguard (comma-separated)'] || ''}
+**Region:** ${region}
+**City:** ${city}
+**Project Number:** ${projectNumber || 'N/A'}
+**IFI:** ${ifi}
+**Funding Source:** ${fundingSource}
+**Sector:** ${sector}
+**Total Project Amount:** ${totalProjectAmount || '0'}
+**Owner:** ${owner}
+**Private Sector Borrowers:** ${privateSectorBorrowers}
+**Project Description:**
+${projectDescription}
+---
+**Project Status:** ${projectStatus || 'Proposed'}
+**Approval Date:** ${approvalDate || 'N/A'}
+**Start Date:** ${startDate || 'N/A'}
+**End Date:** ${endDate || 'N/A'}
+**Environmental Category:** ${environmental}
+**Social Safeguard:** ${socialSafeguard}
+**Groups in Opposition:** ${groupsInOpposition}
+**Types of Actions:** ${typesOfActions}
+**Links to Actions:** ${linksToActions}
+**Active GAIA Support:** ${activeGaiASupport}
+**Notes:**
+${notes}
+**References:**
+${references}
+---
+**Gender Concerns:** ${genderConcerns}
+**Waste Workers:** ${wasteWorkers}
+**Displacement:** ${displacement}
           `.trim();
 
           projects.push({
-            title: row['Project Name*'],
-            country: row['Country*'],
-            corruptionType: row['Corruption Type*'],
+            title: projectName,
+            country,
+            corruptionType,
             details,
-            date: row['Approval Date'] || new Date().toISOString().split('T')[0],
-            publishDate: new Date().toISOString().split('T')[0],
-            latitude: parseFloat(row['Latitude']) || 0,
-            longitude: parseFloat(row['Longitude']) || 0,
-            status: row['Status'] === 'draft' ? 'draft' : 'published',
+            date: approvalDate || new Date().toISOString().split('T')[0],
+            publishDate: publishDate || new Date().toISOString().split('T')[0],
+            latitude: parseFloat(getRowValue(row, ['Latitude'])) || 0,
+            longitude: parseFloat(getRowValue(row, ['Longitude'])) || 0,
+            status: status === 'draft' ? 'draft' : 'published',
           });
         });
 
