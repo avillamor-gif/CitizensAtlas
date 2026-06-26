@@ -545,11 +545,22 @@ export async function getPublications() {
     }
     
     const data = await response.json()
-    return data as Article[]
+    return ((data || []) as any[]).map(normalizePublicationRecord)
   } catch (error) {
     console.error('Error in getPublications:', error)
     throw error
   }
+}
+
+function normalizePublicationRecord(raw: any): Article {
+  if (!raw) return raw
+
+  return {
+    ...raw,
+    category: raw.category ?? raw.publicationType ?? raw.publication_type ?? '',
+    publicationCategory: raw.publicationCategory ?? raw.publication_category ?? undefined,
+    publisher: raw.publisher ?? raw.publication_publisher ?? undefined,
+  } as Article
 }
 
 export async function getPublishedPublications(limit?: number) {
@@ -570,7 +581,7 @@ export async function getPublishedPublications(limit?: number) {
     
     if (error) throw error
     
-    return (data || []) as Article[]
+    return ((data || []) as any[]).map(normalizePublicationRecord)
   } catch (error) {
     console.error('Error in getPublishedPublications:', error)
     throw error
@@ -608,7 +619,8 @@ export async function createPublication(article: Omit<Article, 'id'>) {
     }
     
     const data = await response.json()
-    return Array.isArray(data) ? data[0] : data
+    const created = Array.isArray(data) ? data[0] : data
+    return normalizePublicationRecord(created)
   } catch (error) {
     console.error('Error in createPublication:', error)
     throw error
@@ -654,14 +666,15 @@ export async function updatePublication(id: number, updates: Partial<Article>) {
     }
     
     const data = await response.json()
-    const updated = Array.isArray(data) ? data[0] : data
+    const updatedRaw = Array.isArray(data) ? data[0] : data
+    const updated = normalizePublicationRecord(updatedRaw)
 
     console.log('✅ [updatePublication] Response received:', {
       id: updated?.id,
       category: updated?.category,
       publicationCategory: updated?.publicationCategory,
       publisher: updated?.publisher,
-      keys: updated ? Object.keys(updated) : []
+      keys: updatedRaw ? Object.keys(updatedRaw) : []
     })
 
     // Guard against false-positive success states: if caller supplied these fields,
@@ -717,7 +730,8 @@ export async function getPublicationById(id: number) {
     }
     
     const data = await response.json()
-    return Array.isArray(data) ? data[0] : data
+    const publication = Array.isArray(data) ? data[0] : data
+    return normalizePublicationRecord(publication)
   } catch (error) {
     console.error('Error in getPublicationById:', error)
     throw error
