@@ -4,7 +4,7 @@ import React from 'react';
 
 const PageSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div>
-        <h2 className="atlas-display-heading text-brand-dark-blue mb-2">{title}</h2>
+        <h2 className="text-3xl font-extrabold text-brand-dark-blue mb-2">{title}</h2>
         <div className="w-16 h-1 bg-brand-dark-blue mb-4"></div>
         <div className="text-gray-700 text-lg leading-relaxed space-y-4">
             {children}
@@ -17,7 +17,7 @@ const AboutPage: React.FC = () => {
         <div className="bg-white">
             <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
                 <div>
-                    <h1 className="atlas-display-heading mb-4">About the Citizens' Atlas</h1>
+                    <h1 className="text-5xl font-extrabold mb-4">About the Citizens' Atlas</h1>
                     <p className="text-xl max-w-3xl mx-auto">
                         Exposing false solutions and empowering communities for a Zero Waste future.
                     </p>
@@ -55,7 +55,7 @@ const AboutPage: React.FC = () => {
             
             <div className="bg-brand-dark-blue py-16 px-4 sm:px-8">
                 <div className="container mx-auto max-w-4xl text-center">
-                    <h2 className="atlas-display-heading text-white mb-2">The Problem We Address</h2>
+                    <h2 className="text-3xl font-extrabold text-white mb-2">The Problem We Address</h2>
                     <div className="w-16 h-1 bg-white mx-auto mb-4"></div>
                     <div className="text-lg leading-relaxed space-y-4 text-gray-200">
                         <p>

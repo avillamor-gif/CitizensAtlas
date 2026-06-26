@@ -71,7 +71,7 @@ const Newsletter: React.FC = () => {
     return (
         <section className="bg-white py-16 px-4 sm:px-8">
             <div className="container mx-auto text-center max-w-3xl">
-                <h2 className="atlas-display-heading text-brand-dark-blue mb-2">STAY INFORMED</h2>
+                <h2 className="text-4xl font-extrabold text-brand-dark-blue mb-2">STAY INFORMED</h2>
                 <div className="w-16 h-1 bg-brand-dark-blue mx-auto mb-4"></div>
                 <p className="text-gray-600 mb-8">
                     Subscribe to our weekly newsletter to get the latest news and updates from Citizens' Atlas.
