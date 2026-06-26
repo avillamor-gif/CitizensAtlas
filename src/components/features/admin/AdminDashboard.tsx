@@ -275,7 +275,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     // Load data when switching to relevant pages
     useEffect(() => {
         if (pathname.startsWith('/admin') && !isPageStateHydrated) {
-            setIsLoadingPageData(false);
             return;
         }
 
