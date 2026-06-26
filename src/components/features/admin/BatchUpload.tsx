@@ -26,10 +26,12 @@ interface BatchUploadProps {
 const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
     const [contentType, setContentType] = useState<ContentType>('projects');
     const [file, setFile] = useState<File | null>(null);
+    const [sheetUrl, setSheetUrl] = useState('');
     const [parsedData, setParsedData] = useState<any[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
     const [warnings, setWarnings] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [isImportingSheet, setIsImportingSheet] = useState(false);
     const [uploadResults, setUploadResults] = useState<{ success: number; failed: number } | null>(null);
 
     const handleDownloadTemplate = () => {
@@ -59,10 +61,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
         }
     };
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0];
-        if (!selectedFile) return;
-
+    const processSelectedFile = async (selectedFile: File) => {
         setFile(selectedFile);
         setParsedData([]);
         setErrors([]);
@@ -70,9 +69,6 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
         setUploadResults(null);
 
         try {
-            const arrayBuffer = await selectedFile.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer);
-            
             let result: { data: any[]; errors: string[]; warnings: string[] } = { data: [], errors: [], warnings: [] };
 
             switch (contentType) {
@@ -98,6 +94,47 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
             setWarnings(result.warnings);
         } catch (error) {
             setErrors(['Failed to parse Excel file. Please ensure it matches the template format.']);
+        }
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (!selectedFile) return;
+
+        await processSelectedFile(selectedFile);
+    };
+
+    const handleImportSheet = async () => {
+        const trimmedUrl = sheetUrl.trim();
+        if (!trimmedUrl) {
+            setErrors(['Paste a Google Sheets URL first.']);
+            return;
+        }
+
+        setIsImportingSheet(true);
+        setParsedData([]);
+        setErrors([]);
+        setWarnings([]);
+        setUploadResults(null);
+
+        try {
+            const response = await fetch(`/api/admin/import-sheet?url=${encodeURIComponent(trimmedUrl)}`);
+            if (!response.ok) {
+                const payload = await response.json().catch(() => null);
+                throw new Error(payload?.error || 'Failed to fetch spreadsheet');
+            }
+
+            const blob = await response.blob();
+            const fileName = response.headers.get('x-import-filename') || 'google-sheet.xlsx';
+            const importedFile = new File([blob], fileName, {
+                type: blob.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+
+            await processSelectedFile(importedFile);
+        } catch (error) {
+            setErrors([error instanceof Error ? error.message : 'Failed to import Google Sheet.']);
+        } finally {
+            setIsImportingSheet(false);
         }
     };
 
@@ -149,6 +186,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
 
     const handleReset = () => {
         setFile(null);
+        setSheetUrl('');
         setParsedData([]);
         setErrors([]);
         setWarnings([]);
@@ -236,6 +274,34 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                             </button>
                         </div>
                     )}
+                </div>
+            </div>
+
+            <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-800 mb-3">Or Import from Google Sheets</h2>
+                <p className="text-sm text-gray-600 mb-4">
+                    Paste a public or shared Google Sheets link and import it directly without exporting the file manually.
+                </p>
+                <div className="flex flex-col gap-3 md:flex-row">
+                    <input
+                        type="url"
+                        value={sheetUrl}
+                        onChange={(e) => setSheetUrl(e.target.value)}
+                        placeholder="https://docs.google.com/spreadsheets/d/..."
+                        className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 focus:border-brand-light-blue focus:outline-none"
+                    />
+                    <button
+                        onClick={handleImportSheet}
+                        disabled={isImportingSheet}
+                        className={`rounded-lg px-4 py-2 font-medium text-white transition-colors ${
+                            isImportingSheet ? 'cursor-not-allowed opacity-50' : ''
+                        }`}
+                        style={{ backgroundColor: isImportingSheet ? '#6b7280' : '#0d234f' }}
+                        onMouseEnter={(e) => !isImportingSheet && (e.currentTarget.style.backgroundColor = '#081629')}
+                        onMouseLeave={(e) => !isImportingSheet && (e.currentTarget.style.backgroundColor = '#0d234f')}
+                    >
+                        {isImportingSheet ? 'Importing...' : 'Import Sheet'}
+                    </button>
                 </div>
             </div>
 
