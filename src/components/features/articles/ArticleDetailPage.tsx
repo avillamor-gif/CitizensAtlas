@@ -51,9 +51,18 @@ const getEmbedUrl = (url: string): { embedUrl: string; type: 'youtube' | 'facebo
     return { embedUrl: url, type: 'unknown' };
 };
 
+const normalizeExternalUrl = (url?: string): string | null => {
+    if (!url) return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
+};
+
 const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, sourcePage }) => {
     const buttonText = sourcePage === 'home' ? 'Back to home' : 'Back to list';
     const videoEmbed = article.videoUrl ? getEmbedUrl(article.videoUrl) : null;
+    const publicationLink = normalizeExternalUrl(article.documentUrls?.[0]);
 
     return (
         <div className="bg-white py-12">
@@ -73,6 +82,11 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                         <span className="bg-yellow-400 text-sm font-bold px-3 py-1 inline-block mb-4">
                             {article.category}
                         </span>
+                        {article.publicationCategory && (
+                            <span className="ml-2 bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 inline-block mb-4 rounded">
+                                {article.publicationCategory}
+                            </span>
+                        )}
                         <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-blue leading-tight">
                             {article.title}
                         </h1>
@@ -100,22 +114,44 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                         </div>
                     )}
 
-                    <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
-                       <p>{article.description}</p>
-                    </div>
+                    <div
+                        className="project-brief-content prose prose-lg max-w-none text-gray-800 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: article.description || '' }}
+                    />
+
+                    {publicationLink && (
+                        <div className="mt-8">
+                            <a
+                                href={publicationLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-sm font-bold text-white bg-brand-dark-blue hover:bg-opacity-80 transition-colors py-2 px-4 rounded-md"
+                            >
+                                Open Publication Link
+                            </a>
+                        </div>
+                    )}
 
                     {article.documentNames && article.documentNames.length > 0 && (
                         <div className="mt-12 p-6 bg-gray-50 border rounded-lg">
                             <h3 className="text-xl font-bold text-brand-dark-blue mb-4">Related Documents</h3>
                             <ul className="space-y-2">
-                                {article.documentNames.map((doc, index) => (
-                                    <li key={index}>
-                                        <a href="#" className="text-brand-light-blue hover:underline flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                            {doc}
-                                        </a>
-                                    </li>
-                                ))}
+                                {article.documentNames.map((doc, index) => {
+                                    const docUrl = normalizeExternalUrl(article.documentUrls?.[index] || article.documentUrls?.[0]);
+                                    return (
+                                        <li key={index}>
+                                            <a
+                                                href={docUrl || '#'}
+                                                target={docUrl ? '_blank' : undefined}
+                                                rel={docUrl ? 'noopener noreferrer' : undefined}
+                                                className="text-brand-light-blue hover:underline flex items-center gap-2"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                {doc}
+                                            </a>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     )}

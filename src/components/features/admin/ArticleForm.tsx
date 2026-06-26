@@ -76,6 +76,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     const [showAddPublicationCategory, setShowAddPublicationCategory] = useState(false);
     const [newPublicationCategory, setNewPublicationCategory] = useState('');
 
+    const publicationTypeOptions = Array.from(new Set([...(categories || []), formData.category].filter(Boolean as any)));
+    const publicationCategoryOptions = Array.from(new Set([...(publicationCategories || []), formData.publicationCategory].filter(Boolean as any)));
+
     // Update newsCategories when categories prop changes
     useEffect(() => {
         if (categories && categories.length > 0) {
@@ -444,7 +447,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                             <SelectValue placeholder="Select Publication Type" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {categories && categories.filter(c => c !== '').map(cat => (
+                                            {publicationTypeOptions.filter(c => c !== '').map(cat => (
                                                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                                             ))}
                                         </SelectContent>
@@ -500,7 +503,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                             <SelectValue placeholder="Select Publication Category" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {publicationCategories && publicationCategories.filter(c => c !== '').map(cat => (
+                                            {publicationCategoryOptions.filter(c => c !== '').map(cat => (
                                                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                                             ))}
                                         </SelectContent>
