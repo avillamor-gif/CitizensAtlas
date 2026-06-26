@@ -15,7 +15,7 @@ export const TiptapEditor = ({
   value = '',
   onChange,
   placeholder = 'Enter content...',
-  height = '300px',
+  height = '500px',
   className = '',
 }: TiptapEditorProps) => {
   const editorHeight = useMemo(() => {
