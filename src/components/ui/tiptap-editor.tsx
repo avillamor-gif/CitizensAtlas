@@ -34,7 +34,7 @@ export const TiptapEditor = ({
           base_url: '/tinymce',
           suffix: '.min',
           height: editorHeight,
-          menubar: true,
+          menubar: false,
           branding: false,
           promotion: false,
           elementpath: true,
