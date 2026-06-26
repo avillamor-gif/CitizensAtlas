@@ -102,6 +102,21 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
     return countryOptions.filter(country => country.toLowerCase().includes(query))
   }, [countryOptions, countrySearch])
 
+  const selectedCountries = useMemo(() => {
+    return (formData.country || '')
+      .split(',')
+      .map(country => country.trim())
+      .filter(Boolean)
+  }, [formData.country])
+
+  const toggleCountry = (country: string) => {
+    const next = selectedCountries.includes(country)
+      ? selectedCountries.filter(selected => selected !== country)
+      : [...selectedCountries, country]
+
+    setFormData(prev => ({ ...prev, country: next.join(', ') }))
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -152,7 +167,9 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
                 className="w-full justify-between font-normal"
               >
                 <span className={cn('truncate', !formData.country && 'text-gray-500')}>
-                  {formData.country || 'Select country'}
+                  {selectedCountries.length > 0
+                    ? `${selectedCountries.length} countries selected`
+                    : 'Select countries'}
                 </span>
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
@@ -172,16 +189,14 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
               <div className="max-h-[300px] overflow-y-auto p-1">
                 {filteredCountries.length > 0 ? (
                   filteredCountries.map((country) => {
-                    const isSelected = formData.country === country
+                    const isSelected = selectedCountries.includes(country)
 
                     return (
                       <button
                         key={country}
                         type="button"
                         onClick={() => {
-                          setFormData(prev => ({ ...prev, country }))
-                          setCountryPickerOpen(false)
-                          setCountrySearch('')
+                          toggleCountry(country)
                         }}
                         className="flex w-full items-center justify-between rounded-sm px-3 py-2 text-left text-sm hover:bg-gray-100"
                       >
@@ -194,8 +209,31 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
                   <div className="px-3 py-2 text-sm text-gray-500">No countries found.</div>
                 )}
               </div>
+              <div className="border-t p-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    setCountrySearch('')
+                    setCountryPickerOpen(false)
+                  }}
+                >
+                  Done
+                </Button>
+              </div>
             </PopoverContent>
           </Popover>
+          {selectedCountries.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {selectedCountries.map(country => (
+                <span key={country} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-700">
+                  {country}
+                </span>
+              ))}
+            </div>
+          )}
           <input type="hidden" name="country" value={formData.country || ''} required />
         </div>
       </div>
