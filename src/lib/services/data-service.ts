@@ -438,16 +438,7 @@ export async function createPublication(article: Omit<Article, 'id'>): Promise<A
   
   if (typeof window !== 'undefined') {
     const updatedPubs = [newArticle, ...publications]
-    const minimalPubs = updatedPubs.slice(0, 5000).map(p => ({
-      id: p.id,
-      title: p.title,
-      status: p.status,
-      category: p.category,
-      slug: p.slug,
-      submittedBy: p.submittedBy,
-      submittedAt: p.submittedAt
-    }))
-    localStorage.setItem('atlas_publications', JSON.stringify(minimalPubs))
+    localStorage.setItem('atlas_publications', JSON.stringify(updatedPubs.slice(0, 5000)))
   }
   
   return newArticle
@@ -467,16 +458,7 @@ export async function updatePublication(id: number, updates: Partial<Article>): 
   const updatedArticle = updatedPubs.find(p => p.id === id)!
   
   if (typeof window !== 'undefined') {
-    const minimalPubs = updatedPubs.slice(0, 5000).map(p => ({
-      id: p.id,
-      title: p.title,
-      status: p.status,
-      category: p.category,
-      slug: p.slug,
-      submittedBy: p.submittedBy,
-      submittedAt: p.submittedAt
-    }))
-    localStorage.setItem('atlas_publications', JSON.stringify(minimalPubs))
+    localStorage.setItem('atlas_publications', JSON.stringify(updatedPubs.slice(0, 5000)))
   }
   
   return updatedArticle
@@ -497,16 +479,7 @@ export async function deletePublications(ids: number[]): Promise<void> {
   const filtered = publications.filter(p => !ids.includes(p.id))
   
   if (typeof window !== 'undefined') {
-    const minimalPubs = filtered.slice(0, 5000).map(p => ({
-      id: p.id,
-      title: p.title,
-      status: p.status,
-      category: p.category,
-      slug: p.slug,
-      submittedBy: p.submittedBy,
-      submittedAt: p.submittedAt
-    }))
-    localStorage.setItem('atlas_publications', JSON.stringify(minimalPubs))
+    localStorage.setItem('atlas_publications', JSON.stringify(filtered.slice(0, 5000)))
   }
 }
 
@@ -542,17 +515,7 @@ export async function incrementDownloadCount(id: number): Promise<void> {
   )
   
   if (typeof window !== 'undefined') {
-    const minimalPubs = updated.slice(0, 5000).map(p => ({
-      id: p.id,
-      title: p.title,
-      status: p.status,
-      category: p.category,
-      slug: p.slug,
-      submittedBy: p.submittedBy,
-      submittedAt: p.submittedAt,
-      downloadCount: p.downloadCount
-    }))
-    localStorage.setItem('atlas_publications', JSON.stringify(minimalPubs))
+    localStorage.setItem('atlas_publications', JSON.stringify(updated.slice(0, 5000)))
   }
 }
 

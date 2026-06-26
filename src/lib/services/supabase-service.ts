@@ -629,6 +629,14 @@ export async function updatePublication(id: number, updates: Partial<Article>) {
   }
   
   try {
+    console.log('📝 [updatePublication] Sending update:', {
+      id,
+      category: updates.category,
+      publicationCategory: updates.publicationCategory,
+      publisher: updates.publisher,
+      keys: Object.keys(updates)
+    })
+
     const response = await fetch(`${SUPABASE_URL}/rest/v1/publications?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
@@ -646,7 +654,26 @@ export async function updatePublication(id: number, updates: Partial<Article>) {
     }
     
     const data = await response.json()
-    return Array.isArray(data) ? data[0] : data
+    const updated = Array.isArray(data) ? data[0] : data
+
+    console.log('✅ [updatePublication] Response received:', {
+      id: updated?.id,
+      category: updated?.category,
+      publicationCategory: updated?.publicationCategory,
+      publisher: updated?.publisher,
+      keys: updated ? Object.keys(updated) : []
+    })
+
+    // Guard against false-positive success states: if caller supplied these fields,
+    // ensure Supabase returns the same values after PATCH.
+    if (typeof updates.category === 'string' && updated?.category !== updates.category) {
+      throw new Error(`Publication type was not persisted (expected: "${updates.category}", got: "${updated?.category ?? ''}")`)
+    }
+    if (typeof updates.publicationCategory === 'string' && updated?.publicationCategory !== updates.publicationCategory) {
+      throw new Error(`Publication category was not persisted (expected: "${updates.publicationCategory}", got: "${updated?.publicationCategory ?? ''}")`)
+    }
+
+    return updated
   } catch (error) {
     console.error('Error in updatePublication:', error)
     throw error
