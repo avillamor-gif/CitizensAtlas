@@ -19,6 +19,148 @@ const getRowValue = (row: Record<string, any>, keys: string[]): string => {
 
 const getCsvValue = (row: Record<string, any>, keys: string[]): string => getRowValue(row, keys);
 
+function parseGroupedSpreadsheetProjects(worksheet: XLSX.WorkSheet): ParseResult<Omit<Project, 'id'>> {
+  const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as any[][];
+  const headerRow = rows[0] || [];
+  const subHeaderRow = rows[1] || [];
+  const projects: Omit<Project, 'id'>[] = [];
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  const indexOf = (label: string) => headerRow.findIndex((cell) => String(cell).trim() === label);
+  const headerIncludes = (label: string) => headerRow.some((cell) => String(cell).trim() === label);
+
+  if (!headerIncludes('Project name') || !headerIncludes('Country/ies')) {
+    return { data: [], errors: ['Unsupported spreadsheet layout.'], warnings: [] };
+  }
+
+  const projectNameIndex = indexOf('Project name');
+  const countryIndex = indexOf('Country/ies');
+  const regionIndex = indexOf('Region');
+  const cityIndex = indexOf('City/ies');
+  const projectNumberIndex = indexOf('Project no.');
+  const falseSolutionsStart = indexOf('False solutions');
+  const ifiStart = indexOf('International financial institution (IFI)');
+  const fundingSourceIndex = indexOf('Funding Source');
+  const financialInstrumentStart = indexOf('Financial Instruments');
+  const amount1Index = indexOf('Amount 1');
+  const amount2Index = indexOf('Amount 2');
+  const amount3Index = indexOf('Amount 3');
+  const totalAmountIndex = indexOf('Total project amount in M USD');
+  const ownerIndex = indexOf('Owner (Public/Private/PPP)');
+  const privateBorrowerIndex = indexOf('Private Sector Borrower or Partner');
+  const otherImplementorsIndex = indexOf('Other implementors');
+  const descriptionIndex = indexOf('Project description');
+  const statusIndex = indexOf('Status (proposed, active, cancelled, inactive)');
+  const approvalDateIndex = indexOf('Approval date');
+  const startDateIndex = indexOf('Start date');
+  const endDateIndex = indexOf('End date');
+  const environmentalStart = indexOf('Environmental and Social Safeguard categories');
+  const keyDocumentsIndex = indexOf('Key documents');
+  const groupsIndex = indexOf('Groups in opposition and types of actions');
+  const linksIndex = indexOf('Links to actions');
+  const gaiaSupportIndex = indexOf('Active GAIA support? (Y/N)');
+  const notesIndex = indexOf('Notes');
+  const referencesStart = indexOf('Other References');
+  const genderIndex = indexOf('Gender');
+  const wastePickersIndex = indexOf('Waste pickers');
+  const resettlementIndex = indexOf('Resettlement');
+
+  const pickRangeValues = (row: any[], start: number, end: number, labels?: string[]) => {
+    if (start < 0 || end < start) return [] as string[];
+    const values: string[] = [];
+    for (let index = start; index <= end; index++) {
+      const raw = row[index];
+      const text = String(raw ?? '').trim();
+      if (!text) continue;
+      const label = labels?.[index - start]?.trim();
+      const normalized = text.toLowerCase();
+      if ((normalized === 'x' || normalized === 'x ' || normalized === 'yes') && label) {
+        values.push(label);
+      } else {
+        values.push(text);
+      }
+    }
+    return values;
+  };
+
+  const ifiLabels = subHeaderRow.slice(ifiStart, fundingSourceIndex).map((cell) => String(cell || '').trim());
+  const referenceLabels = subHeaderRow.slice(referencesStart, genderIndex).map((cell) => String(cell || '').trim());
+
+  for (let rowIndex = 2; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex] || [];
+    const projectName = String(row[projectNameIndex] || '').trim();
+    const country = String(row[countryIndex] || '').trim();
+
+    // Skip section labels, blank rows, and non-project rows.
+    if (!projectName || !country) {
+      continue;
+    }
+
+    const falseSolutions = pickRangeValues(row, falseSolutionsStart, ifiStart - 1);
+    if (falseSolutions.length === 0) {
+      warnings.push(`Row ${rowIndex + 1}: No false solution value found.`);
+    }
+
+    const ifiValues = pickRangeValues(row, ifiStart, fundingSourceIndex - 2, ifiLabels);
+    const financialInstruments = pickRangeValues(row, financialInstrumentStart, amount1Index - 1);
+    const environmentalValues = pickRangeValues(row, environmentalStart, keyDocumentsIndex - 1);
+    const referenceValues = pickRangeValues(row, referencesStart, genderIndex - 1, referenceLabels);
+    const groupsAndActions = String(row[groupsIndex] || '').trim();
+
+    const totalProjectAmount = String(row[totalAmountIndex] || '').trim();
+    const amountParts = pickRangeValues(row, amount1Index, amount3Index);
+    const references = [String(row[keyDocumentsIndex] || '').trim(), ...referenceValues].filter(Boolean).join(', ');
+
+    const details = `
+**Region:** ${String(row[regionIndex] || '').trim()}
+**City:** ${String(row[cityIndex] || '').trim()}
+**Project Number:** ${String(row[projectNumberIndex] || '').trim() || 'N/A'}
+**IFI:** ${ifiValues.join(', ')}
+**Funding Source:** ${String(row[fundingSourceIndex] || '').trim()}
+**Sector:** ${String(row[otherImplementorsIndex] || '').trim()}
+**Total Project Amount:** ${totalProjectAmount || amountParts.join(', ') || '0'}
+**Owner:** ${String(row[ownerIndex] || '').trim()}
+**Private Sector Borrowers:** ${String(row[privateBorrowerIndex] || '').trim()}
+**Project Description:**
+${String(row[descriptionIndex] || '').trim()}
+---
+**Project Status:** ${String(row[statusIndex] || '').trim() || 'Proposed'}
+**Approval Date:** ${String(row[approvalDateIndex] || '').trim() || 'N/A'}
+**Start Date:** ${String(row[startDateIndex] || '').trim() || 'N/A'}
+**End Date:** ${String(row[endDateIndex] || '').trim() || 'N/A'}
+**Environmental Category:** ${environmentalValues.join(', ')}
+**Social Safeguard:** ${financialInstruments.join(', ')}
+**Groups in Opposition:** ${groupsAndActions}
+**Types of Actions:** ${groupsAndActions}
+**Links to Actions:** ${String(row[linksIndex] || '').trim()}
+**Active GAIA Support:** ${String(row[gaiaSupportIndex] || '').trim()}
+**Notes:**
+${String(row[notesIndex] || '').trim()}
+**References:**
+${references}
+---
+**Gender Concerns:** ${String(row[genderIndex] || '').trim()}
+**Waste Workers:** ${String(row[wastePickersIndex] || '').trim()}
+**Displacement:** ${String(row[resettlementIndex] || '').trim()}
+    `.trim();
+
+    projects.push({
+      title: projectName,
+      country,
+      corruptionType: falseSolutions.join(', '),
+      details,
+      date: String(row[approvalDateIndex] || '').trim() || new Date().toISOString().split('T')[0],
+      publishDate: new Date().toISOString().split('T')[0],
+      latitude: 0,
+      longitude: 0,
+      status: 'published',
+    });
+  }
+
+  return { data: projects, errors, warnings };
+}
+
 // Parse Projects Excel file
 export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project, 'id'>>> {
   return new Promise((resolve) => {
@@ -29,6 +171,13 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
         const data = e.target?.result;
         const workbook = XLSX.read(data, { type: 'binary' });
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const sheetRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as any[][];
+
+        if ((sheetRows[0] || []).some((cell) => String(cell).trim() === 'Project name')) {
+          resolve(parseGroupedSpreadsheetProjects(worksheet));
+          return;
+        }
+
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
         const projects: Omit<Project, 'id'>[] = [];
