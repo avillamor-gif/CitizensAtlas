@@ -462,20 +462,18 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormField label="Publication Type" required>
-                                    <Select
+                                    <select
+                                        name="category"
                                         value={formData.category || ''}
-                                        onValueChange={(value) => handleSelectChange('category', value)}
+                                        onChange={handleInputChange}
                                         required
+                                        className={inputClass}
                                     >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select Publication Type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {publicationTypeOptions.filter(c => c !== '').map(cat => (
-                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        <option value="" disabled>Select Publication Type</option>
+                                        {publicationTypeOptions.filter(c => c !== '').map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
                                     {onAddCategory && (
                                         <>
                                             {!showAddCategory ? (
@@ -518,20 +516,18 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                     )}
                                 </FormField>
                                 <FormField label="Publication Category" required>
-                                    <Select
+                                    <select
+                                        name="publicationCategory"
                                         value={formData.publicationCategory || ''}
-                                        onValueChange={(value) => handleSelectChange('publicationCategory', value)}
+                                        onChange={handleInputChange}
                                         required
+                                        className={inputClass}
                                     >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select Publication Category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {publicationCategoryOptions.filter(c => c !== '').map(cat => (
-                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        <option value="" disabled>Select Publication Category</option>
+                                        {publicationCategoryOptions.filter(c => c !== '').map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
                                     {onAddPublicationCategory && (
                                         <>
                                             {!showAddPublicationCategory ? (
