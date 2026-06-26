@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import MapGL, { Marker } from 'react-map-gl/maplibre';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import React, { useState, useEffect } from 'react';
+import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { InputField } from '@/components/ui/input-field';
@@ -8,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
-import { MagnifyingGlassIcon } from '@/components/ui/icons';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -42,6 +42,12 @@ const FormField: React.FC<{ label: string; children: React.ReactNode; required?:
         {children}
     </div>
 );
+
+type MultiSelectOption = {
+    value: string;
+    label: string;
+    description?: string;
+};
 
 // Region to Countries mapping
 const regionCountries: Record<string, string[]> = {
@@ -290,6 +296,251 @@ const getRegionFromCountry = (country: string): string => {
     return '';
 };
 
+const parseCommaSeparatedList = (value?: string | null) => {
+    return (value || '')
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean);
+};
+
+const uniqueByValue = (options: MultiSelectOption[]) => {
+    const seen = new Set<string>();
+    return options.filter((option) => {
+        if (seen.has(option.value)) return false;
+        seen.add(option.value);
+        return true;
+    });
+};
+
+const uniqueStrings = (values: string[]) => {
+    return Array.from(new Set(values));
+};
+
+const MultiSelectPopover: React.FC<{
+    label: string;
+    placeholder: string;
+    searchPlaceholder: string;
+    options: MultiSelectOption[];
+    selectedValues: string[];
+    onChange: (values: string[]) => void;
+    disabled?: boolean;
+}> = ({ label, placeholder, searchPlaceholder, options, selectedValues, onChange, disabled = false }) => {
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const filteredOptions = options.filter((option) => {
+        const query = search.trim().toLowerCase();
+        if (!query) return true;
+        return (
+            option.label.toLowerCase().includes(query) ||
+            option.description?.toLowerCase().includes(query)
+        );
+    });
+
+    const selectedCount = selectedValues.length;
+    const triggerLabel = selectedCount > 0
+        ? `${selectedCount} selected`
+        : placeholder;
+
+    const toggleOption = (value: string) => {
+        if (selectedValues.includes(value)) {
+            onChange(selectedValues.filter((item) => item !== value));
+        } else {
+            onChange([...selectedValues, value]);
+        }
+    };
+
+    return (
+        <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">{label}</Label>
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        className={cn(
+                            'flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-left text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-brand-medium-blue focus:border-brand-medium-blue disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-70',
+                            selectedCount > 0 && 'text-gray-900'
+                        )}
+                    >
+                        <span className="truncate">{triggerLabel}</span>
+                        <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                    </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                    <div className="border-b p-3">
+                        <div className="relative">
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <Input
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder={searchPlaceholder}
+                                className="h-9 pl-9"
+                            />
+                        </div>
+                    </div>
+                    <div className="max-h-72 overflow-y-auto p-2">
+                        {filteredOptions.length === 0 ? (
+                            <div className="px-3 py-6 text-center text-sm text-gray-500">No options found</div>
+                        ) : (
+                            filteredOptions.map((option) => {
+                                const checked = selectedValues.includes(option.value);
+                                return (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        onClick={() => toggleOption(option.value)}
+                                        className="flex w-full items-start gap-3 rounded-md px-3 py-2 text-left text-sm hover:bg-gray-100"
+                                    >
+                                        <span
+                                            className={cn(
+                                                'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border',
+                                                checked
+                                                    ? 'border-brand-medium-blue bg-brand-medium-blue text-white'
+                                                    : 'border-gray-300 bg-white'
+                                            )}
+                                        >
+                                            {checked && <Check className="h-3 w-3" />}
+                                        </span>
+                                        <span className="flex-1">
+                                            <span className="block font-medium text-gray-900">{option.label}</span>
+                                            {option.description && (
+                                                <span className="block text-xs text-gray-500">{option.description}</span>
+                                            )}
+                                        </span>
+                                    </button>
+                                );
+                            })
+                        )}
+                    </div>
+                    {selectedCount > 0 && (
+                        <div className="border-t p-2">
+                            <button
+                                type="button"
+                                onClick={() => onChange([])}
+                                className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                            >
+                                <X className="h-4 w-4" />
+                                Clear selections
+                            </button>
+                        </div>
+                    )}
+                </PopoverContent>
+            </Popover>
+        </div>
+    );
+};
+
+const REGION_OPTIONS: MultiSelectOption[] = Object.keys(regionCountries).map((region) => ({
+    value: region,
+    label: region,
+}));
+
+const getCountriesForRegions = (regions: string[]) => {
+    const selectedRegions = regions.length > 0 ? regions : Object.keys(regionCountries);
+    return uniqueByValue(
+        selectedRegions.flatMap((region) =>
+            (regionCountries[region] || []).map((country) => ({
+                value: country,
+                label: country,
+                description: region,
+            }))
+        )
+    );
+};
+
+const getCountryToRegionMap = () => {
+    const map = new Map<string, string>();
+    Object.entries(regionCountries).forEach(([region, countries]) => {
+        countries.forEach((country) => map.set(country, region));
+    });
+    return map;
+};
+
+const countryToRegionMap = getCountryToRegionMap();
+
+const getCityOptionsForCountries = (countries: string[]) => {
+    const selectedCountries = countries.length > 0 ? countries : Object.keys(countryCities);
+    return uniqueByValue(
+        selectedCountries.flatMap((country) =>
+            (countryCities[country] || []).map((city) => ({
+                value: `${country}::${city}`,
+                label: city,
+                description: country,
+            }))
+        )
+    );
+};
+
+const getProvinceFromAddress = (address: Record<string, any>) => {
+    return (
+        address.state ||
+        address.state_district ||
+        address.province ||
+        address.region ||
+        address.county ||
+        address.district ||
+        ''
+    );
+};
+
+const matchCitySelections = (cityValues: string[], countryValues: string[]) => {
+    const selectedCountries = countryValues.length > 0 ? countryValues : Object.keys(countryCities);
+    const validOptions = getCityOptionsForCountries(selectedCountries);
+    const validByValue = new Map(validOptions.map((option) => [option.value, option]));
+    const labelToOptions = new Map<string, MultiSelectOption[]>();
+
+    validOptions.forEach((option) => {
+        const list = labelToOptions.get(option.label) || [];
+        list.push(option);
+        labelToOptions.set(option.label, list);
+    });
+
+    return uniqueStrings(
+        cityValues.flatMap((value) => {
+            if (validByValue.has(value)) {
+                return [value];
+            }
+
+            const [prefix, cityLabel] = value.includes('::') ? value.split('::') : ['', value];
+            if (prefix && cityLabel && validByValue.has(`${prefix}::${cityLabel}`)) {
+                return [`${prefix}::${cityLabel}`];
+            }
+
+            const exactMatch = labelToOptions.get(cityLabel) || [];
+            if (exactMatch.length > 0) {
+                return [exactMatch[0].value];
+            }
+
+            return [];
+        })
+    );
+};
+
+const citySelectionsToDisplayValues = (citySelections: string[]) => {
+    return citySelections.map((value) => {
+        if (value.includes('::')) {
+            const [country, city] = value.split('::');
+            return `${country} - ${city}`;
+        }
+        return value;
+    });
+};
+
+const parseCitySelectionValues = (value?: string | null) => {
+    return parseCommaSeparatedList(value).map((entry) => {
+        if (entry.includes('::')) return entry;
+        const separator = entry.includes(' - ') ? ' - ' : entry.includes(': ') ? ': ' : '';
+        if (separator) {
+            const [country, city] = entry.split(separator).map((part) => part.trim());
+            if (country && city) {
+                return `${country}::${city}`;
+            }
+        }
+        return entry;
+    });
+};
+
 const parseDetails = (details: string) => {
     const detailsMap = new Map<string, string>();
     if (!details) return detailsMap;
@@ -311,9 +562,9 @@ const parseDetails = (details: string) => {
 };
 
 const emptyFormState = {
-    region: '',
-    country: '',
-    city: '',
+    regionSelections: [] as string[],
+    countrySelections: [] as string[],
+    citySelections: [] as string[],
     latitude: '',
     longitude: '',
     projectName: '',
@@ -362,12 +613,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [newSocialSafeguardCategory, setNewSocialSafeguardCategory] = useState('');
     const [showManageEnvironmentalCategories, setShowManageEnvironmentalCategories] = useState(false);
     const [showManageSocialSafeguardCategories, setShowManageSocialSafeguardCategories] = useState(false);
-    const [locationSearch, setLocationSearch] = useState('');
-    const [searchResults, setSearchResults] = useState<Array<{ display_name: string; lat: string; lon: string }>>([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const [showSearchResults, setShowSearchResults] = useState(false);
-    const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const mapRef = useRef<any>(null);
+    const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
         <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
@@ -381,24 +627,27 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const totalAmountStr = (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, '');
             const totalAmountNum = parseFloat(totalAmountStr) || 0;
             
-            // Get country and derive region from it if region not in details
-            const country = projectToEdit.country || '';
-            const regionFromDetails = detailsMap.get('Region') || '';
-            const region = regionFromDetails || (country ? getRegionFromCountry(country) : '');
+            const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
+            const countrySelections = parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country);
+            const citySelections = matchCitySelections(
+                parseCitySelectionValues(detailsMap.get('City')),
+                countrySelections
+            );
+            const derivedRegions = countrySelections.map((country) => countryToRegionMap.get(country) || getRegionFromCountry(country)).filter(Boolean);
+            const mergedRegions = uniqueByValue(
+                [...regionSelections, ...derivedRegions].map((region) => ({ value: region, label: region }))
+            ).map((item) => item.value);
+            const normalizedCountries = countrySelections.map((country) => toTitleCase(country));
             
-            // Normalize country to title case to match Select options
-            const normalizedCountry = country ? toTitleCase(country) : '';
-            
-            console.log('🔍 ProjectForm Edit Mode - Country:', country);
-            console.log('🔍 ProjectForm Edit Mode - Normalized country:', normalizedCountry);
-            console.log('🔍 ProjectForm Edit Mode - Region from details:', regionFromDetails);
-            console.log('🔍 ProjectForm Edit Mode - Computed region:', region);
+            console.log('🔍 ProjectForm Edit Mode - Regions:', mergedRegions);
+            console.log('🔍 ProjectForm Edit Mode - Countries:', normalizedCountries);
+            console.log('🔍 ProjectForm Edit Mode - Cities:', citySelections);
             console.log('🔍 ProjectForm Edit Mode - All details:', Object.fromEntries(detailsMap));
             
             setFormData({
-                region,
-                country: normalizedCountry,
-                city: detailsMap.get('City') || '',
+                regionSelections: mergedRegions,
+                countrySelections: normalizedCountries,
+                citySelections,
                 latitude: projectToEdit.latitude?.toString() || '',
                 longitude: projectToEdit.longitude?.toString() || '',
                 projectName: projectToEdit.title || '',
@@ -444,7 +693,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 displacement: detailsMap.get('Displacement') || '',
             });
             
-            console.log('✅ ProjectForm - State set with region:', region, 'country:', country);
+            console.log('✅ ProjectForm - State set with regions/countries/cities');
             setIsLoadingData(false);
         } else if (prefilledLocation && !isEditMode) {
             // If we have prefilled location data from map click, use it
@@ -454,9 +703,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             
             setFormData({
                 ...emptyFormState,
-                region,
-                country,
-                city,
+                regionSelections: region ? [region] : [],
+                countrySelections: country ? [country] : [],
+                citySelections: city ? [`${country || 'Unknown'}::${city}`] : [],
                 latitude: prefilledLocation.latitude?.toString() || '',
                 longitude: prefilledLocation.longitude?.toString() || '',
                 publishDate: today,
@@ -473,59 +722,153 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         setFormData(prev => ({ ...prev, totalProjectAmount: total }));
     }, [formData.financialInstruments]);
 
-    // Cleanup search timeout on unmount
     useEffect(() => {
-        return () => {
-            if (searchTimeoutRef.current) {
-                clearTimeout(searchTimeoutRef.current);
-            }
-        };
-    }, []);
-
-    // Close search results when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            const target = event.target as HTMLElement;
-            if (!target.closest('.location-search-container')) {
-                setShowSearchResults(false);
-            }
-        };
-
-        if (showSearchResults) {
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => {
-                document.removeEventListener('mousedown', handleClickOutside);
-            };
+        const missingCitySelections = formData.citySelections.filter((selection) => !cityProvinceMap[selection]);
+        if (missingCitySelections.length === 0) {
+            return;
         }
-    }, [showSearchResults]);
+
+        let cancelled = false;
+
+        const loadProvinceData = async () => {
+            const updates: Record<string, string> = {};
+
+            for (const selection of missingCitySelections) {
+                const [country, city] = selection.split('::');
+                if (!country || !city) continue;
+
+                try {
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&q=${encodeURIComponent(`${city}, ${country}`)}`,
+                        {
+                            headers: {
+                                'User-Agent': 'CitizensAtlas/1.0',
+                            },
+                        }
+                    );
+
+                    if (!response.ok) continue;
+
+                    const results = await response.json();
+                    const address = results?.[0]?.address || {};
+                    const province = getProvinceFromAddress(address);
+                    if (province) {
+                        updates[selection] = province;
+                    }
+                } catch (error) {
+                    console.error('Province lookup error:', error);
+                }
+            }
+
+            if (!cancelled && Object.keys(updates).length > 0) {
+                setCityProvinceMap((prev) => ({ ...prev, ...updates }));
+            }
+        };
+
+        loadProvinceData();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [formData.citySelections, formData.countrySelections, cityProvinceMap]);
+
+    useEffect(() => {
+        setFormData((prev) => {
+            const allowedCountries = getCountriesForRegions(prev.regionSelections).map((option) => option.value);
+            const normalizedCountries = uniqueByValue(
+                prev.countrySelections
+                    .filter((country) => allowedCountries.includes(country) || prev.regionSelections.length === 0)
+                    .map((country) => ({ value: country, label: country }))
+            ).map((item) => item.value);
+
+            const allowedCities = getCityOptionsForCountries(normalizedCountries).map((option) => option.value);
+            const normalizedCities = prev.citySelections.filter((city) => {
+                if (allowedCities.includes(city)) return true;
+                if (!city.includes('::')) {
+                    return allowedCities.some((allowedCity) => allowedCity.endsWith(`::${city}`));
+                }
+                return false;
+            });
+
+            const shouldUpdate =
+                normalizedCountries.length !== prev.countrySelections.length ||
+                normalizedCities.length !== prev.citySelections.length;
+
+            if (!shouldUpdate) {
+                return prev;
+            }
+
+            return {
+                ...prev,
+                countrySelections: normalizedCountries,
+                citySelections: normalizedCities,
+            };
+        });
+    }, [formData.regionSelections]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        
-        // If region changes, reset country and city selection
-        if (name === 'region') {
-            setFormData(prev => ({ ...prev, [name]: value, country: '', city: '' }));
-        }
-        // If country changes, reset city selection
-        else if (name === 'country') {
-            setFormData(prev => ({ ...prev, [name]: value, city: '' }));
-        } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
-        }
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     // Helper for Select components (value-only callback)
     const handleSelectChange = (name: string, value: string) => {
-        // If region changes, reset country and city selection
-        if (name === 'region') {
-            setFormData(prev => ({ ...prev, [name]: value, country: '', city: '' }));
-        }
-        // If country changes, reset city selection
-        else if (name === 'country') {
-            setFormData(prev => ({ ...prev, [name]: value, city: '' }));
-        } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
-        }
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleRegionSelectionsChange = (nextRegions: string[]) => {
+        const normalizedRegions = Array.from(new Set(nextRegions));
+        const allowedCountries = getCountriesForRegions(normalizedRegions).map((option) => option.value);
+        const allowedCityValues = getCityOptionsForCountries(allowedCountries).map((option) => option.value);
+
+        setFormData((prev) => ({
+            ...prev,
+            regionSelections: normalizedRegions,
+            countrySelections: prev.countrySelections.filter((country) => allowedCountries.includes(country)),
+            citySelections: prev.citySelections.filter((city) => allowedCityValues.includes(city) || allowedCityValues.some((allowedCity) => allowedCity.endsWith(`::${city}`))),
+        }));
+    };
+
+    const handleCountrySelectionsChange = (nextCountries: string[]) => {
+        const normalizedCountries = Array.from(new Set(nextCountries));
+        const nextRegions = Array.from(
+            new Set(
+                normalizedCountries
+                    .map((country) => countryToRegionMap.get(country) || getRegionFromCountry(country))
+                    .filter(Boolean)
+            )
+        );
+        const allowedCityValues = getCityOptionsForCountries(normalizedCountries).map((option) => option.value);
+
+        setFormData((prev) => ({
+            ...prev,
+            regionSelections: Array.from(new Set([...prev.regionSelections, ...nextRegions])),
+            countrySelections: normalizedCountries,
+            citySelections: prev.citySelections.filter((city) => allowedCityValues.includes(city)),
+        }));
+    };
+
+    const handleCitySelectionsChange = (nextCities: string[]) => {
+        const normalizedCities = Array.from(new Set(nextCities));
+        const inferredCountries = new Set<string>();
+        normalizedCities.forEach((cityValue) => {
+            const [country] = cityValue.split('::');
+            if (country) inferredCountries.add(country);
+        });
+        const inferredRegions = Array.from(
+            new Set(
+                Array.from(inferredCountries)
+                    .map((country) => countryToRegionMap.get(country) || getRegionFromCountry(country))
+                    .filter(Boolean)
+            )
+        );
+
+        setFormData((prev) => ({
+            ...prev,
+            regionSelections: Array.from(new Set([...prev.regionSelections, ...inferredRegions])),
+            countrySelections: Array.from(new Set([...prev.countrySelections, ...inferredCountries])),
+            citySelections: normalizedCities,
+        }));
     };
 
     const handleIfiCheckboxChange = (option: string, checked: boolean) => {
@@ -543,128 +886,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         });
     };
     
-    // Get available countries based on selected region
-    const availableCountries = formData.region ? (regionCountries[formData.region] || []) : [];
-    
-    // Get available cities based on selected country
-    const availableCities = formData.country ? (countryCities[formData.country] || []) : [];
-    
-    // Reverse geocoding to get country and city from coordinates
-    const reverseGeocode = async (latitude: number, longitude: number) => {
-        try {
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
-                {
-                    headers: {
-                        'User-Agent': 'GAIA-Atlas-App'
-                    }
-                }
-            );
-            
-            if (response.ok) {
-                const data = await response.json();
-                const address = data.address || {};
-                
-                return {
-                    country: address.country || '',
-                    city: address.city || address.town || address.village || address.municipality || ''
-                };
-            }
-        } catch (error) {
-            console.error('Reverse geocoding error:', error);
-        }
-        
-        return { country: '', city: '' };
-    };
-
-    // Geocoding search handler
-    const handleLocationSearch = async (query: string) => {
-        setLocationSearch(query);
-        
-        if (query.trim().length < 3) {
-            setSearchResults([]);
-            setShowSearchResults(false);
-            return;
-        }
-
-        // Clear previous timeout
-        if (searchTimeoutRef.current) {
-            clearTimeout(searchTimeoutRef.current);
-        }
-
-        // Debounce search
-        searchTimeoutRef.current = setTimeout(async () => {
-            setIsSearching(true);
-            try {
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
-                    {
-                        headers: {
-                            'User-Agent': 'CitizensAtlas/1.0'
-                        }
-                    }
-                );
-                const data = await response.json();
-                setSearchResults(data);
-                setShowSearchResults(true);
-            } catch (error) {
-                console.error('Geocoding error:', error);
-                setSearchResults([]);
-            } finally {
-                setIsSearching(false);
-            }
-        }, 500);
-    };
-
-    const handleSelectSearchResult = async (result: { display_name: string; lat: string; lon: string }) => {
-        const lat = parseFloat(result.lat);
-        const lng = parseFloat(result.lon);
-        
-        // Use existing reverse geocode function
-        const { country, city } = await reverseGeocode(lat, lng);
-        const region = country ? getRegionFromCountry(country) : '';
-
-        setFormData(prev => ({
-            ...prev,
-            latitude: lat.toFixed(6),
-            longitude: lng.toFixed(6),
-            region,
-            country,
-            city
-        }));
-
-        // Fly to location on map if map ref exists
-        if (mapRef.current) {
-            mapRef.current.flyTo({
-                center: [lng, lat],
-                zoom: 10,
-                duration: 2000
-            });
-        }
-
-        setLocationSearch(result.display_name);
-        setShowSearchResults(false);
-    };
-    
-    // Handle map click to set location
-    const handleMapClick = async (e: any) => {
-        const { lng, lat } = e.lngLat;
-        
-        // Get country and city from coordinates
-        const { country, city } = await reverseGeocode(lat, lng);
-        const region = country ? getRegionFromCountry(country) : '';
-        
-        // Update form data with new location
-        setFormData(prev => ({
-            ...prev,
-            latitude: lat.toFixed(6),
-            longitude: lng.toFixed(6),
-            region,
-            country,
-            city
-        }));
-    };
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setFormData(prev => ({ ...prev, keyDocuments: e.target.files }));
@@ -737,8 +958,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         e.preventDefault();
         console.log('Form submitted!', { isEditMode, projectToEdit, onAddProject, onUpdateProject, formData });
         const {
-            projectName, country, approvalDate, publishDate, falseSolutions,
-            region, city, projectNumber, ifiSelections, ifiOther, fundingSource,
+            projectName, approvalDate, publishDate, falseSolutions,
+            regionSelections, countrySelections, citySelections, projectNumber, ifiSelections, ifiOther, fundingSource,
             totalProjectAmount, owner, privateSectorBorrowers, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             groupsInOpposition, typesOfActions, linksToActions,
@@ -746,14 +967,26 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             wasteWorkers, displacement, latitude, longitude
         } = formData;
 
+        const regionValue = regionSelections.join(', ');
+        const countryValue = countrySelections.join(', ');
+        const cityValue = citySelections
+            .map((selection) => {
+                const [country, city] = selection.split('::');
+                const province = cityProvinceMap[selection];
+                if (!country || !city) return selection;
+                return province ? `${city}, ${province} (${country})` : `${city} (${country})`;
+            })
+            .join(', ');
+
         const ifiValue = [
             ...ifiSelections.filter((selection) => selection !== 'Others'),
             ...(ifiSelections.includes('Others') && ifiOther.trim() ? [ifiOther.trim()] : []),
         ].join(', ');
 
         const details = `
-**Region:** ${region}
-**City:** ${city}
+    **Region:** ${regionValue}
+    **Country:** ${countryValue}
+    **City:** ${cityValue}
 **Project Number:** ${projectNumber || 'N/A'}
 **IFI:** ${ifiValue}
 **Funding Source:** ${fundingSource}
@@ -784,7 +1017,7 @@ ${references}
 
         const projectData = {
             title: projectName,
-            country: country,
+            country: countryValue,
             date: approvalDate,
             publishDate: publishDate,
             corruptionType: falseSolutions.filter(s => s).join(', '),
@@ -847,93 +1080,6 @@ ${references}
                         <Input type="text" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
                     </FormField>
                     
-                    {/* Map Picker - Only show in Admin page form (not in modal) */}
-                    {!isModal && (
-                        <div className="border rounded-lg overflow-hidden">
-                            <div className="bg-gray-100 px-4 py-2 border-b">
-                                <p className="text-sm font-medium text-gray-700 mb-2">
-                                    Click on the map to set project location
-                                </p>
-                                {/* Search field */}
-                                <div className="relative location-search-container">
-                                    <div className="relative">
-                                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                        <input
-                                            type="text"
-                                            value={locationSearch}
-                                            onChange={(e) => handleLocationSearch(e.target.value)}
-                                            onFocus={() => searchResults.length > 0 && setShowSearchResults(true)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    e.preventDefault();
-                                                    // If there are search results, select the first one
-                                                    if (searchResults.length > 0 && showSearchResults) {
-                                                        handleSelectSearchResult(searchResults[0]);
-                                                    }
-                                                }
-                                            }}
-                                            placeholder="Search for a location..."
-                                            className="w-full pl-9 pr-3 py-2 text-base md:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-medium-blue focus:border-brand-medium-blue"
-                                        />
-                                        {isSearching && (
-                                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-brand-medium-blue"></div>
-                                            </div>
-                                        )}
-                                    </div>
-                                    {/* Search results dropdown */}
-                                    {showSearchResults && searchResults.length > 0 && (
-                                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                                            {searchResults.map((result, index) => (
-                                                <button
-                                                    key={index}
-                                                    type="button"
-                                                    onClick={() => handleSelectSearchResult(result)}
-                                                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 focus:bg-gray-100 focus:outline-none border-b border-gray-100 last:border-b-0"
-                                                >
-                                                    {result.display_name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="relative h-[300px] bg-gray-200">
-                                <MapGL
-                                    ref={mapRef}
-                                    initialViewState={{
-                                        longitude: parseFloat(formData.longitude) || 0,
-                                        latitude: parseFloat(formData.latitude) || 0,
-                                        zoom: formData.latitude && formData.longitude ? 8 : 1.5
-                                    }}
-                                    style={{ width: '100%', height: '100%' }}
-                                    mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-                                    onClick={handleMapClick}
-                                >
-                                    {formData.latitude && formData.longitude && (
-                                        <Marker
-                                            longitude={parseFloat(formData.longitude)}
-                                            latitude={parseFloat(formData.latitude)}
-                                            anchor="center"
-                                        >
-                                            <div className="relative">
-                                                <div className="w-8 h-8 bg-red-500 rounded-full border-4 border-white shadow-lg animate-pulse"></div>
-                                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full"></div>
-                                            </div>
-                                        </Marker>
-                                    )}
-                                </MapGL>
-                            </div>
-                        </div>
-                    )}
-                    
-                    {(() => {
-                      console.log('🎨 Rendering Selects - formData.region:', formData.region, 'formData.country:', formData.country)
-                      console.log('🎨 Available countries for region:', formData.region, ':', availableCountries)
-                      console.log('🎨 isLoadingData:', isLoadingData)
-                      return null
-                    })()}
-                    
                     {isLoadingData ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField label="Region">
@@ -948,54 +1094,38 @@ ${references}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="Region">
-                                <Select value={formData.region || ''} onValueChange={(value) => handleSelectChange('region', value)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Region" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Africa">Africa</SelectItem>
-                                        <SelectItem value="Asia">Asia</SelectItem>
-                                        <SelectItem value="Europe">Europe</SelectItem>
-                                        <SelectItem value="North America">North America</SelectItem>
-                                        <SelectItem value="South America">South America</SelectItem>
-                                        <SelectItem value="Oceania">Oceania</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </FormField>
-                            <FormField label="Country">
-                                <Select value={formData.country || ''} onValueChange={(value) => handleSelectChange('country', value)} disabled={!formData.region}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={formData.region ? 'Select Country' : 'Select Region First'} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {availableCountries.map(country => (
-                                            <SelectItem key={country} value={country}>{country}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </FormField>
-                            <FormField label="City/ies">
-                                <Input 
-                                    type="text" 
-                                    name="city" 
-                                    value={formData.city} 
-                                    onChange={handleInputChange} 
-                                    placeholder="e.g., Mumbai, Delhi" 
-                                    disabled={!formData.country}
-                                />
-                            </FormField>
+                            <MultiSelectPopover
+                                label="Region"
+                                placeholder="Select Region(s)"
+                                searchPlaceholder="Search regions..."
+                                options={REGION_OPTIONS}
+                                selectedValues={formData.regionSelections}
+                                onChange={handleRegionSelectionsChange}
+                            />
+                            <MultiSelectPopover
+                                label="Country"
+                                placeholder={formData.regionSelections.length > 0 ? 'Select Country(ies)' : 'Select Country(ies)'}
+                                searchPlaceholder="Search countries..."
+                                options={getCountriesForRegions(formData.regionSelections)}
+                                selectedValues={formData.countrySelections}
+                                onChange={handleCountrySelectionsChange}
+                            />
+                            <MultiSelectPopover
+                                label="City/ies"
+                                placeholder={formData.countrySelections.length > 0 ? 'Select City/ies' : 'Select City/ies'}
+                                searchPlaceholder="Search cities..."
+                                options={getCityOptionsForCountries(formData.countrySelections.length > 0 ? formData.countrySelections : getCountriesForRegions(formData.regionSelections).map((option) => option.value)).map((option) => ({
+                                    ...option,
+                                    description: cityProvinceMap[option.value]
+                                        ? `${option.description} · ${cityProvinceMap[option.value]}`
+                                        : option.description,
+                                }))}
+                                selectedValues={formData.citySelections}
+                                onChange={handleCitySelectionsChange}
+                            />
                         </div>
                     )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField label="Latitude">
-                            <Input type="number" step="any" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="e.g., 34.0522" />
-                        </FormField>
-                        <FormField label="Longitude">
-                            <Input type="number" step="any" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="e.g., -118.2437" />
-                        </FormField>
-                    </div>
-                        
+
                         <SectionTitle>Financials</SectionTitle>
                         <FormField label="International financial institution (IFI)">
                             <div className="space-y-2 rounded-md border border-gray-200 p-3">
