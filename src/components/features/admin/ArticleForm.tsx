@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Article } from '@/types/types';
-import { uploadImage, uploadMultipleDocuments, validateImageFile, validateDocumentFile } from '@/lib/supabase/storage';
+import { uploadImage, validateImageFile } from '@/lib/supabase/storage';
 import { Input } from '@/components/ui/input';
 import { InputField } from '@/components/ui/input-field';
 import { Label } from '@/components/ui/label';
@@ -46,8 +46,8 @@ const emptyFormState = {
     tags: [] as string[],
     publishDate: '',
     videoUrl: '',
+    publicationLink: '',
     imageFile: null as File | null,
-    docFiles: null as FileList | null,
 };
 
 const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, itemToEdit, itemType, categories, onAddCategory, isModal = true, userRole = 'contributor' }) => {
@@ -97,8 +97,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 tags: itemToEdit.tags || [],
                 publishDate: itemToEdit.publishDate || '',
                 videoUrl: itemToEdit.videoUrl || '',
+                publicationLink: itemToEdit.documentUrls?.[0] || '',
                 imageFile: null,
-                docFiles: null,
             });
             console.log('✅ [ArticleForm useEffect] Form data set with category:', itemToEdit.category);
         } else {
@@ -177,12 +177,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
         }
     };
 
-    const handleDocsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFormData(prev => ({ ...prev, docFiles: e.target.files }));
-        }
-    };
-
     const handleAddCategory = () => {
         if (newCategory.trim() && onAddCategory) {
             onAddCategory(newCategory.trim());
@@ -252,7 +246,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
         
         try {
             let uploadedImageUrl = formData.imageUrl;
-            let uploadedDocuments: Array<{url: string, name: string}> = [];
 
             // Upload image if a new file was selected
             if (formData.imageFile) {
@@ -280,24 +273,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             } else if (itemType === 'Video' && !uploadedImageUrl) {
                 // For videos without uploaded image, ensure we have thumbnail URL
                 console.log('ℹ️ No custom image uploaded for video, using video thumbnail');
-            }
-
-            // Upload documents if any (for publications)
-            if (formData.docFiles && formData.docFiles.length > 0) {
-                console.log('Uploading documents...');
-                const files = Array.from(formData.docFiles);
-                
-                // Validate all documents
-                for (const file of files) {
-                    const validation = validateDocumentFile(file);
-                    if (!validation.valid) {
-                        alert(`Document validation failed for ${file.name}: ${validation.error}`);
-                        return;
-                    }
-                }
-                
-                uploadedDocuments = await uploadMultipleDocuments(files);
-                console.log('Documents uploaded:', uploadedDocuments);
             }
 
             const articleData: any = {
@@ -341,12 +316,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
             // Only add document fields for Publications
             if (itemType === 'Publication') {
-                articleData.documentNames = uploadedDocuments.length > 0
-                    ? uploadedDocuments.map(doc => doc.name)
-                    : (itemToEdit?.documentNames || []);
-                articleData.documentUrls = uploadedDocuments.length > 0
-                    ? uploadedDocuments.map(doc => doc.url)
-                    : (itemToEdit?.documentUrls || []);
+                articleData.documentNames = formData.publicationLink ? ['Publication Link'] : [];
+                articleData.documentUrls = formData.publicationLink ? [formData.publicationLink] : [];
             }
 
             console.log('Article data to save:', articleData);
@@ -575,13 +546,15 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                          {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-auto rounded object-cover border" />}
                     </FormField>
                     {itemType === 'Publication' && (
-                        <FormField label="Publication Documents">
-                            <Input type="file" name="docFiles" onChange={handleDocsChange} multiple />
-                            {formData.docFiles && (
-                                <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
-                                    {Array.from(formData.docFiles).map((file: File) => <li key={file.name}>{file.name}</li>)}
-                                </ul>
-                            )}
+                        <FormField label="Publication Link">
+                            <Input
+                                type="url"
+                                name="publicationLink"
+                                value={formData.publicationLink}
+                                onChange={handleInputChange}
+                                placeholder="https://example.com/publication"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Paste the publication URL.</p>
                         </FormField>
                     )}
                     <FormField label="Tags">
