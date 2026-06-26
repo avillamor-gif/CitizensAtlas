@@ -3,6 +3,7 @@ import Hero from '@/components/pages/Hero';
 import ContentCarousel from '@/components/pages/ContentCarousel';
 import Newsletter from '@/components/pages/Newsletter';
 import Collaborate from '@/components/pages/Collaborate';
+import { slugify } from '@/lib/constants';
 // FIX: Import Page type from types.ts to fix circular dependency
 import { Project, FilterOptions, Article, Page, User, ProjectBrief } from '@/types/types';
 
@@ -26,7 +27,7 @@ const Home: React.FC<HomeProps> = (props) => {
     // Convert ProjectBrief to Article format for display
     const projectBriefsAsArticles: Article[] = props.projectBriefsData.map((brief, index) => ({
         id: brief.id,
-        slug: `project-brief-${brief.id}`,
+        slug: `${slugify(brief.project_name)}-${brief.id}`,
         category: brief.project_type || 'Project Brief',
         title: brief.project_name,
         description: `${brief.location}${brief.financing_amount ? ` - ${brief.financing_amount}` : ''}`,

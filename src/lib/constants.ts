@@ -1,6 +1,6 @@
 import { BankData, PieData, Article, Project } from '@/types/types';
 
-const slugify = (text: string) =>
+export const slugify = (text: string) =>
   text
     .toString()
     .normalize('NFD')
