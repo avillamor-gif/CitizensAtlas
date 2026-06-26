@@ -40,8 +40,8 @@ export default function Admin() {
     }
   }, [authLoading, user])
 
-  const loadCategories = async () => {
-    if (loadedData.categories) return // Already loaded
+  const loadCategories = async (forceReload = false) => {
+    if (loadedData.categories && !forceReload) return // Already loaded
     
     try {
       console.log('📥 Admin: Loading categories...')
@@ -180,7 +180,7 @@ export default function Admin() {
         await loadVideos(true)
         break
       case 'categories':
-        await loadCategories()
+        await loadCategories(true)
         break
     }
   }

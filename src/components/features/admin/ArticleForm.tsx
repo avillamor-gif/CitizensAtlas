@@ -431,195 +431,283 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             />
                         </div>
                     </FormField>
-                    <FormField label={itemType === 'Publication' ? 'Publication Type' : itemType === 'Video' ? 'Video Category' : 'Category'} required>
-                        {itemType === 'Publication' || itemType === 'Video' ? (
-                            <>
-                                <Select 
-                                    value={formData.category || ''} 
-                                    onValueChange={(value) => handleSelectChange('category', value)}
-                                    required
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={itemType === 'Publication' ? 'Select Publication Type' : 'Select Video Category'} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories && categories.filter(c => c !== '').map(cat => (
-                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {onAddCategory && (
-                                    <>
-                                        {!showAddCategory ? (
-                                            <button 
-                                                type="button" 
-                                                onClick={() => setShowAddCategory(true)} 
-                                                className="mt-2 text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                {itemType === 'Publication' ? '+ Add New Publication Type' : '+ Add New Video Category'}
-                                            </button>
-                                        ) : (
-                                            <div className="mt-2 flex items-center space-x-2">
-                                                <Input 
-                                                    type="text" 
-                                                    value={newCategory} 
-                                                    onChange={(e) => setNewCategory(e.target.value)} 
-                                                    placeholder={itemType === 'Publication' ? 'Enter new publication type' : 'Enter new video category'}
-                                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
-                                                />
-                                                <button 
-                                                    type="button" 
-                                                    onClick={handleAddCategory} 
-                                                    className="text-white px-4 py-2 rounded-md transition-colors"
-                                                    style={{ backgroundColor: '#0d234f' }}
-                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
-                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
-                                                >
-                                                    Add
-                                                </button>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={() => { setShowAddCategory(false); setNewCategory(''); }} 
-                                                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                                <Select 
-                                    value={formData.category || ''} 
-                                    onValueChange={(value) => handleSelectChange('category', value)}
-                                    required
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {newsCategories.filter(c => c !== '').map(cat => (
-                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {showAddCategory ? (
-                                    <div className="mt-2 flex items-center space-x-2">
-                                        <Input 
-                                            type="text" 
-                                            value={newCategory} 
-                                            onChange={(e) => setNewCategory(e.target.value)} 
-                                            placeholder="Enter new category"
-                                            className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue text-sm"
-                                            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddNewsCategory())}
-                                        />
-                                        <button 
-                                            type="button" 
-                                            onClick={handleAddNewsCategory} 
-                                            className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
-                                        >
-                                            Add
-                                        </button>
-                                        <button 
-                                            type="button" 
-                                            onClick={() => { setShowAddCategory(false); setNewCategory(''); }} 
-                                            className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="mt-2 flex items-center gap-4">
-                                        <button 
-                                            type="button" 
-                                            onClick={() => setShowAddCategory(true)} 
-                                            className="text-sm text-brand-medium-blue hover:underline"
-                                        >
-                                            + Add more category
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowManageNewsCategories(!showManageNewsCategories)}
-                                            className="text-sm text-brand-medium-blue hover:underline"
-                                        >
-                                            - Manage Categories
-                                        </button>
-                                    </div>
-                                )}
-                                {showManageNewsCategories && (
-                                    <div className="mt-2 flex flex-wrap gap-2">
-                                        {newsCategories.map(cat => (
-                                            <div key={cat} className="inline-flex items-center bg-gray-100 rounded-md px-2 py-1 text-sm">
-                                                <span className="text-gray-700">{cat}</span>
+                    {itemType === 'Publication' ? (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField label="Publication Type" required>
+                                    <Select
+                                        value={formData.category || ''}
+                                        onValueChange={(value) => handleSelectChange('category', value)}
+                                        required
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Publication Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories && categories.filter(c => c !== '').map(cat => (
+                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {onAddCategory && (
+                                        <>
+                                            {!showAddCategory ? (
                                                 <button
                                                     type="button"
-                                                    onClick={() => handleDeleteNewsCategory(cat)}
-                                                    className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                                                    title="Delete category"
+                                                    onClick={() => setShowAddCategory(true)}
+                                                    className="mt-2 text-sm text-brand-medium-blue hover:underline"
                                                 >
-                                                    ×
+                                                    + Add New Publication Type
                                                 </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </FormField>
-                    {itemType === 'Publication' && (
-                        <FormField label="Publication Category" required>
-                            <Select
-                                value={formData.publicationCategory || ''}
-                                onValueChange={(value) => handleSelectChange('publicationCategory', value)}
-                                required
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Publication Category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {publicationCategories && publicationCategories.filter(c => c !== '').map(cat => (
-                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {onAddPublicationCategory && (
+                                            ) : (
+                                                <div className="mt-2 flex items-center space-x-2">
+                                                    <Input
+                                                        type="text"
+                                                        value={newCategory}
+                                                        onChange={(e) => setNewCategory(e.target.value)}
+                                                        placeholder="Enter new publication type"
+                                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddCategory}
+                                                        className="text-white px-4 py-2 rounded-md transition-colors"
+                                                        style={{ backgroundColor: '#0d234f' }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                                    >
+                                                        Add
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setShowAddCategory(false); setNewCategory(''); }}
+                                                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </FormField>
+                                <FormField label="Publication Category" required>
+                                    <Select
+                                        value={formData.publicationCategory || ''}
+                                        onValueChange={(value) => handleSelectChange('publicationCategory', value)}
+                                        required
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Publication Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {publicationCategories && publicationCategories.filter(c => c !== '').map(cat => (
+                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {onAddPublicationCategory && (
+                                        <>
+                                            {!showAddPublicationCategory ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowAddPublicationCategory(true)}
+                                                    className="mt-2 text-sm text-brand-medium-blue hover:underline"
+                                                >
+                                                    + Add New Publication Category
+                                                </button>
+                                            ) : (
+                                                <div className="mt-2 flex items-center space-x-2">
+                                                    <Input
+                                                        type="text"
+                                                        value={newPublicationCategory}
+                                                        onChange={(e) => setNewPublicationCategory(e.target.value)}
+                                                        placeholder="Enter new publication category"
+                                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPublicationCategory())}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddPublicationCategory}
+                                                        className="text-white px-4 py-2 rounded-md transition-colors"
+                                                        style={{ backgroundColor: '#0d234f' }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                                    >
+                                                        Add
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setShowAddPublicationCategory(false); setNewPublicationCategory(''); }}
+                                                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </FormField>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField label="Publisher">
+                                    <Input
+                                        type="text"
+                                        name="publisher"
+                                        value={formData.publisher}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter publisher"
+                                    />
+                                </FormField>
+                                <FormField label="Publication Link">
+                                    <Input
+                                        type="url"
+                                        name="publicationLink"
+                                        value={formData.publicationLink}
+                                        onChange={handleInputChange}
+                                        onBlur={handlePublicationLinkBlur}
+                                        placeholder="https://example.com/publication"
+                                    />
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        Paste the publication URL. We will try to auto-capture a featured image from the link.
+                                    </p>
+                                    {isFetchingPublicationImage && (
+                                        <p className="mt-1 text-xs text-gray-500">Fetching preview image from link...</p>
+                                    )}
+                                </FormField>
+                            </div>
+                        </>
+                    ) : (
+                        <FormField label={itemType === 'Video' ? 'Video Category' : 'Category'} required>
+                            {itemType === 'Video' ? (
                                 <>
-                                    {!showAddPublicationCategory ? (
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowAddPublicationCategory(true)}
-                                            className="mt-2 text-sm text-brand-medium-blue hover:underline"
-                                        >
-                                            + Add New Publication Category
-                                        </button>
-                                    ) : (
+                                    <Select
+                                        value={formData.category || ''}
+                                        onValueChange={(value) => handleSelectChange('category', value)}
+                                        required
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Video Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories && categories.filter(c => c !== '').map(cat => (
+                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {onAddCategory && (
+                                        <>
+                                            {!showAddCategory ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowAddCategory(true)}
+                                                    className="mt-2 text-sm text-brand-medium-blue hover:underline"
+                                                >
+                                                    + Add New Video Category
+                                                </button>
+                                            ) : (
+                                                <div className="mt-2 flex items-center space-x-2">
+                                                    <Input
+                                                        type="text"
+                                                        value={newCategory}
+                                                        onChange={(e) => setNewCategory(e.target.value)}
+                                                        placeholder="Enter new video category"
+                                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddCategory}
+                                                        className="text-white px-4 py-2 rounded-md transition-colors"
+                                                        style={{ backgroundColor: '#0d234f' }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                                    >
+                                                        Add
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setShowAddCategory(false); setNewCategory(''); }}
+                                                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <Select
+                                        value={formData.category || ''}
+                                        onValueChange={(value) => handleSelectChange('category', value)}
+                                        required
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {newsCategories.filter(c => c !== '').map(cat => (
+                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {showAddCategory ? (
                                         <div className="mt-2 flex items-center space-x-2">
                                             <Input
                                                 type="text"
-                                                value={newPublicationCategory}
-                                                onChange={(e) => setNewPublicationCategory(e.target.value)}
-                                                placeholder="Enter new publication category"
-                                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPublicationCategory())}
+                                                value={newCategory}
+                                                onChange={(e) => setNewCategory(e.target.value)}
+                                                placeholder="Enter new category"
+                                                className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue text-sm"
+                                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddNewsCategory())}
                                             />
                                             <button
                                                 type="button"
-                                                onClick={handleAddPublicationCategory}
-                                                className="text-white px-4 py-2 rounded-md transition-colors"
-                                                style={{ backgroundColor: '#0d234f' }}
-                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
-                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                                onClick={handleAddNewsCategory}
+                                                className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
                                             >
                                                 Add
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => { setShowAddPublicationCategory(false); setNewPublicationCategory(''); }}
-                                                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                                onClick={() => { setShowAddCategory(false); setNewCategory(''); }}
+                                                className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
                                             >
                                                 Cancel
                                             </button>
+                                        </div>
+                                    ) : (
+                                        <div className="mt-2 flex items-center gap-4">
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowAddCategory(true)}
+                                                className="text-sm text-brand-medium-blue hover:underline"
+                                            >
+                                                + Add more category
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowManageNewsCategories(!showManageNewsCategories)}
+                                                className="text-sm text-brand-medium-blue hover:underline"
+                                            >
+                                                - Manage Categories
+                                            </button>
+                                        </div>
+                                    )}
+                                    {showManageNewsCategories && (
+                                        <div className="mt-2 flex flex-wrap gap-2">
+                                            {newsCategories.map(cat => (
+                                                <div key={cat} className="inline-flex items-center bg-gray-100 rounded-md px-2 py-1 text-sm">
+                                                    <span className="text-gray-700">{cat}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteNewsCategory(cat)}
+                                                        className="ml-2 text-red-500 hover:text-red-700 font-bold"
+                                                        title="Delete category"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
                                 </>
@@ -641,17 +729,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             </p>
                         </FormField>
                     )}
-                    {itemType === 'Publication' && (
-                        <FormField label="Publisher">
-                            <Input
-                                type="text"
-                                name="publisher"
-                                value={formData.publisher}
-                                onChange={handleInputChange}
-                                placeholder="Enter publisher"
-                            />
-                        </FormField>
-                    )}
                     <FormField label="Featured Image">
                         {itemType === 'Video' && (
                             <p className="mb-2 text-sm text-gray-600">
@@ -671,24 +748,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                         />
                          {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-auto rounded object-cover border" />}
                     </FormField>
-                    {itemType === 'Publication' && (
-                        <FormField label="Publication Link">
-                            <Input
-                                type="url"
-                                name="publicationLink"
-                                value={formData.publicationLink}
-                                onChange={handleInputChange}
-                                onBlur={handlePublicationLinkBlur}
-                                placeholder="https://example.com/publication"
-                            />
-                            <p className="mt-1 text-xs text-gray-500">
-                                Paste the publication URL. We will try to auto-capture a featured image from the link.
-                            </p>
-                            {isFetchingPublicationImage && (
-                                <p className="mt-1 text-xs text-gray-500">Fetching preview image from link...</p>
-                            )}
-                        </FormField>
-                    )}
                     <FormField label="Tags">
                         <div className="space-y-2">
                             {/* Display existing tags */}

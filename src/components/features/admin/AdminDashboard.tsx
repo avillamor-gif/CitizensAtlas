@@ -101,6 +101,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
 
+    // Restore last active admin page after refresh.
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const savedPage = window.localStorage.getItem('atlas_admin_active_page') as AdminPage | null;
+        if (savedPage) {
+            setActiveAdminPage(savedPage);
+        }
+    }, []);
+
+    // Persist active admin page so refresh returns to the same section.
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem('atlas_admin_active_page', activeAdminPage);
+    }, [activeAdminPage]);
+
     // Auto-redirect if user doesn't have permission for current page
     React.useEffect(() => {
         const checkAndRedirect = () => {
