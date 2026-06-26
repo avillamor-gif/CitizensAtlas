@@ -15,6 +15,7 @@ interface ProjectBriefListProps {
 }
 
 export default function ProjectBriefList({ briefs, onEdit, onDelete }: ProjectBriefListProps) {
+  const PROJECT_BRIEF_EDIT_ID_KEY = 'atlas_admin_project_brief_edit_id'
   const {
     paginatedItems,
     requestSort,
@@ -34,6 +35,11 @@ export default function ProjectBriefList({ briefs, onEdit, onDelete }: ProjectBr
     searchableFields: ['project_name', 'location', 'country', 'project_type'],
     itemsPerPage: 20
   })
+
+  const persistEditId = (id: number) => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem(PROJECT_BRIEF_EDIT_ID_KEY, String(id))
+  }
 
   const handleDelete = (id: number) => {
     if (window.confirm('Are you sure you want to delete this project brief? This action cannot be undone.')) {
@@ -145,7 +151,10 @@ export default function ProjectBriefList({ briefs, onEdit, onDelete }: ProjectBr
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end items-center space-x-3">
                         <button
-                          onClick={() => onEdit(brief)}
+                          onClick={() => {
+                            persistEditId(brief.id!)
+                            onEdit(brief)
+                          }}
                           className="text-blue-600 hover:text-blue-800 transition-colors"
                           aria-label={`Edit ${brief.project_name}`}
                         >

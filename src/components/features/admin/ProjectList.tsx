@@ -16,8 +16,14 @@ interface ProjectListProps {
 }
 
 const ProjectList: React.FC<ProjectListProps> = ({ projects, onAddProject, onUpdateProject, onDeleteProjects, onEditProject }) => {
+    const PROJECT_EDIT_ID_KEY = 'atlas_admin_project_edit_id';
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
+
+    const persistEditId = (id: number) => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(PROJECT_EDIT_ID_KEY, String(id));
+    };
 
     const {
         paginatedItems,
@@ -45,6 +51,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onAddProject, onUpd
     };
 
     const handleOpenEditModal = (project: Project) => {
+        persistEditId(project.id);
         if (onEditProject) {
             onEditProject(project);
         } else {

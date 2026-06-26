@@ -17,8 +17,14 @@ interface NewsUpdateListProps {
 }
 
 const NewsUpdateList: React.FC<NewsUpdateListProps> = ({ news, onAddNews, onUpdateNews, onDeleteNews, categories, onEditNews }) => {
+    const NEWS_EDIT_ID_KEY = 'atlas_admin_news_edit_id';
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToEdit, setItemToEdit] = useState<Article | null>(null);
+
+    const persistEditId = (id: number) => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(NEWS_EDIT_ID_KEY, String(id));
+    };
 
     const {
         paginatedItems,
@@ -46,6 +52,7 @@ const NewsUpdateList: React.FC<NewsUpdateListProps> = ({ news, onAddNews, onUpda
     };
 
     const handleOpenEditModal = (article: Article) => {
+        persistEditId(article.id);
         if (onEditNews) {
             onEditNews(article);
         } else {

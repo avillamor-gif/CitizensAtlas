@@ -19,8 +19,14 @@ interface PublicationListProps {
 }
 
 const PublicationList: React.FC<PublicationListProps> = ({ publications, onAddPublication, onUpdatePublication, onDeletePublications, publicationTypes, publicationCategories, onAddPublicationCategory, onEditPublication }) => {
+    const PUBLICATION_EDIT_ID_KEY = 'atlas_admin_publication_edit_id';
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToEdit, setItemToEdit] = useState<Article | null>(null);
+
+    const persistEditId = (id: number) => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(PUBLICATION_EDIT_ID_KEY, String(id));
+    };
     
     const {
         paginatedItems,
@@ -48,6 +54,7 @@ const PublicationList: React.FC<PublicationListProps> = ({ publications, onAddPu
     };
 
     const handleOpenEditModal = (article: Article) => {
+        persistEditId(article.id);
         if (onEditPublication) {
             onEditPublication(article);
         } else {

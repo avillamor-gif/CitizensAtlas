@@ -17,8 +17,14 @@ interface VideoListProps {
 }
 
 const VideoList: React.FC<VideoListProps> = ({ videos, onAddVideo, onUpdateVideo, onDeleteVideos, categories, onEditVideo }) => {
+    const VIDEO_EDIT_ID_KEY = 'atlas_admin_video_edit_id';
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToEdit, setItemToEdit] = useState<Article | null>(null);
+
+    const persistEditId = (id: number) => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(VIDEO_EDIT_ID_KEY, String(id));
+    };
 
     const {
         paginatedItems,
@@ -46,6 +52,7 @@ const VideoList: React.FC<VideoListProps> = ({ videos, onAddVideo, onUpdateVideo
     };
 
     const handleOpenEditModal = (article: Article) => {
+        persistEditId(article.id);
         if (onEditVideo) {
             onEditVideo(article);
         } else {
