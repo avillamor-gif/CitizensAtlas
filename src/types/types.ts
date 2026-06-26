@@ -38,6 +38,7 @@ export interface Article {
     title: string;
     description: string;
     imageUrl: string;
+    publisher?: string;
     tagColor: string;
     tags?: string[]; // Multiple tags
     publishDate?: string;

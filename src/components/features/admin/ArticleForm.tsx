@@ -41,6 +41,7 @@ const emptyFormState = {
     title: '',
     description: '',
     category: '',
+    publisher: '',
     imageUrl: '',
     tagColor: 'bg-yellow-400',
     tags: [] as string[],
@@ -68,6 +69,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     // State for tag management
     const [newTag, setNewTag] = useState('');
     const [showAddTag, setShowAddTag] = useState(false);
+    const [isFetchingPublicationImage, setIsFetchingPublicationImage] = useState(false);
 
     // Update newsCategories when categories prop changes
     useEffect(() => {
@@ -92,6 +94,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 title: itemToEdit.title,
                 description: itemToEdit.description || '',
                 category: itemToEdit.category || '', // Ensure always string, never undefined
+                publisher: itemToEdit.publisher || '',
                 imageUrl: itemToEdit.imageUrl,
                 tagColor: itemToEdit.tagColor,
                 tags: itemToEdit.tags || [],
@@ -159,6 +162,32 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             }
         } catch (error) {
             console.warn('Error fetching video thumbnail:', error);
+        }
+    };
+
+    const handlePublicationLinkBlur = async () => {
+        if (itemType !== 'Publication') return;
+
+        const link = formData.publicationLink.trim();
+        if (!link) return;
+
+        // Respect manually uploaded or existing non-fallback images.
+        if (formData.imageFile) return;
+        if (formData.imageUrl && formData.imageUrl !== '/gaia-logo.jpg') return;
+
+        try {
+            setIsFetchingPublicationImage(true);
+            const response = await fetch(`/api/link-preview-image?url=${encodeURIComponent(link)}`);
+            if (!response.ok) return;
+
+            const payload = await response.json();
+            if (payload?.imageUrl) {
+                setFormData(prev => ({ ...prev, imageUrl: payload.imageUrl }));
+            }
+        } catch (error) {
+            console.warn('Could not auto-fetch publication preview image:', error);
+        } finally {
+            setIsFetchingPublicationImage(false);
         }
     };
 
@@ -275,6 +304,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 console.log('ℹ️ No custom image uploaded for video, using video thumbnail');
             }
 
+            // Ensure a stable fallback image when no featured image is provided.
+            if (!uploadedImageUrl) {
+                uploadedImageUrl = '/gaia-logo.jpg';
+            }
+
             const articleData: any = {
                 title: formData.title,
                 description: formData.description,
@@ -316,6 +350,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
             // Only add document fields for Publications
             if (itemType === 'Publication') {
+                articleData.publisher = formData.publisher.trim() || undefined;
                 articleData.documentNames = formData.publicationLink ? ['Publication Link'] : [];
                 articleData.documentUrls = formData.publicationLink ? [formData.publicationLink] : [];
             }
@@ -530,10 +565,26 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             </p>
                         </FormField>
                     )}
-                    <FormField label="Featured Image" required={!isEditMode && itemType !== 'Video'}>
+                    {itemType === 'Publication' && (
+                        <FormField label="Publisher">
+                            <Input
+                                type="text"
+                                name="publisher"
+                                value={formData.publisher}
+                                onChange={handleInputChange}
+                                placeholder="Enter publisher"
+                            />
+                        </FormField>
+                    )}
+                    <FormField label="Featured Image">
                         {itemType === 'Video' && (
                             <p className="mb-2 text-sm text-gray-600">
                                 💡 Thumbnail will be automatically fetched from the video URL. You can upload a custom image if needed.
+                            </p>
+                        )}
+                        {itemType !== 'Video' && (
+                            <p className="mb-2 text-sm text-gray-600">
+                                Optional. If empty, a default fallback image will be used.
                             </p>
                         )}
                         <Input 
@@ -541,7 +592,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             name="imageFile" 
                             onChange={handleImageChange} 
                             accept="image/*" 
-                            required={!itemToEdit && itemType !== 'Video'} 
                         />
                          {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-auto rounded object-cover border" />}
                     </FormField>
@@ -552,9 +602,15 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                 name="publicationLink"
                                 value={formData.publicationLink}
                                 onChange={handleInputChange}
+                                onBlur={handlePublicationLinkBlur}
                                 placeholder="https://example.com/publication"
                             />
-                            <p className="mt-1 text-xs text-gray-500">Paste the publication URL.</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                Paste the publication URL. We will try to auto-capture a featured image from the link.
+                            </p>
+                            {isFetchingPublicationImage && (
+                                <p className="mt-1 text-xs text-gray-500">Fetching preview image from link...</p>
+                            )}
                         </FormField>
                     )}
                     <FormField label="Tags">

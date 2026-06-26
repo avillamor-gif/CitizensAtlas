@@ -67,6 +67,7 @@ CREATE TABLE publications (
   title TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   category TEXT NOT NULL,
+  publisher TEXT,
   description TEXT,
   "imageUrl" TEXT,
   "tagColor" TEXT,

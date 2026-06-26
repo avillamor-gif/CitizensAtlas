@@ -31,6 +31,7 @@ type Article {
   title: String!
   description: String!
   imageUrl: String!
+  publisher: String
   tagColor: String!
   tags: [String!]
   publishDate: String
@@ -86,6 +87,7 @@ input ArticleInput {
   title: String!
   description: String!
   imageUrl: String!
+  publisher: String
   tagColor: String!
   tags: [String!]
   publishDate: String
@@ -101,6 +103,7 @@ input ArticleUpdateInput {
   title: String
   description: String
   imageUrl: String
+  publisher: String
   tagColor: String
   tags: [String!]
   publishDate: String
