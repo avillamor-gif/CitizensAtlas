@@ -170,7 +170,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <ChartCard title="Projects by Country">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <BarChart data={analyticsData.projectsByCountryData} layout="vertical" margin={{ top: 5, right: 30, left: 120, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis type="number" />
@@ -182,7 +182,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                 </ChartCard>
 
                 <ChartCard title="Projects by Status">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <PieChart>
                             <Pie data={analyticsData.projectsByStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
                                 {analyticsData.projectsByStatusData.map((entry, index) => (
@@ -196,7 +196,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                 </ChartCard>
 
                 <ChartCard title="Projects by False Solution Type">
-                     <ResponsiveContainer width="100%" height="100%">
+                     <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <PieChart>
                             <Pie data={analyticsData.projectsBySolutionData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={2}>
                                 {analyticsData.projectsBySolutionData.map((entry, index) => (
@@ -210,7 +210,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                 </ChartCard>
                 
                 <ChartCard title="Projects by IFI">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <BarChart data={analyticsData.projectsByIFIData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" tick={{fontSize: 12}} />
@@ -222,7 +222,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                 </ChartCard>
 
                 <ChartCard title="Project Submissions Over Time">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <LineChart data={analyticsData.projectsOverTimeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
@@ -235,7 +235,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                 </ChartCard>
 
                 <ChartCard title="Projects by Region">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <PieChart>
                             <Pie data={analyticsData.projectsByRegionData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
                                 {analyticsData.projectsByRegionData.map((entry, index) => (
@@ -253,7 +253,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                     className="col-span-1 lg:col-span-2" 
                     chartClassName="h-96"
                 >
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                         <BarChart data={analyticsData.communityActionsData} layout="vertical" margin={{ top: 5, right: 30, left: 280, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis type="number" allowDecimals={false} />

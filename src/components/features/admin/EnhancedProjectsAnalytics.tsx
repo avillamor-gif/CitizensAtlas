@@ -524,7 +524,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[200px] sm:h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <BarChart data={analyticsData.projectsByCountryData} layout="vertical" margin={{ left: 60, right: 10, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                 <XAxis type="number" />
@@ -562,7 +562,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
                 }, {} as any)} 
                 className="h-full w-full"
               >
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                   <PieChart>
                     <Pie
                       data={analyticsData.projectsBySolutionData}
@@ -617,7 +617,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <BarChart data={analyticsData.investmentByCountryData} margin={{ left: -5, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
@@ -645,7 +645,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <LineChart data={analyticsData.projectsOverTimeData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" tick={{ fontSize: 9 }} />
@@ -674,7 +674,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <BarChart data={analyticsData.projectsByIFIData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 7 }} angle={-45} textAnchor="end" height={50} />
@@ -696,7 +696,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <BarChart data={analyticsData.investmentByIFIData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 7 }} angle={-45} textAnchor="end" height={50} />
@@ -718,7 +718,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <PieChart>
                 <Pie
                   data={analyticsData.projectsByRegionData}
@@ -749,7 +749,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <PieChart>
                 <Pie
                   data={analyticsData.gaiaSupportData}
@@ -787,7 +787,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <PieChart>
                 <Pie
                   data={analyticsData.projectsByStatusData}
@@ -818,7 +818,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
           isSuperAdmin={canToggleChartVisibility}
         >
           <ChartContainer config={{}} className="h-[200px] sm:h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
               <BarChart data={analyticsData.communityActionsData} layout="vertical" margin={{ left: 60, right: 10, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                 <XAxis type="number" tick={{ fontSize: 9 }} />
@@ -841,7 +841,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
         >
           {analyticsData.submissionTrendData.length > 0 ? (
             <ChartContainer config={{}} className="h-[180px] sm:h-[220px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                 <LineChart data={analyticsData.submissionTrendData} margin={{ left: -30, right: 5, top: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" tick={{ fontSize: 7 }} angle={-45} textAnchor="end" height={50} />

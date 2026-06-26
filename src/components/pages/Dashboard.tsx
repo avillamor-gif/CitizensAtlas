@@ -38,7 +38,7 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data, dataKey, 
 
 
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={300} minWidth={1} minHeight={1} debounce={50}>
             <BarChart data={data} layout="vertical" margin={{ top: 5, right: 50, left: 20, bottom: 5 }}>
                 <XAxis type="number" hide />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={180} tick={{ fill: '#334155', fontWeight: 'bold', fontSize: '12px' }} interval={0} />
@@ -115,7 +115,7 @@ const PieChartComponent: React.FC<{ data: PieData[]; totalProjects: number; colo
                         <span className="text-sm text-gray-600 font-medium">Total Projects</span>
                     </div>
                 )}
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
                     <PieChart>
                         <Pie
                             data={data}
