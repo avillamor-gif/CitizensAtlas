@@ -111,7 +111,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [isPageStateHydrated, setIsPageStateHydrated] = useState(false);
     const [isLoadingPageData, setIsLoadingPageData] = useState(true);
 
-    const persistEditId = (key: string, id: number) => {
+    const persistEditId = (key: string, id: string | number) => {
         if (typeof window === 'undefined') return;
         window.localStorage.setItem(key, String(id));
     };
@@ -121,12 +121,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         window.localStorage.removeItem(key);
     };
 
-    const getSavedEditId = (key: string): number | null => {
+    const getSavedEditId = (key: string): string | null => {
         if (typeof window === 'undefined') return null;
         const raw = window.localStorage.getItem(key);
-        if (!raw) return null;
-        const parsed = Number(raw);
-        return Number.isNaN(parsed) ? null : parsed;
+        return raw || null;
     };
 
     const isAdminPage = (value: string | null): value is AdminPage => {
@@ -502,7 +500,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 if (!projectToEdit) {
                     const savedProjectId = getSavedEditId(PROJECT_EDIT_ID_KEY);
                     if (savedProjectId !== null) {
-                        const recovered = projects.find(p => p.id === savedProjectId);
+                        const recovered = projects.find(p => String(p.id) === savedProjectId);
                         if (recovered) {
                             setProjectToEdit(recovered);
                             return null;
@@ -574,7 +572,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 if (!projectBriefToEdit) {
                     const savedBriefId = getSavedEditId(PROJECT_BRIEF_EDIT_ID_KEY);
                     if (savedBriefId !== null) {
-                        const recovered = projectBriefs.find(b => b.id === savedBriefId);
+                        const recovered = projectBriefs.find(b => String(b.id) === savedBriefId);
                         if (recovered) {
                             setProjectBriefToEdit(recovered);
                             return null;
@@ -622,7 +620,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 if (!newsToEdit) {
                     const savedNewsId = getSavedEditId(NEWS_EDIT_ID_KEY);
                     if (savedNewsId !== null) {
-                        const recovered = news.find(n => n.id === savedNewsId);
+                        const recovered = news.find(n => String(n.id) === savedNewsId);
                         if (recovered) {
                             setNewsToEdit(recovered);
                             return null;
@@ -691,7 +689,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 if (!publicationToEdit) {
                     const savedPublicationId = getSavedEditId(PUBLICATION_EDIT_ID_KEY);
                     if (savedPublicationId !== null) {
-                        const recovered = publications.find(p => p.id === savedPublicationId);
+                        const recovered = publications.find(p => String(p.id) === savedPublicationId);
                         if (recovered) {
                             setPublicationToEdit(recovered);
                             return null;
@@ -773,7 +771,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 if (!videoToEdit) {
                     const savedVideoId = getSavedEditId(VIDEO_EDIT_ID_KEY);
                     if (savedVideoId !== null) {
-                        const recovered = videos.find(v => v.id === savedVideoId);
+                        const recovered = videos.find(v => String(v.id) === savedVideoId);
                         if (recovered) {
                             setVideoToEdit(recovered);
                             return null;
