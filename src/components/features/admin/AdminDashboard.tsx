@@ -81,6 +81,10 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const PUBLICATION_EDIT_ID_KEY = 'atlas_admin_publication_edit_id';
+    const PROJECT_EDIT_ID_KEY = 'atlas_admin_project_edit_id';
+    const PROJECT_BRIEF_EDIT_ID_KEY = 'atlas_admin_project_brief_edit_id';
+    const NEWS_EDIT_ID_KEY = 'atlas_admin_news_edit_id';
+    const VIDEO_EDIT_ID_KEY = 'atlas_admin_video_edit_id';
     const router = useRouter();
     const pathname = usePathname();
     const { 
@@ -105,6 +109,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
     const [isPageStateHydrated, setIsPageStateHydrated] = useState(false);
+
+    const persistEditId = (key: string, id: number) => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(key, String(id));
+    };
+
+    const clearEditId = (key: string) => {
+        if (typeof window === 'undefined') return;
+        window.localStorage.removeItem(key);
+    };
+
+    const getSavedEditId = (key: string): number | null => {
+        if (typeof window === 'undefined') return null;
+        const raw = window.localStorage.getItem(key);
+        if (!raw) return null;
+        const parsed = Number(raw);
+        return Number.isNaN(parsed) ? null : parsed;
+    };
 
     const isAdminPage = (value: string | null): value is AdminPage => {
         if (!value) return false;
@@ -297,24 +319,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
 
     const handleEditProject = (project: Project) => {
         setProjectToEdit(project);
+        persistEditId(PROJECT_EDIT_ID_KEY, project.id);
         setActiveAdminPage('projects-edit');
+    };
+
+    const handleEditProjectBrief = (brief: ProjectBrief) => {
+        setProjectBriefToEdit(brief);
+        persistEditId(PROJECT_BRIEF_EDIT_ID_KEY, brief.id!);
+        setActiveAdminPage('project-briefs-edit');
     };
 
     const handleEditNews = (article: Article) => {
         setNewsToEdit(article);
+        persistEditId(NEWS_EDIT_ID_KEY, article.id);
         setActiveAdminPage('news-edit');
     };
 
     const handleEditPublication = (article: Article) => {
         setPublicationToEdit(article);
-        if (typeof window !== 'undefined') {
-            window.localStorage.setItem(PUBLICATION_EDIT_ID_KEY, String(article.id));
-        }
+        persistEditId(PUBLICATION_EDIT_ID_KEY, article.id);
         setActiveAdminPage('publications-edit');
     };
 
     const handleEditVideo = (article: Article) => {
         setVideoToEdit(article);
+        persistEditId(VIDEO_EDIT_ID_KEY, article.id);
         setActiveAdminPage('videos-edit');
     };
 
@@ -457,6 +486,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 );
             case 'projects-edit':
                 if (!canViewProjects) return <AccessDenied />;
+                if (!projectToEdit) {
+                    const savedProjectId = getSavedEditId(PROJECT_EDIT_ID_KEY);
+                    if (savedProjectId !== null) {
+                        const recovered = projects.find(p => p.id === savedProjectId);
+                        if (recovered) {
+                            setProjectToEdit(recovered);
+                            return null;
+                        }
+                    }
+                    setActiveAdminPage('projects-list');
+                    return null;
+                }
                 return (
                     <ProjectFormPage
                         onUpdateProject={onUpdateProject}
@@ -464,6 +505,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             // Stay on form page after saving
                         }}
                         onBack={() => {
+                            clearEditId(PROJECT_EDIT_ID_KEY);
                             setProjectToEdit(null);
                             setActiveAdminPage('projects-list');
                         }}
@@ -492,10 +534,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 return (
                     <ProjectBriefList
                         briefs={projectBriefs}
-                        onEdit={(brief) => {
-                            setProjectBriefToEdit(brief);
-                            setActiveAdminPage('project-briefs-edit');
-                        }}
+                        onEdit={handleEditProjectBrief}
                         onDelete={onDeleteProjectBriefs}
                     />
                 );
@@ -516,6 +555,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             case 'project-briefs-edit':
                 if (!canViewProjectBriefs) return <AccessDenied />;
                 if (!projectBriefToEdit) {
+                    const savedBriefId = getSavedEditId(PROJECT_BRIEF_EDIT_ID_KEY);
+                    if (savedBriefId !== null) {
+                        const recovered = projectBriefs.find(b => b.id === savedBriefId);
+                        if (recovered) {
+                            setProjectBriefToEdit(recovered);
+                            return null;
+                        }
+                    }
                     setActiveAdminPage('project-briefs-list');
                     return null;
                 }
@@ -524,10 +571,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         briefToEdit={projectBriefToEdit}
                         onSave={(briefData) => {
                             onUpdateProjectBrief({ ...briefData, id: projectBriefToEdit.id! });
+                            clearEditId(PROJECT_BRIEF_EDIT_ID_KEY);
                             setProjectBriefToEdit(null);
                             setActiveAdminPage('project-briefs-list');
                         }}
                         onCancel={() => {
+                            clearEditId(PROJECT_BRIEF_EDIT_ID_KEY);
                             setProjectBriefToEdit(null);
                             setActiveAdminPage('project-briefs-list');
                         }}
@@ -549,11 +598,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 );
             case 'news-edit':
                 if (!canViewNews) return <AccessDenied />;
+                if (!newsToEdit) {
+                    const savedNewsId = getSavedEditId(NEWS_EDIT_ID_KEY);
+                    if (savedNewsId !== null) {
+                        const recovered = news.find(n => n.id === savedNewsId);
+                        if (recovered) {
+                            setNewsToEdit(recovered);
+                            return null;
+                        }
+                    }
+                    setActiveAdminPage('news-list');
+                    return null;
+                }
                 return (
                     <NewsFormPage
                         onAddNews={onAddNews}
                         onUpdateNews={onUpdateNews}
                         onBack={() => {
+                            clearEditId(NEWS_EDIT_ID_KEY);
                             setNewsToEdit(null);
                             setActiveAdminPage('news-list');
                         }}
@@ -602,14 +664,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             case 'publications-edit':
                 if (!canViewPublications) return <AccessDenied />;
                 if (!publicationToEdit) {
-                    if (typeof window !== 'undefined') {
-                        const savedPublicationId = window.localStorage.getItem(PUBLICATION_EDIT_ID_KEY);
-                        if (savedPublicationId) {
-                            const recovered = publications.find(p => p.id === Number(savedPublicationId));
-                            if (recovered) {
-                                setPublicationToEdit(recovered);
-                                return null;
-                            }
+                    const savedPublicationId = getSavedEditId(PUBLICATION_EDIT_ID_KEY);
+                    if (savedPublicationId !== null) {
+                        const recovered = publications.find(p => p.id === savedPublicationId);
+                        if (recovered) {
+                            setPublicationToEdit(recovered);
+                            return null;
                         }
                     }
                     setActiveAdminPage('publications-list');
@@ -620,9 +680,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         onAddPublication={onAddPublication}
                         onUpdatePublication={onUpdatePublication}
                         onBack={() => {
-                            if (typeof window !== 'undefined') {
-                                window.localStorage.removeItem(PUBLICATION_EDIT_ID_KEY);
-                            }
+                            clearEditId(PUBLICATION_EDIT_ID_KEY);
                             setPublicationToEdit(null);
                             setActiveAdminPage('publications-list');
                         }}
@@ -683,11 +741,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 );
             case 'videos-edit':
                 if (!canViewVideos) return <AccessDenied />;
+                if (!videoToEdit) {
+                    const savedVideoId = getSavedEditId(VIDEO_EDIT_ID_KEY);
+                    if (savedVideoId !== null) {
+                        const recovered = videos.find(v => v.id === savedVideoId);
+                        if (recovered) {
+                            setVideoToEdit(recovered);
+                            return null;
+                        }
+                    }
+                    setActiveAdminPage('videos-list');
+                    return null;
+                }
                 return (
                     <VideoFormPage
                         onAddVideo={onAddVideo}
                         onUpdateVideo={onUpdateVideo}
                         onBack={() => {
+                            clearEditId(VIDEO_EDIT_ID_KEY);
                             setVideoToEdit(null);
                             setActiveAdminPage('videos-list');
                         }}
