@@ -34,6 +34,9 @@ body {
   .animate-blink {
     animation: blink 1.5s infinite;
   }
+  .atlas-display-heading {
+    @apply font-serif text-4xl leading-none sm:text-5xl lg:text-[4rem];
+  }
 }
 
 /* Fix MapLibre popup close button position */

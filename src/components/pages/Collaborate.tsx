@@ -8,7 +8,7 @@ const Collaborate: React.FC = () => {
         <section className="bg-brand-dark-blue py-16 px-4 sm:px-8">
             <div className="container mx-auto grid md:grid-cols-2 gap-8 items-center">
                 <div className="text-white">
-                    <h2 className="text-4xl font-extrabold mb-2">COLLABORATE WITH US</h2>
+                    <h2 className="atlas-display-heading mb-2">COLLABORATE WITH US</h2>
                     <div className="w-16 h-1 bg-white mb-4"></div>
                 </div>
                 <div className="text-white">

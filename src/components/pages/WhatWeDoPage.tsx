@@ -231,7 +231,7 @@ const WhatWeDoPage: React.FC<WhatWeDoPageProps> = ({ currentUser }) => {
     <div className="bg-gray-50">
       <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
         <div>
-          <h1 className="text-5xl font-extrabold mb-4">What We Do</h1>
+          <h1 className="atlas-display-heading mb-4">What We Do</h1>
           <p className="text-xl max-w-3xl mx-auto">
             We provide data, tools, and stories to help communities fight for environmental justice and promote real Zero Waste solutions.
           </p>
