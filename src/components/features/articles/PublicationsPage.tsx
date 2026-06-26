@@ -18,12 +18,18 @@ interface PublicationsPageProps {
 
 const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticle, onIncrementDownload }) => {
   const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [tagFilter, setTagFilter] = useState('all');
   const [yearFilter, setYearFilter] = useState('all');
 
+  const publicationTypes = useMemo(() => {
+    const types = items.map(p => p.category).filter(Boolean);
+    return ['all', ...Array.from(new Set(types)).sort()];
+  }, [items]);
+
   const categories = useMemo(() => {
-    const cats = items.map(p => p.category).filter(Boolean);
+    const cats = items.map(p => p.publicationCategory).filter(Boolean) as string[];
     return ['all', ...Array.from(new Set(cats)).sort()];
   }, [items]);
 
@@ -39,7 +45,12 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
     return ['all', ...Array.from(new Set(allYears)).sort((a, b) => Number(b) - Number(a))];
   }, [items]);
 
-  const hasActiveFilters = search !== '' || categoryFilter !== 'all' || tagFilter !== 'all' || yearFilter !== 'all';
+  const hasActiveFilters =
+    search !== '' ||
+    typeFilter !== 'all' ||
+    categoryFilter !== 'all' ||
+    tagFilter !== 'all' ||
+    yearFilter !== 'all';
 
   const filtered = useMemo(() => {
     return items.filter(pub => {
@@ -47,17 +58,21 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
         search === '' ||
         pub.title.toLowerCase().includes(search.toLowerCase()) ||
         (pub.description ?? '').toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || pub.category === categoryFilter;
+      const matchesType = typeFilter === 'all' || pub.category === typeFilter;
+      const matchesCategory =
+        categoryFilter === 'all' ||
+        (pub.publicationCategory ?? '') === categoryFilter;
       const matchesTag = tagFilter === 'all' || (pub.tags ?? []).includes(tagFilter);
       const matchesYear =
         yearFilter === 'all' ||
         (pub.publishDate && new Date(pub.publishDate).getFullYear().toString() === yearFilter);
-      return matchesSearch && matchesCategory && matchesTag && matchesYear;
+      return matchesSearch && matchesType && matchesCategory && matchesTag && matchesYear;
     });
-  }, [items, search, categoryFilter, tagFilter, yearFilter]);
+  }, [items, search, typeFilter, categoryFilter, tagFilter, yearFilter]);
 
   const handleClearFilters = () => {
     setSearch('');
+    setTypeFilter('all');
     setCategoryFilter('all');
     setTagFilter('all');
     setYearFilter('all');
@@ -71,14 +86,26 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
         onChange={e => setSearch(e.target.value)}
         className="w-full md:w-64 h-11"
       />
+      <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <SelectTrigger className="w-full md:w-48 h-11">
+          <SelectValue placeholder="All Publication Types" />
+        </SelectTrigger>
+        <SelectContent>
+          {publicationTypes.map(type => (
+            <SelectItem key={type} value={type}>
+              {type === 'all' ? 'All Publication Types' : type}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <Select value={categoryFilter} onValueChange={setCategoryFilter}>
         <SelectTrigger className="w-full md:w-48 h-11">
-          <SelectValue placeholder="All Categories" />
+          <SelectValue placeholder="All Publication Categories" />
         </SelectTrigger>
         <SelectContent>
           {categories.map(cat => (
             <SelectItem key={cat} value={cat}>
-              {cat === 'all' ? 'All Categories' : cat}
+              {cat === 'all' ? 'All Publication Categories' : cat}
             </SelectItem>
           ))}
         </SelectContent>
