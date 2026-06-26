@@ -19,7 +19,7 @@ export default function Admin() {
   const [publicationTypes, setPublicationTypes] = useState<string[]>([])
   const [publicationCategories, setPublicationCategories] = useState<string[]>([])
   const [videoCategories, setVideoCategories] = useState<string[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   
   // Track what data has been loaded to prevent redundant fetches
@@ -45,7 +45,6 @@ export default function Admin() {
     
     try {
       console.log('📥 Admin: Loading categories...')
-      setLoading(true)
       setLoadError(null)
       
       const [newsCatsData, pubTypesData, pubCategoriesData, videoCatsData] = await Promise.all([
@@ -69,8 +68,6 @@ export default function Admin() {
       })
     } catch (error) {
       console.error('❌ Admin: Error loading categories:', error)
-    } finally {
-      setLoading(false)
     }
   }
 

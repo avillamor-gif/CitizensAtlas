@@ -109,6 +109,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
     const [isPageStateHydrated, setIsPageStateHydrated] = useState(false);
+    const [isLoadingPageData, setIsLoadingPageData] = useState(false);
 
     const persistEditId = (key: string, id: number) => {
         if (typeof window === 'undefined') return;
@@ -268,10 +269,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     // Load data when switching to relevant pages
     useEffect(() => {
         if (pathname.startsWith('/admin') && !isPageStateHydrated) {
+            setIsLoadingPageData(false);
             return;
         }
 
+        let isCancelled = false;
+
         const loadPageData = async () => {
+            setIsLoadingPageData(true);
             try {
                 if (activeAdminPage === 'projects-list' || activeAdminPage === 'projects-edit' || activeAdminPage === 'projects-analytics') {
                     await onLoadProjects?.()
@@ -300,10 +305,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 }
             } catch (error) {
                 console.error('Error loading page data:', error)
+            } finally {
+                if (!isCancelled) {
+                    setIsLoadingPageData(false);
+                }
             }
         }
         
         loadPageData()
+
+        return () => {
+            isCancelled = true;
+        };
     }, [activeAdminPage, isPageStateHydrated, pathname])
 
     const testLogout = async () => {
@@ -494,6 +507,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             setProjectToEdit(recovered);
                             return null;
                         }
+                        if (isLoadingPageData) {
+                            return <div className="p-4">Loading project...</div>;
+                        }
+                        clearEditId(PROJECT_EDIT_ID_KEY);
                     }
                     setActiveAdminPage('projects-list');
                     return null;
@@ -562,6 +579,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             setProjectBriefToEdit(recovered);
                             return null;
                         }
+                        if (isLoadingPageData) {
+                            return <div className="p-4">Loading project brief...</div>;
+                        }
+                        clearEditId(PROJECT_BRIEF_EDIT_ID_KEY);
                     }
                     setActiveAdminPage('project-briefs-list');
                     return null;
@@ -606,6 +627,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             setNewsToEdit(recovered);
                             return null;
                         }
+                        if (isLoadingPageData) {
+                            return <div className="p-4">Loading news item...</div>;
+                        }
+                        clearEditId(NEWS_EDIT_ID_KEY);
                     }
                     setActiveAdminPage('news-list');
                     return null;
@@ -671,6 +696,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             setPublicationToEdit(recovered);
                             return null;
                         }
+                        if (isLoadingPageData) {
+                            return <div className="p-4">Loading publication...</div>;
+                        }
+                        clearEditId(PUBLICATION_EDIT_ID_KEY);
                     }
                     setActiveAdminPage('publications-list');
                     return null;
@@ -749,6 +778,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             setVideoToEdit(recovered);
                             return null;
                         }
+                        if (isLoadingPageData) {
+                            return <div className="p-4">Loading video...</div>;
+                        }
+                        clearEditId(VIDEO_EDIT_ID_KEY);
                     }
                     setActiveAdminPage('videos-list');
                     return null;
