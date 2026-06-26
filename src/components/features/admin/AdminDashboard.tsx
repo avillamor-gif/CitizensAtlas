@@ -104,6 +104,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [newsToEdit, setNewsToEdit] = useState<Article | null>(null);
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
+    const [isPageStateHydrated, setIsPageStateHydrated] = useState(false);
 
     const isAdminPage = (value: string | null): value is AdminPage => {
         if (!value) return false;
@@ -135,12 +136,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         if (savedPage) {
             setActiveAdminPage(savedPage);
         }
+
+        setIsPageStateHydrated(true);
     }, [pathname]);
 
     // Persist active admin page so refresh returns to the same section.
     useEffect(() => {
         if (typeof window === 'undefined') return;
         if (!pathname.startsWith('/admin')) return;
+        if (!isPageStateHydrated) return;
 
         window.localStorage.setItem('atlas_admin_active_page', activeAdminPage);
 
@@ -148,7 +152,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         if (pathname !== targetPath) {
             router.replace(targetPath, { scroll: false });
         }
-    }, [activeAdminPage, pathname, router]);
+    }, [activeAdminPage, pathname, router, isPageStateHydrated]);
 
     // Auto-redirect if user doesn't have permission for current page
     React.useEffect(() => {
