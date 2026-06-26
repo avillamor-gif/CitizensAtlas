@@ -19,7 +19,6 @@ export default function Admin() {
   const [publicationTypes, setPublicationTypes] = useState<string[]>([])
   const [publicationCategories, setPublicationCategories] = useState<string[]>([])
   const [videoCategories, setVideoCategories] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   
   // Track what data has been loaded to prevent redundant fetches
@@ -187,7 +186,6 @@ export default function Admin() {
     // In normal operation, use specific load functions instead
     try {
       console.log('� Admin: Loading all data...')
-      setLoading(true)
       setLoadError(null)
       
       const [
@@ -232,8 +230,6 @@ export default function Admin() {
       console.error('❌ Admin: Error loading data:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to load data'
       setLoadError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
   
@@ -262,18 +258,6 @@ export default function Admin() {
     if (targetUrl) {
       router.push(targetUrl)
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-700 font-medium">Loading dashboard...</p>
-          <p className="text-sm text-gray-500 mt-2">This should only take a moment</p>
-        </div>
-      </div>
-    )
   }
 
   // Show login prompt if user is not authenticated

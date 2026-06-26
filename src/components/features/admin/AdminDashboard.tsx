@@ -109,7 +109,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
     const [isPageStateHydrated, setIsPageStateHydrated] = useState(false);
-    const [isLoadingPageData, setIsLoadingPageData] = useState(false);
+    const [isLoadingPageData, setIsLoadingPageData] = useState(true);
 
     const persistEditId = (key: string, id: number) => {
         if (typeof window === 'undefined') return;
