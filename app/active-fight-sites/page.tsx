@@ -9,7 +9,7 @@ import * as dataService from '@/lib/services/data-service'
 function BriefCard({ brief }: { brief: ProjectBrief }) {
   // Only make card clickable if country exists
   const hasCountry = brief.country && brief.country.trim()
-  const href = hasCountry ? `/country-project-briefs?country=${encodeURIComponent(brief.country)}` : '#'
+  const href = hasCountry ? `/country-project-briefs?country=${encodeURIComponent(brief.country || '')}` : '#'
   
   const cardContent = (
     <div className={`bg-white border border-gray-200 rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full ${hasCountry ? 'hover:shadow-xl hover:border-brand-light-blue cursor-pointer' : 'opacity-75'}`}>
