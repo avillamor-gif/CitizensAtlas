@@ -38,6 +38,22 @@ const Home: React.FC<HomeProps> = (props) => {
         country: brief.country, // Store country for navigation
     }));
 
+    // Reconstruct slugs for news, publications, and videos with IDs
+    const newsWithSlugs = props.newsData.map(article => ({
+        ...article,
+        slug: `${slugify(article.title)}-${article.id}`
+    }));
+
+    const publicationsWithSlugs = props.publicationsData.map(article => ({
+        ...article,
+        slug: `${slugify(article.title)}-${article.id}`
+    }));
+
+    const videosWithSlugs = props.videosData.map(article => ({
+        ...article,
+        slug: `${slugify(article.title)}-${article.id}`
+    }));
+
     return (
         <>
             <Hero
@@ -49,17 +65,17 @@ const Home: React.FC<HomeProps> = (props) => {
             currentUser={props.currentUser}
             />
             <div className="bg-brand-section-blue">
-            <ContentCarousel title="LATEST NEWS" items={props.newsData} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
+            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
             </div>
             <div className="bg-white">
             <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} />
             </div>
             <Collaborate />
             <div className="bg-brand-section-blue">
-            <ContentCarousel title="VIDEOS" items={props.videosData} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} />
+            <ContentCarousel title="VIDEOS" items={videosWithSlugs} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} />
             </div>
             <div className="bg-white">
-            <ContentCarousel title="PUBLICATIONS" items={props.publicationsData} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={props.onViewArticle} />
+            <ContentCarousel title="PUBLICATIONS" items={publicationsWithSlugs} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={props.onViewArticle} />
             </div>
             <Newsletter />
         </>
