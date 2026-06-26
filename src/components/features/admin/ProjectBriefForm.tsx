@@ -1,14 +1,17 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ProjectBrief } from '@/types/types'
 import { TiptapEditor } from '@/components/ui/tiptap-editor'
+import { allCountries } from '@/lib/countries'
+import { Check, ChevronsUpDown, Search } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface ProjectBriefFormData {
   project_name: string
@@ -58,6 +61,8 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
   countries = []
 }) => {
   const [mounted, setMounted] = useState(false)
+  const [countryPickerOpen, setCountryPickerOpen] = useState(false)
+  const [countrySearch, setCountrySearch] = useState('')
   const [formData, setFormData] = useState<ProjectBriefFormData>(
     briefToEdit || {
       project_name: '',
@@ -81,6 +86,21 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const countryOptions = useMemo(() => {
+    return Array.from(new Set([...allCountries, ...countries.map(country => country.trim()).filter(Boolean)]))
+      .sort((left, right) => left.localeCompare(right))
+  }, [countries])
+
+  const filteredCountries = useMemo(() => {
+    const query = countrySearch.trim().toLowerCase()
+
+    if (!query) {
+      return countryOptions
+    }
+
+    return countryOptions.filter(country => country.toLowerCase().includes(query))
+  }, [countryOptions, countrySearch])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -122,28 +142,61 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Country: <span className="text-red-500">*</span>
           </label>
-          <Select
-            value={formData.country}
-            onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {countries.length > 0 ? (
-                Array.from(new Set(countries)).sort().map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="" disabled>
-                  No countries available
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
+          <Popover open={countryPickerOpen} onOpenChange={setCountryPickerOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                role="combobox"
+                aria-expanded={countryPickerOpen}
+                className="w-full justify-between font-normal"
+              >
+                <span className={cn('truncate', !formData.country && 'text-gray-500')}>
+                  {formData.country || 'Select country'}
+                </span>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+              <div className="border-b p-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    value={countrySearch}
+                    onChange={(e) => setCountrySearch(e.target.value)}
+                    placeholder="Search country..."
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+              <div className="max-h-[300px] overflow-y-auto p-1">
+                {filteredCountries.length > 0 ? (
+                  filteredCountries.map((country) => {
+                    const isSelected = formData.country === country
+
+                    return (
+                      <button
+                        key={country}
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, country }))
+                          setCountryPickerOpen(false)
+                          setCountrySearch('')
+                        }}
+                        className="flex w-full items-center justify-between rounded-sm px-3 py-2 text-left text-sm hover:bg-gray-100"
+                      >
+                        <span>{country}</span>
+                        <Check className={cn('h-4 w-4 text-brand-dark-blue', isSelected ? 'opacity-100' : 'opacity-0')} />
+                      </button>
+                    )
+                  })
+                ) : (
+                  <div className="px-3 py-2 text-sm text-gray-500">No countries found.</div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+          <input type="hidden" name="country" value={formData.country || ''} required />
         </div>
       </div>
 
