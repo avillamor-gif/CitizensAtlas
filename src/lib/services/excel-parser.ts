@@ -69,13 +69,14 @@ function parseGroupedSpreadsheetProjects(worksheet: XLSX.WorkSheet): ParseResult
   const pickRangeValues = (row: any[], start: number, end: number, labels?: string[]) => {
     if (start < 0 || end < start) return [] as string[];
     const values: string[] = [];
+    const truthyMarkers = new Set(['x', 'yes', 'true', '1', 'y', '✓', '✔']);
     for (let index = start; index <= end; index++) {
       const raw = row[index];
       const text = String(raw ?? '').trim();
       if (!text) continue;
       const label = labels?.[index - start]?.trim();
       const normalized = text.toLowerCase();
-      if ((normalized === 'x' || normalized === 'x ' || normalized === 'yes') && label) {
+      if (truthyMarkers.has(normalized) && label) {
         values.push(label);
       } else {
         values.push(text);
