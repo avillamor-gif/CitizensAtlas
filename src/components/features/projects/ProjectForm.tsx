@@ -319,7 +319,8 @@ const emptyFormState = {
     projectName: '',
     projectNumber: '',
     falseSolutions: [''],
-    ifi: '',
+    ifiSelections: [] as string[],
+    ifiOther: '',
     fundingSource: '',
     financialInstruments: [{ amount: '' }],
     totalProjectAmount: 0,
@@ -344,6 +345,8 @@ const emptyFormState = {
     wasteWorkers: '',
     displacement: '',
 };
+
+const IFI_OPTIONS = ['ADB', 'AIIB', 'GCF', 'GIZ', 'JICA', 'KOICA', 'IFC/ WB', 'Others'] as const;
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, projectToEdit, isModal = true, onAddProject, onUpdateProject, prefilledLocation, userRole = 'contributor' }) => {
     const { user } = useAuth();
@@ -401,7 +404,21 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 projectName: projectToEdit.title || '',
                 projectNumber: detailsMap.get('Project Number') || '',
                 falseSolutions: projectToEdit.corruptionType?.split(', ').map(s => s.trim()) || [''],
-                ifi: detailsMap.get('IFI') || '',
+                ifiSelections: (() => {
+                    const savedIfi = detailsMap.get('IFI') || '';
+                    const parsedValues = savedIfi.split(',').map((value) => value.trim()).filter(Boolean);
+                    const selectedKnown = parsedValues.filter((value) => IFI_OPTIONS.includes(value as typeof IFI_OPTIONS[number]));
+                    const hasOtherValue = parsedValues.some((value) => !IFI_OPTIONS.includes(value as typeof IFI_OPTIONS[number]));
+                    if (hasOtherValue && !selectedKnown.includes('Others')) {
+                        selectedKnown.push('Others');
+                    }
+                    return selectedKnown;
+                })(),
+                ifiOther: (() => {
+                    const savedIfi = detailsMap.get('IFI') || '';
+                    const parsedValues = savedIfi.split(',').map((value) => value.trim()).filter(Boolean);
+                    return parsedValues.filter((value) => !IFI_OPTIONS.includes(value as typeof IFI_OPTIONS[number])).join(', ');
+                })(),
                 fundingSource: detailsMap.get('Funding Source') || '',
                 financialInstruments: [{ amount: totalAmountStr }],
                 totalProjectAmount: totalAmountNum,
@@ -509,6 +526,21 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+    };
+
+    const handleIfiCheckboxChange = (option: string, checked: boolean) => {
+        setFormData((prev) => {
+            const currentSelections = prev.ifiSelections;
+            const nextSelections = checked
+                ? [...new Set([...currentSelections, option])]
+                : currentSelections.filter((value) => value !== option);
+
+            return {
+                ...prev,
+                ifiSelections: nextSelections,
+                ifiOther: option === 'Others' && !checked ? '' : prev.ifiOther,
+            };
+        });
     };
     
     // Get available countries based on selected region
@@ -706,7 +738,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         console.log('Form submitted!', { isEditMode, projectToEdit, onAddProject, onUpdateProject, formData });
         const {
             projectName, country, approvalDate, publishDate, falseSolutions,
-            region, city, projectNumber, ifi, fundingSource,
+            region, city, projectNumber, ifiSelections, ifiOther, fundingSource,
             totalProjectAmount, owner, privateSectorBorrowers, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             groupsInOpposition, typesOfActions, linksToActions,
@@ -714,11 +746,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             wasteWorkers, displacement, latitude, longitude
         } = formData;
 
+        const ifiValue = [
+            ...ifiSelections.filter((selection) => selection !== 'Others'),
+            ...(ifiSelections.includes('Others') && ifiOther.trim() ? [ifiOther.trim()] : []),
+        ].join(', ');
+
         const details = `
 **Region:** ${region}
 **City:** ${city}
 **Project Number:** ${projectNumber || 'N/A'}
-**IFI:** ${ifi}
+**IFI:** ${ifiValue}
 **Funding Source:** ${fundingSource}
 **Total Project Amount:** $${totalProjectAmount.toLocaleString()}
 **Owner:** ${owner}
@@ -962,7 +999,30 @@ ${references}
                         <SectionTitle>Financials</SectionTitle>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField label="International financial institution (IFI)">
-                                <Input type="text" name="ifi" value={formData.ifi} onChange={handleInputChange} />
+                                <div className="space-y-2 rounded-md border border-gray-200 p-3">
+                                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                        {IFI_OPTIONS.map((option) => (
+                                            <label key={option} className="inline-flex items-center gap-2 text-sm text-gray-700">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.ifiSelections.includes(option)}
+                                                    onChange={(e) => handleIfiCheckboxChange(option, e.target.checked)}
+                                                    className="h-4 w-4 rounded border-gray-300 text-brand-medium-blue focus:ring-brand-medium-blue"
+                                                />
+                                                <span>{option}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    {formData.ifiSelections.includes('Others') && (
+                                        <Input
+                                            type="text"
+                                            name="ifiOther"
+                                            value={formData.ifiOther}
+                                            onChange={handleInputChange}
+                                            placeholder="Please specify other IFI"
+                                        />
+                                    )}
+                                </div>
                             </FormField>
                             <FormField label="Funding source">
                                 <Input type="text" name="fundingSource" value={formData.fundingSource} onChange={handleInputChange} />
