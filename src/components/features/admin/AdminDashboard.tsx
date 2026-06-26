@@ -14,6 +14,7 @@ import PublicationList from './PublicationList';
 import VideoList from './VideoList';
 import EnhancedProjectsAnalytics from './EnhancedProjectsAnalytics';
 import NewsCategoryList from './NewsCategoryList';
+import PublicationCategoryList from './PublicationCategoryList';
 import PublicationTypeList from './PublicationTypeList';
 import VideoCategoryList from './VideoCategoryList';
 import ProjectFormPage from './ProjectFormPage';
@@ -57,6 +58,10 @@ interface AdminDashboardProps {
     onAddPublicationType: (type: string) => void;
     onUpdatePublicationType: (oldName: string, newName: string) => void;
     onDeletePublicationType: (typeName: string) => void;
+    publicationCategories: string[];
+    onAddPublicationCategory: (category: string) => void;
+    onUpdatePublicationCategory: (oldName: string, newName: string) => void;
+    onDeletePublicationCategory: (categoryName: string) => void;
     videos: Article[];
     onLoadVideos?: () => Promise<void>;
     onAddVideo: (articleData: Omit<Article, 'id' | 'slug'>) => void;
@@ -81,6 +86,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         newsCategories, onAddNewsCategory, onUpdateNewsCategory, onDeleteNewsCategory,
         publications, onLoadPublications, onAddPublication, onUpdatePublication, onDeletePublications,
         publicationTypes, onAddPublicationType, onUpdatePublicationType, onDeletePublicationType,
+        publicationCategories, onAddPublicationCategory, onUpdatePublicationCategory, onDeletePublicationCategory,
         videos, onLoadVideos, onAddVideo, onUpdateVideo, onDeleteVideos,
         videoCategories, onAddVideoCategory, onUpdateVideoCategory, onDeleteVideoCategory,
         onApproveDraft, onRejectDraft, onEditDraft,
@@ -135,7 +141,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 hasAccess = false;
             } else if (activeAdminPage === 'projects-analytics' && !canViewAnalytics) {
                 hasAccess = false;
-            } else if ((activeAdminPage === 'news-categories' || activeAdminPage === 'publications-types' || activeAdminPage === 'videos-categories') && !canManageCategories) {
+            } else if ((activeAdminPage === 'news-categories' || activeAdminPage === 'publications-types' || activeAdminPage === 'publications-categories' || activeAdminPage === 'videos-categories') && !canManageCategories) {
                 hasAccess = false;
             } else if (activeAdminPage === 'batch-upload' && !canBatchUpload) {
                 hasAccess = false;
@@ -523,6 +529,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         onBack={() => setActiveAdminPage('publications-list')}
                         publicationTypes={publicationTypes}
                         onAddPublicationType={onAddPublicationType}
+                        publicationCategories={publicationCategories}
+                        onAddPublicationCategory={onAddPublicationCategory}
                         userRole={currentUser?.role}
                     />
                 );
@@ -538,6 +546,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         }}
                         publicationTypes={publicationTypes}
                         onAddPublicationType={onAddPublicationType}
+                        publicationCategories={publicationCategories}
+                        onAddPublicationCategory={onAddPublicationCategory}
                         itemToEdit={publicationToEdit}
                         userRole={currentUser?.role}
                     />
@@ -551,6 +561,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         onUpdatePublication={onUpdatePublication}
                         onDeletePublications={onDeletePublications}
                         publicationTypes={publicationTypes}
+                        publicationCategories={publicationCategories}
+                        onAddPublicationCategory={onAddPublicationCategory}
                         onEditPublication={handleEditPublication}
                     />
                 );
@@ -563,6 +575,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         onAddType={onAddPublicationType}
                         onUpdateType={onUpdatePublicationType}
                         onDeleteType={onDeletePublicationType}
+                    />
+                );
+            case 'publications-categories':
+                if (!canManageCategories) return <AccessDenied />;
+                return (
+                    <PublicationCategoryList
+                        publications={publications}
+                        publicationCategories={publicationCategories}
+                        onAddCategory={onAddPublicationCategory}
+                        onUpdateCategory={onUpdatePublicationCategory}
+                        onDeleteCategory={onDeletePublicationCategory}
                     />
                 );
             case 'videos-add':

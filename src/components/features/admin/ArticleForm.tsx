@@ -24,6 +24,8 @@ interface ArticleFormProps {
     itemType: 'News Update' | 'Publication' | 'Video';
     categories?: string[];
     onAddCategory?: (category: string) => void;
+    publicationCategories?: string[];
+    onAddPublicationCategory?: (category: string) => void;
     isModal?: boolean; // If false, renders as inline form without overlay
     userRole?: 'contributor' | 'admin' | 'super-admin';
 }
@@ -41,6 +43,7 @@ const emptyFormState = {
     title: '',
     description: '',
     category: '',
+    publicationCategory: '',
     publisher: '',
     imageUrl: '',
     tagColor: 'bg-yellow-400',
@@ -51,7 +54,7 @@ const emptyFormState = {
     imageFile: null as File | null,
 };
 
-const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, itemToEdit, itemType, categories, onAddCategory, isModal = true, userRole = 'contributor' }) => {
+const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, itemToEdit, itemType, categories, onAddCategory, publicationCategories, onAddPublicationCategory, isModal = true, userRole = 'contributor' }) => {
     console.log('🎨 [ArticleForm] Component mounted/updated:', { itemType, isModal, userRole, hasItemToEdit: !!itemToEdit });
     
     const { user } = useAuth();
@@ -70,6 +73,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     const [newTag, setNewTag] = useState('');
     const [showAddTag, setShowAddTag] = useState(false);
     const [isFetchingPublicationImage, setIsFetchingPublicationImage] = useState(false);
+    const [showAddPublicationCategory, setShowAddPublicationCategory] = useState(false);
+    const [newPublicationCategory, setNewPublicationCategory] = useState('');
 
     // Update newsCategories when categories prop changes
     useEffect(() => {
@@ -94,6 +99,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 title: itemToEdit.title,
                 description: itemToEdit.description || '',
                 category: itemToEdit.category || '', // Ensure always string, never undefined
+                publicationCategory: itemToEdit.publicationCategory || '',
                 publisher: itemToEdit.publisher || '',
                 imageUrl: itemToEdit.imageUrl,
                 tagColor: itemToEdit.tagColor,
@@ -212,6 +218,15 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             setFormData(prev => ({ ...prev, category: newCategory.trim() }));
             setNewCategory('');
             setShowAddCategory(false);
+        }
+    };
+
+    const handleAddPublicationCategory = () => {
+        if (newPublicationCategory.trim() && onAddPublicationCategory) {
+            onAddPublicationCategory(newPublicationCategory.trim());
+            setFormData(prev => ({ ...prev, publicationCategory: newPublicationCategory.trim() }));
+            setNewPublicationCategory('');
+            setShowAddPublicationCategory(false);
         }
     };
 
@@ -351,6 +366,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             // Only add document fields for Publications
             if (itemType === 'Publication') {
                 articleData.publisher = formData.publisher.trim() || undefined;
+                articleData.publicationCategory = formData.publicationCategory || undefined;
                 articleData.documentNames = formData.publicationLink ? ['Publication Link'] : [];
                 articleData.documentUrls = formData.publicationLink ? [formData.publicationLink] : [];
             }
@@ -550,6 +566,64 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             </>
                         )}
                     </FormField>
+                    {itemType === 'Publication' && (
+                        <FormField label="Publication Category" required>
+                            <Select
+                                value={formData.publicationCategory || ''}
+                                onValueChange={(value) => handleSelectChange('publicationCategory', value)}
+                                required
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Publication Category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {publicationCategories && publicationCategories.filter(c => c !== '').map(cat => (
+                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {onAddPublicationCategory && (
+                                <>
+                                    {!showAddPublicationCategory ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowAddPublicationCategory(true)}
+                                            className="mt-2 text-sm text-brand-medium-blue hover:underline"
+                                        >
+                                            + Add New Publication Category
+                                        </button>
+                                    ) : (
+                                        <div className="mt-2 flex items-center space-x-2">
+                                            <Input
+                                                type="text"
+                                                value={newPublicationCategory}
+                                                onChange={(e) => setNewPublicationCategory(e.target.value)}
+                                                placeholder="Enter new publication category"
+                                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPublicationCategory())}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleAddPublicationCategory}
+                                                className="text-white px-4 py-2 rounded-md transition-colors"
+                                                style={{ backgroundColor: '#0d234f' }}
+                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
+                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                                            >
+                                                Add
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => { setShowAddPublicationCategory(false); setNewPublicationCategory(''); }}
+                                                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </FormField>
+                    )}
                     {itemType === 'Video' && (
                         <FormField label="Video URL (YouTube, Vimeo, Facebook)" required>
                             <Input 

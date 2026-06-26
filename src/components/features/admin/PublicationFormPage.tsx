@@ -8,11 +8,13 @@ interface PublicationFormPageProps {
     onBack: () => void;
     publicationTypes: string[];
     onAddPublicationType?: (publicationType: string) => void;
+    publicationCategories: string[];
+    onAddPublicationCategory?: (category: string) => void;
     itemToEdit?: Article | null;
     userRole?: 'contributor' | 'admin' | 'super-admin';
 }
 
-const PublicationFormPage: React.FC<PublicationFormPageProps> = ({ onAddPublication, onUpdatePublication, onBack, publicationTypes, onAddPublicationType, itemToEdit, userRole }) => {
+const PublicationFormPage: React.FC<PublicationFormPageProps> = ({ onAddPublication, onUpdatePublication, onBack, publicationTypes, onAddPublicationType, publicationCategories, onAddPublicationCategory, itemToEdit, userRole }) => {
     return (
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -42,6 +44,8 @@ const PublicationFormPage: React.FC<PublicationFormPageProps> = ({ onAddPublicat
                 itemType="Publication"
                 categories={publicationTypes}
                 onAddCategory={onAddPublicationType}
+                publicationCategories={publicationCategories}
+                onAddPublicationCategory={onAddPublicationCategory}
                 isModal={false}
                 userRole={userRole}
             />

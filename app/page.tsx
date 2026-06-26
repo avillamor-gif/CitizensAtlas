@@ -57,6 +57,7 @@ function HomePageContent() {
   const [videos, setVideos] = useState<Article[]>([])
   const [newsCategories, setNewsCategories] = useState<string[]>([])
   const [publicationTypes, setPublicationTypes] = useState<string[]>([])
+  const [publicationCategories, setPublicationCategories] = useState<string[]>([])
   const [videoCategories, setVideoCategories] = useState<string[]>([])
   const [isAdminView, setIsAdminView] = useState(false)
   const [dataLoading, setDataLoading] = useState(true)
@@ -89,6 +90,7 @@ function HomePageContent() {
         projectBriefsData,
         newsCategoriesData,
         publicationTypesData,
+        publicationCategoriesData,
         videoCategoriesData,
       ] = await Promise.all([
         dataService.getPublishedProjectsWithDetails(),
@@ -98,12 +100,14 @@ function HomePageContent() {
         dataService.getPublishedProjectBriefs(),
         dataService.getNewsCategories(),
         dataService.getPublicationTypes(),
+        dataService.getPublicationCategories(),
         dataService.getVideoCategories(),
       ])
       
       // Set category data immediately
       setNewsCategories(newsCategoriesData)
       setPublicationTypes(publicationTypesData)
+      setPublicationCategories(publicationCategoriesData)
       setVideoCategories(videoCategoriesData)
 
       const loadTime = Date.now() - startTime
@@ -849,6 +853,70 @@ function HomePageContent() {
     }
   }
 
+  // Publication Category Handlers
+  const handleAddPublicationCategory = async (category: string) => {
+    if (!category) return
+
+    if (publicationCategories.includes(category)) {
+      alert(`Publication category "${category}" already exists.`)
+      return
+    }
+
+    try {
+      console.log('💾 Adding publication category to database:', category)
+      await dataService.createPublicationCategory(category)
+      setPublicationCategories(prev => [...prev, category].sort())
+      alert('✅ Publication category added successfully!')
+    } catch (error) {
+      console.error('Failed to add publication category:', error)
+      alert('❌ Failed to add publication category. Please try again.')
+    }
+  }
+
+  const handleUpdatePublicationCategory = async (oldName: string, newName: string) => {
+    if (newName && !publicationCategories.includes(newName)) {
+      try {
+        console.log('💾 Updating publication category in database:', { oldName, newName })
+        await dataService.updatePublicationCategory(oldName, newName)
+
+        setPublicationCategories(prev =>
+          prev.map(c => c === oldName ? newName : c).sort()
+        )
+
+        setPublications(prevPubs =>
+          prevPubs.map(pub =>
+            pub.publicationCategory === oldName ? { ...pub, publicationCategory: newName } : pub
+          )
+        )
+
+        alert('✅ Publication category updated successfully!')
+      } catch (error) {
+        console.error('Failed to update publication category:', error)
+        alert('❌ Failed to update publication category. Please try again.')
+      }
+    } else if (newName !== oldName) {
+      alert(`Publication category "${newName}" already exists.`)
+    }
+  }
+
+  const handleDeletePublicationCategory = async (categoryName: string) => {
+    const isCategoryInUse = publications.some(pub => pub.publicationCategory === categoryName)
+    if (isCategoryInUse) {
+      alert(`Cannot delete category "${categoryName}" as it's currently in use by one or more publications.`)
+      return
+    }
+
+    try {
+      console.log('💾 Deleting publication category from database:', categoryName)
+      await dataService.deletePublicationCategory(categoryName)
+      setPublicationCategories(prev => prev.filter(c => c !== categoryName))
+      alert('✅ Publication category deleted successfully!')
+    } catch (error) {
+      console.error('Failed to delete publication category:', error)
+      alert('❌ Failed to delete publication category. Please try again.')
+    }
+  }
+
   // Draft Approval Handlers
   const handleApproveDraft = async (item: { id: number; type: 'project' | 'news' | 'publication' | 'video'; submittedBy?: string; title?: string }) => {
     const { id, type } = item;
@@ -1139,6 +1207,10 @@ function HomePageContent() {
           onAddPublicationType={handleAddPublicationType}
           onUpdatePublicationType={handleUpdatePublicationType}
           onDeletePublicationType={handleDeletePublicationType}
+          publicationCategories={publicationCategories}
+          onAddPublicationCategory={handleAddPublicationCategory}
+          onUpdatePublicationCategory={handleUpdatePublicationCategory}
+          onDeletePublicationCategory={handleDeletePublicationCategory}
           videos={videos}
           onAddVideo={handleAddVideo}
           onUpdateVideo={handleUpdateVideo}

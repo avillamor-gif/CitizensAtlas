@@ -17,6 +17,7 @@ export default function Admin() {
   const [videos, setVideos] = useState<Article[]>([])
   const [newsCategories, setNewsCategories] = useState<string[]>([])
   const [publicationTypes, setPublicationTypes] = useState<string[]>([])
+  const [publicationCategories, setPublicationCategories] = useState<string[]>([])
   const [videoCategories, setVideoCategories] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -47,20 +48,23 @@ export default function Admin() {
       setLoading(true)
       setLoadError(null)
       
-      const [newsCatsData, pubTypesData, videoCatsData] = await Promise.all([
+      const [newsCatsData, pubTypesData, pubCategoriesData, videoCatsData] = await Promise.all([
         DataService.getNewsCategories(),
         DataService.getPublicationTypes(),
+        DataService.getPublicationCategories(),
         DataService.getVideoCategories()
       ])
 
       setNewsCategories(newsCatsData)
       setPublicationTypes(pubTypesData)
+      setPublicationCategories(pubCategoriesData)
       setVideoCategories(videoCatsData)
       setLoadedData(prev => ({ ...prev, categories: true }))
       
       console.log('✅ Admin: Categories loaded', {
         newsCategories: newsCatsData.length,
         publicationTypes: pubTypesData.length,
+        publicationCategories: pubCategoriesData.length,
         videoCategories: videoCatsData.length
       })
     } catch (error) {
@@ -196,6 +200,7 @@ export default function Admin() {
         videosData,
         newsCatsData,
         pubTypesData,
+        pubCategoriesData,
         videoCatsData
       ] = await Promise.all([
         DataService.getProjects(),
@@ -204,6 +209,7 @@ export default function Admin() {
         DataService.getVideos(),
         DataService.getNewsCategories(),
         DataService.getPublicationTypes(),
+        DataService.getPublicationCategories(),
         DataService.getVideoCategories()
       ])
 
@@ -213,6 +219,7 @@ export default function Admin() {
       setVideos(videosData)
       setNewsCategories(newsCatsData)
       setPublicationTypes(pubTypesData)
+      setPublicationCategories(pubCategoriesData)
       setVideoCategories(videoCatsData)
       setLoadedData({
         projects: true,
@@ -470,6 +477,19 @@ export default function Admin() {
         }}
         onDeletePublicationType={async (typeName) => {
           await DataService.deletePublicationType(typeName)
+          await reloadData('categories')
+        }}
+        publicationCategories={publicationCategories}
+        onAddPublicationCategory={async (category) => {
+          await DataService.createPublicationCategory(category)
+          await reloadData('categories')
+        }}
+        onUpdatePublicationCategory={async (oldName, newName) => {
+          await DataService.updatePublicationCategory(oldName, newName)
+          await reloadData('categories')
+        }}
+        onDeletePublicationCategory={async (categoryName) => {
+          await DataService.deletePublicationCategory(categoryName)
           await reloadData('categories')
         }}
         videos={videos}

@@ -989,6 +989,55 @@ export async function deletePublicationType(name: string) {
   if (error) throw error
 }
 
+export async function getPublicationCategories() {
+  try {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('publication_categories')
+      .select('name')
+      .order('name', { ascending: true })
+
+    if (error) throw error
+
+    return (data || []).map((c: { name: string }) => c.name)
+  } catch (error) {
+    console.error('Error in getPublicationCategories:', error)
+    throw error
+  }
+}
+
+export async function createPublicationCategory(name: string) {
+  const { data, error } = await (supabase
+    .from('publication_categories') as any)
+    .insert([{ name }])
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function updatePublicationCategory(oldName: string, newName: string) {
+  const { data, error } = await (supabase
+    .from('publication_categories') as any)
+    .update({ name: newName })
+    .eq('name', oldName)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function deletePublicationCategory(name: string) {
+  const { error } = await supabase
+    .from('publication_categories')
+    .delete()
+    .eq('name', name)
+
+  if (error) throw error
+}
+
 export async function getVideoCategories() {
   try {
     const supabase = getSupabase()

@@ -35,6 +35,7 @@ export interface Article {
     id: number;
     slug: string;
     category: string;
+    publicationCategory?: string;
     title: string;
     description: string;
     imageUrl: string;

@@ -67,6 +67,7 @@ CREATE TABLE publications (
   title TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   category TEXT NOT NULL,
+  "publicationCategory" TEXT,
   publisher TEXT,
   description TEXT,
   "imageUrl" TEXT,
@@ -124,6 +125,16 @@ CREATE TABLE publication_types (
 );
 
 -- ============================================
+-- PUBLICATION CATEGORIES TABLE
+-- ============================================
+CREATE TABLE publication_categories (
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT UNIQUE NOT NULL,
+  "createdAt" TIMESTAMPTZ DEFAULT NOW(),
+  "updatedAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
 -- VIDEO CATEGORIES TABLE
 -- ============================================
 CREATE TABLE video_categories (
@@ -143,6 +154,7 @@ CREATE INDEX IF NOT EXISTS idx_news_category ON news(category);
 CREATE INDEX IF NOT EXISTS idx_news_slug ON news(slug);
 CREATE INDEX IF NOT EXISTS idx_publications_status ON publications(status);
 CREATE INDEX IF NOT EXISTS idx_publications_category ON publications(category);
+CREATE INDEX IF NOT EXISTS idx_publications_publication_category ON publications("publicationCategory");
 CREATE INDEX IF NOT EXISTS idx_publications_slug ON publications(slug);
 CREATE INDEX IF NOT EXISTS idx_videos_status ON videos(status);
 CREATE INDEX IF NOT EXISTS idx_videos_category ON videos(category);
@@ -158,6 +170,7 @@ ALTER TABLE publications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE videos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE news_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE publication_types ENABLE ROW LEVEL SECURITY;
+ALTER TABLE publication_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE video_categories ENABLE ROW LEVEL SECURITY;
 
 -- Public read access for published content
@@ -178,6 +191,9 @@ CREATE POLICY "Public can view news categories" ON news_categories
   FOR SELECT USING (true);
 
 CREATE POLICY "Public can view publication types" ON publication_types
+  FOR SELECT USING (true);
+
+CREATE POLICY "Public can view publication categories" ON publication_categories
   FOR SELECT USING (true);
 
 CREATE POLICY "Public can view video categories" ON video_categories
@@ -242,6 +258,9 @@ CREATE POLICY "Authenticated users can manage news categories" ON news_categorie
 CREATE POLICY "Authenticated users can manage publication types" ON publication_types
   FOR ALL USING (auth.role() = 'authenticated');
 
+CREATE POLICY "Authenticated users can manage publication categories" ON publication_categories
+  FOR ALL USING (auth.role() = 'authenticated');
+
 CREATE POLICY "Authenticated users can manage video categories" ON video_categories
   FOR ALL USING (auth.role() = 'authenticated');
 
@@ -272,6 +291,9 @@ CREATE TRIGGER update_news_categories_updated_at BEFORE UPDATE ON news_categorie
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_publication_types_updated_at BEFORE UPDATE ON publication_types
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_publication_categories_updated_at BEFORE UPDATE ON publication_categories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_video_categories_updated_at BEFORE UPDATE ON video_categories

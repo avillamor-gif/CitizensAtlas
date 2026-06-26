@@ -825,6 +825,77 @@ export async function deletePublicationType(name: string): Promise<void> {
   }
 }
 
+export async function getPublicationCategories(): Promise<string[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await supabaseService.getPublicationCategories()
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('atlas_publicationCategories')
+    return stored ? JSON.parse(stored) : []
+  }
+  return []
+}
+
+export async function createPublicationCategory(name: string): Promise<void> {
+  if (isSupabaseConfigured()) {
+    try {
+      await supabaseService.createPublicationCategory(name)
+      return
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+
+  const categories = await getPublicationCategories()
+  if (!categories.includes(name)) {
+    const updated = [...categories, name].sort()
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('atlas_publicationCategories', JSON.stringify(updated))
+    }
+  }
+}
+
+export async function updatePublicationCategory(oldName: string, newName: string): Promise<void> {
+  if (isSupabaseConfigured()) {
+    try {
+      await supabaseService.updatePublicationCategory(oldName, newName)
+      return
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+
+  const categories = await getPublicationCategories()
+  const updated = categories.map(c => c === oldName ? newName : c).sort()
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('atlas_publicationCategories', JSON.stringify(updated))
+  }
+}
+
+export async function deletePublicationCategory(name: string): Promise<void> {
+  if (isSupabaseConfigured()) {
+    try {
+      await supabaseService.deletePublicationCategory(name)
+      return
+    } catch (error) {
+      console.warn('Supabase error, falling back to localStorage:', error)
+    }
+  }
+
+  const categories = await getPublicationCategories()
+  const filtered = categories.filter(c => c !== name)
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('atlas_publicationCategories', JSON.stringify(filtered))
+  }
+}
+
 export async function getVideoCategories(): Promise<string[]> {
   if (isSupabaseConfigured()) {
     try {

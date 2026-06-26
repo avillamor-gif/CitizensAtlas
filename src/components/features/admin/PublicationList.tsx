@@ -13,10 +13,12 @@ interface PublicationListProps {
     onUpdatePublication: (article: Omit<Article, 'slug'>) => void;
     onDeletePublications: (articleIds: number[]) => void;
     publicationTypes: string[];
+    publicationCategories?: string[];
+    onAddPublicationCategory?: (category: string) => void;
     onEditPublication?: (article: Article) => void;
 }
 
-const PublicationList: React.FC<PublicationListProps> = ({ publications, onAddPublication, onUpdatePublication, onDeletePublications, publicationTypes, onEditPublication }) => {
+const PublicationList: React.FC<PublicationListProps> = ({ publications, onAddPublication, onUpdatePublication, onDeletePublications, publicationTypes, publicationCategories, onAddPublicationCategory, onEditPublication }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToEdit, setItemToEdit] = useState<Article | null>(null);
     
@@ -198,6 +200,8 @@ const PublicationList: React.FC<PublicationListProps> = ({ publications, onAddPu
                     itemToEdit={itemToEdit}
                     itemType="Publication"
                     categories={publicationTypes}
+                    publicationCategories={publicationCategories}
+                    onAddPublicationCategory={onAddPublicationCategory}
                 />
             )}
         </div>
