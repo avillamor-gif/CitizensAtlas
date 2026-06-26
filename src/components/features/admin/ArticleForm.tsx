@@ -54,6 +54,17 @@ const emptyFormState = {
     imageFile: null as File | null,
 };
 
+const deriveDocumentNameFromLink = (rawLink: string): string => {
+    try {
+        const parsed = new URL(rawLink);
+        const fileName = decodeURIComponent(parsed.pathname.split('/').pop() || '').trim();
+        if (fileName) return fileName;
+    } catch {
+        // Fall through to default.
+    }
+    return 'Publication Link';
+};
+
 const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, itemToEdit, itemType, categories, onAddCategory, publicationCategories, onAddPublicationCategory, isModal = true, userRole = 'contributor' }) => {
     console.log('🎨 [ArticleForm] Component mounted/updated:', { itemType, isModal, userRole, hasItemToEdit: !!itemToEdit });
     
@@ -394,7 +405,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 articleData.publisher = formData.publisher.trim() || undefined;
                 articleData.publicationCategory = formData.publicationCategory.trim() || undefined;
                 const normalizedLink = formData.publicationLink.trim();
-                articleData.documentNames = normalizedLink ? ['Publication Link'] : [];
+                articleData.documentNames = normalizedLink ? [deriveDocumentNameFromLink(normalizedLink)] : [];
                 articleData.documentUrls = normalizedLink ? [normalizedLink] : [];
             }
 

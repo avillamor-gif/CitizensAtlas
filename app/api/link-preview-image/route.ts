@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.m4v', '.webm', '.avi', '.mkv'];
+
+function isLikelyPdf(url: URL): boolean {
+  return url.pathname.toLowerCase().endsWith('.pdf');
+}
+
+function isLikelyVideo(url: URL): boolean {
+  const pathname = url.pathname.toLowerCase();
+  return VIDEO_EXTENSIONS.some(ext => pathname.endsWith(ext));
+}
+
 function extractMetaContent(html: string, property: string): string | null {
   const escaped = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const patterns = [
@@ -38,6 +49,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    if (isLikelyPdf(parsedUrl)) {
+      return NextResponse.json({ imageUrl: '/file-pdf.svg', fileType: 'pdf' });
+    }
+
+    if (isLikelyVideo(parsedUrl)) {
+      return NextResponse.json({ imageUrl: '/file-video.svg', fileType: 'video' });
+    }
+
     const response = await fetch(parsedUrl.toString(), {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; CitizensAtlasBot/1.0)',
@@ -52,8 +71,17 @@ export async function GET(request: NextRequest) {
     }
 
     const contentType = response.headers.get('content-type') || '';
-    if (!contentType.toLowerCase().includes('text/html')) {
-      return NextResponse.json({ error: 'URL is not an HTML page' }, { status: 400 });
+    const loweredContentType = contentType.toLowerCase();
+    if (loweredContentType.includes('application/pdf')) {
+      return NextResponse.json({ imageUrl: '/file-pdf.svg', fileType: 'pdf' });
+    }
+
+    if (loweredContentType.startsWith('video/')) {
+      return NextResponse.json({ imageUrl: '/file-video.svg', fileType: 'video' });
+    }
+
+    if (!loweredContentType.includes('text/html')) {
+      return NextResponse.json({ imageUrl: null, fileType: 'unknown' }, { status: 200 });
     }
 
     const html = await response.text();
@@ -66,11 +94,11 @@ export async function GET(request: NextRequest) {
     ].filter(Boolean) as string[];
 
     if (candidates.length === 0) {
-      return NextResponse.json({ imageUrl: null }, { status: 404 });
+      return NextResponse.json({ imageUrl: null, fileType: 'html' }, { status: 200 });
     }
 
     const resolvedImageUrl = new URL(candidates[0], parsedUrl).toString();
-    return NextResponse.json({ imageUrl: resolvedImageUrl });
+    return NextResponse.json({ imageUrl: resolvedImageUrl, fileType: 'html' });
   } catch (error) {
     console.error('Link preview image fetch error:', error);
     return NextResponse.json({ error: 'Unable to fetch link preview image' }, { status: 500 });
