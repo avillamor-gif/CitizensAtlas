@@ -387,9 +387,9 @@ export async function getNewsById(id: number): Promise<Article | null> {
 // ============================================
 export async function getPublications(): Promise<Article[]> {
   if (isSupabaseConfigured()) {
+    const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
     try {
       // Try authenticated access first
-      const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
       if (authData) {
         // User is logged in, get all publications
         return await supabaseService.getPublications()
@@ -399,6 +399,10 @@ export async function getPublications(): Promise<Article[]> {
         return await supabaseService.getPublishedPublications()
       }
     } catch (error) {
+      // For authenticated admin flows, fail hard instead of silently serving stale local data.
+      if (authData) {
+        throw error
+      }
       console.warn('Supabase error, falling back to localStorage:', error)
     }
   }
@@ -494,9 +498,13 @@ export async function deletePublications(ids: number[]): Promise<void> {
 // Get single publication with full details (for editing)
 export async function getPublicationById(id: number): Promise<Article | null> {
   if (isSupabaseConfigured()) {
+    const authData = typeof window !== 'undefined' ? localStorage.getItem('atlas-auth-token') : null
     try {
       return await supabaseService.getPublicationById(id)
     } catch (error) {
+      if (authData) {
+        throw error
+      }
       console.warn('Supabase error, falling back to localStorage:', error)
     }
   }
