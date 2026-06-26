@@ -129,6 +129,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         const pageFromUrl = pathPage === 'admin' ? null : pathPage;
         if (isAdminPage(pageFromUrl)) {
             setActiveAdminPage(pageFromUrl);
+            setIsPageStateHydrated(true);
             return;
         }
 
