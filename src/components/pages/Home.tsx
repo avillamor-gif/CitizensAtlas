@@ -28,7 +28,7 @@ const Home: React.FC<HomeProps> = (props) => {
     const projectBriefsAsArticles: Article[] = props.projectBriefsData.map((brief, index) => ({
         id: brief.id,
         slug: `${slugify(brief.project_name)}-${brief.id}`,
-        category: brief.project_type || 'Project Brief',
+        category: brief.project_type || 'Active Fight Site',
         title: brief.project_name,
         description: `${brief.location}${brief.financing_amount ? ` - ${brief.financing_amount}` : ''}`,
         imageUrl: 'https://picsum.photos/400/300?random=' + index,

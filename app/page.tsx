@@ -384,13 +384,15 @@ function HomePageContent() {
     try {
       const newArticle = await dataService.createNews({
         ...newsData,
-        slug: slugify(newsData.title),
+        slug: slugify(newsData.title) + '-' + undefined, // Will be updated after creation
         status: currentUser?.role === 'contributor' ? 'draft' : 'published',
         submittedBy: currentUser?.name || currentUser?.email,
         submittedAt: new Date().toISOString(),
       })
       
-      setNews(prevNews => [newArticle, ...prevNews])
+      // Update slug with ID for SEO
+      const articleWithSlug = { ...newArticle, slug: slugify(newArticle.title) + '-' + newArticle.id }
+      setNews(prevNews => [articleWithSlug, ...prevNews])
       console.log('✅ News added with status:', newArticle.status, 'Article:', newArticle)
       
       // Auto-add new category to database if it doesn't exist
@@ -490,13 +492,15 @@ function HomePageContent() {
     try {
       const newArticle = await dataService.createPublication({
         ...publicationData,
-        slug: slugify(publicationData.title),
+        slug: slugify(publicationData.title) + '-' + undefined, // Will be updated after creation
         status: currentUser?.role === 'contributor' ? 'draft' : 'published',
         submittedBy: currentUser?.name || currentUser?.email,
         submittedAt: new Date().toISOString(),
       })
       
-      setPublications(prevPublications => [newArticle, ...prevPublications])
+      // Update slug with ID for SEO
+      const articleWithSlug = { ...newArticle, slug: slugify(newArticle.title) + '-' + newArticle.id }
+      setPublications(prevPublications => [articleWithSlug, ...prevPublications])
       
       // Ensure new publication type exists BEFORE showing success
       if (publicationData.category) {
@@ -578,13 +582,15 @@ function HomePageContent() {
     try {
       const newArticle = await dataService.createVideo({
         ...videoData,
-        slug: slugify(videoData.title),
+        slug: slugify(videoData.title) + '-' + undefined, // Will be updated after creation
         status: currentUser?.role === 'contributor' ? 'draft' : 'published',
         submittedBy: currentUser?.name || currentUser?.email || 'Anonymous',
         submittedAt: new Date().toISOString(),
       })
       
-      setVideos(prevVideos => [newArticle, ...prevVideos])
+      // Update slug with ID for SEO
+      const articleWithSlug = { ...newArticle, slug: slugify(newArticle.title) + '-' + newArticle.id }
+      setVideos(prevVideos => [articleWithSlug, ...prevVideos])
       
       // Auto-add new video category to database if it doesn't exist
       if (videoData.category && !videoCategories.includes(videoData.category)) {
