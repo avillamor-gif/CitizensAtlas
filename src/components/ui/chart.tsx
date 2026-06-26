@@ -45,12 +45,57 @@ const ChartContainer = React.forwardRef<
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
+  const containerRef = React.useRef<HTMLDivElement | null>(null)
+  const [hasValidSize, setHasValidSize] = React.useState(false)
+
+  const setCombinedRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      containerRef.current = node
+
+      if (typeof ref === "function") {
+        ref(node)
+      } else if (ref) {
+        ref.current = node
+      }
+    },
+    [ref]
+  )
+
+  React.useEffect(() => {
+    const node = containerRef.current
+    if (!node) return
+
+    const updateSize = (width: number, height: number) => {
+      setHasValidSize(width > 0 && height > 0)
+    }
+
+    const rect = node.getBoundingClientRect()
+    updateSize(rect.width, rect.height)
+
+    if (typeof ResizeObserver === "undefined") {
+      const onResize = () => {
+        const nextRect = node.getBoundingClientRect()
+        updateSize(nextRect.width, nextRect.height)
+      }
+      window.addEventListener("resize", onResize)
+      return () => window.removeEventListener("resize", onResize)
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (!entry) return
+      updateSize(entry.contentRect.width, entry.contentRect.height)
+    })
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <ChartContext.Provider value={{ config }}>
       <div
         data-chart={chartId}
-        ref={ref}
+        ref={setCombinedRef}
         className={cn(
           "flex min-w-0 min-h-[1px] aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
           className
@@ -58,9 +103,13 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1} debounce={50}>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        {hasValidSize ? (
+          <RechartsPrimitive.ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
+            {children}
+          </RechartsPrimitive.ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full" aria-hidden="true" />
+        )}
       </div>
     </ChartContext.Provider>
   )
