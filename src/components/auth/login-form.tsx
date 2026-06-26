@@ -46,8 +46,8 @@ export function LoginForm({
         console.log('✅ Login successful! Redirecting to admin dashboard...');
         
         // Redirect to dedicated admin page
-        console.log('🚀 Executing immediate redirect to /admin...');
-        window.location.href = '/admin';
+        console.log('🚀 Executing immediate redirect to /admin/account-profile...');
+        window.location.href = '/admin/account-profile';
         
         // Don't reset loading - let the page redirect
         return;

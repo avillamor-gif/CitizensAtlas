@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         
                         {/* User Avatar or Login Link */}
                         {currentUser ? (
-                            <Link href="/admin" className="flex items-center">
+                            <Link href="/admin/account-profile" className="flex items-center">
                                 <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
                                     <AvatarImage src={currentUser.avatar_url} alt={currentUser.full_name} />
                                     <AvatarFallback className="bg-brand-dark-blue text-white">
@@ -185,7 +185,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <div className="pt-4 border-t border-gray-200">
                             {currentUser ? (
                                 <Link 
-                                    href="/admin" 
+                                    href="/admin/account-profile" 
                                     className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
