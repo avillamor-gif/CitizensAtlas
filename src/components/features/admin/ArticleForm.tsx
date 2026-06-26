@@ -88,7 +88,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
     const publicationTypeOptions = Array.from(new Set([...(categories || []), formData.category].filter(Boolean as any)));
     const publicationCategoryOptions = Array.from(new Set([...(publicationCategories || []), formData.publicationCategory].filter(Boolean as any)));
-    const previewImageUrl = formData.imageUrl?.trim() ? formData.imageUrl : '/gaia-logo.jpg';
+    const previewImageUrl = formData.imageUrl?.trim() ? formData.imageUrl : '/fallback.jpg';
 
     // Update newsCategories when categories prop changes
     useEffect(() => {
@@ -331,7 +331,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
             // Ensure a stable fallback image when no featured image is provided.
             if (!uploadedImageUrl || !uploadedImageUrl.trim()) {
-                uploadedImageUrl = '/gaia-logo.jpg';
+                uploadedImageUrl = '/fallback.jpg';
             }
 
             const articleData: any = {
@@ -752,7 +752,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             alt="Preview"
                             className="mt-2 h-32 w-auto rounded object-cover border"
                             onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).src = '/gaia-logo.jpg';
+                                (e.currentTarget as HTMLImageElement).src = '/fallback.jpg';
                             }}
                         />
                     </FormField>

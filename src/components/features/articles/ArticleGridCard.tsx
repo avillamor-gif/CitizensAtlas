@@ -21,11 +21,11 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
         >
             <div className="h-48 overflow-hidden relative">
                 <img
-                    src={item.imageUrl || '/gaia-logo.jpg'}
+                    src={item.imageUrl || '/fallback.jpg'}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = '/gaia-logo.jpg';
+                        (e.currentTarget as HTMLImageElement).src = '/fallback.jpg';
                     }}
                 />
                 {isVideo && (

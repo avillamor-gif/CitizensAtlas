@@ -21,11 +21,11 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
         >
             <div className="sm:w-1/3 flex-shrink-0 h-48 sm:h-auto overflow-hidden relative">
                 <img
-                    src={item.imageUrl || '/gaia-logo.jpg'}
+                    src={item.imageUrl || '/fallback.jpg'}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = '/gaia-logo.jpg';
+                        (e.currentTarget as HTMLImageElement).src = '/fallback.jpg';
                     }}
                 />
                 {isVideo && (
