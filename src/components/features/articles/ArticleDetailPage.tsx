@@ -110,6 +110,9 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                                 src={article.imageUrl || '/gaia-logo.jpg'} 
                                 alt={article.title}
                                 className="w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
+                                onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).src = '/gaia-logo.jpg';
+                                }}
                             />
                         </div>
                     )}

@@ -356,7 +356,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             }
 
             // Ensure a stable fallback image when no featured image is provided.
-            if (!uploadedImageUrl) {
+            if (!uploadedImageUrl || !uploadedImageUrl.trim()) {
                 uploadedImageUrl = '/gaia-logo.jpg';
             }
 
