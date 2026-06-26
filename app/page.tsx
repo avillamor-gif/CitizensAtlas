@@ -542,6 +542,10 @@ function HomePageContent() {
     try {
       // Call the backend API to update the publication
       const updatedArticle = await dataService.updatePublication(updatedArticleData.id, updatedArticleData)
+
+      if (!updatedArticle.category || !updatedArticle.publicationCategory) {
+        throw new Error('Updated publication came back without Publication Type or Publication Category')
+      }
       
       // Update local state with the result
       const finalArticle = { 

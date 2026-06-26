@@ -448,7 +448,15 @@ export async function updatePublication(id: number, updates: Partial<Article>): 
   if (isSupabaseConfigured()) {
     // Don't fall back to localStorage - we need to see real errors
     console.log('🔄 [DataService] Attempting Supabase publication update:', { id, updates: Object.keys(updates) })
-    return await supabaseService.updatePublication(id, updates)
+    const updated = await supabaseService.updatePublication(id, updates)
+
+    // Read back from DB to avoid stale/partial response objects.
+    const verified = await supabaseService.getPublicationById(id)
+    if (!verified) {
+      throw new Error(`Publication ${id} was updated but could not be read back from Supabase`)
+    }
+
+    return verified
   }
   
   // Only use localStorage if Supabase is not configured

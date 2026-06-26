@@ -390,10 +390,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
             // Only add document fields for Publications
             if (itemType === 'Publication') {
+                articleData.category = formData.category.trim();
                 articleData.publisher = formData.publisher.trim() || undefined;
-                articleData.publicationCategory = formData.publicationCategory || undefined;
-                articleData.documentNames = formData.publicationLink ? ['Publication Link'] : [];
-                articleData.documentUrls = formData.publicationLink ? [formData.publicationLink] : [];
+                articleData.publicationCategory = formData.publicationCategory.trim() || undefined;
+                const normalizedLink = formData.publicationLink.trim();
+                articleData.documentNames = normalizedLink ? ['Publication Link'] : [];
+                articleData.documentUrls = normalizedLink ? [normalizedLink] : [];
             }
 
             console.log('Article data to save:', articleData);
