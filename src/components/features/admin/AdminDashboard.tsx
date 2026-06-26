@@ -156,6 +156,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
 
     // Auto-redirect if user doesn't have permission for current page
     React.useEffect(() => {
+        if (pathname.startsWith('/admin') && !isPageStateHydrated) {
+            return;
+        }
+
         const checkAndRedirect = () => {
             const userRole = currentUser?.role;
             
@@ -236,10 +240,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         
         window.addEventListener('role-permissions-updated', handlePermissionsUpdated);
         return () => window.removeEventListener('role-permissions-updated', handlePermissionsUpdated);
-    }, [activeAdminPage, currentUser?.role]); // Only depend on role, not entire currentUser object
+    }, [activeAdminPage, currentUser?.role, isPageStateHydrated, pathname]); // Only depend on role, not entire currentUser object
 
     // Load data when switching to relevant pages
     useEffect(() => {
+        if (pathname.startsWith('/admin') && !isPageStateHydrated) {
+            return;
+        }
+
         const loadPageData = async () => {
             try {
                 if (activeAdminPage === 'projects-list' || activeAdminPage === 'projects-edit' || activeAdminPage === 'projects-analytics') {
@@ -273,7 +281,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         }
         
         loadPageData()
-    }, [activeAdminPage])
+    }, [activeAdminPage, isPageStateHydrated, pathname])
 
     const testLogout = async () => {
         console.log('TEST: Logout button clicked in header');
