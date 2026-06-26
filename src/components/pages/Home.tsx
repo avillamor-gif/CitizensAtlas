@@ -19,7 +19,7 @@ interface HomeProps {
     publicationsData: Article[];
     videosData: Article[];
     onNavigate: (page: Page) => void;
-    onViewArticle: (article: Article) => void;
+    onViewArticle: (article: Article, sourcePage?: Page) => void;
     currentUser?: User | null;
 }
 

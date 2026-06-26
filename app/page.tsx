@@ -1075,14 +1075,20 @@ function HomePageContent() {
     }
   }
   
-  const handleViewArticle = (article: Article) => {
+  const handleViewArticle = (article: Article, sourcePage?: Page) => {
       setArticleSource(activePage)
-      let targetPage = activePage
+      let targetPage = sourcePage || activePage
       
       // Active Fight Sites are identified by the synthetic country field added in projectBriefsToArticles.
       // Do this check first because IDs can overlap across content types.
       if (article.country !== undefined) {
         router.push(`/active-fight-sites/${article.slug}`)
+        return
+      }
+
+      // If we know the source section from the UI, use it directly to avoid ID overlap across tables.
+      if (sourcePage === 'news' || sourcePage === 'videos' || sourcePage === 'publications') {
+        router.push(`/${sourcePage}/${article.slug}`)
         return
       }
       

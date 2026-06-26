@@ -9,14 +9,15 @@ import { Page } from '@/types/types';
 interface ArticleCardProps {
     item: Article;
     hasBackground: boolean;
-    onViewArticle: (article: Article) => void;
+    onViewArticle: (article: Article, sourcePage?: Page) => void;
     isVideo?: boolean;
+    sourcePage?: Page;
 }
 
-const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewArticle, isVideo = false }) => (
+const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewArticle, isVideo = false, sourcePage }) => (
     <div className="flex-shrink-0 w-72">
         <button 
-            onClick={() => onViewArticle(item)}
+            onClick={() => onViewArticle(item, sourcePage)}
             className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-yellow rounded-lg"
         >
             <div className="bg-gray-300 h-40 mb-2 overflow-hidden rounded-lg relative">
@@ -43,7 +44,7 @@ interface ContentCarouselProps {
     hasBackground?: boolean;
     onNavigate?: (page: Page) => void;
     page?: Page;
-    onViewArticle: (article: Article) => void;
+    onViewArticle: (article: Article, sourcePage?: Page) => void;
     isVideoCarousel?: boolean;
 }
 
@@ -101,7 +102,7 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
                 </div>
                 <div ref={scrollContainerRef} className="flex space-x-8 overflow-x-auto pb-4 -mb-4">
                     {items.map(item => (
-                        <ArticleCard key={item.id} item={item} hasBackground={!hasBackground} onViewArticle={onViewArticle} isVideo={isVideoCarousel} />
+                        <ArticleCard key={item.id} item={item} hasBackground={!hasBackground} onViewArticle={onViewArticle} isVideo={isVideoCarousel} sourcePage={page} />
                     ))}
                 </div>
             </div>
