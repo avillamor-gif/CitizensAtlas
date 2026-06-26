@@ -122,6 +122,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     // Restore last active admin page after refresh.
     useEffect(() => {
         if (typeof window === 'undefined') return;
+        if (!pathname.startsWith('/admin')) return;
 
         const pathPage = pathname.split('/').filter(Boolean).pop() ?? null;
         const pageFromUrl = pathPage === 'admin' ? null : pathPage;
@@ -139,6 +140,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     // Persist active admin page so refresh returns to the same section.
     useEffect(() => {
         if (typeof window === 'undefined') return;
+        if (!pathname.startsWith('/admin')) return;
+
         window.localStorage.setItem('atlas_admin_active_page', activeAdminPage);
 
         const targetPath = `/admin/${activeAdminPage}`;
