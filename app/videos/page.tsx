@@ -1,35 +1,21 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
-import { VideosPage, ArticleDetailPage } from '@/components/features/articles'
+import { VideosPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
+import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function Videos() {
   const [videos, setVideos] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedVideo, setSelectedVideo] = useState<Article | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    dataService.getPublishedVideos().then(setVideos).catch(console.error).finally(() => setLoading(false))
+    dataService.getPublishedVideos().then(items => setVideos(reconstructArticleSlugs(items))).catch(console.error).finally(() => setLoading(false))
   }, [])
-
-  if (selectedVideo) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <ArticleDetailPage
-            article={selectedVideo}
-            onBack={() => setSelectedVideo(null)}
-            sourcePage="videos"
-          />
-        </main>
-        <Footer />
-      </div>
-    )
-  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -40,7 +26,7 @@ export default function Videos() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading videos...</div>
           </div>
         ) : (
-          <VideosPage items={videos} onViewArticle={setSelectedVideo} />
+          <VideosPage items={videos} onViewArticle={(article) => router.push(`/videos/${buildSeoSlug(article.title, article.id)}`)} />
         )}
       </main>
       <Footer />

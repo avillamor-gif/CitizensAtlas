@@ -1,18 +1,20 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
-import { ArticleDetailPage, PublicationsPage } from '@/components/features/articles'
+import { PublicationsPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
+import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function Publications() {
   const [publications, setPublications] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    dataService.getPublishedPublications().then(setPublications).catch(console.error).finally(() => setLoading(false))
+    dataService.getPublishedPublications().then(items => setPublications(reconstructArticleSlugs(items))).catch(console.error).finally(() => setLoading(false))
   }, [])
 
   const handleIncrementDownload = (articleId: number) => {
@@ -20,22 +22,6 @@ export default function Publications() {
       prev.map(pub =>
         pub.id === articleId ? { ...pub, downloadCount: (pub.downloadCount || 0) + 1 } : pub
       )
-    )
-  }
-
-  if (selectedArticle) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <ArticleDetailPage
-            article={selectedArticle}
-            onBack={() => setSelectedArticle(null)}
-            sourcePage="publications"
-          />
-        </main>
-        <Footer />
-      </div>
     )
   }
 
@@ -50,7 +36,7 @@ export default function Publications() {
         ) : (
           <PublicationsPage
             items={publications}
-            onViewArticle={setSelectedArticle}
+            onViewArticle={(article) => router.push(`/publications/${buildSeoSlug(article.title, article.id)}`)}
             onIncrementDownload={handleIncrementDownload}
           />
         )}

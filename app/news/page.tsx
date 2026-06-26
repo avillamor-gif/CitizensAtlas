@@ -1,35 +1,21 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
-import { NewsPage, ArticleDetailPage } from '@/components/features/articles'
+import { NewsPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
+import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function News() {
   const [news, setNews] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    dataService.getPublishedNews().then(setNews).catch(console.error).finally(() => setLoading(false))
+    dataService.getPublishedNews().then(items => setNews(reconstructArticleSlugs(items))).catch(console.error).finally(() => setLoading(false))
   }, [])
-
-  if (selectedArticle) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <ArticleDetailPage
-            article={selectedArticle}
-            onBack={() => setSelectedArticle(null)}
-            sourcePage="news"
-          />
-        </main>
-        <Footer />
-      </div>
-    )
-  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -40,7 +26,7 @@ export default function News() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading news...</div>
           </div>
         ) : (
-          <NewsPage items={news} onViewArticle={setSelectedArticle} />
+          <NewsPage items={news} onViewArticle={(article) => router.push(`/news/${buildSeoSlug(article.title, article.id)}`)} />
         )}
       </main>
       <Footer />

@@ -12,7 +12,7 @@ import { notifyAdminOfNewSubmission, notifyContributorOfStatus } from '@/utils/n
 import * as dataService from '@/lib/services/data-service'
 import { updateProject, updateNews, updatePublication, updateVideo } from '@/lib/services/data-service'
 import { useAuth } from '@/contexts/AuthContext'
-import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
+import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 const slugify = (text: string) =>
   text
@@ -232,6 +232,11 @@ function HomePageContent() {
       setIsAdminView(false)
       
       if (articleSlug) {
+        if (page === 'news' || page === 'videos' || page === 'publications') {
+          router.replace(`/${page}/${articleSlug}`)
+          return
+        }
+
         // Find article from all sources
         const allArticles = [...news, ...videos, ...publications]
         const article = allArticles.find(a => a.slug === articleSlug)
@@ -1007,8 +1012,8 @@ function HomePageContent() {
       let targetPage = activePage
       
       // Check if this is a project brief (has country field)
-      if (article.country && article.country.trim()) {
-          router.push(`/country-project-briefs?country=${encodeURIComponent(article.country)}`)
+      if (article.country !== undefined) {
+        router.push(`/active-fight-sites/${buildSeoSlug(article.title, article.id)}`)
           return
       }
       
@@ -1016,7 +1021,7 @@ function HomePageContent() {
       else if (videos.some(a => a.id === article.id)) targetPage = 'videos'
       else if (publications.some(a => a.id === article.id)) targetPage = 'publications'
       
-      router.push(`?page=${targetPage}&article=${article.slug}`)
+      router.push(`/${targetPage}/${buildSeoSlug(article.title, article.id)}`)
   }
 
   const handleReturnToList = () => {

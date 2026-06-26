@@ -5,11 +5,12 @@ import Link from 'next/link'
 import { Header, Footer } from '@/components/layout'
 import { ProjectBrief } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
+import { buildSeoSlug } from '@/lib/utils/slug-utils'
 
 function BriefCard({ brief }: { brief: ProjectBrief }) {
   // Only make card clickable if country exists
   const hasCountry = brief.country && brief.country.trim()
-  const href = hasCountry ? `/country-project-briefs?country=${encodeURIComponent(brief.country || '')}` : '#'
+  const href = hasCountry ? `/active-fight-sites/${buildSeoSlug(brief.project_name, brief.id)}` : '#'
   
   const cardContent = (
     <div className={`bg-white border border-gray-200 rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full ${hasCountry ? 'hover:shadow-xl hover:border-brand-light-blue cursor-pointer' : 'opacity-75'}`}>
