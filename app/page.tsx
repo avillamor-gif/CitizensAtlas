@@ -1012,7 +1012,7 @@ function HomePageContent() {
       let targetPage = activePage
       
       // Check if this is a project brief (has country field)
-      if (article.country !== undefined) {
+        if (article.country !== undefined && !news.some(a => a.id === article.id) && !videos.some(a => a.id === article.id) && !publications.some(a => a.id === article.id)) {
         router.push(`/active-fight-sites/${buildSeoSlug(article.title, article.id)}`)
           return
       }

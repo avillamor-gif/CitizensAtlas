@@ -8,12 +8,10 @@ import * as dataService from '@/lib/services/data-service'
 import { buildSeoSlug } from '@/lib/utils/slug-utils'
 
 function BriefCard({ brief }: { brief: ProjectBrief }) {
-  // Only make card clickable if country exists
-  const hasCountry = brief.country && brief.country.trim()
-  const href = hasCountry ? `/active-fight-sites/${buildSeoSlug(brief.project_name, brief.id)}` : '#'
+  const href = `/active-fight-sites/${buildSeoSlug(brief.project_name, brief.id)}`
   
   const cardContent = (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full ${hasCountry ? 'hover:shadow-xl hover:border-brand-light-blue cursor-pointer' : 'opacity-75'}`}>
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl hover:border-brand-light-blue cursor-pointer">
       <div className="p-6 flex flex-col flex-grow">
         <span className="bg-yellow-400 text-xs font-bold px-2 py-1 inline-block mb-3 self-start">
           {brief.project_type || 'Project Brief'}
@@ -44,21 +42,15 @@ function BriefCard({ brief }: { brief: ProjectBrief }) {
         {brief.timeline_and_status && (
           <p className="text-sm text-gray-500 mt-2 line-clamp-2">{brief.timeline_and_status}</p>
         )}
-        {hasCountry && (
-          <div className="mt-4 self-start">
-            <span className="text-sm font-bold text-brand-light-blue hover:underline">
-              View Details &rarr;
-            </span>
-          </div>
-        )}
+        <div className="mt-4 self-start">
+          <span className="text-sm font-bold text-brand-light-blue hover:underline">
+            View Details &rarr;
+          </span>
+        </div>
       </div>
     </div>
   )
-  
-  if (!hasCountry) {
-    return cardContent
-  }
-  
+
   return (
     <Link href={href}>
       {cardContent}

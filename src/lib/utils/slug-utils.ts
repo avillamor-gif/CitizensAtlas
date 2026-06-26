@@ -38,7 +38,7 @@ export function projectBriefToArticle(brief: ProjectBrief, index?: number): Arti
     tagColor: '#FFEB3B',
     publishDate: brief.created_at || brief.submitted_at,
     status: brief.status || 'published',
-    country: brief.country,
+    country: brief.country ?? '',
   };
 }
 
