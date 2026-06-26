@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Project, Article, ProjectBrief } from '@/types/types';
 import { AdminSidebar, AdminPage } from './AdminSidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
@@ -80,6 +81,9 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const PUBLICATION_EDIT_ID_KEY = 'atlas_admin_publication_edit_id';
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const { 
         projects, onLoadProjects, onAddProject, onUpdateProject, onDeleteProjects,
         projectBriefs, onLoadProjectBriefs, onAddProjectBrief, onUpdateProjectBrief, onDeleteProjectBriefs,
@@ -102,20 +106,46 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [publicationToEdit, setPublicationToEdit] = useState<Article | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
 
+    const isAdminPage = (value: string | null): value is AdminPage => {
+        if (!value) return false;
+        const validPages: AdminPage[] = [
+            'projects-list', 'projects-analytics', 'projects-add', 'projects-edit',
+            'project-briefs-list', 'project-briefs-add', 'project-briefs-edit',
+            'news-list', 'news-categories', 'news-add', 'news-edit',
+            'publications-list', 'publications-types', 'publications-categories', 'publications-add', 'publications-edit',
+            'videos-list', 'videos-categories', 'videos-add', 'videos-edit',
+            'drafts-projects', 'drafts-news', 'drafts-publications', 'drafts-videos',
+            'pending-approvals', 'batch-upload', 'team-management', 'role-management', 'account-profile'
+        ];
+        return validPages.includes(value as AdminPage);
+    };
+
     // Restore last active admin page after refresh.
     useEffect(() => {
         if (typeof window === 'undefined') return;
+        const pageFromUrl = searchParams.get('page');
+        if (isAdminPage(pageFromUrl)) {
+            setActiveAdminPage(pageFromUrl);
+            return;
+        }
         const savedPage = window.localStorage.getItem('atlas_admin_active_page') as AdminPage | null;
         if (savedPage) {
             setActiveAdminPage(savedPage);
         }
-    }, []);
+    }, [searchParams]);
 
     // Persist active admin page so refresh returns to the same section.
     useEffect(() => {
         if (typeof window === 'undefined') return;
         window.localStorage.setItem('atlas_admin_active_page', activeAdminPage);
-    }, [activeAdminPage]);
+
+        const currentPageInUrl = searchParams.get('page');
+        if (currentPageInUrl !== activeAdminPage) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('page', activeAdminPage);
+            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        }
+    }, [activeAdminPage, pathname, router, searchParams]);
 
     // Auto-redirect if user doesn't have permission for current page
     React.useEffect(() => {
