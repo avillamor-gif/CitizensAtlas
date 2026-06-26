@@ -997,65 +997,65 @@ ${references}
                     </div>
                         
                         <SectionTitle>Financials</SectionTitle>
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField label="International financial institution (IFI)">
-                                <div className="space-y-2 rounded-md border border-gray-200 p-3">
-                                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                                        {IFI_OPTIONS.map((option) => (
-                                            <label key={option} className="inline-flex items-center gap-2 text-sm text-gray-700">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.ifiSelections.includes(option)}
-                                                    onChange={(e) => handleIfiCheckboxChange(option, e.target.checked)}
-                                                    className="h-4 w-4 rounded border-gray-300 text-brand-medium-blue focus:ring-brand-medium-blue"
-                                                />
-                                                <span>{option}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                    {formData.ifiSelections.includes('Others') && (
-                                        <Input
-                                            type="text"
-                                            name="ifiOther"
-                                            value={formData.ifiOther}
-                                            onChange={handleInputChange}
-                                            placeholder="Please specify other IFI"
-                                        />
-                                    )}
+                        <FormField label="International financial institution (IFI)">
+                            <div className="space-y-2 rounded-md border border-gray-200 p-3">
+                                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                    {IFI_OPTIONS.map((option) => (
+                                        <label key={option} className="inline-flex items-center gap-2 text-sm text-gray-700">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.ifiSelections.includes(option)}
+                                                onChange={(e) => handleIfiCheckboxChange(option, e.target.checked)}
+                                                className="h-4 w-4 rounded border-gray-300 text-brand-medium-blue focus:ring-brand-medium-blue"
+                                            />
+                                            <span>{option}</span>
+                                        </label>
+                                    ))}
                                 </div>
-                            </FormField>
+                                {formData.ifiSelections.includes('Others') && (
+                                    <Input
+                                        type="text"
+                                        name="ifiOther"
+                                        value={formData.ifiOther}
+                                        onChange={handleInputChange}
+                                        placeholder="Please specify other IFI"
+                                    />
+                                )}
+                            </div>
+                        </FormField>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField label="Funding source">
                                 <Input type="text" name="fundingSource" value={formData.fundingSource} onChange={handleInputChange} />
                             </FormField>
+                            <FormField label="Financial Instruments">
+                                {formData.financialInstruments.map((instrument, index) => (
+                                    <div key={index} className="flex items-center space-x-2 mb-2">
+                                        <Input 
+                                            type="text" 
+                                            placeholder="Amount" 
+                                            value={instrument.amount} 
+                                            onChange={(e) => handleRepeatableChange('financialInstruments', index, { amount: e.target.value })} 
+                                        />
+                                        {formData.financialInstruments.length > 1 && (
+                                            <button 
+                                                type="button" 
+                                                onClick={() => removeRepeatableRow('financialInstruments', index)} 
+                                                className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
+                                            >
+                                                Remove
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                                <button 
+                                    type="button" 
+                                    onClick={() => addRepeatableRow('financialInstruments')} 
+                                    className="text-sm text-brand-medium-blue hover:underline"
+                                >
+                                    + Add instrument
+                                </button>
+                            </FormField>
                         </div>
-                        <FormField label="Financial Instruments">
-                            {formData.financialInstruments.map((instrument, index) => (
-                                <div key={index} className="flex items-center space-x-2 mb-2">
-                                    <Input 
-                                        type="text" 
-                                        placeholder="Amount" 
-                                        value={instrument.amount} 
-                                        onChange={(e) => handleRepeatableChange('financialInstruments', index, { amount: e.target.value })} 
-                                    />
-                                    {formData.financialInstruments.length > 1 && (
-                                        <button 
-                                            type="button" 
-                                            onClick={() => removeRepeatableRow('financialInstruments', index)} 
-                                            className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
-                                        >
-                                            Remove
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                            <button 
-                                type="button" 
-                                onClick={() => addRepeatableRow('financialInstruments')} 
-                                className="text-sm text-brand-medium-blue hover:underline"
-                            >
-                                + Add instrument
-                            </button>
-                        </FormField>
                         <FormField label="Total Project Amount">
                             <Input type="text" value={`$${formData.totalProjectAmount.toLocaleString()}`} readOnly className="bg-gray-100" />
                         </FormField>
