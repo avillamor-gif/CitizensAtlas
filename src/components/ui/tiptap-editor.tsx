@@ -26,10 +26,13 @@ export const TiptapEditor = ({
   return (
     <div className={`border border-gray-300 rounded-lg overflow-hidden ${className}`}>
       <Editor
-        apiKey="no-api-key"
+        tinymceScriptSrc="/tinymce/tinymce.min.js"
+        licenseKey="gpl"
         value={value}
         onEditorChange={(content) => onChange(content)}
         init={{
+          base_url: '/tinymce',
+          suffix: '.min',
           height: editorHeight,
           menubar: true,
           branding: false,

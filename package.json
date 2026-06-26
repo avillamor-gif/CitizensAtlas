@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "copy:tinymce": "node scripts/copy-tinymce-assets.cjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "deploy": "git add -A && git commit -m 'Quick deploy' && git push origin main",
-    "deploy:msg": "git add -A && git commit && git push origin main"
+    "deploy:msg": "git add -A && git commit && git push origin main",
+    "postinstall": "npm run copy:tinymce"
   },
   "dependencies": {
     "@apollo/server": "^5.5.0",
