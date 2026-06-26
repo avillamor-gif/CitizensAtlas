@@ -88,6 +88,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
     const publicationTypeOptions = Array.from(new Set([...(categories || []), formData.category].filter(Boolean as any)));
     const publicationCategoryOptions = Array.from(new Set([...(publicationCategories || []), formData.publicationCategory].filter(Boolean as any)));
+    const previewImageUrl = formData.imageUrl?.trim() ? formData.imageUrl : '/gaia-logo.jpg';
 
     // Update newsCategories when categories prop changes
     useEffect(() => {
@@ -746,7 +747,14 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                             onChange={handleImageChange} 
                             accept="image/*" 
                         />
-                         {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-auto rounded object-cover border" />}
+                        <img
+                            src={previewImageUrl}
+                            alt="Preview"
+                            className="mt-2 h-32 w-auto rounded object-cover border"
+                            onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = '/gaia-logo.jpg';
+                            }}
+                        />
                     </FormField>
                     <FormField label="Tags">
                         <div className="space-y-2">
