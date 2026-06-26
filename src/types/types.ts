@@ -48,6 +48,7 @@ export interface Article {
     status?: 'draft' | 'published';
     submittedBy?: string;
     submittedAt?: string;
+    country?: string; // For project briefs
 }
 
 export interface Project {

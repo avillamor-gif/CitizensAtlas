@@ -1004,6 +1004,13 @@ function HomePageContent() {
   const handleViewArticle = (article: Article) => {
       setArticleSource(activePage)
       let targetPage = activePage
+      
+      // Check if this is a project brief (has country field)
+      if (article.country && article.country.trim()) {
+          router.push(`/country-project-briefs?country=${encodeURIComponent(article.country)}`)
+          return
+      }
+      
       if (news.some(a => a.id === article.id)) targetPage = 'news'
       else if (videos.some(a => a.id === article.id)) targetPage = 'videos'
       else if (publications.some(a => a.id === article.id)) targetPage = 'publications'

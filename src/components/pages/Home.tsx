@@ -34,6 +34,7 @@ const Home: React.FC<HomeProps> = (props) => {
         tagColor: '#FFEB3B',
         publishDate: brief.created_at || brief.submitted_at,
         status: brief.status || 'published',
+        country: brief.country, // Store country for navigation
     }));
 
     return (
