@@ -83,7 +83,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     // State for tag management
     const [newTag, setNewTag] = useState('');
     const [showAddTag, setShowAddTag] = useState(false);
-    const [isFetchingPublicationImage, setIsFetchingPublicationImage] = useState(false);
     const [showAddPublicationCategory, setShowAddPublicationCategory] = useState(false);
     const [newPublicationCategory, setNewPublicationCategory] = useState('');
 
@@ -193,32 +192,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             }
         } catch (error) {
             console.warn('Error fetching video thumbnail:', error);
-        }
-    };
-
-    const handlePublicationLinkBlur = async () => {
-        if (itemType !== 'Publication') return;
-
-        const link = formData.publicationLink.trim();
-        if (!link) return;
-
-        // Respect manually uploaded or existing non-fallback images.
-        if (formData.imageFile) return;
-        if (formData.imageUrl && formData.imageUrl !== '/gaia-logo.jpg') return;
-
-        try {
-            setIsFetchingPublicationImage(true);
-            const response = await fetch(`/api/link-preview-image?url=${encodeURIComponent(link)}`);
-            if (!response.ok) return;
-
-            const payload = await response.json();
-            if (payload?.imageUrl) {
-                setFormData(prev => ({ ...prev, imageUrl: payload.imageUrl }));
-            }
-        } catch (error) {
-            console.warn('Could not auto-fetch publication preview image:', error);
-        } finally {
-            setIsFetchingPublicationImage(false);
         }
     };
 
@@ -597,15 +570,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                         name="publicationLink"
                                         value={formData.publicationLink}
                                         onChange={handleInputChange}
-                                        onBlur={handlePublicationLinkBlur}
                                         placeholder="https://example.com/publication"
                                     />
-                                    <p className="mt-1 text-xs text-gray-500">
-                                        Paste the publication URL. We will try to auto-capture a featured image from the link.
-                                    </p>
-                                    {isFetchingPublicationImage && (
-                                        <p className="mt-1 text-xs text-gray-500">Fetching preview image from link...</p>
-                                    )}
                                 </FormField>
                             </div>
                         </>
