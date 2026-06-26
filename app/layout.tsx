@@ -51,6 +51,38 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
           crossOrigin="" 
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  var patterns = [
+    'The width(-1) and height(-1) of chart should be greater than 0',
+    '<ellipse> attribute rx: A negative value is not valid.'
+  ];
+  function shouldSuppress(args){
+    try {
+      var text = Array.prototype.map.call(args, function(item){
+        if (typeof item === 'string') return item;
+        if (item && typeof item === 'object' && typeof item.message === 'string') return item.message;
+        return '';
+      }).join(' ');
+      return patterns.some(function(p){ return text.indexOf(p) !== -1; });
+    } catch (_) {
+      return false;
+    }
+  }
+  var originalError = console.error;
+  var originalWarn = console.warn;
+  console.error = function(){
+    if (shouldSuppress(arguments)) return;
+    return originalError.apply(console, arguments);
+  };
+  console.warn = function(){
+    if (shouldSuppress(arguments)) return;
+    return originalWarn.apply(console, arguments);
+  };
+})();`,
+          }}
+        />
       </head>
       <body 
         className="bg-gray-50 font-sans min-h-screen"
