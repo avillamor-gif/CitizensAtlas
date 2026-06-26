@@ -150,7 +150,7 @@ const countryCities: Record<string, string[]> = {
     'Oman': ['Muscat', 'Salalah', 'Sohar', 'Nizwa', 'Sur', 'Ibri', 'Buraimi'],
     'Pakistan': ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Sialkot', 'Gujranwala'],
     'Palestine': ['Gaza City', 'Hebron', 'Nablus', 'Ramallah', 'Khan Yunis', 'Bethlehem', 'Jenin'],
-    'Philippines': ['Manila', 'Quezon City', 'Davao City', 'Caloocan', 'Cebu City', 'Zamboanga City', 'Taguig', 'Pasig', 'Antipolo'],
+    'Philippines': ['Manila', 'Quezon City', 'Davao City', 'Caloocan', 'Cebu City', 'Zamboanga City', 'Taguig', 'Pasig', 'Antipolo', 'Makati', 'Bacolod', 'Cagayan de Oro', 'General Santos', 'Iloilo City', 'Mandaue', 'Las Piñas', 'Marikina', 'Pasay', 'Parañaque', 'Valenzuela', 'Mandaluyong', 'Baguio', 'Legazpi', 'Naga', 'Tacloban', 'Puerto Princesa', 'Butuan', 'Lucena', 'Ormoc', 'Olongapo', 'San Jose del Monte', 'Cabanatuan', 'Tarlac City', 'Dagupan', 'Lapu-Lapu City'],
     'Qatar': ['Doha', 'Al Wakrah', 'Al Rayyan', 'Umm Salal', 'Al Khor', 'Dukhan'],
     'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Tabuk', 'Buraidah', 'Khobar'],
     'Singapore': ['Singapore', 'Jurong', 'Woodlands', 'Tampines', 'Bedok', 'Hougang'],
@@ -530,6 +530,14 @@ const citySelectionsToDisplayValues = (citySelections: string[]) => {
 const parseCitySelectionValues = (value?: string | null) => {
     return parseCommaSeparatedList(value).map((entry) => {
         if (entry.includes('::')) return entry;
+        const provinceAwareMatch = entry.match(/^(.+?)\s*,\s*(.+?)\s*\((.+?)\)$/);
+        if (provinceAwareMatch) {
+            const city = provinceAwareMatch[1].trim();
+            const country = provinceAwareMatch[3].trim();
+            if (country && city) {
+                return `${country}::${city}`;
+            }
+        }
         const separator = entry.includes(' - ') ? ' - ' : entry.includes(': ') ? ': ' : '';
         if (separator) {
             const [country, city] = entry.split(separator).map((part) => part.trim());
