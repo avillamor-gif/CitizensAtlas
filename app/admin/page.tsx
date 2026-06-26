@@ -459,8 +459,16 @@ export default function Admin() {
           }
         }}
         onUpdatePublication={async (article) => {
-          await DataService.updatePublication(article.id!, article)
-          await reloadData('publications')
+          try {
+            console.log('📤 Admin page: Updating publication...', article.id)
+            await DataService.updatePublication(article.id!, article)
+            await reloadData('publications')
+            alert('✅ Publication updated successfully!')
+          } catch (error) {
+            console.error('❌ Admin page: Error updating publication:', error)
+            alert('❌ Failed to update publication. Please check console for details.')
+            throw error
+          }
         }}
         onDeletePublications={async (articleIds) => {
           await DataService.deletePublications(articleIds)

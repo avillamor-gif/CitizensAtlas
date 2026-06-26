@@ -3,8 +3,8 @@ import { Article } from '@/types/types';
 import ArticleForm from './ArticleForm';
 
 interface PublicationFormPageProps {
-    onAddPublication: (articleData: Omit<Article, 'id' | 'slug'>) => void;
-    onUpdatePublication?: (article: Omit<Article, 'slug'>) => void;
+    onAddPublication: (articleData: Omit<Article, 'id' | 'slug'>) => Promise<void> | void;
+    onUpdatePublication?: (article: Omit<Article, 'slug'>) => Promise<void> | void;
     onBack: () => void;
     publicationTypes: string[];
     onAddPublicationType?: (publicationType: string) => void;
@@ -30,13 +30,13 @@ const PublicationFormPage: React.FC<PublicationFormPageProps> = ({ onAddPublicat
             
             <ArticleForm
                 onClose={onBack}
-                onSubmit={(articleData) => {
-                    onAddPublication(articleData);
+                onSubmit={async (articleData) => {
+                    await onAddPublication(articleData);
                     onBack();
                 }}
-                onUpdate={(articleData) => {
+                onUpdate={async (articleData) => {
                     if (onUpdatePublication && itemToEdit) {
-                        onUpdatePublication({ ...articleData, id: itemToEdit.id });
+                        await onUpdatePublication({ ...articleData, id: itemToEdit.id });
                         onBack();
                     }
                 }}

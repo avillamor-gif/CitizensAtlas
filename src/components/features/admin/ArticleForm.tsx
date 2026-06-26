@@ -18,8 +18,8 @@ import {
 
 interface ArticleFormProps {
     onClose: () => void;
-    onSubmit: (article: Omit<Article, 'id' | 'slug'>) => void;
-    onUpdate: (article: Omit<Article, 'slug'>) => void;
+    onSubmit: (article: Omit<Article, 'id' | 'slug'>) => Promise<void> | void;
+    onUpdate: (article: Omit<Article, 'slug'>) => Promise<void> | void;
     itemToEdit: Article | null;
     itemType: 'News Update' | 'Publication' | 'Video';
     categories?: string[];
@@ -301,6 +301,17 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             description: formData.description?.substring(0, 50) + '...',
             allKeys: Object.keys(formData)
         });
+
+        if (itemType === 'Publication') {
+            if (!formData.category?.trim()) {
+                alert('❌ Publication Type is required.');
+                return;
+            }
+            if (!formData.publicationCategory?.trim()) {
+                alert('❌ Publication Category is required.');
+                return;
+            }
+        }
         
         try {
             let uploadedImageUrl = formData.imageUrl;
@@ -398,7 +409,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     tags: articleData.tags,
                     allKeys: Object.keys({ ...articleData, id: itemToEdit.id })
                 });
-                onUpdate({ ...articleData, id: itemToEdit.id });
+                await onUpdate({ ...articleData, id: itemToEdit.id });
             } else {
                 console.log('📤 [ArticleForm] Calling onSubmit with:', {
                     title: articleData.title,
@@ -410,7 +421,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     tags: articleData.tags,
                     allKeys: Object.keys(articleData)
                 });
-                onSubmit(articleData);
+                await onSubmit(articleData);
             }
         } catch (error) {
             console.error('Upload error:', error);
