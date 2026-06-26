@@ -127,6 +127,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         return raw || null;
     };
 
+    const navigateToAdminPage = (page: AdminPage) => {
+        setActiveAdminPage(page);
+        const targetPath = `/admin/${page}`;
+        if (pathname !== targetPath) {
+            router.replace(targetPath, { scroll: false });
+        }
+    };
+
     const isAdminPage = (value: string | null): value is AdminPage => {
         if (!value) return false;
         const validPages: AdminPage[] = [
@@ -331,31 +339,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const handleEditProject = (project: Project) => {
         setProjectToEdit(project);
         persistEditId(PROJECT_EDIT_ID_KEY, project.id);
-        setActiveAdminPage('projects-edit');
+        navigateToAdminPage('projects-edit');
     };
 
     const handleEditProjectBrief = (brief: ProjectBrief) => {
         setProjectBriefToEdit(brief);
         persistEditId(PROJECT_BRIEF_EDIT_ID_KEY, brief.id!);
-        setActiveAdminPage('project-briefs-edit');
+        navigateToAdminPage('project-briefs-edit');
     };
 
     const handleEditNews = (article: Article) => {
         setNewsToEdit(article);
         persistEditId(NEWS_EDIT_ID_KEY, article.id);
-        setActiveAdminPage('news-edit');
+        navigateToAdminPage('news-edit');
     };
 
     const handleEditPublication = (article: Article) => {
         setPublicationToEdit(article);
         persistEditId(PUBLICATION_EDIT_ID_KEY, article.id);
-        setActiveAdminPage('publications-edit');
+        navigateToAdminPage('publications-edit');
     };
 
     const handleEditVideo = (article: Article) => {
         setVideoToEdit(article);
         persistEditId(VIDEO_EDIT_ID_KEY, article.id);
-        setActiveAdminPage('videos-edit');
+        navigateToAdminPage('videos-edit');
     };
 
     const renderContent = () => {
