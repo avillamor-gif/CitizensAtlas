@@ -79,6 +79,7 @@ interface AdminDashboardProps {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
+    const PUBLICATION_EDIT_ID_KEY = 'atlas_admin_publication_edit_id';
     const { 
         projects, onLoadProjects, onAddProject, onUpdateProject, onDeleteProjects,
         projectBriefs, onLoadProjectBriefs, onAddProjectBrief, onUpdateProjectBrief, onDeleteProjectBriefs,
@@ -260,6 +261,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
 
     const handleEditPublication = (article: Article) => {
         setPublicationToEdit(article);
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem(PUBLICATION_EDIT_ID_KEY, String(article.id));
+        }
         setActiveAdminPage('publications-edit');
     };
 
@@ -551,11 +555,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 );
             case 'publications-edit':
                 if (!canViewPublications) return <AccessDenied />;
+                if (!publicationToEdit) {
+                    if (typeof window !== 'undefined') {
+                        const savedPublicationId = window.localStorage.getItem(PUBLICATION_EDIT_ID_KEY);
+                        if (savedPublicationId) {
+                            const recovered = publications.find(p => p.id === Number(savedPublicationId));
+                            if (recovered) {
+                                setPublicationToEdit(recovered);
+                                return null;
+                            }
+                        }
+                    }
+                    setActiveAdminPage('publications-list');
+                    return null;
+                }
                 return (
                     <PublicationFormPage
                         onAddPublication={onAddPublication}
                         onUpdatePublication={onUpdatePublication}
                         onBack={() => {
+                            if (typeof window !== 'undefined') {
+                                window.localStorage.removeItem(PUBLICATION_EDIT_ID_KEY);
+                            }
                             setPublicationToEdit(null);
                             setActiveAdminPage('publications-list');
                         }}

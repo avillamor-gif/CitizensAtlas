@@ -88,10 +88,17 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
 
     useEffect(() => {
         if (isEditMode && itemToEdit) {
+            const editItem = itemToEdit as any;
+            const resolvedCategory = itemToEdit.category || editItem.publicationType || editItem.publication_type || '';
+            const resolvedPublicationCategory = itemToEdit.publicationCategory || editItem.publication_category || '';
+            const resolvedPublisher = itemToEdit.publisher || editItem.publication_publisher || '';
+            const resolvedPublicationLink = itemToEdit.documentUrls?.[0] || editItem.publicationLink || editItem.publication_link || '';
+
             console.log('🔄 [ArticleForm useEffect] Loading item to edit:', {
                 id: itemToEdit.id,
                 title: itemToEdit.title,
-                category: itemToEdit.category,
+                category: resolvedCategory,
+                publicationCategory: resolvedPublicationCategory,
                 imageUrl: itemToEdit.imageUrl,
                 description: itemToEdit.description?.substring(0, 100),
                 tagColor: itemToEdit.tagColor,
@@ -101,18 +108,22 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             setFormData({
                 title: itemToEdit.title,
                 description: itemToEdit.description || '',
-                category: itemToEdit.category || '', // Ensure always string, never undefined
-                publicationCategory: itemToEdit.publicationCategory || '',
-                publisher: itemToEdit.publisher || '',
+                category: resolvedCategory,
+                publicationCategory: resolvedPublicationCategory,
+                publisher: resolvedPublisher,
                 imageUrl: itemToEdit.imageUrl,
                 tagColor: itemToEdit.tagColor,
                 tags: itemToEdit.tags || [],
                 publishDate: itemToEdit.publishDate || '',
                 videoUrl: itemToEdit.videoUrl || '',
-                publicationLink: itemToEdit.documentUrls?.[0] || '',
+                publicationLink: resolvedPublicationLink,
                 imageFile: null,
             });
-            console.log('✅ [ArticleForm useEffect] Form data set with category:', itemToEdit.category);
+            console.log('✅ [ArticleForm useEffect] Form data set:', {
+                category: resolvedCategory,
+                publicationCategory: resolvedPublicationCategory,
+                publicationLink: resolvedPublicationLink
+            });
         } else {
             setFormData({ ...emptyFormState, publishDate: today });
         }
