@@ -353,7 +353,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
               {/* Team Management Collapsible */}
               {teamManagementItems.map((item) => (
                 <Collapsible
-                  key={`${item.title}-${item.isActive ? 'active' : 'inactive'}`}
+                  key={item.title}
                   asChild
                   defaultOpen={Boolean(item.isActive)}
                   className="group/collapsible"
