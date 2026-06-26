@@ -6,7 +6,7 @@ import { Header, Footer } from '@/components/layout'
 import { PublicationsPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
-import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
+import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function Publications() {
   const [publications, setPublications] = useState<Article[]>([])
@@ -36,7 +36,7 @@ export default function Publications() {
         ) : (
           <PublicationsPage
             items={publications}
-            onViewArticle={(article) => router.push(`/publications/${buildSeoSlug(article.title, article.id)}`)}
+            onViewArticle={(article) => router.push(`/publications/${article.slug}`)}
             onIncrementDownload={handleIncrementDownload}
           />
         )}

@@ -12,7 +12,7 @@ import { notifyAdminOfNewSubmission, notifyContributorOfStatus } from '@/utils/n
 import * as dataService from '@/lib/services/data-service'
 import { updateProject, updateNews, updatePublication, updateVideo } from '@/lib/services/data-service'
 import { useAuth } from '@/contexts/AuthContext'
-import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
+import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 const slugify = (text: string) =>
   text
@@ -1014,7 +1014,7 @@ function HomePageContent() {
       // Active Fight Sites are identified by the synthetic country field added in projectBriefsToArticles.
       // Do this check first because IDs can overlap across content types.
       if (article.country !== undefined) {
-        router.push(`/active-fight-sites/${buildSeoSlug(article.title, article.id)}`)
+        router.push(`/active-fight-sites/${article.slug}`)
         return
       }
       
@@ -1022,7 +1022,7 @@ function HomePageContent() {
       else if (videos.some(a => a.id === article.id)) targetPage = 'videos'
       else if (publications.some(a => a.id === article.id)) targetPage = 'publications'
       
-      router.push(`/${targetPage}/${buildSeoSlug(article.title, article.id)}`)
+        router.push(`/${targetPage}/${article.slug}`)
   }
 
   const handleReturnToList = () => {

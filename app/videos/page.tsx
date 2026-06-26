@@ -6,7 +6,7 @@ import { Header, Footer } from '@/components/layout'
 import { VideosPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
-import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
+import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function Videos() {
   const [videos, setVideos] = useState<Article[]>([])
@@ -26,7 +26,7 @@ export default function Videos() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading videos...</div>
           </div>
         ) : (
-          <VideosPage items={videos} onViewArticle={(article) => router.push(`/videos/${buildSeoSlug(article.title, article.id)}`)} />
+          <VideosPage items={videos} onViewArticle={(article) => router.push(`/videos/${article.slug}`)} />
         )}
       </main>
       <Footer />

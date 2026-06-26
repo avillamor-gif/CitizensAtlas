@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { ProjectBrief } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
-import { buildSeoSlug, parseIdFromSlug } from '@/lib/utils/slug-utils'
+import { projectBriefsToArticles } from '@/lib/utils/slug-utils'
 
 const globalStyles = `
   .project-brief-content a {
@@ -65,24 +65,17 @@ export default function ActiveFightSiteDetailPage() {
     const loadBrief = async () => {
       const rawSlug = params?.slug
       const slug = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug
-      const id = slug ? parseIdFromSlug(slug) : null
 
-      if (!slug || id === null) {
+      if (!slug) {
         setLoading(false)
         return
       }
 
       try {
         const items = await dataService.getPublishedProjectBriefs()
-        const match = items.find(item => item.id === id) || null
-
-        if (match) {
-          const canonicalSlug = buildSeoSlug(match.project_name, match.id)
-          if (canonicalSlug !== slug) {
-            router.replace(`/active-fight-sites/${canonicalSlug}`)
-            return
-          }
-        }
+        const briefsAsArticles = projectBriefsToArticles(items)
+        const matchedArticle = briefsAsArticles.find(item => item.slug === slug)
+        const match = matchedArticle ? items.find(item => item.id === matchedArticle.id) || null : null
 
         setBrief(match)
       } catch (error) {
@@ -93,7 +86,7 @@ export default function ActiveFightSiteDetailPage() {
     }
 
     loadBrief()
-  }, [params, router])
+  }, [params])
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">

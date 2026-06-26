@@ -6,7 +6,7 @@ import { Header, Footer } from '@/components/layout'
 import { ArticleDetailPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
-import { buildSeoSlug, parseIdFromSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
+import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function VideoDetailPage() {
   const params = useParams<{ slug: string }>()
@@ -18,24 +18,15 @@ export default function VideoDetailPage() {
     const loadArticle = async () => {
       const rawSlug = params?.slug
       const slug = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug
-      const id = slug ? parseIdFromSlug(slug) : null
 
-      if (!slug || id === null) {
+      if (!slug) {
         setLoading(false)
         return
       }
 
       try {
         const items = reconstructArticleSlugs(await dataService.getPublishedVideos())
-        const match = items.find(item => item.id === id)
-
-        if (match) {
-          const canonicalSlug = buildSeoSlug(match.title, match.id)
-          if (canonicalSlug !== slug) {
-            router.replace(`/videos/${canonicalSlug}`)
-            return
-          }
-        }
+        const match = items.find(item => item.slug === slug)
 
         setArticle(match || null)
       } catch (error) {

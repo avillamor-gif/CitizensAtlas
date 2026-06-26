@@ -6,7 +6,7 @@ import { Header, Footer } from '@/components/layout'
 import { NewsPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
-import { buildSeoSlug, reconstructArticleSlugs } from '@/lib/utils/slug-utils'
+import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 
 export default function News() {
   const [news, setNews] = useState<Article[]>([])
@@ -26,7 +26,7 @@ export default function News() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading news...</div>
           </div>
         ) : (
-          <NewsPage items={news} onViewArticle={(article) => router.push(`/news/${buildSeoSlug(article.title, article.id)}`)} />
+          <NewsPage items={news} onViewArticle={(article) => router.push(`/news/${article.slug}`)} />
         )}
       </main>
       <Footer />

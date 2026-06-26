@@ -5,10 +5,9 @@ import Link from 'next/link'
 import { Header, Footer } from '@/components/layout'
 import { ProjectBrief } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
-import { buildSeoSlug } from '@/lib/utils/slug-utils'
+import { projectBriefsToArticles } from '@/lib/utils/slug-utils'
 
-function BriefCard({ brief }: { brief: ProjectBrief }) {
-  const href = `/active-fight-sites/${buildSeoSlug(brief.project_name, brief.id)}`
+function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
   
   const cardContent = (
     <div className="bg-white border border-gray-200 rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl hover:border-brand-light-blue cursor-pointer">
@@ -62,6 +61,14 @@ export default function ActiveFightSites() {
   const [briefs, setBriefs] = useState<ProjectBrief[]>([])
   const [loading, setLoading] = useState(true)
 
+  const briefSlugById = React.useMemo(() => {
+    const map = new Map<number, string>()
+    for (const article of projectBriefsToArticles(briefs)) {
+      map.set(article.id, article.slug)
+    }
+    return map
+  }, [briefs])
+
   useEffect(() => {
     dataService.getPublishedProjectBriefs().then(setBriefs).catch(console.error).finally(() => setLoading(false))
   }, [])
@@ -94,7 +101,7 @@ export default function ActiveFightSites() {
                 <p className="text-sm text-gray-500 mb-6">{briefs.length} active fight site{briefs.length !== 1 ? 's' : ''}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                   {briefs.map(brief => (
-                    <BriefCard key={brief.id} brief={brief} />
+                    <BriefCard key={brief.id} brief={brief} href={`/active-fight-sites/${briefSlugById.get(brief.id) || ''}`} />
                   ))}
                 </div>
               </>

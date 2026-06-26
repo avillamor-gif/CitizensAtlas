@@ -1,36 +1,57 @@
 import { slugify } from '@/lib/constants';
 import { Article, ProjectBrief } from '@/types/types';
 
-export function buildSeoSlug(title: string, id: number): string {
-  return `${slugify(title)}-${id}`
-}
+function assignUniqueSlugs<T extends { id: number }>(
+  items: T[],
+  getTitle: (item: T) => string
+): Map<number, string> {
+  const byBase = new Map<string, T[]>()
 
-export function parseIdFromSlug(slug: string): number | null {
-  const match = slug.match(/-(\d+)$/)
-  if (!match) return null
+  for (const item of items) {
+    const base = slugify(getTitle(item)) || 'post'
+    const existing = byBase.get(base)
+    if (existing) {
+      existing.push(item)
+    } else {
+      byBase.set(base, [item])
+    }
+  }
 
-  const parsed = Number(match[1])
-  return Number.isFinite(parsed) ? parsed : null
+  const result = new Map<number, string>()
+
+  for (const [base, group] of byBase.entries()) {
+    const sorted = [...group].sort((a, b) => a.id - b.id)
+    sorted.forEach((item, index) => {
+      const slug = index === 0 ? base : `${base}-${index + 1}`
+      result.set(item.id, slug)
+    })
+  }
+
+  return result
 }
 
 /**
- * Reconstruct article slugs with IDs for SEO-friendly URLs
- * Format: ${slugify(title)}-${id}
+ * Reconstruct article slugs with duplicate-only numbering.
+ * Examples: title, title-2, title-3
  */
 export function reconstructArticleSlugs(articles: Article[]): Article[] {
+  const slugMap = assignUniqueSlugs(articles, article => article.title)
+
   return articles.map(article => ({
     ...article,
-    slug: buildSeoSlug(article.title, article.id)
+    slug: slugMap.get(article.id) || (slugify(article.title) || 'post')
   }));
 }
 
 /**
- * Convert ProjectBrief to Article format with SEO-friendly slug
+ * Convert multiple ProjectBriefs to Articles with duplicate-only numbering.
  */
-export function projectBriefToArticle(brief: ProjectBrief, index?: number): Article {
-  return {
+export function projectBriefsToArticles(briefs: ProjectBrief[]): Article[] {
+  const slugMap = assignUniqueSlugs(briefs, brief => brief.project_name)
+
+  return briefs.map((brief, index) => ({
     id: brief.id,
-    slug: buildSeoSlug(brief.project_name, brief.id),
+    slug: slugMap.get(brief.id) || (slugify(brief.project_name) || 'post'),
     category: brief.project_type || 'Active Fight Site',
     title: brief.project_name,
     description: `${brief.location}${brief.financing_amount ? ` - ${brief.financing_amount}` : ''}`,
@@ -39,12 +60,5 @@ export function projectBriefToArticle(brief: ProjectBrief, index?: number): Arti
     publishDate: brief.created_at || brief.submitted_at,
     status: brief.status || 'published',
     country: brief.country ?? '',
-  };
-}
-
-/**
- * Convert multiple ProjectBriefs to Articles with SEO-friendly slugs
- */
-export function projectBriefsToArticles(briefs: ProjectBrief[]): Article[] {
-  return briefs.map((brief, index) => projectBriefToArticle(brief, index));
+  }))
 }
