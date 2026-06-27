@@ -41,7 +41,7 @@ export default function RotatingGlobe() {
               key={`v-${angle}`}
               cx="160"
               cy="160"
-              rx={Math.cos((angle * Math.PI) / 180) * 150}
+              rx={Math.abs(Math.cos((angle * Math.PI) / 180) * 150)}
               ry="150"
               fill="none"
               stroke="white"

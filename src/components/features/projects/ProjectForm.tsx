@@ -23,8 +23,8 @@ interface ProjectFormProps {
     onProjectAdded: () => void;
     projectToEdit?: Project | null;
     isModal?: boolean; // If false, renders as inline form without overlay
-    onAddProject?: (projectData: Omit<Project, 'id'>) => void;
-    onUpdateProject?: (project: Project) => void;
+    onAddProject?: (projectData: Omit<Project, 'id'>) => void | Promise<void>;
+    onUpdateProject?: (project: Project) => void | Promise<void>;
     prefilledLocation?: {
         latitude?: number;
         longitude?: number;
@@ -962,7 +962,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted!', { isEditMode, projectToEdit, onAddProject, onUpdateProject, formData });
         const {
@@ -977,6 +977,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const regionValue = regionSelections.join(', ');
         const countryValue = countrySelections.join(', ');
+
+        if (!countryValue.trim()) {
+            alert('Country is required. Please select at least one country.');
+            return;
+        }
         const cityValue = citySelections
             .map((selection) => {
                 const [country, city] = selection.split('::');
@@ -1047,20 +1052,26 @@ ${references}
         });
         console.log('Project data to save:', projectData);
 
-        if (isEditMode && projectToEdit && onUpdateProject) {
-            // Update existing project
-            console.log('Calling onUpdateProject');
-            onUpdateProject({ id: projectToEdit.id, ...projectData });
-        } else if (onAddProject) {
-            // Add new project
-            console.log('Calling onAddProject');
-            onAddProject(projectData);
-        } else {
-            console.error('No handler available! onAddProject:', onAddProject, 'onUpdateProject:', onUpdateProject);
+        try {
+            if (isEditMode && projectToEdit && onUpdateProject) {
+                // Update existing project
+                console.log('Calling onUpdateProject');
+                await onUpdateProject({ id: projectToEdit.id, ...projectData });
+            } else if (onAddProject) {
+                // Add new project
+                console.log('Calling onAddProject');
+                await onAddProject(projectData);
+            } else {
+                console.error('No handler available! onAddProject:', onAddProject, 'onUpdateProject:', onUpdateProject);
+                return;
+            }
+
+            onProjectAdded();
+            onClose();
+        } catch (error) {
+            console.error('❌ Failed to save project:', error);
+            alert('❌ Failed to save project. Please try again.');
         }
-        
-        onProjectAdded();
-        onClose();
     };
     
     const inputClass = "w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue";
