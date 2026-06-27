@@ -601,7 +601,7 @@ const emptyFormState = {
     ifiSelections: [] as string[],
     ifiOther: '',
     fundingSource: '',
-    financialInstruments: [{ amount: '' }],
+    financialInstruments: [] as string[],
     totalProjectAmount: 0,
     owner: '',
     privateSectorBorrowers: [''],
@@ -626,6 +626,14 @@ const emptyFormState = {
 };
 
 const IFI_OPTIONS = ['ADB', 'AIIB', 'GCF', 'GIZ', 'JICA', 'KOICA', 'IFC/ WB', 'Others'] as const;
+const FINANCIAL_INSTRUMENT_OPTIONS: MultiSelectOption[] = [
+    { value: 'Loans', label: 'Loans' },
+    { value: 'Grants', label: 'Grants' },
+    { value: 'Equity', label: 'Equity' },
+    { value: 'Debt', label: 'Debt' },
+    { value: 'Technical Assistance', label: 'Technical Assistance' },
+    { value: 'Financial Intermediary', label: 'Financial Intermediary' },
+];
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, projectToEdit, isModal = true, onAddProject, onUpdateProject, prefilledLocation, userRole = 'contributor' }) => {
     const { user } = useAuth();
@@ -700,7 +708,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                     return parsedValues.filter((value) => !IFI_OPTIONS.includes(value as typeof IFI_OPTIONS[number])).join(', ');
                 })(),
                 fundingSource: detailsMap.get('Funding Source') || '',
-                financialInstruments: [{ amount: totalAmountStr }],
+                financialInstruments: parseCommaSeparatedList(detailsMap.get('Financial Instruments') || detailsMap.get('Financial Instrument')),
                 totalProjectAmount: totalAmountNum,
                 owner: detailsMap.get('Owner') || '',
                 privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
@@ -748,11 +756,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         }
     }, [projectToEdit, isEditMode, prefilledLocation]);
 
-
-    useEffect(() => {
-        const total = formData.financialInstruments.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-        setFormData(prev => ({ ...prev, totalProjectAmount: total }));
-    }, [formData.financialInstruments]);
 
     useEffect(() => {
         const missingCitySelections = formData.citySelections.filter((selection) => !cityProvinceMap[selection]);
@@ -1103,7 +1106,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         console.log('Form submitted!', { isEditMode, projectToEdit, onAddProject, onUpdateProject, formData });
         const {
             projectName, approvalDate, publishDate, falseSolutions,
-            regionSelections, countrySelections, cityInput, projectNumber, ifiSelections, ifiOther, fundingSource,
+            regionSelections, countrySelections, cityInput, projectNumber, ifiSelections, ifiOther, fundingSource, financialInstruments,
             totalProjectAmount, owner, privateSectorBorrowers, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             groupsInOpposition, typesOfActions, linksToActions,
@@ -1128,6 +1131,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             ...ifiSelections.filter((selection) => selection !== 'Others'),
             ...(ifiSelections.includes('Others') && ifiOther.trim() ? [ifiOther.trim()] : []),
         ].join(', ');
+        const financialInstrumentsValue = financialInstruments.join(', ');
 
         const details = `
     **Region:** ${regionValue}
@@ -1136,6 +1140,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 **Project Number:** ${projectNumber || 'N/A'}
 **IFI:** ${ifiValue}
 **Funding Source:** ${fundingSource}
+**Financial Instruments:** ${financialInstrumentsValue}
 **Total Project Amount:** $${totalProjectAmount.toLocaleString()}
 **Owner:** ${owner}
 **Private Sector Borrowers:** ${privateSectorBorrowers.join(', ')}
@@ -1336,36 +1341,25 @@ ${references}
                                 <Input type="text" name="fundingSource" value={formData.fundingSource} onChange={handleInputChange} />
                             </FormField>
                             <FormField label="Financial Instruments">
-                                {formData.financialInstruments.map((instrument, index) => (
-                                    <div key={index} className="flex items-center space-x-2 mb-2">
-                                        <Input 
-                                            type="text" 
-                                            placeholder="Amount" 
-                                            value={instrument.amount} 
-                                            onChange={(e) => handleRepeatableChange('financialInstruments', index, { amount: e.target.value })} 
-                                        />
-                                        {formData.financialInstruments.length > 1 && (
-                                            <button 
-                                                type="button" 
-                                                onClick={() => removeRepeatableRow('financialInstruments', index)} 
-                                                className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
-                                            >
-                                                Remove
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                                <button 
-                                    type="button" 
-                                    onClick={() => addRepeatableRow('financialInstruments')} 
-                                    className="text-sm text-brand-medium-blue hover:underline"
-                                >
-                                    + Add instrument
-                                </button>
+                                <MultiSelectPopover
+                                    label=""
+                                    placeholder="Select Financial Instruments"
+                                    searchPlaceholder="Search financial instruments..."
+                                    options={FINANCIAL_INSTRUMENT_OPTIONS}
+                                    selectedValues={formData.financialInstruments}
+                                    onChange={(values) => setFormData(prev => ({ ...prev, financialInstruments: values }))}
+                                />
                             </FormField>
                         </div>
                         <FormField label="Total Project Amount">
-                            <Input type="text" value={`$${formData.totalProjectAmount.toLocaleString()}`} readOnly className="bg-gray-100" />
+                            <Input
+                                type="number"
+                                step="any"
+                                min="0"
+                                value={formData.totalProjectAmount || ''}
+                                onChange={(e) => setFormData(prev => ({ ...prev, totalProjectAmount: parseFloat(e.target.value) || 0 }))}
+                                placeholder="Enter total project amount"
+                            />
                         </FormField>
                         
                         <SectionTitle>Details</SectionTitle>
