@@ -19,6 +19,17 @@ const getRowValue = (row: Record<string, any>, keys: string[]): string => {
 
 const getCsvValue = (row: Record<string, any>, keys: string[]): string => getRowValue(row, keys);
 
+const deriveDocumentNameFromLink = (rawLink: string): string => {
+  try {
+    const parsed = new URL(rawLink);
+    const fileName = decodeURIComponent(parsed.pathname.split('/').pop() || '').trim();
+    if (fileName) return fileName;
+  } catch {
+    // Fall through to default.
+  }
+  return 'Publication Link';
+};
+
 const TRUTHY_CHECKBOX_MARKERS = new Set(['x', 'yes', 'true', '1', 'y', '✓', '✔']);
 
 const isCheckedValue = (value: any): boolean => {
@@ -364,29 +375,40 @@ export function parseNewsExcel(file: File): Promise<ParseResult<Omit<Article, 'i
         jsonData.forEach((row: any, index: number) => {
           const rowNum = index + 2;
 
-          if (!row['Title*']) {
+          const title = getRowValue(row, ['Title*', 'Title']);
+          const category = getRowValue(row, ['Category*', 'Category']);
+          const description = getRowValue(row, ['Description*', 'Description']);
+          const imageUrl = getRowValue(row, ['Featured Image URL (optional)', 'Featured Image URL', 'Image URL']);
+          const tagsRaw = getRowValue(row, ['Tags (comma-separated)', 'Tags']);
+          const publishDate = getRowValue(row, ['Publish Date']);
+          const status = getRowValue(row, ['Status (published/draft)', 'Status']);
+
+          if (!title) {
             errors.push(`Row ${rowNum}: Title is required`);
             return;
           }
-          if (!row['Category*']) {
+          if (!category) {
             errors.push(`Row ${rowNum}: Category is required`);
             return;
           }
+          if (!description) {
+            errors.push(`Row ${rowNum}: Description is required`);
+            return;
+          }
 
-          const tags = row['Tags (comma-separated)']
-            ? row['Tags (comma-separated)'].split(',').map((t: string) => t.trim())
+          const tags = tagsRaw
+            ? tagsRaw.split(',').map((t: string) => t.trim())
             : [];
 
           news.push({
-            title: row['Title*'],
-            category: row['Category*'],
-            description: row['Description'] || '',
-            imageUrl: row['Image URL'] || '',
+            title,
+            category,
+            description,
+            imageUrl: imageUrl || '',
             tagColor: 'bg-yellow-400',
             tags,
-            publishDate: row['Publish Date'] || new Date().toISOString().split('T')[0],
-            videoUrl: row['Video URL'] || undefined,
-            status: row['Status'] === 'draft' ? 'draft' : 'published',
+            publishDate: publishDate || new Date().toISOString().split('T')[0],
+            status: status === 'draft' ? 'draft' : 'published',
           });
         });
 
@@ -423,34 +445,55 @@ export function parsePublicationsExcel(file: File): Promise<ParseResult<Omit<Art
         jsonData.forEach((row: any, index: number) => {
           const rowNum = index + 2;
 
-          if (!row['Title*']) {
+          const title = getRowValue(row, ['Title*', 'Title']);
+          const publicationType = getRowValue(row, ['Publication Type*', 'Category*', 'Category']);
+          const publicationCategory = getRowValue(row, ['Publication Category*', 'Publication Category', 'publication_category']);
+          const description = getRowValue(row, ['Description*', 'Description']);
+          const publisher = getRowValue(row, ['Publisher']);
+          const publicationLink = getRowValue(row, ['Publication Link']);
+          const imageUrl = getRowValue(row, ['Featured Image URL (optional)', 'Featured Image URL', 'Image URL']);
+          const tagsRaw = getRowValue(row, ['Tags (comma-separated)', 'Tags']);
+          const publishDate = getRowValue(row, ['Publish Date']);
+          const status = getRowValue(row, ['Status (published/draft)', 'Status']);
+
+          if (!title) {
             errors.push(`Row ${rowNum}: Title is required`);
             return;
           }
-          if (!row['Category*']) {
-            errors.push(`Row ${rowNum}: Category is required`);
+          if (!publicationType) {
+            errors.push(`Row ${rowNum}: Publication Type is required`);
+            return;
+          }
+          if (!publicationCategory) {
+            errors.push(`Row ${rowNum}: Publication Category is required`);
+            return;
+          }
+          if (!description) {
+            errors.push(`Row ${rowNum}: Description is required`);
             return;
           }
 
-          const tags = row['Tags (comma-separated)']
-            ? row['Tags (comma-separated)'].split(',').map((t: string) => t.trim())
+          const tags = tagsRaw
+            ? tagsRaw.split(',').map((t: string) => t.trim())
             : [];
 
-          const documentNames = row['Document Names (comma-separated)']
-            ? row['Document Names (comma-separated)'].split(',').map((d: string) => d.trim())
-            : [];
+          const documentUrls = publicationLink ? [publicationLink] : [];
+          const documentNames = publicationLink ? [deriveDocumentNameFromLink(publicationLink)] : [];
 
           publications.push({
-            title: row['Title*'],
-            category: row['Category*'],
-            description: row['Description'] || '',
-            imageUrl: row['Image URL'] || '',
+            title,
+            category: publicationType,
+            publicationCategory,
+            publisher: publisher || undefined,
+            description,
+            imageUrl: imageUrl || '',
             tagColor: 'bg-blue-400',
             tags,
-            publishDate: row['Publish Date'] || new Date().toISOString().split('T')[0],
+            publishDate: publishDate || new Date().toISOString().split('T')[0],
             documentNames,
+            documentUrls,
             downloadCount: 0,
-            status: row['Status'] === 'draft' ? 'draft' : 'published',
+            status: status === 'draft' ? 'draft' : 'published',
           });
         });
 
@@ -487,33 +530,46 @@ export function parseVideosExcel(file: File): Promise<ParseResult<Omit<Article, 
         jsonData.forEach((row: any, index: number) => {
           const rowNum = index + 2;
 
-          if (!row['Title*']) {
+          const title = getRowValue(row, ['Title*', 'Title']);
+          const category = getRowValue(row, ['Video Category*', 'Category*', 'Category']);
+          const description = getRowValue(row, ['Description*', 'Description']);
+          const videoUrl = getRowValue(row, ['Video URL*', 'Video URL']);
+          const imageUrl = getRowValue(row, ['Featured Image URL (optional)', 'Featured Image URL', 'Image URL']);
+          const tagsRaw = getRowValue(row, ['Tags (comma-separated)', 'Tags']);
+          const publishDate = getRowValue(row, ['Publish Date']);
+          const status = getRowValue(row, ['Status (published/draft)', 'Status']);
+
+          if (!title) {
             errors.push(`Row ${rowNum}: Title is required`);
             return;
           }
-          if (!row['Category*']) {
+          if (!category) {
             errors.push(`Row ${rowNum}: Category is required`);
             return;
           }
-          if (!row['Video URL*']) {
+          if (!description) {
+            errors.push(`Row ${rowNum}: Description is required`);
+            return;
+          }
+          if (!videoUrl) {
             errors.push(`Row ${rowNum}: Video URL is required`);
             return;
           }
 
-          const tags = row['Tags (comma-separated)']
-            ? row['Tags (comma-separated)'].split(',').map((t: string) => t.trim())
+          const tags = tagsRaw
+            ? tagsRaw.split(',').map((t: string) => t.trim())
             : [];
 
           videos.push({
-            title: row['Title*'],
-            category: row['Category*'],
-            description: row['Description'] || '',
-            imageUrl: row['Image URL'] || '',
+            title,
+            category,
+            description,
+            imageUrl: imageUrl || '',
             tagColor: 'bg-purple-400',
             tags,
-            publishDate: row['Publish Date'] || new Date().toISOString().split('T')[0],
-            videoUrl: row['Video URL*'],
-            status: row['Status'] === 'draft' ? 'draft' : 'published',
+            publishDate: publishDate || new Date().toISOString().split('T')[0],
+            videoUrl,
+            status: status === 'draft' ? 'draft' : 'published',
           });
         });
 
@@ -550,36 +606,52 @@ export function parseProjectBriefsExcel(file: File): Promise<ParseResult<Omit<Pr
         jsonData.forEach((row: any, index: number) => {
           const rowNum = index + 2;
 
+          const projectName = getRowValue(row, ['Project Name*', 'Project Name']);
+          const projectType = getRowValue(row, ['Project Type (kind of energy project)', 'Project Type']);
+          const location = getRowValue(row, ['Location*', 'Location']);
+          const country = getRowValue(row, ['Country*', 'Country']);
+          const financingAmount = getRowValue(row, ['Financing Amount']);
+          const financiers = getRowValue(row, ['Financiers']);
+          const financialInstruments = getRowValue(row, ['Financial Instruments']);
+          const otherPartners = getRowValue(row, ['Other partners involved', 'Other Partners Involved']);
+          const timelineAndStatus = getRowValue(row, ['Timeline and Status']);
+          const safeguardCategories = getRowValue(row, ['Safeguard categories', 'Safeguard Categories']);
+          const negativeImpacts = getRowValue(row, ['Negative impacts of the project', 'Negative Impacts']);
+          const reprisals = getRowValue(row, ['Reprisals associated with the project', 'Reprisals']);
+          const advocacyTimeline = getRowValue(row, ['Advocacy Timeline']);
+          const otherInformation = getRowValue(row, ['Other information and links to project documents', 'Other Information']);
+          const status = getRowValue(row, ['Status (published/draft)', 'Status']);
+
           // Required fields validation
-          if (!row['Project Name*']) {
+          if (!projectName) {
             errors.push(`Row ${rowNum}: Project Name is required`);
             return;
           }
-          if (!row['Location*']) {
+          if (!location) {
             errors.push(`Row ${rowNum}: Location is required`);
             return;
           }
-          if (!row['Country*']) {
+          if (!country) {
             errors.push(`Row ${rowNum}: Country is required`);
             return;
           }
 
           briefs.push({
-            project_name: row['Project Name*'],
-            project_type: row['Project Type'] || '',
-            location: row['Location*'],
-            country: row['Country*'],
-            financing_amount: row['Financing Amount'] || '',
-            financiers: row['Financiers'] || '',
-            financial_instruments: row['Financial Instruments'] || '',
-            other_partners_involved: row['Other Partners Involved'] || '',
-            timeline_and_status: row['Timeline and Status'] || '',
-            safeguard_categories: row['Safeguard Categories'] || '',
-            negative_impacts: row['Negative Impacts'] || '',
-            reprisals: row['Reprisals'] || '',
-            advocacy_timeline: row['Advocacy Timeline'] || '',
-            other_information: row['Other Information'] || '',
-            status: row['Status'] === 'draft' ? 'draft' : 'published',
+            project_name: projectName,
+            project_type: projectType || '',
+            location,
+            country,
+            financing_amount: financingAmount || '',
+            financiers: financiers || '',
+            financial_instruments: financialInstruments || '',
+            other_partners_involved: otherPartners || '',
+            timeline_and_status: timelineAndStatus || '',
+            safeguard_categories: safeguardCategories || '',
+            negative_impacts: negativeImpacts || '',
+            reprisals: reprisals || '',
+            advocacy_timeline: advocacyTimeline || '',
+            other_information: otherInformation || '',
+            status: status === 'draft' ? 'draft' : 'published',
             submitted_at: new Date().toISOString(),
           });
         });
