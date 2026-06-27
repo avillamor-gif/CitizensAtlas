@@ -281,11 +281,29 @@ const toTitleCase = (str: string): string => {
         .join(' ');
 };
 
+// Use narrower Asian subregions for map-driven auto-fill.
+const asiaSubregionCountries: Record<string, string[]> = {
+    'South Asia': ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', 'Pakistan', 'Sri Lanka'],
+    'South East Asia': ['Brunei', 'Cambodia', 'Indonesia', 'Laos', 'Malaysia', 'Myanmar', 'Philippines', 'Singapore', 'Thailand', 'Timor-Leste', 'Vietnam'],
+    'East Asia': ['China', 'Japan', 'Mongolia', 'North Korea', 'South Korea', 'Taiwan'],
+    'West Asia': ['Armenia', 'Azerbaijan', 'Bahrain', 'Cyprus', 'Georgia', 'Iran', 'Iraq', 'Israel', 'Jordan', 'Kuwait', 'Lebanon', 'Oman', 'Palestine', 'Qatar', 'Saudi Arabia', 'Syria', 'Turkey', 'United Arab Emirates', 'Yemen'],
+    'Central Asia': ['Kazakhstan', 'Kyrgyzstan', 'Tajikistan', 'Turkmenistan', 'Uzbekistan'],
+};
+
 // Helper function to get region from country (case-insensitive)
 const getRegionFromCountry = (country: string): string => {
     if (!country) return '';
     const countryLower = country.toLowerCase();
     console.log('🔍 getRegionFromCountry - Looking for:', country, '(lowercase:', countryLower, ')');
+
+    for (const [subregion, countries] of Object.entries(asiaSubregionCountries)) {
+        const found = countries.some(c => c.toLowerCase() === countryLower);
+        if (found) {
+            console.log('✅ Found Asian subregion:', subregion, 'for country:', country);
+            return subregion;
+        }
+    }
+
     for (const [region, countries] of Object.entries(regionCountries)) {
         const found = countries.some(c => c.toLowerCase() === countryLower);
         if (found) {
