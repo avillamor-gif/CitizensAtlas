@@ -6,6 +6,7 @@ import ProjectDetailModal from '@/components/features/projects/ProjectDetailModa
 import ProjectForm from '@/components/features/projects/ProjectForm';
 import { countryNameToCode, getIfiAbbreviation } from '@/lib/constants';
 import * as DataService from '@/lib/services/data-service';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MapPageProps {
     projects: Project[];
@@ -13,6 +14,9 @@ interface MapPageProps {
 }
 
 const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
+    const { user } = useAuth();
+    const canEditProjects = !!user && (user.role === 'admin' || user.role === 'super-admin');
+
     // Independent filters state for Map page - not shared with homepage
     const [filters, setFilters] = useState<Filters>({
         country: 'all',
@@ -45,9 +49,12 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
     };
 
     const handleEditProject = useCallback((project: Project) => {
+        if (!canEditProjects) {
+            return;
+        }
         setProjectToEdit(project);
         setSelectedProject(null); // Close the details modal
-    }, []);
+    }, [canEditProjects]);
 
     const handleMapLoad = () => {
         setIsMapLoading(false);
@@ -215,7 +222,12 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
 
             {/* Project Details Panel - Desktop Only - Fixed 35% width */}
             {selectedProject && !projectToEdit && (
-                <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} isSidePanel={true} />
+                <ProjectDetailModal
+                    project={selectedProject}
+                    onClose={closeDetailModal}
+                    onEdit={canEditProjects ? handleEditProject : undefined}
+                    isSidePanel={true}
+                />
             )}
 
             {/* Project Edit Form */}
@@ -226,7 +238,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
                     onProjectAdded={() => setProjectToEdit(null)}
                     onUpdateProject={handleUpdateProject}
                     isModal={true}
-                    userRole="admin"
+                    userRole={(user?.role as 'contributor' | 'admin' | 'super-admin') || 'contributor'}
                 />
             )}
         </div>

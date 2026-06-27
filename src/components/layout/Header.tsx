@@ -7,6 +7,7 @@ import { Page, User } from '@/types/types';
 import { UserIcon } from '@/components/ui/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Menu, X } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
     currentUser?: User;
@@ -37,6 +38,8 @@ const NavLink: React.FC<{ href: string; isActive: boolean; children: React.React
 const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { user: authUser } = useAuth();
+    const resolvedUser = currentUser ?? authUser ?? undefined;
 
     const isActive = (page: string) => {
         const path = pageToPath[page];
@@ -79,12 +82,12 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
                         
                         {/* User Avatar or Login Link */}
-                        {currentUser ? (
+                        {resolvedUser ? (
                             <Link href="/admin/account-profile" className="flex items-center">
                                 <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
-                                    <AvatarImage src={currentUser.avatar_url} alt={currentUser.full_name} />
+                                    <AvatarImage src={resolvedUser.avatar_url} alt={resolvedUser.full_name} />
                                     <AvatarFallback className="bg-brand-dark-blue text-white">
-                                        {getInitials(currentUser.full_name)}
+                                        {getInitials(resolvedUser.full_name)}
                                     </AvatarFallback>
                                 </Avatar>
                             </Link>
@@ -183,20 +186,20 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
 
                         {/* Mobile User Section */}
                         <div className="pt-4 border-t border-gray-200">
-                            {currentUser ? (
+                            {resolvedUser ? (
                                 <Link 
                                     href="/admin/account-profile" 
                                     className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     <Avatar className="h-10 w-10">
-                                        <AvatarImage src={currentUser.avatar_url} alt={currentUser.full_name} />
+                                        <AvatarImage src={resolvedUser.avatar_url} alt={resolvedUser.full_name} />
                                         <AvatarFallback className="bg-brand-dark-blue text-white">
-                                            {getInitials(currentUser.full_name)}
+                                            {getInitials(resolvedUser.full_name)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <p className="font-medium text-gray-900">{currentUser.full_name}</p>
+                                        <p className="font-medium text-gray-900">{resolvedUser.full_name}</p>
                                         <p className="text-sm text-gray-500">Admin Dashboard</p>
                                     </div>
                                 </Link>
