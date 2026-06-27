@@ -59,11 +59,31 @@ interface InteractiveMapProps {
     onMarkerClick: (project: Project) => void;
     onMapClick?: (location: { latitude: number; longitude: number }) => void;
     onMapLoad?: () => void;
+    selectedLocation?: { latitude: number; longitude: number } | null;
+    pickerMode?: boolean;
 }
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false }) => {
     const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
+    const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const mapRef = useRef<any>(null);
+
+    useEffect(() => {
+        setPickedLocation(selectedLocation);
+
+        if (
+            selectedLocation &&
+            mapRef.current &&
+            !Number.isNaN(selectedLocation.latitude) &&
+            !Number.isNaN(selectedLocation.longitude)
+        ) {
+            mapRef.current.flyTo({
+                center: [selectedLocation.longitude, selectedLocation.latitude],
+                zoom: 6,
+                duration: 800,
+            });
+        }
+    }, [selectedLocation]);
 
     // Calculate projects per country for choropleth
     const countryProjectCounts = useMemo(() => {
@@ -121,6 +141,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
     // Calculate center point based on all projects
     const mapCenter = useMemo(() => {
+        if (selectedLocation && !Number.isNaN(selectedLocation.latitude) && !Number.isNaN(selectedLocation.longitude)) {
+            return {
+                longitude: selectedLocation.longitude,
+                latitude: selectedLocation.latitude,
+                zoom: 5,
+            };
+        }
+
         if (projects.length === 0) {
             return { longitude: 0, latitude: 20, zoom: 1.5 };
         }
@@ -201,10 +229,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     setCountryPopup(null);
                     // If onMapClick is provided and user clicks on empty map area (not a marker)
                     if (onMapClick && e.lngLat) {
-                        onMapClick({
+                        const nextLocation = {
                             latitude: e.lngLat.lat,
                             longitude: e.lngLat.lng
-                        });
+                        };
+                        setPickedLocation(nextLocation);
+                        onMapClick(nextLocation);
                     }
                 }}
             >
@@ -241,6 +271,19 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     </Marker>
                 ))}
 
+                {(pickedLocation || selectedLocation) && (
+                    <Marker
+                        longitude={(selectedLocation || pickedLocation)!.longitude}
+                        latitude={(selectedLocation || pickedLocation)!.latitude}
+                        anchor="bottom"
+                    >
+                        <div className="flex flex-col items-center pointer-events-none">
+                            <div className="w-4 h-4 rounded-full bg-red-600 border-2 border-white shadow-lg" />
+                            <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-l-transparent border-r-transparent border-t-red-600 -mt-[2px]" />
+                        </div>
+                    </Marker>
+                )}
+
                 {countryPopup && (
                     <Popup
                         longitude={countryPopup.lng}
@@ -262,7 +305,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 )}
             </Map>
 
-            {projects.length === 0 && (
+            {projects.length === 0 && !pickerMode && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 pointer-events-none z-20">
                     <div className="text-center p-8 bg-white rounded-lg shadow-xl">
                         <h3 className="text-2xl font-semibold text-brand-dark-blue">No Projects Found</h3>
@@ -271,7 +314,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 </div>
             )}
 
-            <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs">
+            {!pickerMode && <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs">
                 <div>
                     <h4 className="font-bold text-sm mb-2 text-brand-dark-blue">False Solution Types</h4>
                     <ul className="space-y-1">
@@ -283,7 +326,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         ))}
                     </ul>
                 </div>
-            </div>
+            </div>}
         </div>
     );
 };

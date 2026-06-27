@@ -9,6 +9,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import InteractiveMap from '@/components/features/map/InteractiveMap';
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -573,6 +574,7 @@ const emptyFormState = {
     regionSelections: [] as string[],
     countrySelections: [] as string[],
     citySelections: [] as string[],
+    cityInput: '',
     latitude: '',
     longitude: '',
     projectName: '',
@@ -622,6 +624,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [showManageEnvironmentalCategories, setShowManageEnvironmentalCategories] = useState(false);
     const [showManageSocialSafeguardCategories, setShowManageSocialSafeguardCategories] = useState(false);
     const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
+    const [addressQuery, setAddressQuery] = useState('');
+    const [isSearchingAddress, setIsSearchingAddress] = useState(false);
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
         <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
@@ -656,6 +660,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 regionSelections: mergedRegions,
                 countrySelections: normalizedCountries,
                 citySelections,
+                cityInput: parseCommaSeparatedList(detailsMap.get('City')).join(', '),
                 latitude: projectToEdit.latitude?.toString() || '',
                 longitude: projectToEdit.longitude?.toString() || '',
                 projectName: projectToEdit.title || '',
@@ -714,6 +719,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 regionSelections: region ? [region] : [],
                 countrySelections: country ? [country] : [],
                 citySelections: city ? [`${country || 'Unknown'}::${city}`] : [],
+                cityInput: city,
                 latitude: prefilledLocation.latitude?.toString() || '',
                 longitude: prefilledLocation.longitude?.toString() || '',
                 publishDate: today,
@@ -879,6 +885,118 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         }));
     };
 
+    const applyResolvedLocation = (params: {
+        latitude: string;
+        longitude: string;
+        country?: string;
+        city?: string;
+    }) => {
+        const country = params.country ? toTitleCase(params.country) : '';
+        const region = country ? getRegionFromCountry(country) : '';
+
+        setFormData((prev) => ({
+            ...prev,
+            latitude: params.latitude,
+            longitude: params.longitude,
+            regionSelections: region ? [region] : prev.regionSelections,
+            countrySelections: country ? [country] : prev.countrySelections,
+            cityInput: params.city
+                ? Array.from(new Set([...prev.cityInput.split(',').map((item) => item.trim()).filter(Boolean), params.city])).join(', ')
+                : prev.cityInput,
+        }));
+    };
+
+    const handleMapLocationPick = async (location: { latitude: number; longitude: number }) => {
+        const latitude = location.latitude.toFixed(6);
+        const longitude = location.longitude.toFixed(6);
+
+        applyResolvedLocation({ latitude, longitude });
+
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=10&addressdetails=1`,
+                {
+                    headers: {
+                        'User-Agent': 'CitizensAtlas/1.0',
+                    },
+                }
+            );
+
+            if (!response.ok) return;
+
+            const payload = await response.json();
+            const address = payload?.address || {};
+            const country = address.country || '';
+            const city = address.city || address.town || address.village || address.municipality || '';
+
+            applyResolvedLocation({ latitude, longitude, country, city });
+        } catch (error) {
+            console.error('Reverse geocoding error:', error);
+        }
+    };
+
+    const handleAddressSearch = async () => {
+        const query = addressQuery.trim();
+        if (!query) return;
+
+        setIsSearchingAddress(true);
+
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&q=${encodeURIComponent(query)}`,
+                {
+                    headers: {
+                        'User-Agent': 'CitizensAtlas/1.0',
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Address search failed');
+            }
+
+            const results = await response.json();
+            const first = results?.[0];
+
+            if (!first) {
+                alert('No location found for that address.');
+                return;
+            }
+
+            const latitude = Number.parseFloat(first.lat);
+            const longitude = Number.parseFloat(first.lon);
+            if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+                alert('Invalid location result. Try another address.');
+                return;
+            }
+
+            const address = first.address || {};
+            const country = address.country || '';
+            const city = address.city || address.town || address.village || address.municipality || '';
+
+            applyResolvedLocation({
+                latitude: latitude.toFixed(6),
+                longitude: longitude.toFixed(6),
+                country,
+                city,
+            });
+        } catch (error) {
+            console.error('Address search error:', error);
+            alert('Failed to search address. Please try again.');
+        } finally {
+            setIsSearchingAddress(false);
+        }
+    };
+
+    const selectedMapLocation = (() => {
+        const latitude = parseFloat(formData.latitude);
+        const longitude = parseFloat(formData.longitude);
+        if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+            return null;
+        }
+        return { latitude, longitude };
+    })();
+
     const handleIfiCheckboxChange = (option: string, checked: boolean) => {
         setFormData((prev) => {
             const currentSelections = prev.ifiSelections;
@@ -967,7 +1085,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         console.log('Form submitted!', { isEditMode, projectToEdit, onAddProject, onUpdateProject, formData });
         const {
             projectName, approvalDate, publishDate, falseSolutions,
-            regionSelections, countrySelections, citySelections, projectNumber, ifiSelections, ifiOther, fundingSource,
+            regionSelections, countrySelections, cityInput, projectNumber, ifiSelections, ifiOther, fundingSource,
             totalProjectAmount, owner, privateSectorBorrowers, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             groupsInOpposition, typesOfActions, linksToActions,
@@ -982,13 +1100,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             alert('Country is required. Please select at least one country.');
             return;
         }
-        const cityValue = citySelections
-            .map((selection) => {
-                const [country, city] = selection.split('::');
-                const province = cityProvinceMap[selection];
-                if (!country || !city) return selection;
-                return province ? `${city}, ${province} (${country})` : `${city} (${country})`;
-            })
+        const cityValue = cityInput
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean)
             .join(', ');
 
         const ifiValue = [
@@ -1099,51 +1214,77 @@ ${references}
                         <Input type="text" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
                     </FormField>
                     
-                    {isLoadingData ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="Region">
-                                <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 animate-pulse h-[42px]"></div>
-                            </FormField>
-                            <FormField label="Country">
-                                <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 animate-pulse h-[42px]"></div>
-                            </FormField>
-                            <FormField label="City/ies">
-                                <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 animate-pulse h-[42px]"></div>
-                            </FormField>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <FormField label="Region">
+                            <Input
+                                type="text"
+                                value={formData.regionSelections.join(', ')}
+                                placeholder="Auto-filled from map pin"
+                                readOnly
+                                className="bg-gray-50"
+                            />
+                        </FormField>
+                        <FormField label="Country" required>
+                            <Input
+                                type="text"
+                                value={formData.countrySelections.join(', ')}
+                                placeholder="Auto-filled from map pin"
+                                readOnly
+                                className="bg-gray-50"
+                            />
+                        </FormField>
+                        <FormField label="City/ies (comma-separated)">
+                            <Input
+                                type="text"
+                                name="cityInput"
+                                value={formData.cityInput}
+                                onChange={handleInputChange}
+                                placeholder="e.g. Manila, Quezon City, Cebu City"
+                            />
+                        </FormField>
+                    </div>
+
+                    <FormField label="Project Location (click map to pin)">
+                        <div className="space-y-3">
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <Input
+                                    type="text"
+                                    value={addressQuery}
+                                    onChange={(e) => setAddressQuery(e.target.value)}
+                                    placeholder="Search address (e.g. Quezon City, Philippines)"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            handleAddressSearch();
+                                        }
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddressSearch}
+                                    disabled={isSearchingAddress}
+                                    className="px-4 py-2 text-white rounded-md transition-colors disabled:opacity-60"
+                                    style={{ backgroundColor: '#0d234f' }}
+                                >
+                                    {isSearchingAddress ? 'Searching...' : 'Search'}
+                                </button>
+                            </div>
+                            <div className="h-72 overflow-hidden rounded-md border border-gray-300">
+                                <InteractiveMap
+                                    projects={[]}
+                                    onMarkerClick={() => {}}
+                                    onMapClick={handleMapLocationPick}
+                                    selectedLocation={selectedMapLocation}
+                                    pickerMode={true}
+                                />
+                            </div>
+                            <p className="text-xs text-gray-600">
+                                Type an address to place the pin, or click anywhere on the map.
+                            </p>
+                            <input type="hidden" name="latitude" value={formData.latitude} readOnly />
+                            <input type="hidden" name="longitude" value={formData.longitude} readOnly />
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <MultiSelectPopover
-                                label="Region"
-                                placeholder="Select Region(s)"
-                                searchPlaceholder="Search regions..."
-                                options={REGION_OPTIONS}
-                                selectedValues={formData.regionSelections}
-                                onChange={handleRegionSelectionsChange}
-                            />
-                            <MultiSelectPopover
-                                label="Country"
-                                placeholder={formData.regionSelections.length > 0 ? 'Select Country(ies)' : 'Select Country(ies)'}
-                                searchPlaceholder="Search countries..."
-                                options={getCountriesForRegions(formData.regionSelections)}
-                                selectedValues={formData.countrySelections}
-                                onChange={handleCountrySelectionsChange}
-                            />
-                            <MultiSelectPopover
-                                label="City/ies"
-                                placeholder={formData.countrySelections.length > 0 ? 'Select City/ies' : 'Select City/ies'}
-                                searchPlaceholder="Search cities..."
-                                options={getCityOptionsForCountries(formData.countrySelections.length > 0 ? formData.countrySelections : getCountriesForRegions(formData.regionSelections).map((option) => option.value)).map((option) => ({
-                                    ...option,
-                                    description: cityProvinceMap[option.value]
-                                        ? `${option.description} · ${cityProvinceMap[option.value]}`
-                                        : option.description,
-                                }))}
-                                selectedValues={formData.citySelections}
-                                onChange={handleCitySelectionsChange}
-                            />
-                        </div>
-                    )}
+                    </FormField>
 
                         <SectionTitle>Financials</SectionTitle>
                         <FormField label="International financial institution (IFI)">
