@@ -455,6 +455,20 @@ const REGION_OPTIONS: MultiSelectOption[] = Object.keys(regionCountries).map((re
     label: region,
 }));
 
+const canonicalCountryByLower = (() => {
+    const map = new Map<string, string>();
+    Object.values(regionCountries).flat().forEach((country) => {
+        map.set(country.toLowerCase(), country);
+    });
+    return map;
+})();
+
+const normalizeCountryName = (country: string) => {
+    const trimmed = country.trim();
+    if (!trimmed) return '';
+    return canonicalCountryByLower.get(trimmed.toLowerCase()) || toTitleCase(trimmed);
+};
+
 const getCountriesForRegions = (regions: string[]) => {
     const selectedRegions = regions.length > 0 ? regions : Object.keys(regionCountries);
     return uniqueByValue(
@@ -666,7 +680,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const totalAmountNum = parseFloat(totalAmountStr) || 0;
             
             const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
-            const countrySelections = parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country);
+            const countrySelections = uniqueStrings(
+                parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country)
+                    .map(normalizeCountryName)
+                    .filter(Boolean)
+            );
             const citySelections = matchCitySelections(
                 parseCitySelectionValues(detailsMap.get('City')),
                 countrySelections
@@ -675,16 +693,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const mergedRegions = uniqueByValue(
                 [...regionSelections, ...derivedRegions].map((region) => ({ value: region, label: region }))
             ).map((item) => item.value);
-            const normalizedCountries = countrySelections.map((country) => toTitleCase(country));
             
             console.log('🔍 ProjectForm Edit Mode - Regions:', mergedRegions);
-            console.log('🔍 ProjectForm Edit Mode - Countries:', normalizedCountries);
+            console.log('🔍 ProjectForm Edit Mode - Countries:', countrySelections);
             console.log('🔍 ProjectForm Edit Mode - Cities:', citySelections);
             console.log('🔍 ProjectForm Edit Mode - All details:', Object.fromEntries(detailsMap));
             
             setFormData({
                 regionSelections: mergedRegions,
-                countrySelections: normalizedCountries,
+                countrySelections,
                 citySelections,
                 cityInput: parseCommaSeparatedList(detailsMap.get('City')).join(', '),
                 latitude: projectToEdit.latitude?.toString() || '',
@@ -736,7 +753,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             setIsLoadingData(false);
         } else if (prefilledLocation && !isEditMode) {
             // If we have prefilled location data from map click, use it
-            const country = prefilledLocation.country || '';
+            const country = normalizeCountryName(prefilledLocation.country || '');
             const region = country ? getRegionFromCountry(country) : '';
             const city = prefilledLocation.city || '';
             
@@ -912,7 +929,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         country?: string;
         city?: string;
     }) => {
-        const country = params.country ? toTitleCase(params.country) : '';
+        const country = params.country ? normalizeCountryName(params.country) : '';
         const region = country ? getRegionFromCountry(country) : '';
 
         setFormData((prev) => ({
