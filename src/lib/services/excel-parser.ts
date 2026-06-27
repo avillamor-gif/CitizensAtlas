@@ -19,6 +19,23 @@ const getRowValue = (row: Record<string, any>, keys: string[]): string => {
 
 const getCsvValue = (row: Record<string, any>, keys: string[]): string => getRowValue(row, keys);
 
+const TRUTHY_CHECKBOX_MARKERS = new Set(['x', 'yes', 'true', '1', 'y', '✓', '✔']);
+
+const isCheckedValue = (value: any): boolean => {
+  if (value === undefined || value === null) return false;
+  const normalized = String(value).trim().toLowerCase();
+  return TRUTHY_CHECKBOX_MARKERS.has(normalized);
+};
+
+const getCheckedLabels = (row: Record<string, any>, labelToHeaderKeys: Record<string, string[]>): string[] => {
+  const selected: string[] = [];
+  Object.entries(labelToHeaderKeys).forEach(([label, keys]) => {
+    const checked = keys.some((key) => isCheckedValue(row[key]));
+    if (checked) selected.push(label);
+  });
+  return selected;
+};
+
 function parseGroupedSpreadsheetProjects(worksheet: XLSX.WorkSheet): ParseResult<Omit<Project, 'id'>> {
   const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as any[][];
   const headerRow = rows[0] || [];
@@ -189,28 +206,30 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const rowNum = index + 2; // +2 because Excel starts at 1 and we have headers
 
           const projectName = getRowValue(row, ['Project Name*', 'Project Name', 'Title']);
-          const country = getRowValue(row, ['Country*', 'Country']);
-          const corruptionType = getCsvValue(row, ['Corruption Type*', 'Corruption Type', 'False Solution Type*', 'False Solution Type', 'False Solutions']);
+          const country = getRowValue(row, ['Country/ies*', 'Country/ies', 'Country*', 'Country']);
+          const corruptionTypeText = getCsvValue(row, ['False Solution Type* (comma-separated)', 'False Solution Type*', 'False solution type', 'False Solution Type', 'Corruption Type*', 'Corruption Type', 'False Solutions']);
           const region = getRowValue(row, ['Region']);
-          const city = getRowValue(row, ['City']);
+          const city = getRowValue(row, ['City/ies', 'City']);
           const projectNumber = getRowValue(row, ['Project Number']);
           const totalProjectAmount = getRowValue(row, ['Total Project Amount', 'Project Amount']);
-          const ifi = getRowValue(row, ['IFI']);
-          const fundingSource = getRowValue(row, ['Funding Source']);
+          const ifiText = getRowValue(row, ['International Financial Institution (IFI) (comma-separated)', 'International financial institution (IFI)', 'IFI']);
+          const ifiOther = getRowValue(row, ['Other IFI']);
+          const fundingSource = getRowValue(row, ['Funding Source', 'Funding source']);
+          const financialInstruments = getRowValue(row, ['Financial Instruments (comma-separated amounts)', 'Financial Instruments']);
           const sector = getRowValue(row, ['Sector']);
-          const owner = getRowValue(row, ['Owner']);
-          const privateSectorBorrowers = getCsvValue(row, ['Private Sector Borrowers (comma-separated)', 'Private Sector Borrowers']);
-          const projectDescription = getRowValue(row, ['Project Description', 'Description']);
-          const projectStatus = getRowValue(row, ['Project Status']);
-          const approvalDate = getRowValue(row, ['Approval Date']);
-          const startDate = getRowValue(row, ['Start Date']);
-          const endDate = getRowValue(row, ['End Date']);
+          const owner = getRowValue(row, ['Owner (Public/ Private / PPP)', 'Owner']);
+          const privateSectorBorrowers = getCsvValue(row, ['Private Sector Borrower (comma-separated)', 'Private Sector Borrowers (comma-separated)', 'Private Sector Borrowers']);
+          const projectDescription = getRowValue(row, ['Project Description', 'Project description', 'Description']);
+          const projectStatus = getRowValue(row, ['Project Status', 'Status (proposed, active, cancelled, inactive)']);
+          const approvalDate = getRowValue(row, ['Approval Date*', 'Approval Date', 'Approval date']);
+          const startDate = getRowValue(row, ['Start Date', 'Start date']);
+          const endDate = getRowValue(row, ['End Date', 'End date']);
           const groupsInOpposition = getCsvValue(row, ['Groups in Opposition (comma-separated)', 'Groups in Opposition']);
-          const typesOfActions = getCsvValue(row, ['Types of Actions (comma-separated)', 'Types of Actions']);
-          const linksToActions = getCsvValue(row, ['Links to Actions (comma-separated)', 'Links to Actions']);
-          const environmental = getCsvValue(row, ['Environmental Categories (comma-separated)', 'Environmental Category', 'Environmental']);
+          const typesOfActions = getCsvValue(row, ['Types of Actions', 'Types of Actions (comma-separated)']);
+          const linksToActions = getCsvValue(row, ['Links to Actions', 'Links to Actions (comma-separated)']);
+          const environmental = getCsvValue(row, ['Environmental (comma-separated)', 'Environmental Categories (comma-separated)', 'Environmental Category', 'Environmental']);
           const socialSafeguard = getCsvValue(row, ['Social Safeguard (comma-separated)', 'Social Safeguard', 'Social Safeguards']);
-          const activeGaiASupport = getRowValue(row, ['Active GAIA Support', 'Active GAIA support?', 'GAIA Support']);
+          const activeGaiASupport = getRowValue(row, ['Active GAIA Support (Yes/No)', 'Active GAIA Support', 'Active GAIA support?', 'GAIA Support']);
           const notes = getRowValue(row, ['Notes']);
           const references = getRowValue(row, ['References']);
           const genderConcerns = getRowValue(row, ['Gender Concerns']);
@@ -218,6 +237,34 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const displacement = getRowValue(row, ['Displacement']);
           const publishDate = getRowValue(row, ['Publish Date']);
           const status = getRowValue(row, ['Status']);
+
+          const falseSolutionCheckboxValues = getCheckedLabels(row, {
+            'Waste-to-Energy': ['False Solution - Waste-to-Energy (X/Yes)', 'False Solution - Waste-to-Energy'],
+            'Plastic-to-Fuel Technologies': ['False Solution - Plastic-to-Fuel Technologies (X/Yes)', 'False Solution - Plastic-to-Fuel Technologies'],
+            'Chemical Recycling': ['False Solution - Chemical Recycling (X/Yes)', 'False Solution - Chemical Recycling'],
+            'Refuse-derived fuel': ['False Solution - Refuse-derived fuel (X/Yes)', 'False Solution - Refuse-derived fuel'],
+          });
+
+          const corruptionType = [
+            ...corruptionTypeText.split(',').map((value) => value.trim()).filter(Boolean),
+            ...falseSolutionCheckboxValues,
+          ].filter((value, index, array) => array.indexOf(value) === index).join(', ');
+
+          const ifiCheckboxValues = getCheckedLabels(row, {
+            'ADB': ['IFI - ADB (X/Yes)', 'IFI - ADB'],
+            'AIIB': ['IFI - AIIB (X/Yes)', 'IFI - AIIB'],
+            'GCF': ['IFI - GCF (X/Yes)', 'IFI - GCF'],
+            'GIZ': ['IFI - GIZ (X/Yes)', 'IFI - GIZ'],
+            'JICA': ['IFI - JICA (X/Yes)', 'IFI - JICA'],
+            'KOICA': ['IFI - KOICA (X/Yes)', 'IFI - KOICA'],
+            'IFC/ WB': ['IFI - IFC/ WB (X/Yes)', 'IFI - IFC/ WB'],
+            'Others': ['IFI - Others (X/Yes)', 'IFI - Others'],
+          });
+
+          const ifi = [
+            ...ifiText.split(',').map((value) => value.trim()).filter(Boolean),
+            ...ifiCheckboxValues,
+          ].filter((value, index, array) => array.indexOf(value) === index).join(', ');
 
           // Required fields validation
           if (!projectName) {
@@ -233,15 +280,19 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
             return;
           }
 
+          const combinedIfi = [ifi, ifiOther].filter(Boolean).join(', ');
+          const computedTotalAmount = totalProjectAmount || financialInstruments;
+
           // Build details string to match ProjectForm exactly.
           const details = `
 **Region:** ${region}
+**Country:** ${country}
 **City:** ${city}
 **Project Number:** ${projectNumber || 'N/A'}
-**IFI:** ${ifi}
+**IFI:** ${combinedIfi}
 **Funding Source:** ${fundingSource}
 **Sector:** ${sector}
-**Total Project Amount:** ${totalProjectAmount || '0'}
+**Total Project Amount:** ${computedTotalAmount || '0'}
 **Owner:** ${owner}
 **Private Sector Borrowers:** ${privateSectorBorrowers}
 **Project Description:**
