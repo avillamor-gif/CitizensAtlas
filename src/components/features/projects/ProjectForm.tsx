@@ -1250,9 +1250,24 @@ ${references}
                     <FormField label="Project Name" required>
                         <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} required />
                     </FormField>
-                    <FormField label="Project Number">
-                        <Input type="text" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
-                    </FormField>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <FormField label="Project Number">
+                            <Input type="text" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
+                        </FormField>
+                        <FormField label="Project Status">
+                            <Select value={formData.projectStatus || undefined} onValueChange={(value) => handleSelectChange('projectStatus', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Proposed">Proposed</SelectItem>
+                                    <SelectItem value="Active">Active</SelectItem>
+                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="Inactive">Inactive</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
+                    </div>
                     <FormField label="False solution type">
                         {formData.falseSolutions.map((solution, index) => (
                             <div key={index} className="flex items-center space-x-2 mb-2">
@@ -1283,19 +1298,6 @@ ${references}
                                 height="300px"
                             />
                         </div>
-                    </FormField>
-                    <FormField label="Project Status">
-                        <Select value={formData.projectStatus || undefined} onValueChange={(value) => handleSelectChange('projectStatus', value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Proposed">Proposed</SelectItem>
-                                <SelectItem value="Active">Active</SelectItem>
-                                <SelectItem value="Cancelled">Cancelled</SelectItem>
-                                <SelectItem value="Inactive">Inactive</SelectItem>
-                            </SelectContent>
-                        </Select>
                     </FormField>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                         <div className="w-full">
@@ -1451,8 +1453,6 @@ ${references}
                                 placeholder="Enter total project amount"
                             />
                         </FormField>
-                        
-                        <SectionTitle>Details</SectionTitle>
                         <FormField label="Owner (Public/ Private / PPP)">
                             <Select value={formData.owner || undefined} onValueChange={(value) => handleSelectChange('owner', value)}>
                                 <SelectTrigger>
