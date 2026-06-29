@@ -10,6 +10,7 @@ import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import InteractiveMap from '@/components/features/map/InteractiveMap';
 import { cn } from '@/lib/utils';
+import * as DataService from '@/lib/services/data-service';
 import {
   Select,
   SelectContent,
@@ -692,12 +693,36 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     );
 
     useEffect(() => {
-        if (isEditMode && projectToEdit) {
-            const detailsMap = parseDetails(projectToEdit.details);
+        const initializeEditForm = async () => {
+            if (!(isEditMode && projectToEdit)) {
+                return false;
+            }
+
+            setIsLoadingData(true);
+
+            let sourceProject = projectToEdit;
+            const hasCompletePayload =
+                typeof projectToEdit.details === 'string' &&
+                projectToEdit.details.trim().length > 0 &&
+                typeof projectToEdit.corruptionType === 'string';
+
+            // Some list views provide partial project rows. Re-fetch full row to guarantee form hydration.
+            if (!hasCompletePayload) {
+                try {
+                    const fullProject = await DataService.getProjectById(projectToEdit.id);
+                    if (fullProject) {
+                        sourceProject = fullProject;
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch full project details for edit form:', error);
+                }
+            }
+
+            const detailsMap = parseDetails(sourceProject.details || '');
             const totalAmountStr = (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, '');
             const totalAmountNum = parseFloat(totalAmountStr) || 0;
             const savedFalseSolutions =
-                projectToEdit.corruptionType ||
+                sourceProject.corruptionType ||
                 getDetailValue(detailsMap, ['False Solution Type', 'False solution type', 'False Solutions', 'False Solution']) ||
                 '';
             
@@ -726,9 +751,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 countrySelections,
                 citySelections,
                 cityInput: parseCommaSeparatedList(detailsMap.get('City')).join(', '),
-                latitude: projectToEdit.latitude?.toString() || '',
-                longitude: projectToEdit.longitude?.toString() || '',
-                projectName: projectToEdit.title || '',
+                latitude: sourceProject.latitude?.toString() || '',
+                longitude: sourceProject.longitude?.toString() || '',
+                projectName: sourceProject.title || '',
                 projectNumber: detailsMap.get('Project Number') || '',
                 falseSolutions: savedFalseSolutions
                     ? savedFalseSolutions.split(',').map(s => s.trim()).filter(Boolean)
@@ -755,10 +780,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
                 projectDescription: detailsMap.get('Project Description') || '',
                 projectStatus: getDetailValue(detailsMap, ['Project Status', 'Status']) || '',
-                approvalDate: projectToEdit.date || '',
+                approvalDate: sourceProject.date || '',
                 startDate: detailsMap.get('Start Date') || '',
                 endDate: detailsMap.get('End Date') || '',
-                publishDate: projectToEdit.publishDate || '',
+                publishDate: sourceProject.publishDate || '',
                 environmental: detailsMap.get('Environmental Category')?.split(', ').map(s => s.trim()) || [''],
                 socialSafeguard: detailsMap.get('Social Safeguard')?.split(', ').map(s => s.trim()) || [''],
                 keyDocuments: detailsMap.get('Key Documents') || '',
@@ -775,7 +800,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             
             console.log('✅ ProjectForm - State set with regions/countries/cities');
             setIsLoadingData(false);
-        } else if (prefilledLocation && !isEditMode) {
+            return true;
+        };
+
+        const initialize = async () => {
+            const initializedEdit = await initializeEditForm();
+            if (initializedEdit) return;
+
+            if (prefilledLocation && !isEditMode) {
             // If we have prefilled location data from map click, use it
             const country = normalizeCountryName(prefilledLocation.country || '');
             const region = country ? getRegionFromCountry(country) : '';
@@ -791,10 +823,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 longitude: prefilledLocation.longitude?.toString() || '',
                 publishDate: today,
             });
-        } else {
-            setFormData({ ...emptyFormState, publishDate: today });
-            setIsLoadingData(false);
-        }
+            } else {
+                setFormData({ ...emptyFormState, publishDate: today });
+                setIsLoadingData(false);
+            }
+        };
+
+        initialize();
     }, [projectToEdit, isEditMode, prefilledLocation]);
 
 
