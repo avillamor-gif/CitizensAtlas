@@ -1665,6 +1665,17 @@ ${references}
                             </div>
                         </div>
                         <FormField label="Key documents"><InputField type="file" name="keyDocuments" onChange={handleFileChange} multiple /></FormField>
+
+                        <SectionTitle>Just Transition Indicators</SectionTitle>
+                        <FormField label="Gender concerns">
+                            <Textarea name="genderConcerns" value={formData.genderConcerns} onChange={handleInputChange} rows={3} />
+                        </FormField>
+                        <FormField label="Waste workers">
+                            <Textarea name="wasteWorkers" value={formData.wasteWorkers} onChange={handleInputChange} rows={3} />
+                        </FormField>
+                        <FormField label="Resettlement">
+                            <Textarea name="displacement" value={formData.displacement} onChange={handleInputChange} rows={3} />
+                        </FormField>
                         
                         <SectionTitle>Community Opposition & Actions</SectionTitle>
                         <div>
@@ -1741,17 +1752,6 @@ ${references}
                         </FormField>
                         <FormField label="References">
                             <Textarea name="references" value={formData.references} onChange={handleInputChange} rows={3} />
-                        </FormField>
-
-                        <SectionTitle>Just Transition Indicators</SectionTitle>
-                        <FormField label="Gender concerns">
-                            <Input type="text" name="genderConcerns" value={formData.genderConcerns} onChange={handleInputChange} />
-                        </FormField>
-                        <FormField label="Waste workers">
-                            <Input type="text" name="wasteWorkers" value={formData.wasteWorkers} onChange={handleInputChange} />
-                        </FormField>
-                        <FormField label="Resettlement">
-                            <Input type="text" name="displacement" value={formData.displacement} onChange={handleInputChange} />
                         </FormField>
                     </div>
                     <div className="p-6 bg-gray-50 border-t rounded-b-lg space-y-4">
