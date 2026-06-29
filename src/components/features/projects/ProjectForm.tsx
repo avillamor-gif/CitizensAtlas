@@ -746,7 +746,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 references: detailsMap.get('References') || '',
                 genderConcerns: detailsMap.get('Gender Concerns') || '',
                 wasteWorkers: detailsMap.get('Waste Workers') || '',
-                displacement: detailsMap.get('Displacement') || '',
+                displacement: detailsMap.get('Resettlement') || detailsMap.get('Displacement') || '',
             });
             
             console.log('✅ ProjectForm - State set with regions/countries/cities');
@@ -1180,7 +1180,7 @@ ${references}
 ---
 **Gender Concerns:** ${genderConcerns}
 **Waste Workers:** ${wasteWorkers}
-**Displacement:** ${displacement}
+**Resettlement:** ${displacement}
         `.trim();
 
         const projectData = {
@@ -1666,7 +1666,7 @@ ${references}
                         </div>
                         <FormField label="Key documents"><InputField type="file" name="keyDocuments" onChange={handleFileChange} multiple /></FormField>
                         
-                        <SectionTitle>Community & Actions</SectionTitle>
+                        <SectionTitle>Community Opposition & Actions</SectionTitle>
                         <div>
                             <Label className="block text-sm font-medium text-gray-700 mb-3">Community Actions</Label>
                             {formData.groupsInOpposition.map((group, index) => (
@@ -1742,13 +1742,15 @@ ${references}
                         <FormField label="References">
                             <Textarea name="references" value={formData.references} onChange={handleInputChange} rows={3} />
                         </FormField>
+
+                        <SectionTitle>Just Transition Indicators</SectionTitle>
                         <FormField label="Gender concerns">
                             <Input type="text" name="genderConcerns" value={formData.genderConcerns} onChange={handleInputChange} />
                         </FormField>
                         <FormField label="Waste workers">
                             <Input type="text" name="wasteWorkers" value={formData.wasteWorkers} onChange={handleInputChange} />
                         </FormField>
-                        <FormField label="Displacement">
+                        <FormField label="Resettlement">
                             <Input type="text" name="displacement" value={formData.displacement} onChange={handleInputChange} />
                         </FormField>
                     </div>
