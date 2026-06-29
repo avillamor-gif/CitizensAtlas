@@ -11,6 +11,12 @@ export default function Map() {
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  const handleUpdateProject = async (updatedProject: Project) => {
+    const result = await dataService.updateProject(updatedProject.id, updatedProject)
+    setProjects(prevProjects => prevProjects.map(project => project.id === result.id ? result : project))
+    alert('✅ Project updated successfully!')
+  }
+
   // Prevent body scrolling on map page
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -68,6 +74,7 @@ export default function Map() {
         <MapPage 
           projects={projects}
           filterOptions={filterOptions}
+          onUpdateProject={handleUpdateProject}
         />
       </main>
     </div>

@@ -1271,6 +1271,7 @@ function HomePageContent() {
       <Home
         projects={filteredProjects}
         onAddProject={handleAddProject}
+        onUpdateProject={handleUpdateProject}
         filterOptions={filterOptions}
         activeView={activeView}
         setActiveView={setActiveView}

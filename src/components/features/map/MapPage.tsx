@@ -11,9 +11,10 @@ import { useAuth } from '@/contexts/AuthContext';
 interface MapPageProps {
     projects: Project[];
     filterOptions: FilterOptions;
+    onUpdateProject?: (project: Project) => void | Promise<void>;
 }
 
-const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
+const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProject }) => {
     const { user } = useAuth();
     const canEditProjects = !!user && (user.role === 'admin' || user.role === 'super-admin');
 
@@ -71,9 +72,12 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions }) => {
 
     const handleUpdateProject = async (updatedProject: Project) => {
         try {
-            // Update the project in the database
-            await DataService.updateProject(updatedProject.id, updatedProject);
-            alert('✅ Project updated successfully!');
+            if (onUpdateProject) {
+                await onUpdateProject(updatedProject);
+            } else {
+                await DataService.updateProject(updatedProject.id, updatedProject);
+                alert('✅ Project updated successfully!');
+            }
             setProjectToEdit(null);
         } catch (error) {
             console.error('Failed to update project:', error);

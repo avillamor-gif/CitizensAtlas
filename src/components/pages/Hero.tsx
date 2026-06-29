@@ -40,11 +40,12 @@ interface HeroProps {
     setActiveView: (view: 'Map' | 'Projects') => void;
     projects: Project[];
     onAddProject: (project: Omit<Project, 'id'>) => void;
+    onUpdateProject?: (project: Project) => void | Promise<void>;
     filterOptions: FilterOptions;
     currentUser?: User | null;
 }
 
-const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, filterOptions, currentUser }) => {
+const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddProject, onUpdateProject, filterOptions, currentUser }) => {
     // Independent filters state for homepage map - not shared with Map page
     const [filters, setFilters] = useState<Filters>({
         country: 'all',
@@ -100,9 +101,12 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
 
     const handleUpdateProject = async (updatedProject: Project) => {
         try {
-            // Update the project in the database
-            await DataService.updateProject(updatedProject.id, updatedProject);
-            alert('✅ Project updated successfully!');
+            if (onUpdateProject) {
+                await onUpdateProject(updatedProject);
+            } else {
+                await DataService.updateProject(updatedProject.id, updatedProject);
+                alert('✅ Project updated successfully!');
+            }
             setProjectToEdit(null);
         } catch (error) {
             console.error('Failed to update project:', error);

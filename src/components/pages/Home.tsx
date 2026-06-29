@@ -10,6 +10,7 @@ import { Project, FilterOptions, Article, Page, User, ProjectBrief } from '@/typ
 interface HomeProps {
     projects: Project[];
     onAddProject: (projectData: Omit<Project, 'id'>) => void;
+    onUpdateProject?: (project: Project) => void | Promise<void>;
     filterOptions: FilterOptions;
     activeView: 'Map' | 'Projects';
     // FIX: Removed stray '>' character
@@ -37,6 +38,7 @@ const Home: React.FC<HomeProps> = (props) => {
             <Hero
             projects={props.projects}
             onAddProject={props.onAddProject}
+            onUpdateProject={props.onUpdateProject}
             filterOptions={props.filterOptions}
             activeView={props.activeView}
             setActiveView={props.setActiveView}

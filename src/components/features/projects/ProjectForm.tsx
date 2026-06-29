@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
-import { InputField } from '@/components/ui/input-field';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -627,7 +626,7 @@ const emptyFormState = {
     publishDate: '',
     environmental: [''],
     socialSafeguard: [''],
-    keyDocuments: null as FileList | null,
+    keyDocuments: '',
     groupsInOpposition: [''],
     typesOfActions: '',
     linksToActions: '',
@@ -737,7 +736,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 publishDate: projectToEdit.publishDate || '',
                 environmental: detailsMap.get('Environmental Category')?.split(', ').map(s => s.trim()) || [''],
                 socialSafeguard: detailsMap.get('Social Safeguard')?.split(', ').map(s => s.trim()) || [''],
-                keyDocuments: null,
+                keyDocuments: detailsMap.get('Key Documents') || '',
                 groupsInOpposition: detailsMap.get('Groups in Opposition')?.split(', ').map(s => s.trim()) || [''],
                 typesOfActions: detailsMap.get('Types of Actions') || '',
                 linksToActions: detailsMap.get('Links to Actions') || '',
@@ -1050,12 +1049,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         });
     };
     
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFormData(prev => ({ ...prev, keyDocuments: e.target.files }));
-        }
-    };
-
     const handleRepeatableChange = (field: keyof typeof formData, index: number, value: any) => {
         const list = [...(formData[field] as any[])];
         list[index] = value;
@@ -1126,7 +1119,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             regionSelections, countrySelections, cityInput, projectNumber, ifiSelections, ifiOther, fundingSource, financialInstruments,
             totalProjectAmount, owner, privateSectorBorrowers, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
-            groupsInOpposition, typesOfActions, linksToActions,
+            keyDocuments, groupsInOpposition, typesOfActions, linksToActions,
             activeGaiAASupport, notes, references, genderConcerns,
             wasteWorkers, displacement, latitude, longitude
         } = formData;
@@ -1169,6 +1162,7 @@ ${projectDescription}
 **End Date:** ${endDate || 'N/A'}
 **Environmental Category:** ${environmental.filter(e => e).join(', ')}
 **Social Safeguard:** ${socialSafeguard.filter(s => s).join(', ')}
+**Key Documents:** ${keyDocuments || 'N/A'}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
 **Links to Actions:** ${linksToActions}
@@ -1665,7 +1659,15 @@ ${references}
                                 </div>
                             </div>
                         </div>
-                        <FormField label="Key documents"><InputField type="file" name="keyDocuments" onChange={handleFileChange} multiple /></FormField>
+                        <FormField label="Key documents URL">
+                            <Input
+                                type="url"
+                                name="keyDocuments"
+                                value={formData.keyDocuments}
+                                onChange={handleInputChange}
+                                placeholder="https://example.com/document"
+                            />
+                        </FormField>
 
                         <SectionTitle>Just Transition Indicators</SectionTitle>
                         <FormField label="Gender concerns">
