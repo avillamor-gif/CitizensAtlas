@@ -587,7 +587,7 @@ const parseDetails = (details: string) => {
     const lines = details.replace(/\n---\n/g, '\n').split('\n');
     let currentKey: string | null = null;
     for (const line of lines) {
-        const match = line.match(/^\*\*(.*?):\*\*(.*)$/);
+        const match = line.match(/^\s*\*\*(.*?):\*\*(.*)$/);
         if (match) {
             const key = match[1].trim();
             const value = match[2].trim();
@@ -599,6 +599,25 @@ const parseDetails = (details: string) => {
         }
     }
     return detailsMap;
+};
+
+const getDetailValue = (detailsMap: Map<string, string>, keys: string[]) => {
+    for (const key of keys) {
+        const direct = detailsMap.get(key);
+        if (direct) return direct;
+    }
+
+    const lowerKeyToValue = new Map<string, string>();
+    detailsMap.forEach((value, key) => {
+        lowerKeyToValue.set(key.toLowerCase(), value);
+    });
+
+    for (const key of keys) {
+        const fallback = lowerKeyToValue.get(key.toLowerCase());
+        if (fallback) return fallback;
+    }
+
+    return '';
 };
 
 const emptyFormState = {
@@ -677,6 +696,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const detailsMap = parseDetails(projectToEdit.details);
             const totalAmountStr = (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, '');
             const totalAmountNum = parseFloat(totalAmountStr) || 0;
+            const savedFalseSolutions =
+                projectToEdit.corruptionType ||
+                getDetailValue(detailsMap, ['False Solution Type', 'False solution type', 'False Solutions', 'False Solution']) ||
+                '';
             
             const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
             const countrySelections = uniqueStrings(
@@ -707,7 +730,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 longitude: projectToEdit.longitude?.toString() || '',
                 projectName: projectToEdit.title || '',
                 projectNumber: detailsMap.get('Project Number') || '',
-                falseSolutions: projectToEdit.corruptionType?.split(', ').map(s => s.trim()) || [''],
+                falseSolutions: savedFalseSolutions
+                    ? savedFalseSolutions.split(',').map(s => s.trim()).filter(Boolean)
+                    : [''],
                 ifiSelections: (() => {
                     const savedIfi = detailsMap.get('IFI') || '';
                     const parsedValues = savedIfi.split(',').map((value) => value.trim()).filter(Boolean);
@@ -729,7 +754,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 owner: detailsMap.get('Owner') || '',
                 privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
                 projectDescription: detailsMap.get('Project Description') || '',
-                projectStatus: detailsMap.get('Project Status') || '',
+                projectStatus: getDetailValue(detailsMap, ['Project Status', 'Status']) || '',
                 approvalDate: projectToEdit.date || '',
                 startDate: detailsMap.get('Start Date') || '',
                 endDate: detailsMap.get('End Date') || '',
@@ -1141,13 +1166,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             ...ifiSelections.filter((selection) => selection !== 'Others'),
             ...(ifiSelections.includes('Others') && ifiOther.trim() ? [ifiOther.trim()] : []),
         ].join(', ');
+        const falseSolutionsValue = falseSolutions.filter(s => s).join(', ');
         const financialInstrumentsValue = financialInstruments.join(', ');
+
+        if (!falseSolutionsValue.trim()) {
+            alert('False solution type is required. Please select at least one option.');
+            return;
+        }
+
+        if (!projectStatus.trim()) {
+            alert('Project Status is required. Please select a status.');
+            return;
+        }
 
         const details = `
     **Region:** ${regionValue}
     **Country:** ${countryValue}
     **City:** ${cityValue}
 **Project Number:** ${projectNumber || 'N/A'}
+    **False Solution Type:** ${falseSolutionsValue || 'N/A'}
 **IFI:** ${ifiValue}
 **Funding Source:** ${fundingSource}
 **Financial Instruments:** ${financialInstrumentsValue}
@@ -1182,7 +1219,7 @@ ${references}
             country: countryValue,
             date: approvalDate,
             publishDate: publishDate,
-            corruptionType: falseSolutions.filter(s => s).join(', '),
+            corruptionType: falseSolutionsValue,
             details: details,
             latitude: parseFloat(latitude) || 0,
             longitude: parseFloat(longitude) || 0,
