@@ -1253,6 +1253,79 @@ ${references}
                     <FormField label="Project Number">
                         <Input type="text" name="projectNumber" value={formData.projectNumber} onChange={handleInputChange} />
                     </FormField>
+                    <FormField label="False solution type">
+                        {formData.falseSolutions.map((solution, index) => (
+                            <div key={index} className="flex items-center space-x-2 mb-2">
+                                <Select 
+                                    value={solution || undefined} 
+                                    onValueChange={(value) => handleRepeatableChange('falseSolutions', index, value)}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select False Solution Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Waste-to-Energy">Waste-to-Energy</SelectItem>
+                                        <SelectItem value="Plastic-to-Fuel Technologies">Plastic-to-Fuel Technologies</SelectItem>
+                                        <SelectItem value="Chemical Recycling">Chemical Recycling</SelectItem>
+                                        <SelectItem value="Refuse-derived fuel">Refuse-derived fuel</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {formData.falseSolutions.length > 1 && <button type="button" onClick={() => removeRepeatableRow('falseSolutions', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
+                            </div>
+                        ))}
+                        <button type="button" onClick={() => addRepeatableRow('falseSolutions')} className="text-sm text-brand-medium-blue hover:underline">+ Add solution</button>
+                    </FormField>
+                    <FormField label="Project description">
+                        <div className="mb-24 relative z-20">
+                            <TiptapEditor
+                                value={formData.projectDescription}
+                                onChange={(value) => setFormData(prev => ({ ...prev, projectDescription: value }))}
+                                height="300px"
+                            />
+                        </div>
+                    </FormField>
+                    <FormField label="Project Status">
+                        <Select value={formData.projectStatus || undefined} onValueChange={(value) => handleSelectChange('projectStatus', value)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Proposed">Proposed</SelectItem>
+                                <SelectItem value="Active">Active</SelectItem>
+                                <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                <SelectItem value="Inactive">Inactive</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </FormField>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                        <div className="w-full">
+                            <FormField label="Approval date" required>
+                                <DatePicker
+                                    value={formData.approvalDate}
+                                    onChange={(date) => handleSelectChange('approvalDate', date)}
+                                    placeholder="Pick approval date"
+                                />
+                            </FormField>
+                        </div>
+                        <div className="w-full">
+                            <FormField label="Start date">
+                                <DatePicker
+                                    value={formData.startDate}
+                                    onChange={(date) => handleSelectChange('startDate', date)}
+                                    placeholder="Pick start date"
+                                />
+                            </FormField>
+                        </div>
+                        <div className="w-full">
+                            <FormField label="End date">
+                                <DatePicker
+                                    value={formData.endDate}
+                                    onChange={(date) => handleSelectChange('endDate', date)}
+                                    placeholder="Pick end date"
+                                />
+                            </FormField>
+                        </div>
+                    </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <FormField label="Region">
@@ -1380,28 +1453,6 @@ ${references}
                         </FormField>
                         
                         <SectionTitle>Details</SectionTitle>
-                        <FormField label="False solution type">
-                            {formData.falseSolutions.map((solution, index) => (
-                                <div key={index} className="flex items-center space-x-2 mb-2">
-                                    <Select 
-                                        value={solution || undefined} 
-                                        onValueChange={(value) => handleRepeatableChange('falseSolutions', index, value)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select False Solution Type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Waste-to-Energy">Waste-to-Energy</SelectItem>
-                                            <SelectItem value="Plastic-to-Fuel Technologies">Plastic-to-Fuel Technologies</SelectItem>
-                                            <SelectItem value="Chemical Recycling">Chemical Recycling</SelectItem>
-                                            <SelectItem value="Refuse-derived fuel">Refuse-derived fuel</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {formData.falseSolutions.length > 1 && <button type="button" onClick={() => removeRepeatableRow('falseSolutions', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
-                                </div>
-                            ))}
-                            <button type="button" onClick={() => addRepeatableRow('falseSolutions')} className="text-sm text-brand-medium-blue hover:underline">+ Add solution</button>
-                        </FormField>
                         <FormField label="Owner (Public/ Private / PPP)">
                             <Select value={formData.owner || undefined} onValueChange={(value) => handleSelectChange('owner', value)}>
                                 <SelectTrigger>
@@ -1423,57 +1474,7 @@ ${references}
                             ))}
                             <button type="button" onClick={() => addRepeatableRow('privateSectorBorrowers')} className="text-sm text-brand-medium-blue hover:underline">+ Add borrower</button>
                         </FormField>
-                        <FormField label="Project description">
-                            <div className="mb-24 relative z-20">
-                                <TiptapEditor
-                                    value={formData.projectDescription}
-                                    onChange={(value) => setFormData(prev => ({ ...prev, projectDescription: value }))}
-                                    height="300px"
-                                />
-                            </div>
-                        </FormField>
-                        <FormField label="Project Status">
-                            <Select value={formData.projectStatus || undefined} onValueChange={(value) => handleSelectChange('projectStatus', value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Proposed">Proposed</SelectItem>
-                                    <SelectItem value="Active">Active</SelectItem>
-                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
-                                    <SelectItem value="Inactive">Inactive</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </FormField>
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                             <div className="w-full">
-                                <FormField label="Approval date" required>
-                                    <DatePicker
-                                        value={formData.approvalDate}
-                                        onChange={(date) => handleSelectChange('approvalDate', date)}
-                                        placeholder="Pick approval date"
-                                    />
-                                </FormField>
-                             </div>
-                            <div className="w-full">
-                                <FormField label="Start date">
-                                    <DatePicker
-                                        value={formData.startDate}
-                                        onChange={(date) => handleSelectChange('startDate', date)}
-                                        placeholder="Pick start date"
-                                    />
-                                </FormField>
-                            </div>
-                            <div className="w-full">
-                                <FormField label="End date">
-                                    <DatePicker
-                                        value={formData.endDate}
-                                        onChange={(date) => handleSelectChange('endDate', date)}
-                                        placeholder="Pick end date"
-                                    />
-                                </FormField>
-                            </div>
-                        </div>
+                        <SectionTitle>Environmental and Social Safeguards</SectionTitle>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <FormField label="Environmental">
