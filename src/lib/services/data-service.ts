@@ -165,8 +165,14 @@ export async function createProject(project: Omit<Project, 'id'>): Promise<Proje
   if (isSupabaseConfigured()) {
     console.log('🚀 Attempting to create project in Supabase:', { title: project.title })
     const result = await supabaseService.createProject(project)
-    console.log('✅ Project created successfully in Supabase:', result.id)
-    return result
+    const verified = await supabaseService.getProjectById(result.id)
+
+    if (!verified) {
+      throw new Error(`Project ${result.id} was created but could not be read back from Supabase`)
+    }
+
+    console.log('✅ Project created successfully in Supabase:', verified.id)
+    return verified
   }
   
   // Fallback to localStorage - return project with generated ID
@@ -185,7 +191,14 @@ export async function updateProject(id: number, updates: Partial<Project>): Prom
   if (isSupabaseConfigured()) {
     // Don't fall back to localStorage - we need to see real errors
     console.log('🔄 [DataService] Attempting Supabase project update:', { id, updates: Object.keys(updates) })
-    return await supabaseService.updateProject(id, updates)
+    await supabaseService.updateProject(id, updates)
+
+    const verified = await supabaseService.getProjectById(id)
+    if (!verified) {
+      throw new Error(`Project ${id} was updated but could not be read back from Supabase`)
+    }
+
+    return verified
   }
   
   // Only use localStorage if Supabase is not configured
