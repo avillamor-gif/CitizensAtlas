@@ -1501,7 +1501,7 @@ ${references}
                         </div>
                     </FormField>
 
-                        <SectionTitle>Funding Source</SectionTitle>
+                        <SectionTitle>Financial Information</SectionTitle>
                         {formData.fundingRows.map((row, index) => {
                             const selectedElsewhere = formData.fundingRows
                                 .map((item, itemIndex) => (itemIndex === index ? '' : item.ifi))
@@ -1595,8 +1595,8 @@ ${references}
                                     + Add Funding Source
                                 </button>
                             </div>
-                            <div className="md:col-span-1 flex items-center gap-2 md:justify-end">
-                                <Label className="text-sm font-medium text-gray-700 whitespace-nowrap">Total Project Amount (M USD)</Label>
+                            <div className="md:col-span-1 space-y-1">
+                                <Label className="text-sm font-medium text-gray-700">Total Project Amount (M USD)</Label>
                                 <Input
                                     type="text"
                                     readOnly
