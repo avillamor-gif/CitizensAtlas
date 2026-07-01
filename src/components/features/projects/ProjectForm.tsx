@@ -472,7 +472,11 @@ const canonicalCountryByLower = (() => {
 const normalizeCountryName = (country: string) => {
     const trimmed = country.trim();
     if (!trimmed) return '';
-    return canonicalCountryByLower.get(trimmed.toLowerCase()) || toTitleCase(trimmed);
+    const lowered = trimmed.toLowerCase();
+    const canonical = canonicalCountryByLower.get(lowered);
+    const result = canonical || toTitleCase(trimmed);
+    console.log('🌍 normalizeCountryName:', { input: country, trimmed, lowered, found: !!canonical, result });
+    return result;
 };
 
 const getCountriesForRegions = (regions: string[]) => {
@@ -1031,8 +1035,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const region = country ? getRegionFromCountry(country) : '';
 
         console.log('🌍 applyResolvedLocation input:', params);
-        console.log('🌍 applyResolvedLocation normalized:', { country, region });
-        console.log('🌍 countrySelections will be set to:', country ? [country] : 'unchanged');
+        console.log('🌍 normalizeCountryName("' + params.country + '") =', country);
+        console.log('🌍 getRegionFromCountry("' + country + '") =', region);
+        console.log('🌍 State will be set:', { 
+            countrySelections: country ? [country] : 'empty - will keep prev', 
+            regionSelections: region ? [region] : 'empty - will keep prev'
+        });
 
         setFormData((prev) => ({
             ...prev,
@@ -1040,7 +1048,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             longitude: params.longitude,
             regionSelections: region ? [region] : prev.regionSelections,
             countrySelections: country ? [country] : prev.countrySelections,
-            cityInput: prev.cityInput,
+            cityInput: params.city || prev.cityInput,
         }));
     };
 
@@ -1067,11 +1075,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const payload = await response.json();
             const address = payload?.address || {};
             const country = address.country || address.country_name || '';
+            const city = address.city || address.town || address.village || '';
 
             console.log('📍 handleMapLocationPick raw response:', payload);
-            console.log('📍 handleMapLocationPick parsed:', { address, country, latitude, longitude });
+            console.log('📍 handleMapLocationPick address:', address);
+            console.log('📍 handleMapLocationPick extracted - country:', country, 'city:', city);
 
-            applyResolvedLocation({ latitude, longitude, country });
+            applyResolvedLocation({ latitude, longitude, country, city });
         } catch (error) {
             console.error('Reverse geocoding error:', error);
             applyResolvedLocation({ latitude, longitude });
