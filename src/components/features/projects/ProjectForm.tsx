@@ -1580,12 +1580,18 @@ ${references}
                                                         type="button"
                                                         onClick={() => {
                                                             // Auto-fill Region based on Country
+                                                            console.log('🌍 Country selected:', country);
                                                             const region = getRegionFromCountry(country);
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                countrySelections: [country],
-                                                                regionSelections: region ? [region] : prev.regionSelections
-                                                            }));
+                                                            console.log('🌍 Region result:', region);
+                                                            setFormData(prev => {
+                                                                const updated = {
+                                                                    ...prev,
+                                                                    countrySelections: [country],
+                                                                    regionSelections: region ? [region] : prev.regionSelections
+                                                                };
+                                                                console.log('🌍 FormData after update:', updated.countrySelections, updated.regionSelections);
+                                                                return updated;
+                                                            });
                                                             setCountrySearch('');
                                                             setIsCountryDropdownOpen(false);
                                                         }}
