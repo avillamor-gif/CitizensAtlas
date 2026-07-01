@@ -8,7 +8,6 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import InteractiveMap from '@/components/features/map/InteractiveMap';
 import { cn } from '@/lib/utils';
 import * as DataService from '@/lib/services/data-service';
 import { allCountries } from '@/lib/countries';
@@ -1207,14 +1206,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         }
     };
 
-    const selectedMapLocation = (() => {
-        const latitude = parseFloat(formData.latitude);
-        const longitude = parseFloat(formData.longitude);
-        if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
-            return null;
-        }
-        return { latitude, longitude };
-    })();
+    const selectedMapLocation = null; // Map removed
 
     const handleFundingRowChange = (index: number, key: keyof FundingRow, value: string) => {
         setFormData((prev) => {
@@ -1354,10 +1346,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const latNum = parseFloat(latitude);
         const lngNum = parseFloat(longitude);
-        if (isNaN(latNum) || isNaN(lngNum) || (latNum === 0 && lngNum === 0)) {
-            alert('Project location is required. Please click on the map or search for an address to set the project location.');
-            return;
-        }
+        // Location is now optional since map is removed
+        // if (isNaN(latNum) || isNaN(lngNum) || (latNum === 0 && lngNum === 0)) {
+        //     alert('Project location is required. Please click on the map or search for an address to set the project location.');
+        //     return;
+        // }
 
         const details = `
     **Region:** ${regionValue}
@@ -1586,9 +1579,12 @@ ${references}
                                                         key={country}
                                                         type="button"
                                                         onClick={() => {
+                                                            // Auto-fill Region based on Country
+                                                            const region = getRegionFromCountry(country);
                                                             setFormData(prev => ({
                                                                 ...prev,
-                                                                countrySelections: [country]
+                                                                countrySelections: [country],
+                                                                regionSelections: region ? [region] : prev.regionSelections
                                                             }));
                                                             setCountrySearch('');
                                                             setIsCountryDropdownOpen(false);
@@ -1622,48 +1618,6 @@ ${references}
                             />
                         </FormField>
                     </div>
-
-                    <FormField label="Project Location (click map to pin)" required>
-                        <div className="space-y-3">
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <Input
-                                    type="text"
-                                    value={addressQuery}
-                                    onChange={(e) => setAddressQuery(e.target.value)}
-                                    placeholder="Search address (e.g. Quezon City, Philippines)"
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            handleAddressSearch();
-                                        }
-                                    }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddressSearch}
-                                    disabled={isSearchingAddress}
-                                    className="px-4 py-2 text-white rounded-md transition-colors disabled:opacity-60"
-                                    style={{ backgroundColor: '#0d234f' }}
-                                >
-                                    {isSearchingAddress ? 'Searching...' : 'Search'}
-                                </button>
-                            </div>
-                            <div className="h-72 overflow-hidden rounded-md border border-gray-300">
-                                <InteractiveMap
-                                    projects={[]}
-                                    onMarkerClick={() => {}}
-                                    onMapClick={handleMapLocationPick}
-                                    selectedLocation={selectedMapLocation}
-                                    pickerMode={true}
-                                />
-                            </div>
-                            <p className="text-xs text-gray-600">
-                                Type an address to place the pin, or click anywhere on the map.
-                            </p>
-                            <input type="hidden" name="latitude" value={formData.latitude} readOnly />
-                            <input type="hidden" name="longitude" value={formData.longitude} readOnly />
-                        </div>
-                    </FormField>
 
                         <SectionTitle>Financial Information</SectionTitle>
                         {formData.fundingRows.map((row, index) => {
