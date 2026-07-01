@@ -1514,7 +1514,7 @@ ${references}
                             return (
                                 <div
                                     key={index}
-                                    className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_180px_auto] items-end ${isFirstRow ? 'gap-3 mb-2' : 'gap-2 mb-1'}`}
+                                    className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] items-end ${isFirstRow ? 'gap-3 mb-2' : 'gap-2 mb-1'}`}
                                 >
                                     <div className={isFirstRow ? 'space-y-1' : ''}>
                                         {isFirstRow && (
@@ -1573,16 +1573,17 @@ ${references}
                                             <button
                                                 type="button"
                                                 onClick={() => removeRepeatableRow('fundingRows', index)}
-                                                className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
+                                                className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md text-lg"
+                                                title="Remove row"
                                             >
-                                                Remove
+                                                ×
                                             </button>
                                         )}
                                     </div>
                                 </div>
                             );
                         })}
-                        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_180px_auto] items-center gap-2 mb-2">
+                        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 mb-2">
                             <div className="md:col-span-2">
                                 <button
                                     type="button"
@@ -1593,12 +1594,12 @@ ${references}
                                     + Add funding source row
                                 </button>
                             </div>
-                            <div className="md:col-span-2 flex items-center gap-2 md:justify-end">
+                            <div className="md:col-span-1 flex items-center gap-2 md:justify-end">
                                 <Label className="text-sm font-medium text-gray-700 whitespace-nowrap">Total Project Amount (M USD)</Label>
                                 <Input
                                     type="text"
                                     readOnly
-                                    className="bg-gray-50 w-full md:w-[180px]"
+                                    className="bg-gray-50 w-full"
                                     value={calculateFundingTotal(formData.fundingRows).toLocaleString()}
                                 />
                             </div>
