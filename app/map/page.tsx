@@ -49,7 +49,7 @@ export default function Map() {
       return match ? match[1].trim() : ''
     }
 
-    // Only include countries that have published projects and are not empty
+    // Ensure 'all' is always included, even if no data yet
     const countries = ['all', ...Array.from(new Set(projects
       .filter(p => p.status === 'published' || p.status === undefined)
       .map(p => p.country)
@@ -60,10 +60,10 @@ export default function Map() {
     const projectStatuses = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
 
     return {
-      countries,
-      solutionTypes,
-      ifis,
-      projectStatuses
+      countries: countries.length > 1 ? countries : ['all'],
+      solutionTypes: solutionTypes.length > 1 ? solutionTypes : ['all'],
+      ifis: ifis.length > 1 ? ifis : ['all'],
+      projectStatuses: projectStatuses.length > 1 ? projectStatuses : ['all']
     }
   }, [projects])
 

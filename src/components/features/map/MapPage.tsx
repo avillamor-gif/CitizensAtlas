@@ -18,20 +18,28 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
     const { user } = useAuth();
     const canEditProjects = !!user && (user.role === 'admin' || user.role === 'super-admin');
 
+    // Validate that filter value exists in options, otherwise use 'all'
+    const validateFilterValue = useCallback((value: string, options: string[]): string => {
+        return options.includes(value) ? value : 'all';
+    }, []);
+
+    // Initialize filters with validated values based on available options
+    const initialFilters = useMemo(() => ({
+        country: validateFilterValue('all', filterOptions.countries),
+        solutionType: validateFilterValue('all', filterOptions.solutionTypes),
+        ifi: validateFilterValue('all', filterOptions.ifis),
+        projectStatus: validateFilterValue('all', filterOptions.projectStatuses),
+    }), [filterOptions, validateFilterValue]);
+
     // Independent filters state for Map page - not shared with homepage
-    const [filters, setFilters] = useState<Filters>({
-        country: 'all',
-        solutionType: 'all',
-        ifi: 'all',
-        projectStatus: 'all',
-    });
+    const [filters, setFilters] = useState<Filters>(initialFilters);
 
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(true);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    // Local filter change handler
+    // Local filter change handler - validates the value before updating
     const onFilterChange = useCallback((filterName: keyof Filters, value: string) => {
         setFilters(prev => ({
             ...prev,
