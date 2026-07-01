@@ -471,17 +471,20 @@ const canonicalCountryByLower = (() => {
 
 const normalizeCountryName = (country: string) => {
     const trimmed = country.trim();
-    if (!trimmed) return '';
+    if (!trimmed) {
+        console.log('🌍 normalizeCountryName - Input is empty, returning empty string');
+        return '';
+    }
     const lowered = trimmed.toLowerCase();
     // First try to find in canonical list
     const canonical = canonicalCountryByLower.get(lowered);
     if (canonical) {
-        console.log('🌍 normalizeCountryName - Found in canonical:', { input: country, result: canonical });
+        console.log('🌍 normalizeCountryName - FOUND in canonical list:', { input: country, result: canonical });
         return canonical;
     }
     // Otherwise just title-case it (Nominatim returns proper English names with accept-language=en)
     const result = toTitleCase(trimmed);
-    console.log('🌍 normalizeCountryName - Using title-case:', { input: country, result });
+    console.log('🌍 normalizeCountryName - NOT in canonical list, using title-case:', { input: country, result, lowered });
     return result;
 };
 
@@ -1037,25 +1040,34 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         country?: string;
         city?: string;
     }) => {
+        console.log('🌍 applyResolvedLocation called with:', params);
+        
         const country = params.country ? normalizeCountryName(params.country) : '';
         const region = country ? getRegionFromCountry(country) : '';
 
-        console.log('🌍 applyResolvedLocation input:', params);
-        console.log('🌍 normalizeCountryName("' + params.country + '") =', country);
-        console.log('🌍 getRegionFromCountry("' + country + '") =', region);
-        console.log('🌍 State will be set:', { 
-            countrySelections: country ? [country] : 'empty - will keep prev', 
-            regionSelections: region ? [region] : 'empty - will keep prev'
+        console.log('🌍 After normalization - country:"' + country + '" region:"' + region + '"');
+        console.log('🌍 Will update state:', { 
+            countrySelections: country ? [country] : 'keep previous', 
+            regionSelections: region ? [region] : 'keep previous'
         });
 
-        setFormData((prev) => ({
-            ...prev,
-            latitude: params.latitude,
-            longitude: params.longitude,
-            regionSelections: region ? [region] : prev.regionSelections,
-            countrySelections: country ? [country] : prev.countrySelections,
-            cityInput: params.city || prev.cityInput,
-        }));
+        setFormData((prev) => {
+            const updated = {
+                ...prev,
+                latitude: params.latitude,
+                longitude: params.longitude,
+                regionSelections: region ? [region] : prev.regionSelections,
+                countrySelections: country ? [country] : prev.countrySelections,
+                cityInput: params.city || prev.cityInput,
+            };
+            console.log('🌍 FormData updated:', { 
+                countrySelections: updated.countrySelections,
+                regionSelections: updated.regionSelections,
+                latitude: updated.latitude,
+                longitude: updated.longitude
+            });
+            return updated;
+        });
     };
 
     const handleMapLocationPick = async (location: { latitude: number; longitude: number }) => {
@@ -1080,12 +1092,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
             const payload = await response.json();
             const address = payload?.address || {};
-            const country = address.country || address.country_name || '';
             const city = address.city || address.town || address.village || '';
+            
+            // Extract country - try multiple possible field names
+            let country = address.country || '';
 
             console.log('📍 handleMapLocationPick raw response:', payload);
-            console.log('📍 handleMapLocationPick address:', address);
-            console.log('📍 handleMapLocationPick extracted - country:', country, 'city:', city);
+            console.log('📍 handleMapLocationPick address object:', address);
+            console.log('📍 handleMapLocationPick extracted - country:"' + country + '" city:"' + city + '"');
 
             applyResolvedLocation({ latitude, longitude, country, city });
         } catch (error) {
