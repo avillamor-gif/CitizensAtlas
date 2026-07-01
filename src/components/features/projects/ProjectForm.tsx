@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import InteractiveMap from '@/components/features/map/InteractiveMap';
 import { cn } from '@/lib/utils';
 import * as DataService from '@/lib/services/data-service';
+import { allCountries } from '@/lib/countries';
 import {
   Select,
   SelectContent,
@@ -461,6 +462,12 @@ const REGION_OPTIONS: MultiSelectOption[] = Object.keys(regionCountries).map((re
     label: region,
 }));
 
+// Get all countries in sorted order
+const getAllCountries = (): string[] => {
+    // Use the comprehensive allCountries list from lib/countries
+    return [...allCountries].sort();
+};
+
 // Country code to country name mapping (ISO 3166-1 alpha-2)
 const countryCodeToName: Record<string, string> = {
     'PH': 'Philippines', 'IN': 'India', 'BD': 'Bangladesh', 'BT': 'Bhutan', 'NP': 'Nepal', 'LK': 'Sri Lanka', 'MM': 'Myanmar',
@@ -754,6 +761,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
     const [addressQuery, setAddressQuery] = useState('');
     const [isSearchingAddress, setIsSearchingAddress] = useState(false);
+    const [countrySearch, setCountrySearch] = useState('');
+    const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
         <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
@@ -1543,14 +1552,65 @@ ${references}
                                 className="bg-gray-50"
                             />
                         </FormField>
-                        <FormField label="Country">
-                            <Input
-                                type="text"
-                                value={formData.countrySelections.join(', ')}
-                                placeholder="Auto-filled from map pin"
-                                readOnly
-                                className="bg-gray-50"
-                            />
+                        <FormField label="Country" required>
+                            <Popover open={isCountryDropdownOpen} onOpenChange={setIsCountryDropdownOpen}>
+                                <PopoverTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className="w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-between items-center"
+                                    >
+                                        <span className={formData.countrySelections[0] ? 'text-gray-900' : 'text-gray-500'}>
+                                            {formData.countrySelections[0] || 'Select a country...'}
+                                        </span>
+                                        <ChevronDown className="h-4 w-4 opacity-50" />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-full p-0" align="start">
+                                    <div className="p-2 space-y-2">
+                                        <div className="relative">
+                                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+                                            <input
+                                                placeholder="Search countries..."
+                                                className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                value={countrySearch}
+                                                onChange={(e) => setCountrySearch(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="max-h-60 overflow-y-auto">
+                                            {getAllCountries()
+                                                .filter(country =>
+                                                    country.toLowerCase().includes(countrySearch.toLowerCase())
+                                                )
+                                                .map(country => (
+                                                    <button
+                                                        key={country}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                countrySelections: [country]
+                                                            }));
+                                                            setCountrySearch('');
+                                                            setIsCountryDropdownOpen(false);
+                                                        }}
+                                                        className={cn(
+                                                            'w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-100 flex items-center gap-2',
+                                                            formData.countrySelections[0] === country && 'bg-blue-50 text-blue-700'
+                                                        )}
+                                                    >
+                                                        {formData.countrySelections[0] === country && <Check className="h-4 w-4" />}
+                                                        {country}
+                                                    </button>
+                                                ))}
+                                            {getAllCountries().filter(country =>
+                                                country.toLowerCase().includes(countrySearch.toLowerCase())
+                                            ).length === 0 && (
+                                                <div className="px-3 py-2 text-sm text-gray-500">No countries found</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         </FormField>
                         <FormField label="City/ies (comma-separated)">
                             <Input
