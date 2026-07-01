@@ -1364,31 +1364,32 @@ ${references}
                                     <SelectItem value="Active">Active</SelectItem>
                                     <SelectItem value="Cancelled">Cancelled</SelectItem>
                                     <SelectItem value="Inactive">Inactive</SelectItem>
+                                    <SelectItem value="Completed">Completed</SelectItem>
                                 </SelectContent>
                             </Select>
                         </FormField>
                     </div>
                     <FormField label="False solution type">
-                        {formData.falseSolutions.map((solution, index) => (
-                            <div key={index} className="flex items-center space-x-2 mb-2">
-                                <Select 
-                                    value={solution || undefined} 
-                                    onValueChange={(value) => handleRepeatableChange('falseSolutions', index, value)}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select False Solution Type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Waste-to-Energy">Waste-to-Energy</SelectItem>
-                                        <SelectItem value="Plastic-to-Fuel Technologies">Plastic-to-Fuel Technologies</SelectItem>
-                                        <SelectItem value="Chemical Recycling">Chemical Recycling</SelectItem>
-                                        <SelectItem value="Refuse-derived fuel">Refuse-derived fuel</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {formData.falseSolutions.length > 1 && <button type="button" onClick={() => removeRepeatableRow('falseSolutions', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
-                            </div>
-                        ))}
-                        <button type="button" onClick={() => addRepeatableRow('falseSolutions')} className="text-sm text-brand-medium-blue hover:underline">+ Add solution</button>
+                        <div className="space-y-2">
+                            {['Waste-to-Energy (WtE)', 'Plastic-to-Fuel Technologies', 'Chemical Recycling', 'Refuse-Derived Fuel (RDF)', 'Plastic & Carbon Credit Schemes', 'Bioplastics', 'Carbon Capture on Landfills'].map((solution) => (
+                                <div key={solution} className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id={`solution-${solution}`}
+                                        checked={formData.falseSolutions.includes(solution)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setFormData(prev => ({ ...prev, falseSolutions: [...prev.falseSolutions, solution] }));
+                                            } else {
+                                                setFormData(prev => ({ ...prev, falseSolutions: prev.falseSolutions.filter(s => s !== solution) }));
+                                            }
+                                        }}
+                                        className="h-4 w-4 rounded border-gray-300"
+                                    />
+                                    <label htmlFor={`solution-${solution}`} className="text-sm text-gray-700 cursor-pointer">{solution}</label>
+                                </div>
+                            ))}
+                        </div>
                     </FormField>
                     <FormField label="Project description">
                         <div className="mb-24 relative z-20">

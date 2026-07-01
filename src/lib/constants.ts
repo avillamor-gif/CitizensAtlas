@@ -56,10 +56,13 @@ export const publicationsData: Article[] = [
 ];
 
 export const solutionTypeColors: { readonly [key: string]: { readonly hex: string; readonly tailwind: string } } = {
-    'Waste-to-Energy': { hex: '#ef4444', tailwind: 'bg-red-500' },
+    'Waste-to-Energy (WtE)': { hex: '#ef4444', tailwind: 'bg-red-500' },
     'Plastic-to-Fuel Technologies': { hex: '#f97316', tailwind: 'bg-orange-500' },
     'Chemical Recycling': { hex: '#eab308', tailwind: 'bg-yellow-500' },
-    'Refuse-derived fuel': { hex: '#a855f7', tailwind: 'bg-purple-500' },
+    'Refuse-Derived Fuel (RDF)': { hex: '#a855f7', tailwind: 'bg-purple-500' },
+    'Plastic & Carbon Credit Schemes': { hex: '#22c55e', tailwind: 'bg-green-500' },
+    'Bioplastics': { hex: '#06b6d4', tailwind: 'bg-cyan-500' },
+    'Carbon Capture on Landfills': { hex: '#ec4899', tailwind: 'bg-pink-500' },
     'default': { hex: '#3b82f6', tailwind: 'bg-blue-500' }
 };
 
