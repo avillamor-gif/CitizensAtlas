@@ -756,6 +756,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             }
 
             const detailsMap = parseDetails(sourceProject.details || '');
+            
+            console.log('🔍 RAW DETAILS STRING:', sourceProject.details);
+            console.log('🔍 PARSED DETAILS MAP:', Object.fromEntries(detailsMap));
+            console.log('🔍 Country from map:', detailsMap.get('Country'));
+            
             const totalAmountStr = (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, '');
             const totalAmountNum = parseFloat(totalAmountStr) || 0;
             const savedFalseSolutions =
@@ -772,10 +777,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             
             const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
             const countrySelections = uniqueStrings(
-                parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country)
+                parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country || '')
                     .map(normalizeCountryName)
                     .filter(Boolean)
             );
+            
+            console.log('🔍 Country parsing:', {
+                fromMap: detailsMap.get('Country'),
+                fromProject: projectToEdit.country,
+                parsed: parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country || ''),
+                normalized: countrySelections
+            });
             const citySelections = matchCitySelections(
                 parseCitySelectionValues(detailsMap.get('City')),
                 countrySelections
