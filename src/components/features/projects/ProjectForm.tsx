@@ -1028,8 +1028,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const latitude = location.latitude.toFixed(6);
         const longitude = location.longitude.toFixed(6);
 
-        applyResolvedLocation({ latitude, longitude });
-
         try {
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=10&addressdetails=1`,
@@ -1040,7 +1038,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 }
             );
 
-            if (!response.ok) return;
+            if (!response.ok) {
+                applyResolvedLocation({ latitude, longitude });
+                return;
+            }
 
             const payload = await response.json();
             const address = payload?.address || {};
@@ -1050,6 +1051,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             applyResolvedLocation({ latitude, longitude, country, city });
         } catch (error) {
             console.error('Reverse geocoding error:', error);
+            applyResolvedLocation({ latitude, longitude });
         }
     };
 
