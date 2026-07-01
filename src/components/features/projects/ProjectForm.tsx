@@ -1605,27 +1605,31 @@ ${references}
                                 />
                             </div>
                         </div>
-                        <FormField label="Owner (Public/ Private / PPP)">
-                            <Select value={formData.owner || undefined} onValueChange={(value) => handleSelectChange('owner', value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Owner" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Public">Public</SelectItem>
-                                    <SelectItem value="Private">Private</SelectItem>
-                                    <SelectItem value="PPP">PPP</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </FormField>
-                        <FormField label="Private Sector Borrower">
-                            {formData.privateSectorBorrowers.map((borrower, index) => (
-                                <div key={index} className="flex items-center space-x-2 mb-2">
-                                    <Input type="text" value={borrower} onChange={(e) => handleRepeatableChange('privateSectorBorrowers', index, e.target.value)} />
-                                    {formData.privateSectorBorrowers.length > 1 && <button type="button" onClick={() => removeRepeatableRow('privateSectorBorrowers', index)} className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm">Remove</button>}
-                                </div>
-                            ))}
-                            <button type="button" onClick={() => addRepeatableRow('privateSectorBorrowers')} className="text-sm text-brand-medium-blue hover:underline">+ Add borrower</button>
-                        </FormField>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
+                                <Input 
+                                    type="text" 
+                                    value={formData.owner || ''} 
+                                    onChange={(e) => handleSelectChange('owner', e.target.value)}
+                                    placeholder="e.g., Public, Private, PPP"
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-sm font-medium text-gray-700">Private Sector Borrower <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
+                                <Input 
+                                    type="text" 
+                                    value={formData.privateSectorBorrowers.join(', ')} 
+                                    onChange={(e) => {
+                                        const values = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
+                                        setFormData({ ...formData, privateSectorBorrowers: values });
+                                    }}
+                                    placeholder="e.g., Company A, Company B"
+                                    className="mt-1"
+                                />
+                            </div>
+                        </div>
                         <SectionTitle>Environmental and Social Safeguards</SectionTitle>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
