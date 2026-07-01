@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, ChevronDown, Search, X } from 'lucide-react';
+import { Check, ChevronDown, Search, X, Trash2 } from 'lucide-react';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1573,10 +1573,10 @@ ${references}
                                             <button
                                                 type="button"
                                                 onClick={() => removeRepeatableRow('fundingRows', index)}
-                                                className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md text-lg"
+                                                className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md"
                                                 title="Remove row"
                                             >
-                                                ×
+                                                <Trash2 size={18} />
                                             </button>
                                         )}
                                     </div>
