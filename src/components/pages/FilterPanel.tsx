@@ -34,7 +34,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
             </div>
             <div className={`${isCompact ? 'space-y-2' : 'space-y-4'}`}>
                 <Select
-                    value={filters.country}
+                    value={filters.country || 'all'}
                     onValueChange={(value) => onFilterChange('country', value)}
                 >
                     <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`}>
@@ -50,7 +50,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                 </Select>
 
                 <Select
-                    value={filters.solutionType}
+                    value={filters.solutionType || 'all'}
                     onValueChange={(value) => onFilterChange('solutionType', value)}
                 >
                     <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`}>
@@ -66,7 +66,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                 </Select>
 
                 <Select
-                    value={filters.ifi}
+                    value={filters.ifi || 'all'}
                     onValueChange={(value) => onFilterChange('ifi', value)}
                 >
                     <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`}>
@@ -82,7 +82,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                 </Select>
 
                 <Select
-                    value={filters.projectStatus}
+                    value={filters.projectStatus || 'all'}
                     onValueChange={(value) => onFilterChange('projectStatus', value)}
                 >
                     <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`}>
