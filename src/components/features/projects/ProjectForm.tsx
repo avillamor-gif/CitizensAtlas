@@ -1430,47 +1430,47 @@ ${references}
                                         <ChevronDown className="h-4 w-4" />
                                     </button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-full p-0">
-                                    <div className="p-2">
+                                <PopoverContent className="w-80 p-0" side="bottom" align="start">
+                                    <div className="p-3 border-b">
                                         <Input
                                             type="text"
                                             placeholder="Search countries..."
                                             value={countrySearch}
                                             onChange={(e) => setCountrySearch(e.target.value)}
-                                            className="mb-2"
+                                            className="w-full"
                                             autoFocus
                                         />
-                                        <div className="max-h-64 overflow-y-auto">
-                                            {getAllCountries()
-                                                .filter(country =>
-                                                    country.toLowerCase().includes(countrySearch.toLowerCase())
-                                                )
-                                                .map(country => (
-                                                    <button
-                                                        key={country}
-                                                        onClick={() => {
-                                                            const region = getRegionFromCountry(country);
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                countrySelections: [country],
-                                                                regionSelections: region ? [region] : prev.regionSelections
-                                                            }));
-                                                            setCountrySearch('');
-                                                            setIsCountryOpen(false);
-                                                        }}
-                                                        className={`w-full text-left px-3 py-2 hover:bg-blue-50 rounded ${
-                                                            formData.countrySelections[0] === country ? 'bg-blue-100 font-semibold' : ''
-                                                        }`}
-                                                    >
-                                                        {country}
-                                                    </button>
-                                                ))}
-                                            {getAllCountries().filter(country =>
+                                    </div>
+                                    <div className="max-h-64 overflow-y-auto">
+                                        {getAllCountries()
+                                            .filter(country =>
                                                 country.toLowerCase().includes(countrySearch.toLowerCase())
-                                            ).length === 0 && (
-                                                <div className="px-3 py-2 text-gray-500">No countries found</div>
-                                            )}
-                                        </div>
+                                            )
+                                            .map(country => (
+                                                <button
+                                                    key={country}
+                                                    onClick={() => {
+                                                        const region = getRegionFromCountry(country);
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            countrySelections: [country],
+                                                            regionSelections: region ? [region] : prev.regionSelections
+                                                        }));
+                                                        setCountrySearch('');
+                                                        setIsCountryOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 text-sm ${
+                                                        formData.countrySelections[0] === country ? 'bg-blue-100 font-semibold' : ''
+                                                    }`}
+                                                >
+                                                    {country}
+                                                </button>
+                                            ))}
+                                        {getAllCountries().filter(country =>
+                                            country.toLowerCase().includes(countrySearch.toLowerCase())
+                                        ).length === 0 && (
+                                            <div className="px-4 py-3 text-center text-sm text-gray-500">No countries found</div>
+                                        )}
                                     </div>
                                 </PopoverContent>
                             </Popover>
