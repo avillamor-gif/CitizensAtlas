@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, Search, X, Trash2 } from 'lucide-react';
 import { Project } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import * as DataService from '@/lib/services/data-service';
 import { allCountries } from '@/lib/countries';
@@ -293,12 +294,10 @@ const asiaSubregionCountries: Record<string, string[]> = {
 const getRegionFromCountry = (country: string): string => {
     if (!country) return '';
     const countryLower = country.toLowerCase();
-    console.log('🔍 getRegionFromCountry - Looking for:', country, '(lowercase:', countryLower, ')');
 
     for (const [subregion, countries] of Object.entries(asiaSubregionCountries)) {
         const found = countries.some(c => c.toLowerCase() === countryLower);
         if (found) {
-            console.log('✅ Found Asian subregion:', subregion, 'for country:', country);
             return subregion;
         }
     }
@@ -306,11 +305,9 @@ const getRegionFromCountry = (country: string): string => {
     for (const [region, countries] of Object.entries(regionCountries)) {
         const found = countries.some(c => c.toLowerCase() === countryLower);
         if (found) {
-            console.log('✅ Found region:', region, 'for country:', country);
             return region;
         }
     }
-    console.log('❌ No region found for country:', country);
     return '';
 };
 
@@ -485,19 +482,16 @@ const canonicalCountryByLower = (() => {
 const normalizeCountryName = (country: string) => {
     const trimmed = country.trim();
     if (!trimmed) {
-        console.log('🌍 normalizeCountryName - Input is empty, returning empty string');
         return '';
     }
     const lowered = trimmed.toLowerCase();
     // First try to find in canonical list
     const canonical = canonicalCountryByLower.get(lowered);
     if (canonical) {
-        console.log('🌍 normalizeCountryName - FOUND in canonical list:', { input: country, result: canonical });
         return canonical;
     }
     // Otherwise just title-case it (Nominatim returns proper English names with accept-language=en)
     const result = toTitleCase(trimmed);
-    console.log('🌍 normalizeCountryName - NOT in canonical list, using title-case:', { input: country, result, lowered });
     return result;
 };
 
@@ -751,7 +745,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [showManageEnvironmentalCategories, setShowManageEnvironmentalCategories] = useState(false);
     const [showManageSocialSafeguardCategories, setShowManageSocialSafeguardCategories] = useState(false);
     const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
-    const [addressQuery, setAddressQuery] = useState('');
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
         <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
@@ -782,9 +775,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
             const detailsMap = parseDetails(sourceProject.details || '');
             
-            console.log('🔍 RAW DETAILS STRING:', sourceProject.details);
-            console.log('🔍 PARSED DETAILS MAP:', Object.fromEntries(detailsMap));
-            console.log('🔍 Country from map:', detailsMap.get('Country'));
             
             const totalAmountStr = (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, '');
             const totalAmountNum = parseFloat(totalAmountStr) || 0;
@@ -793,11 +783,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 getDetailValue(detailsMap, ['False Solution Type', 'False solution type', 'False Solutions', 'False Solution']) ||
                 '';
             
-            console.log('📋 Loading falseSolutions:', { 
-                corruptionType: sourceProject.corruptionType, 
-                fromDetails: getDetailValue(detailsMap, ['False Solution Type', 'False solution type', 'False Solutions', 'False Solution']),
-                savedFalseSolutions
-            });
             const fundingRows = parseFundingRows(detailsMap, totalAmountNum);
             
             const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
@@ -807,12 +792,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                     .filter(Boolean)
             );
             
-            console.log('🔍 Country parsing:', {
-                fromMap: detailsMap.get('Country'),
-                fromProject: projectToEdit.country,
-                parsed: parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country || ''),
-                normalized: countrySelections
-            });
             const citySelections = matchCitySelections(
                 parseCitySelectionValues(detailsMap.get('City')),
                 countrySelections
@@ -822,10 +801,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 [...regionSelections, ...derivedRegions].map((region) => ({ value: region, label: region }))
             ).map((item) => item.value);
             
-            console.log('🔍 ProjectForm Edit Mode - Regions:', mergedRegions);
-            console.log('🔍 ProjectForm Edit Mode - Countries:', countrySelections);
-            console.log('🔍 ProjectForm Edit Mode - Cities:', citySelections);
-            console.log('🔍 ProjectForm Edit Mode - All details:', Object.fromEntries(detailsMap));
             
             setFormData({
                 regionSelections: mergedRegions,
@@ -862,7 +837,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 displacement: detailsMap.get('Resettlement') || detailsMap.get('Displacement') || '',
             });
             
-            console.log('✅ ProjectForm - State set with regions/countries/cities');
             setIsLoadingData(false);
             return true;
         };
@@ -1053,7 +1027,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         countryCode?: string;
         city?: string;
     }) => {
-        console.log('🌍 applyResolvedLocation called with:', params);
         
         let country = params.country ? normalizeCountryName(params.country) : '';
         
@@ -1061,16 +1034,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         if (!country && params.countryCode) {
             const countryCode = params.countryCode.toUpperCase();
             country = countryCodeToName[countryCode] || '';
-            console.log('🌍 Converted country_code', countryCode, 'to:', country);
         }
         
         const region = country ? getRegionFromCountry(country) : '';
-
-        console.log('🌍 After normalization - country:"' + country + '" region:"' + region + '"');
-        console.log('🌍 Will update state:', { 
-            countrySelections: country ? [country] : 'keep previous', 
-            regionSelections: region ? [region] : 'keep previous'
-        });
 
         setFormData((prev) => {
             const updated = {
@@ -1081,12 +1047,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 countrySelections: country ? [country] : prev.countrySelections,
                 cityInput: params.city || prev.cityInput,
             };
-            console.log('🌍 FormData updated:', { 
-                countrySelections: updated.countrySelections,
-                regionSelections: updated.regionSelections,
-                latitude: updated.latitude,
-                longitude: updated.longitude
-            });
             return updated;
         });
     };
@@ -1119,80 +1079,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const countryCode = address.country_code || '';
             const state = address.state || address.province || '';
 
-            console.log('📍 Reverse geocoding response:', { address, country, countryCode, city, state });
 
             // If no country found, try to extract from display_name
             if (!country && payload.display_name) {
                 const parts = payload.display_name.split(',');
                 if (parts.length > 0) {
                     country = parts[parts.length - 1].trim(); // Last part is usually country
-                    console.log('📍 Extracted country from display_name:', country);
                 }
             }
 
-            console.log('📍 Final extracted values:', { country, countryCode, city, latitude, longitude });
             applyResolvedLocation({ latitude, longitude, country, countryCode, city } as any);
             
         } catch (error) {
             console.error('❌ Reverse geocoding error:', error);
             applyResolvedLocation({ latitude, longitude });
-        }
-    };
-
-    const handleAddressSearch = async () => {
-        const query = addressQuery.trim();
-        if (!query) return;
-
-        setIsSearchingAddress(true);
-
-        try {
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&accept-language=en&q=${encodeURIComponent(query)}`,
-                {
-                    headers: {
-                        'User-Agent': 'CitizensAtlas/1.0',
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error('Address search failed');
-            }
-
-            const results = await response.json();
-            const first = results?.[0];
-
-            if (!first) {
-                alert('No location found for that address.');
-                return;
-            }
-
-            const latitude = Number.parseFloat(first.lat);
-            const longitude = Number.parseFloat(first.lon);
-            if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
-                alert('Invalid location result. Try another address.');
-                return;
-            }
-
-            const address = first.address || {};
-            const country = address.country || '';
-            const countryCode = address.country_code || '';
-            const city = address.city || address.town || address.village || '';
-
-            console.log('📍 handleAddressSearch result:', { address, country, countryCode, city, latitude, longitude });
-
-            applyResolvedLocation({
-                latitude: latitude.toFixed(6),
-                longitude: longitude.toFixed(6),
-                country,
-                countryCode,
-                city,
-            });
-        } catch (error) {
-            console.error('Address search error:', error);
-            alert('Failed to search address. Please try again.');
-        } finally {
-            setIsSearchingAddress(false);
         }
     };
 
@@ -1270,7 +1170,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted!', { isEditMode, projectToEdit, onAddProject, onUpdateProject, formData });
         const {
             projectName, approvalDate, publishDate, falseSolutions,
             regionSelections, countrySelections, cityInput, projectNumber, fundingRows,
@@ -1315,7 +1214,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const ifiValue = normalizedFundingRows.map((row) => row.ifi).join(', ');
         const falseSolutionsValue = falseSolutions.filter(s => s).join(', ');
         
-        console.log('💾 Saving falseSolutions:', { falseSolutions, falseSolutionsValue });
         const financialInstrumentsValue = normalizedFundingRows.map((row) => row.financialInstrument).join(', ');
         const totalProjectAmount = calculateFundingTotal(normalizedFundingRows);
         const fundingSourceValue = normalizedFundingRows.length > 0
@@ -1391,25 +1289,12 @@ ${references}
             submittedAt: new Date().toISOString(),
         };
 
-        console.log('🔍 ProjectForm Debug:', {
-            user: user,
-            userRole: userRole,
-            userEmail: user?.email,
-            status: projectData.status,
-            submittedBy: projectData.submittedBy,
-            submittedAt: projectData.submittedAt
-        });
-        console.log('Project data to save:', projectData);
-        console.log('💾 projectData.corruptionType:', projectData.corruptionType);
-
         try {
             if (isEditMode && projectToEdit && onUpdateProject) {
                 // Update existing project
-                console.log('Calling onUpdateProject');
                 await onUpdateProject({ id: projectToEdit.id, ...projectData });
             } else if (onAddProject) {
                 // Add new project
-                console.log('Calling onAddProject');
                 await onAddProject(projectData);
             } else {
                 console.error('No handler available! onAddProject:', onAddProject, 'onUpdateProject:', onUpdateProject);
