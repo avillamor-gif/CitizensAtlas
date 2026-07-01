@@ -1278,7 +1278,7 @@ ${projectDescription}
 **Key Documents:** ${keyDocuments || 'N/A'}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
-**Links to Actions:** ${linksToActions}
+**Links to Actions:** ${linksToActions || 'N/A'}
 **Active GAIA Support:** ${activeGaiAASupport}
 **Notes:**
 ${notes}
@@ -1377,7 +1377,7 @@ ${references}
                         </FormField>
                     </div>
                     <FormField label="False solution type">
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-3 gap-3">
                             {['Waste-to-Energy (WtE)', 'Plastic-to-Fuel Technologies', 'Chemical Recycling', 'Refuse-Derived Fuel (RDF)', 'Plastic & Carbon Credit Schemes', 'Bioplastics', 'Carbon Capture on Landfills'].map((solution) => (
                                 <div key={solution} className="flex items-center space-x-2">
                                     <input
@@ -1852,7 +1852,6 @@ ${references}
                         
                         <SectionTitle>Community Opposition & Actions</SectionTitle>
                         <div>
-                            <Label className="block text-sm font-medium text-gray-700 mb-3">Community Actions</Label>
                             {formData.groupsInOpposition.map((group, index) => (
                                 <div key={index} className="mb-3">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
