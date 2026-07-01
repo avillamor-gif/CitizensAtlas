@@ -13,6 +13,7 @@
 
 import { Project, Article, ProjectBrief } from '@/types/types'
 import * as supabaseService from './supabase-service'
+import { getCountryCoordinates } from '../country-coordinates'
 
 // Check if Supabase is configured
 const isSupabaseConfigured = () => {
@@ -162,9 +163,24 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function createProject(project: Omit<Project, 'id'>): Promise<Project> {
+  // Auto-geocode using country if coordinates are missing
+  let enrichedProject = { ...project };
+  
+  if ((!enrichedProject.latitude || !enrichedProject.longitude) && enrichedProject.country) {
+    const coords = getCountryCoordinates(enrichedProject.country);
+    if (coords) {
+      enrichedProject = {
+        ...enrichedProject,
+        latitude: enrichedProject.latitude || coords.lat,
+        longitude: enrichedProject.longitude || coords.lng,
+      };
+      console.log(`📍 Auto-geocoded ${enrichedProject.country} to [${coords.lat}, ${coords.lng}]`);
+    }
+  }
+
   if (isSupabaseConfigured()) {
-    console.log('🚀 Attempting to create project in Supabase:', { title: project.title })
-    const result = await supabaseService.createProject(project)
+    console.log('🚀 Attempting to create project in Supabase:', { title: enrichedProject.title })
+    const result = await supabaseService.createProject(enrichedProject)
     const verified = await supabaseService.getProjectById(result.id)
 
     if (!verified) {
@@ -178,7 +194,7 @@ export async function createProject(project: Omit<Project, 'id'>): Promise<Proje
   // Fallback to localStorage - return project with generated ID
   const projects = await getProjects()
   const newId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1
-  const newProject = { ...project, id: newId } as Project
+  const newProject = { ...enrichedProject, id: newId } as Project
   
   if (typeof window !== 'undefined') {
     localStorage.setItem('atlas_projects', JSON.stringify([newProject, ...projects]))
