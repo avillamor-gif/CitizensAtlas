@@ -66,8 +66,46 @@ export const solutionTypeColors: { readonly [key: string]: { readonly hex: strin
     'default': { hex: '#3b82f6', tailwind: 'bg-blue-500' }
 };
 
+// Normalize raw solution types from database to match color keys
+export const normalizeSolutionType = (rawType: string): string => {
+    if (!rawType) return 'default';
+    
+    const lower = rawType.toLowerCase();
+    
+    // Map raw types to standardized solution types
+    if (lower.includes('wte') || lower.includes('waste-to-energy') || lower.includes('incineration')) {
+        return 'Waste-to-Energy (WtE)';
+    }
+    if (lower.includes('plastic') && lower.includes('fuel')) {
+        return 'Plastic-to-Fuel Technologies';
+    }
+    if (lower.includes('chemical recycl')) {
+        return 'Chemical Recycling';
+    }
+    if (lower.includes('rdf') || lower.includes('refuse-derived')) {
+        return 'Refuse-Derived Fuel (RDF)';
+    }
+    if ((lower.includes('plastic') && lower.includes('credit')) || lower.includes('carbon credit') || lower.includes('carbon scheme')) {
+        return 'Plastic & Carbon Credit Schemes';
+    }
+    if (lower.includes('bioplastic')) {
+        return 'Bioplastics';
+    }
+    if (lower.includes('carbon capture') || lower.includes('landfill')) {
+        return 'Carbon Capture on Landfills';
+    }
+    
+    return 'default';
+};
+
 export const getSolutionTypeColor = (type: string, format: 'hex' | 'tailwind') => {
     if (!type) return solutionTypeColors['default'][format];
+    
+    // Normalize the raw type first
+    const normalizedType = normalizeSolutionType(type);
+    if (solutionTypeColors[normalizedType]) {
+        return solutionTypeColors[normalizedType][format];
+    }
     
     // The donut chart uses exact names from the split, but map markers might have combined types.
     // We prioritize the first type listed for map markers for consistency.
