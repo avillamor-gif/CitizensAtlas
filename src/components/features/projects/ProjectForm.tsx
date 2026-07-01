@@ -745,6 +745,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [showManageEnvironmentalCategories, setShowManageEnvironmentalCategories] = useState(false);
     const [showManageSocialSafeguardCategories, setShowManageSocialSafeguardCategories] = useState(false);
     const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
+    const [countrySearch, setCountrySearch] = useState('');
+    const [isCountryOpen, setIsCountryOpen] = useState(false);
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
         <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
@@ -1421,24 +1423,57 @@ ${references}
                             />
                         </FormField>
                         <FormField label="Country" required>
-                            <select
-                                value={formData.countrySelections[0] || ''}
-                                onChange={(e) => {
-                                    const country = e.target.value;
-                                    const region = getRegionFromCountry(country);
-                                    setFormData(prev => ({
-                                        ...prev,
-                                        countrySelections: [country],
-                                        regionSelections: region ? [region] : prev.regionSelections
-                                    }));
-                                }}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                            >
-                                <option value="">Select a country...</option>
-                                {getAllCountries().map(country => (
-                                    <option key={country} value={country}>{country}</option>
-                                ))}
-                            </select>
+                            <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
+                                <PopoverTrigger asChild>
+                                    <button className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex justify-between items-center">
+                                        <span>{formData.countrySelections[0] || 'Select a country...'}</span>
+                                        <ChevronDown className="h-4 w-4" />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-full p-0">
+                                    <div className="p-2">
+                                        <Input
+                                            type="text"
+                                            placeholder="Search countries..."
+                                            value={countrySearch}
+                                            onChange={(e) => setCountrySearch(e.target.value)}
+                                            className="mb-2"
+                                            autoFocus
+                                        />
+                                        <div className="max-h-64 overflow-y-auto">
+                                            {getAllCountries()
+                                                .filter(country =>
+                                                    country.toLowerCase().includes(countrySearch.toLowerCase())
+                                                )
+                                                .map(country => (
+                                                    <button
+                                                        key={country}
+                                                        onClick={() => {
+                                                            const region = getRegionFromCountry(country);
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                countrySelections: [country],
+                                                                regionSelections: region ? [region] : prev.regionSelections
+                                                            }));
+                                                            setCountrySearch('');
+                                                            setIsCountryOpen(false);
+                                                        }}
+                                                        className={`w-full text-left px-3 py-2 hover:bg-blue-50 rounded ${
+                                                            formData.countrySelections[0] === country ? 'bg-blue-100 font-semibold' : ''
+                                                        }`}
+                                                    >
+                                                        {country}
+                                                    </button>
+                                                ))}
+                                            {getAllCountries().filter(country =>
+                                                country.toLowerCase().includes(countrySearch.toLowerCase())
+                                            ).length === 0 && (
+                                                <div className="px-3 py-2 text-gray-500">No countries found</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         </FormField>
                         <FormField label="City/ies (comma-separated)">
                             <Input
