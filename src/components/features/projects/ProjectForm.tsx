@@ -473,9 +473,15 @@ const normalizeCountryName = (country: string) => {
     const trimmed = country.trim();
     if (!trimmed) return '';
     const lowered = trimmed.toLowerCase();
+    // First try to find in canonical list
     const canonical = canonicalCountryByLower.get(lowered);
-    const result = canonical || toTitleCase(trimmed);
-    console.log('🌍 normalizeCountryName:', { input: country, trimmed, lowered, found: !!canonical, result });
+    if (canonical) {
+        console.log('🌍 normalizeCountryName - Found in canonical:', { input: country, result: canonical });
+        return canonical;
+    }
+    // Otherwise just title-case it (Nominatim returns proper English names with accept-language=en)
+    const result = toTitleCase(trimmed);
+    console.log('🌍 normalizeCountryName - Using title-case:', { input: country, result });
     return result;
 };
 
@@ -893,7 +899,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
                 try {
                     const response = await fetch(
-                        `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&q=${encodeURIComponent(`${city}, ${country}`)}`,
+                        `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&accept-language=en&q=${encodeURIComponent(`${city}, ${country}`)}`,
                         {
                             headers: {
                                 'User-Agent': 'CitizensAtlas/1.0',
@@ -1058,7 +1064,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=10&addressdetails=1`,
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=10&addressdetails=1&accept-language=en`,
                 {
                     headers: {
                         'User-Agent': 'CitizensAtlas/1.0',
@@ -1096,7 +1102,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&q=${encodeURIComponent(query)}`,
+                `https://nominatim.openstreetmap.org/search?format=json&limit=1&addressdetails=1&accept-language=en&q=${encodeURIComponent(query)}`,
                 {
                     headers: {
                         'User-Agent': 'CitizensAtlas/1.0',
