@@ -1524,7 +1524,7 @@ ${references}
                                             value={row.ifi || undefined}
                                             onValueChange={(value) => handleFundingRowChange(index, 'ifi', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-10">
                                                 <SelectValue placeholder="Select IFI" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -1543,7 +1543,7 @@ ${references}
                                             value={row.financialInstrument || undefined}
                                             onValueChange={(value) => handleFundingRowChange(index, 'financialInstrument', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-10">
                                                 <SelectValue placeholder="Select instrument" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -1565,6 +1565,7 @@ ${references}
                                             value={row.amount}
                                             onChange={(e) => handleFundingRowChange(index, 'amount', e.target.value)}
                                             placeholder="0"
+                                            className="h-10"
                                         />
                                     </div>
 
@@ -1599,7 +1600,7 @@ ${references}
                                 <Input
                                     type="text"
                                     readOnly
-                                    className="bg-gray-50 w-full"
+                                    className="bg-gray-50 w-full h-10"
                                     value={calculateFundingTotal(formData.fundingRows).toLocaleString()}
                                 />
                             </div>
