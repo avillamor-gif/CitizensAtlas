@@ -3,6 +3,7 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import Map, { Marker, Popup, Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import Supercluster from 'supercluster';
 import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
 
@@ -66,7 +67,9 @@ interface InteractiveMapProps {
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false }) => {
     const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
+    const [zoom, setZoom] = useState(3);
     const mapRef = useRef<any>(null);
+    const superclusterRef = useRef<any>(null);
 
     useEffect(() => {
         setPickedLocation(selectedLocation);
@@ -138,6 +141,86 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
             };
         });
     }, [projects, minAmount, maxAmount]);
+
+    // Initialize and manage clustering
+    const clustersAndMarkers = useMemo(() => {
+        // Initialize supercluster
+        const index = new Supercluster({
+            radius: 80,
+            maxZoom: 16,
+            minZoom: 0,
+        });
+
+        const projectPoints = projects.map(p => ({
+            type: 'Feature' as const,
+            geometry: {
+                type: 'Point' as const,
+                coordinates: [p.longitude, p.latitude],
+            },
+            properties: p,
+        }));
+
+        index.load(projectPoints);
+        superclusterRef.current = index;
+
+        // Get clusters and individual markers for current zoom
+        const clusters: any[] = [];
+        const individual: typeof markers = [];
+
+        if (zoom < 5) {
+            // Show clusters
+            const bbox: [number, number, number, number] = [-180, -85, 180, 85];
+            const clusterList = index.getClusters(bbox as any, Math.floor(zoom));
+            
+            clusterList.forEach(cluster => {
+                if (cluster.properties.cluster) {
+                    // It's a cluster
+                    const clusterId = cluster.id as number;
+                    const clusteredProjects = index.getLeaves(clusterId, Infinity) as any[];
+                    const clusterCenter = cluster.geometry.coordinates as [number, number];
+                    
+                    // Calculate cluster properties
+                    const totalAmount = clusteredProjects.reduce((sum, leaf) => {
+                        return sum + parseProjectAmount(leaf.properties.details);
+                    }, 0);
+                    
+                    // Get most common corruption type for cluster color
+                    const typeFreq: Record<string, number> = {};
+                    clusteredProjects.forEach(leaf => {
+                        const type = leaf.properties.corruptionType || 'default';
+                        typeFreq[type] = (typeFreq[type] || 0) + 1;
+                    });
+                    
+                    const mostCommonType = Object.entries(typeFreq).sort((a, b) => b[1] - a[1])[0]?.[0] || 'default';
+                    const clusterColor = getSolutionTypeColor(mostCommonType, 'hex');
+                    
+                    clusters.push({
+                        id: cluster.id,
+                        type: 'cluster',
+                        lng: clusterCenter[0],
+                        lat: clusterCenter[1],
+                        count: clusteredProjects.length,
+                        totalAmount,
+                        color: clusterColor,
+                    });
+                } else {
+                    // It's an individual point (when zoomed in)
+                    const project = cluster.properties as Project;
+                    individual.push({
+                        ...project,
+                        size: calculateBubbleSize(parseProjectAmount(project.details), minAmount, maxAmount),
+                        amount: parseProjectAmount(project.details),
+                        bgColor: getSolutionTypeColor(project.corruptionType, 'hex'),
+                    });
+                }
+            });
+        } else {
+            // Show all individual markers
+            return { clusters: [], individual: markers };
+        }
+
+        return { clusters, individual };
+    }, [zoom, projects, markers, minAmount, maxAmount]);
 
     // Calculate center point based on all projects
     const mapCenter = useMemo(() => {
@@ -225,6 +308,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         onMapLoad();
                     }
                 }}
+                onZoom={(e) => {
+                    setZoom(e.viewState.zoom);
+                }}
                 onClick={(e) => {
                     setCountryPopup(null);
                     // If onMapClick is provided and user clicks on empty map area (not a marker)
@@ -238,8 +324,45 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
             >
-                {/* Bubble markers for projects */}
-                {markers.map((project) => (
+                {/* Cluster markers */}
+                {clustersAndMarkers.clusters.map((cluster) => (
+                    <Marker
+                        key={`cluster-${cluster.id}`}
+                        longitude={cluster.lng}
+                        latitude={cluster.lat}
+                        anchor="center"
+                        onClick={(e) => {
+                            e.originalEvent.stopPropagation();
+                            // Zoom into cluster
+                            if (mapRef.current && superclusterRef.current) {
+                                const expansionZoom = superclusterRef.current.getClusterExpansionZoom(cluster.id as number);
+                                mapRef.current.flyTo({
+                                    center: [cluster.lng, cluster.lat],
+                                    zoom: expansionZoom,
+                                    duration: 300,
+                                });
+                            }
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: '48px',
+                                height: '48px',
+                                backgroundColor: cluster.color,
+                                opacity: 0.8,
+                            }}
+                            className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110 shadow-lg"
+                        >
+                            <div className="text-center">
+                                <div className="text-white font-bold text-sm">{cluster.count}</div>
+                                <div className="text-white font-semibold text-xs">{formatAmount(cluster.totalAmount)}</div>
+                            </div>
+                        </div>
+                    </Marker>
+                ))}
+
+                {/* Individual project markers */}
+                {clustersAndMarkers.individual.map((project) => (
                     <Marker
                         key={`marker-${project.id}`}
                         longitude={project.longitude}
