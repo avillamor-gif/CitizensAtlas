@@ -1579,21 +1579,28 @@ ${references}
                                                         key={country}
                                                         type="button"
                                                         onClick={() => {
-                                                            // Auto-fill Region based on Country
                                                             console.log('🌍 Country selected:', country);
                                                             const region = getRegionFromCountry(country);
                                                             console.log('🌍 Region result:', region);
+                                                            
+                                                            // Update state first
                                                             setFormData(prev => {
                                                                 const updated = {
                                                                     ...prev,
                                                                     countrySelections: [country],
                                                                     regionSelections: region ? [region] : prev.regionSelections
                                                                 };
-                                                                console.log('🌍 FormData after update:', updated.countrySelections, updated.regionSelections);
+                                                                console.log('🌍 FormData updated:', updated.countrySelections, updated.regionSelections);
                                                                 return updated;
                                                             });
+                                                            
+                                                            // Clear search immediately
                                                             setCountrySearch('');
-                                                            setIsCountryDropdownOpen(false);
+                                                            
+                                                            // Close dropdown after a small delay to ensure state updates
+                                                            setTimeout(() => {
+                                                                setIsCountryDropdownOpen(false);
+                                                            }, 50);
                                                         }}
                                                         className={cn(
                                                             'w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-100 flex items-center gap-2',
