@@ -1225,11 +1225,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const regionValue = regionSelections.join(', ');
         const countryValue = countrySelections.join(', ');
-
-        if (!countryValue.trim()) {
-            alert('Country is required. Please select at least one country.');
-            return;
-        }
         const cityValue = cityInput
             .split(',')
             .map((item) => item.trim())
@@ -1465,20 +1460,11 @@ ${references}
                         </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField label="Region">
                             <Input
                                 type="text"
                                 value={formData.regionSelections.join(', ')}
-                                placeholder="Auto-filled from map pin"
-                                readOnly
-                                className="bg-gray-50"
-                            />
-                        </FormField>
-                        <FormField label="Country" required>
-                            <Input
-                                type="text"
-                                value={formData.countrySelections.join(', ')}
                                 placeholder="Auto-filled from map pin"
                                 readOnly
                                 className="bg-gray-50"
