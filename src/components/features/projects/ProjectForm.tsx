@@ -461,6 +461,20 @@ const REGION_OPTIONS: MultiSelectOption[] = Object.keys(regionCountries).map((re
     label: region,
 }));
 
+// Country code to country name mapping (ISO 3166-1 alpha-2)
+const countryCodeToName: Record<string, string> = {
+    'PH': 'Philippines', 'IN': 'India', 'BD': 'Bangladesh', 'BT': 'Bhutan', 'NP': 'Nepal', 'LK': 'Sri Lanka', 'MM': 'Myanmar',
+    'TH': 'Thailand', 'LA': 'Laos', 'KH': 'Cambodia', 'VN': 'Vietnam', 'MY': 'Malaysia', 'SG': 'Singapore', 'BN': 'Brunei',
+    'ID': 'Indonesia', 'TL': 'Timor-Leste', 'KR': 'South Korea', 'JP': 'Japan', 'CN': 'China', 'MN': 'Mongolia',
+    'AF': 'Afghanistan', 'PK': 'Pakistan', 'IR': 'Iran', 'IQ': 'Iraq', 'SY': 'Syria', 'LB': 'Lebanon', 'JO': 'Jordan',
+    'IL': 'Israel', 'PS': 'Palestine', 'SA': 'Saudi Arabia', 'AE': 'United Arab Emirates', 'QA': 'Qatar', 'BH': 'Bahrain',
+    'KW': 'Kuwait', 'OM': 'Oman', 'YE': 'Yemen', 'TR': 'Turkey', 'AM': 'Armenia', 'AZ': 'Azerbaijan', 'GE': 'Georgia',
+    'GB': 'United Kingdom', 'FR': 'France', 'DE': 'Germany', 'IT': 'Italy', 'ES': 'Spain', 'PT': 'Portugal',
+    'US': 'United States', 'CA': 'Canada', 'MX': 'Mexico', 'BR': 'Brazil', 'AR': 'Argentina', 'CL': 'Chile',
+    'ZA': 'South Africa', 'NG': 'Nigeria', 'EG': 'Egypt', 'KE': 'Kenya', 'ET': 'Ethiopia',
+    'AU': 'Australia', 'NZ': 'New Zealand',
+};
+
 const canonicalCountryByLower = (() => {
     const map = new Map<string, string>();
     Object.values(regionCountries).flat().forEach((country) => {
@@ -1038,11 +1052,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         latitude: string;
         longitude: string;
         country?: string;
+        countryCode?: string;
         city?: string;
     }) => {
         console.log('🌍 applyResolvedLocation called with:', params);
         
-        const country = params.country ? normalizeCountryName(params.country) : '';
+        let country = params.country ? normalizeCountryName(params.country) : '';
+        
+        // If country is still empty and we have country_code, try to convert it
+        if (!country && params.countryCode) {
+            const countryCode = params.countryCode.toUpperCase();
+            country = countryCodeToName[countryCode] || '';
+            console.log('🌍 Converted country_code', countryCode, 'to:', country);
+        }
+        
         const region = country ? getRegionFromCountry(country) : '';
 
         console.log('🌍 After normalization - country:"' + country + '" region:"' + region + '"');
@@ -1075,35 +1098,45 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const longitude = location.longitude.toFixed(6);
 
         try {
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=10&addressdetails=1&accept-language=en`,
+            // Use search API which gives better country data than reverse
+            const searchResponse = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1&accept-language=en`,
                 {
-                    headers: {
-                        'User-Agent': 'CitizensAtlas/1.0',
-                    },
+                    headers: { 'User-Agent': 'CitizensAtlas/1.0' },
                 }
             );
 
-            if (!response.ok) {
-                console.warn('❌ Nominatim API error:', response.status);
+            if (!searchResponse.ok) {
+                console.warn('❌ Nominatim API error:', searchResponse.status);
                 applyResolvedLocation({ latitude, longitude });
                 return;
             }
 
-            const payload = await response.json();
+            const payload = await searchResponse.json();
             const address = payload?.address || {};
-            const city = address.city || address.town || address.village || '';
             
-            // Extract country - try multiple possible field names
+            // Extract location data
+            const city = address.city || address.town || address.village || '';
             let country = address.country || '';
+            const countryCode = address.country_code || '';
+            const state = address.state || address.province || '';
 
-            console.log('📍 handleMapLocationPick raw response:', payload);
-            console.log('📍 handleMapLocationPick address object:', address);
-            console.log('📍 handleMapLocationPick extracted - country:"' + country + '" city:"' + city + '"');
+            console.log('📍 Reverse geocoding response:', { address, country, countryCode, city, state });
 
-            applyResolvedLocation({ latitude, longitude, country, city });
+            // If no country found, try to extract from display_name
+            if (!country && payload.display_name) {
+                const parts = payload.display_name.split(',');
+                if (parts.length > 0) {
+                    country = parts[parts.length - 1].trim(); // Last part is usually country
+                    console.log('📍 Extracted country from display_name:', country);
+                }
+            }
+
+            console.log('📍 Final extracted values:', { country, countryCode, city, latitude, longitude });
+            applyResolvedLocation({ latitude, longitude, country, countryCode, city } as any);
+            
         } catch (error) {
-            console.error('Reverse geocoding error:', error);
+            console.error('❌ Reverse geocoding error:', error);
             applyResolvedLocation({ latitude, longitude });
         }
     };
@@ -1145,13 +1178,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
             const address = first.address || {};
             const country = address.country || '';
+            const countryCode = address.country_code || '';
+            const city = address.city || address.town || address.village || '';
 
-            console.log('📍 handleAddressSearch result:', { address, country, latitude, longitude });
+            console.log('📍 handleAddressSearch result:', { address, country, countryCode, city, latitude, longitude });
 
             applyResolvedLocation({
                 latitude: latitude.toFixed(6),
                 longitude: longitude.toFixed(6),
                 country,
+                countryCode,
+                city,
             });
         } catch (error) {
             console.error('Address search error:', error);
