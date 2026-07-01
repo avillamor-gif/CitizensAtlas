@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import * as DataService from '@/lib/services/data-service';
 import { allCountries } from '@/lib/countries';
