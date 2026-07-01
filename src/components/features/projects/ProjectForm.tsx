@@ -1018,7 +1018,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const country = params.country ? normalizeCountryName(params.country) : '';
         const region = country ? getRegionFromCountry(country) : '';
 
-        console.log('🌍 applyResolvedLocation:', { country, region, original: params.country });
+        console.log('🌍 applyResolvedLocation input:', params);
+        console.log('🌍 applyResolvedLocation normalized:', { country, region });
+        console.log('🌍 countrySelections will be set to:', country ? [country] : 'unchanged');
 
         setFormData((prev) => ({
             ...prev,
@@ -1045,15 +1047,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             );
 
             if (!response.ok) {
+                console.warn('❌ Nominatim API error:', response.status);
                 applyResolvedLocation({ latitude, longitude });
                 return;
             }
 
             const payload = await response.json();
             const address = payload?.address || {};
-            const country = address.country || '';
+            const country = address.country || address.country_name || '';
 
-            console.log('📍 handleMapLocationPick reverse geocoding:', { address, country, latitude, longitude });
+            console.log('📍 handleMapLocationPick raw response:', payload);
+            console.log('📍 handleMapLocationPick parsed:', { address, country, latitude, longitude });
 
             applyResolvedLocation({ latitude, longitude, country });
         } catch (error) {
