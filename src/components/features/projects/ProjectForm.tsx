@@ -762,6 +762,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 sourceProject.corruptionType ||
                 getDetailValue(detailsMap, ['False Solution Type', 'False solution type', 'False Solutions', 'False Solution']) ||
                 '';
+            
+            console.log('📋 Loading falseSolutions:', { 
+                corruptionType: sourceProject.corruptionType, 
+                fromDetails: getDetailValue(detailsMap, ['False Solution Type', 'False solution type', 'False Solutions', 'False Solution']),
+                savedFalseSolutions
+            });
             const fundingRows = parseFundingRows(detailsMap, totalAmountNum);
             
             const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
@@ -1012,15 +1018,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const country = params.country ? normalizeCountryName(params.country) : '';
         const region = country ? getRegionFromCountry(country) : '';
 
+        console.log('🌍 applyResolvedLocation:', { country, region, original: params.country });
+
         setFormData((prev) => ({
             ...prev,
             latitude: params.latitude,
             longitude: params.longitude,
             regionSelections: region ? [region] : prev.regionSelections,
             countrySelections: country ? [country] : prev.countrySelections,
-            cityInput: params.city
-                ? Array.from(new Set([...prev.cityInput.split(',').map((item) => item.trim()).filter(Boolean), params.city])).join(', ')
-                : prev.cityInput,
+            cityInput: prev.cityInput,
         }));
     };
 
@@ -1046,9 +1052,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const payload = await response.json();
             const address = payload?.address || {};
             const country = address.country || '';
-            const city = address.city || address.town || address.village || address.municipality || '';
 
-            applyResolvedLocation({ latitude, longitude, country, city });
+            console.log('📍 handleMapLocationPick reverse geocoding:', { address, country, latitude, longitude });
+
+            applyResolvedLocation({ latitude, longitude, country });
         } catch (error) {
             console.error('Reverse geocoding error:', error);
             applyResolvedLocation({ latitude, longitude });
@@ -1092,13 +1099,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
             const address = first.address || {};
             const country = address.country || '';
-            const city = address.city || address.town || address.village || address.municipality || '';
+
+            console.log('📍 handleAddressSearch result:', { address, country, latitude, longitude });
 
             applyResolvedLocation({
                 latitude: latitude.toFixed(6),
                 longitude: longitude.toFixed(6),
                 country,
-                city,
             });
         } catch (error) {
             console.error('Address search error:', error);
@@ -1232,6 +1239,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const ifiValue = normalizedFundingRows.map((row) => row.ifi).join(', ');
         const falseSolutionsValue = falseSolutions.filter(s => s).join(', ');
+        
+        console.log('💾 Saving falseSolutions:', { falseSolutions, falseSolutionsValue });
         const financialInstrumentsValue = normalizedFundingRows.map((row) => row.financialInstrument).join(', ');
         const totalProjectAmount = calculateFundingTotal(normalizedFundingRows);
         const fundingSourceValue = normalizedFundingRows.length > 0
@@ -1315,6 +1324,7 @@ ${references}
             submittedAt: projectData.submittedAt
         });
         console.log('Project data to save:', projectData);
+        console.log('💾 projectData.corruptionType:', projectData.corruptionType);
 
         try {
             if (isEditMode && projectToEdit && onUpdateProject) {
