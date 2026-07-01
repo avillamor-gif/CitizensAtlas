@@ -1509,10 +1509,17 @@ ${references}
                             const availableIfiOptions = IFI_OPTIONS.filter(
                                 (option) => option === row.ifi || !selectedElsewhere.includes(option)
                             );
+                            const isFirstRow = index === 0;
 
                             return (
-                                <div key={index} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_180px_auto] gap-3 mb-3 items-end">
-                                    <FormField label="International Financial Institution (IFI)">
+                                <div
+                                    key={index}
+                                    className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_180px_auto] items-end ${isFirstRow ? 'gap-3 mb-2' : 'gap-2 mb-1'}`}
+                                >
+                                    <div className={isFirstRow ? 'space-y-1' : ''}>
+                                        {isFirstRow && (
+                                            <Label className="text-sm font-medium text-gray-700">International Financial Institution (IFI)</Label>
+                                        )}
                                         <Select
                                             value={row.ifi || undefined}
                                             onValueChange={(value) => handleFundingRowChange(index, 'ifi', value)}
@@ -1526,9 +1533,12 @@ ${references}
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                    </FormField>
+                                    </div>
 
-                                    <FormField label="Financial Instruments">
+                                    <div className={isFirstRow ? 'space-y-1' : ''}>
+                                        {isFirstRow && (
+                                            <Label className="text-sm font-medium text-gray-700">Financial Instruments</Label>
+                                        )}
                                         <Select
                                             value={row.financialInstrument || undefined}
                                             onValueChange={(value) => handleFundingRowChange(index, 'financialInstrument', value)}
@@ -1542,9 +1552,12 @@ ${references}
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                    </FormField>
+                                    </div>
 
-                                    <FormField label="Amount (M USD)">
+                                    <div className={isFirstRow ? 'space-y-1' : ''}>
+                                        {isFirstRow && (
+                                            <Label className="text-sm font-medium text-gray-700">Amount (M USD)</Label>
+                                        )}
                                         <Input
                                             type="number"
                                             step="any"
@@ -1553,9 +1566,9 @@ ${references}
                                             onChange={(e) => handleFundingRowChange(index, 'amount', e.target.value)}
                                             placeholder="0"
                                         />
-                                    </FormField>
+                                    </div>
 
-                                    <div className="pb-2">
+                                    <div className={isFirstRow ? 'pb-2' : 'pb-0'}>
                                         {formData.fundingRows.length > 1 && (
                                             <button
                                                 type="button"
@@ -1569,22 +1582,27 @@ ${references}
                                 </div>
                             );
                         })}
-                        <button
-                            type="button"
-                            onClick={() => addRepeatableRow('fundingRows')}
-                            disabled={formData.fundingRows.filter((row) => row.ifi).length >= IFI_OPTIONS.length}
-                            className="text-sm text-brand-medium-blue hover:underline disabled:text-gray-400 disabled:no-underline"
-                        >
-                            + Add funding source row
-                        </button>
-                        <FormField label="Total Project Amount (M USD)">
-                            <Input
-                                type="text"
-                                readOnly
-                                className="bg-gray-50"
-                                value={calculateFundingTotal(formData.fundingRows).toLocaleString()}
-                            />
-                        </FormField>
+                        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_180px_auto] items-center gap-2 mb-2">
+                            <div className="md:col-span-2">
+                                <button
+                                    type="button"
+                                    onClick={() => addRepeatableRow('fundingRows')}
+                                    disabled={formData.fundingRows.filter((row) => row.ifi).length >= IFI_OPTIONS.length}
+                                    className="text-sm text-brand-medium-blue hover:underline disabled:text-gray-400 disabled:no-underline"
+                                >
+                                    + Add funding source row
+                                </button>
+                            </div>
+                            <div className="md:col-span-2 flex items-center gap-2 md:justify-end">
+                                <Label className="text-sm font-medium text-gray-700 whitespace-nowrap">Total Project Amount (M USD)</Label>
+                                <Input
+                                    type="text"
+                                    readOnly
+                                    className="bg-gray-50 w-full md:w-[180px]"
+                                    value={calculateFundingTotal(formData.fundingRows).toLocaleString()}
+                                />
+                            </div>
+                        </div>
                         <FormField label="Owner (Public/ Private / PPP)">
                             <Select value={formData.owner || undefined} onValueChange={(value) => handleSelectChange('owner', value)}>
                                 <SelectTrigger>
