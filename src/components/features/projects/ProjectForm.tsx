@@ -1248,6 +1248,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             return;
         }
 
+        const latNum = parseFloat(latitude);
+        const lngNum = parseFloat(longitude);
+        if (isNaN(latNum) || isNaN(lngNum) || (latNum === 0 && lngNum === 0)) {
+            alert('Project location is required. Please click on the map or search for an address to set the project location.');
+            return;
+        }
+
         const details = `
     **Region:** ${regionValue}
     **Country:** ${countryValue}
@@ -1460,7 +1467,7 @@ ${references}
                         </FormField>
                     </div>
 
-                    <FormField label="Project Location (click map to pin)">
+                    <FormField label="Project Location (click map to pin)" required>
                         <div className="space-y-3">
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <Input
