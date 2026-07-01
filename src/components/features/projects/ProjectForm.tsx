@@ -498,13 +498,19 @@ const normalizeCountryName = (country: string) => {
 const getCountriesForRegions = (regions: string[]) => {
     const selectedRegions = regions.length > 0 ? regions : Object.keys(regionCountries);
     return uniqueByValue(
-        selectedRegions.flatMap((region) =>
-            (regionCountries[region] || []).map((country) => ({
+        selectedRegions.flatMap((region) => {
+            // Check main regions first
+            const mainRegionCountries = regionCountries[region] || [];
+            // Also check Asia subregions
+            const asiaSubregionCountriesList = asiaSubregionCountries[region] || [];
+            // Combine both
+            const allCountries = [...mainRegionCountries, ...asiaSubregionCountriesList];
+            return allCountries.map((country) => ({
                 value: country,
                 label: country,
                 description: region,
-            }))
-        )
+            }));
+        })
     );
 };
 
@@ -1425,7 +1431,7 @@ ${references}
                         <FormField label="Country" required>
                             <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
                                 <PopoverTrigger asChild>
-                                    <button className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex justify-between items-center">
+                                    <button type="button" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex justify-between items-center">
                                         <span>{formData.countrySelections[0] || 'Select a country...'}</span>
                                         <ChevronDown className="h-4 w-4" />
                                     </button>
@@ -1448,6 +1454,7 @@ ${references}
                                             )
                                             .map(country => (
                                                 <button
+                                                    type="button"
                                                     key={country}
                                                     onClick={() => {
                                                         const region = getRegionFromCountry(country);
