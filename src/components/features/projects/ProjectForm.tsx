@@ -1514,7 +1514,7 @@ ${references}
                             return (
                                 <div
                                     key={index}
-                                    className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] items-end ${isFirstRow ? 'gap-3 mb-2' : 'gap-2 mb-1'}`}
+                                    className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] items-end ${isFirstRow ? 'gap-3 mb-2' : 'gap-2 mb-0'}`}
                                 >
                                     <div className={isFirstRow ? 'space-y-1' : ''}>
                                         {isFirstRow && (
@@ -1591,7 +1591,7 @@ ${references}
                                     disabled={formData.fundingRows.filter((row) => row.ifi).length >= IFI_OPTIONS.length}
                                     className="text-sm text-brand-medium-blue hover:underline disabled:text-gray-400 disabled:no-underline"
                                 >
-                                    + Add funding source row
+                                    + Add Funding Source
                                 </button>
                             </div>
                             <div className="md:col-span-1 flex items-center gap-2 md:justify-end">
