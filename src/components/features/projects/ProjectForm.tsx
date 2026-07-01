@@ -701,21 +701,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             setIsLoadingData(true);
 
             let sourceProject = projectToEdit;
-            const hasCompletePayload =
-                typeof projectToEdit.details === 'string' &&
-                projectToEdit.details.trim().length > 0 &&
-                typeof projectToEdit.corruptionType === 'string';
 
-            // Some list views provide partial project rows. Re-fetch full row to guarantee form hydration.
-            if (!hasCompletePayload) {
-                try {
-                    const fullProject = await DataService.getProjectById(projectToEdit.id);
-                    if (fullProject) {
-                        sourceProject = fullProject;
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch full project details for edit form:', error);
+            // Always re-fetch the full project row in edit mode so the form hydrates from
+            // the canonical database record instead of whichever partial object opened it.
+            try {
+                const fullProject = await DataService.getProjectById(projectToEdit.id);
+                if (fullProject) {
+                    sourceProject = fullProject;
                 }
+            } catch (error) {
+                console.error('Failed to fetch full project details for edit form:', error);
             }
 
             const detailsMap = parseDetails(sourceProject.details || '');
