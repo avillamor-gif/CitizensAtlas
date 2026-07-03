@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Article } from '@/types/types';
 import ViewToggle from '@/components/pages/ViewToggle';
 import ArticleGridCard from './ArticleGridCard';
 import ArticleListRow from './ArticleListRow';
-import Pagination from '@/components/features/admin/Pagination';
 
 interface ArticleListPageProps {
     title: string;
@@ -14,23 +13,57 @@ interface ArticleListPageProps {
     hideTitle?: boolean;
 }
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 12;
 
 const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewArticle, onIncrementDownload, filterBar, hideTitle = false }) => {
     const [view, setView] = useState<'grid' | 'list'>('grid');
-    const [currentPage, setCurrentPage] = useState(1);
+    const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE);
+    const [isLoading, setIsLoading] = useState(false);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
 
-    const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+    const displayedItems = useMemo(() => {
+        return items.slice(0, displayedCount);
+    }, [items, displayedCount]);
 
-    const paginatedItems = useMemo(() => {
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    }, [items, currentPage]);
+    const hasMore = displayedCount < items.length;
 
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo(0, 0);
-    };
+    const loadMore = useCallback(() => {
+        if (hasMore && !isLoading) {
+            setIsLoading(true);
+            // Simulate a small delay for better UX
+            setTimeout(() => {
+                setDisplayedCount(prev => Math.min(prev + ITEMS_PER_PAGE, items.length));
+                setIsLoading(false);
+            }, 300);
+        }
+    }, [hasMore, isLoading, items.length]);
+
+    // Reset display count when items change (e.g., when filters change)
+    useEffect(() => {
+        setDisplayedCount(ITEMS_PER_PAGE);
+    }, [items]);
+
+    // Intersection Observer for infinite scroll
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !isLoading) {
+                    loadMore();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (loadMoreRef.current) {
+            observer.observe(loadMoreRef.current);
+        }
+
+        return () => {
+            if (loadMoreRef.current) {
+                observer.unobserve(loadMoreRef.current);
+            }
+        };
+    }, [loadMore, hasMore, isLoading]);
 
     return (
         <div className="bg-white py-12 px-4 sm:px-8 lg:px-16">
@@ -62,21 +95,31 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
 
                 {view === 'grid' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {paginatedItems.map(item => <ArticleGridCard key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
+                        {displayedItems.map(item => <ArticleGridCard key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
                     </div>
                 ) : (
                     <div className="space-y-8">
-                        {paginatedItems.map(item => <ArticleListRow key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
+                        {displayedItems.map(item => <ArticleListRow key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
                     </div>
                 )}
                 
-                 <div className="mt-12">
-                    <Pagination 
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                    />
-                </div>
+                {/* Load More Trigger */}
+                {hasMore && (
+                    <div ref={loadMoreRef} className="mt-12 flex justify-center">
+                        {isLoading && (
+                            <div className="flex flex-col items-center gap-2">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-dark-blue"></div>
+                                <p className="text-gray-500">Loading more publications...</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+                
+                {!hasMore && items.length > ITEMS_PER_PAGE && (
+                    <div className="mt-12 text-center text-gray-500">
+                        <p>No more publications to load</p>
+                    </div>
+                )}
             </div>
         </div>
     );
