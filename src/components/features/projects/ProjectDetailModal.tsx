@@ -164,6 +164,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     <DetailRow label="Total Project Amount" value={detailsMap.get('Total Project Amount')} />
                     <DetailRow label="Owner" value={detailsMap.get('Owner')} />
                     <DetailRow label="Private Sector Borrower(s)" value={detailsMap.get('Private Sector Borrowers')} />
+                    <DetailRow label="Economic Cooperation or Programs" value={detailsMap.get('Economic Cooperation or Programs')} />
+                    <DetailRow label="Other Implementors" value={detailsMap.get('Other Implementors')} />
                 </>
             ),
         },

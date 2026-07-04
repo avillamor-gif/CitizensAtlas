@@ -706,6 +706,8 @@ const emptyFormState = {
     fundingRows: [{ ifi: '', financialInstrument: '', amount: '' }] as FundingRow[],
     owner: '',
     privateSectorBorrowers: [''],
+    economicCooperationOrPrograms: '',
+    otherImplementors: '',
     projectDescription: '',
     projectStatus: '',
     approvalDate: '',
@@ -825,6 +827,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 fundingRows,
                 owner: detailsMap.get('Owner') || '',
                 privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
+                economicCooperationOrPrograms: detailsMap.get('Economic Cooperation or Programs') || '',
+                otherImplementors: detailsMap.get('Other Implementors') || '',
                 projectDescription: detailsMap.get('Project Description') || '',
                 projectStatus: getDetailValue(detailsMap, ['Project Status', 'Status']) || '',
                 approvalDate: sourceProject.date || '',
@@ -1181,7 +1185,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const {
             projectName, approvalDate, publishDate, falseSolutions,
             regionSelections, countrySelections, cityInput, projectNumber, fundingRows,
-            owner, privateSectorBorrowers, projectDescription,
+            owner, privateSectorBorrowers, economicCooperationOrPrograms, otherImplementors, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             keyDocuments, groupsInOpposition, typesOfActions, linksToActions,
             activeGaiAASupport, notes, references, genderConcerns,
@@ -1260,6 +1264,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 **Total Project Amount:** ${totalProjectAmount.toLocaleString()} M USD
 **Owner:** ${owner}
 **Private Sector Borrowers:** ${privateSectorBorrowers.join(', ')}
+**Economic Cooperation or Programs:** ${economicCooperationOrPrograms}
+**Other Implementors:** ${otherImplementors}
 **Project Description:**
 ${projectDescription}
 ---
@@ -1597,7 +1603,7 @@ ${references}
                                 />
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
                                 <Input 
@@ -1618,6 +1624,26 @@ ${references}
                                         setFormData({ ...formData, privateSectorBorrowers: values });
                                     }}
                                     placeholder="e.g., Company A, Company B"
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-sm font-medium text-gray-700">Economic Cooperation or Programs</Label>
+                                <Input 
+                                    type="text" 
+                                    value={formData.economicCooperationOrPrograms || ''} 
+                                    onChange={(e) => setFormData({ ...formData, economicCooperationOrPrograms: e.target.value })}
+                                    placeholder="e.g., RCEP, CPTPP, Regional Programs"
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-sm font-medium text-gray-700">Other Implementors</Label>
+                                <Input 
+                                    type="text" 
+                                    value={formData.otherImplementors || ''} 
+                                    onChange={(e) => setFormData({ ...formData, otherImplementors: e.target.value })}
+                                    placeholder="e.g., Ministry, NGOs, Local Organizations"
                                     className="mt-1"
                                 />
                             </div>
