@@ -48,6 +48,7 @@ type FundingRow = {
     ifi: string;
     financialInstrument: string;
     amount: string;
+    otherIFIName?: string;
 };
 
 type IFISafeguard = {
@@ -668,11 +669,25 @@ const parseFundingRows = (detailsMap: Map<string, string>, totalAmountNum: numbe
         .map((line) => line.replace(/^[-*]\s*/, ''))
         .map((line) => line.split('|').map((part) => part.trim()))
         .filter((parts) => parts.length >= 3)
-        .map((parts) => ({
-            ifi: parts[0],
-            financialInstrument: parts[1],
-            amount: parts[2].replace(/\s*M\s*USD$/i, '').trim(),
-        }))
+        .map((parts) => {
+            const ifiRaw = parts[0];
+            let ifi = ifiRaw;
+            let otherIFIName = '';
+            
+            // Check if IFI is "Others (Custom Name)" format
+            const othersMatch = ifiRaw.match(/^Others\s*\((.+)\)$/);
+            if (othersMatch) {
+                ifi = 'Others';
+                otherIFIName = othersMatch[1];
+            }
+            
+            return {
+                ifi,
+                financialInstrument: parts[1],
+                amount: parts[2].replace(/\s*M\s*USD$/i, '').trim(),
+                otherIFIName,
+            };
+        })
         .filter((row) => row.ifi || row.financialInstrument || row.amount);
 
     if (parsedFromFundingSource.length > 0) {
@@ -683,13 +698,27 @@ const parseFundingRows = (detailsMap: Map<string, string>, totalAmountNum: numbe
     const instrumentValues = parseCommaSeparatedList(detailsMap.get('Financial Instruments') || detailsMap.get('Financial Instrument'));
     const maxRows = Math.max(ifiValues.length, instrumentValues.length, 1);
 
-    const fallbackRows = Array.from({ length: maxRows }, (_, index) => ({
-        ifi: ifiValues[index] || '',
-        financialInstrument: instrumentValues[index] || '',
-        amount: maxRows === 1 && totalAmountNum > 0 ? String(totalAmountNum) : '',
-    })).filter((row) => row.ifi || row.financialInstrument || row.amount);
+    const fallbackRows = Array.from({ length: maxRows }, (_, index) => {
+        const ifiRaw = ifiValues[index] || '';
+        let ifi = ifiRaw;
+        let otherIFIName = '';
+        
+        // Check if IFI is "Others (Custom Name)" format
+        const othersMatch = ifiRaw.match(/^Others\s*\((.+)\)$/);
+        if (othersMatch) {
+            ifi = 'Others';
+            otherIFIName = othersMatch[1];
+        }
+        
+        return {
+            ifi,
+            financialInstrument: instrumentValues[index] || '',
+            amount: maxRows === 1 && totalAmountNum > 0 ? String(totalAmountNum) : '',
+            otherIFIName,
+        };
+    }).filter((row) => row.ifi || row.financialInstrument || row.amount);
 
-    return fallbackRows.length > 0 ? fallbackRows : [{ ifi: '', financialInstrument: '', amount: '' }];
+    return fallbackRows.length > 0 ? fallbackRows : [{ ifi: '', financialInstrument: '', amount: '', otherIFIName: '' }];
 };
 
 const calculateFundingTotal = (rows: FundingRow[]) => {
@@ -709,7 +738,7 @@ const emptyFormState = {
     projectName: '',
     projectNumber: '',
     falseSolutions: [''],
-    fundingRows: [{ ifi: '', financialInstrument: '', amount: '' }] as FundingRow[],
+    fundingRows: [{ ifi: '', financialInstrument: '', amount: '', otherIFIName: '' }] as FundingRow[],
     owner: '',
     privateSectorBorrowers: [''],
     economicCooperationOrPrograms: '',
@@ -1249,7 +1278,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const normalizedFundingRows = fundingRows
             .map((row) => ({
-                ifi: row.ifi.trim(),
+                ifi: row.ifi === 'Others' && row.otherIFIName 
+                    ? `Others (${row.otherIFIName.trim()})`
+                    : row.ifi.trim(),
                 financialInstrument: row.financialInstrument.trim(),
                 amount: row.amount.trim(),
             }))
@@ -1578,6 +1609,15 @@ ${references}
                                                 ))}
                                             </SelectContent>
                                         </Select>
+                                        {row.ifi === 'Others' && (
+                                            <Input
+                                                type="text"
+                                                placeholder="Enter IFI name"
+                                                value={row.otherIFIName || ''}
+                                                onChange={(e) => handleFundingRowChange(index, 'otherIFIName', e.target.value)}
+                                                className="h-10 mt-1"
+                                            />
+                                        )}
                                     </div>
 
                                     <div className={isFirstRow ? 'space-y-1' : ''}>
