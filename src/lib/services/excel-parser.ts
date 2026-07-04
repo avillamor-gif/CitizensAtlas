@@ -309,7 +309,14 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
             return;
           }
 
-          const combinedIfi = [ifi, ifiOther].filter(Boolean).join(', ');
+          const combinedIfi = (() => {
+            let ifis = ifi.split(',').map(i => i.trim()).filter(Boolean);
+            if (ifiOther && ifis.includes('Others')) {
+              // Replace 'Others' with 'Others (customName)'
+              ifis = ifis.map(i => i === 'Others' ? `Others (${ifiOther})` : i);
+            }
+            return ifis.join(', ');
+          })();
           const computedTotalAmount = totalProjectAmount || financialInstruments;
 
           // Build details string to match ProjectForm exactly.
