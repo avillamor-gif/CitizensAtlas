@@ -86,7 +86,7 @@ export function generateProjectsTemplate() {
     '',
     'x',
     'x',
-    'Local Development Bank',
+    'Development Bank of South Asia',
     'Government Budget',
     '250000000, 250000000',
     'Waste-to-Energy, Chemical Recycling',
