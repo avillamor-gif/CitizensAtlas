@@ -1256,8 +1256,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     **Region:** ${regionValue}
     **Country:** ${countryValue}
     **City:** ${cityValue}
-**Project Number:** ${projectNumber || 'N/A'}
-    **False Solution Type:** ${falseSolutionsValue || 'N/A'}
+**Project Number:** ${projectNumber}
+    **False Solution Type:** ${falseSolutionsValue}
 **IFI:** ${ifiValue}
 **Funding Source:** ${fundingSourceValue}
 **Financial Instruments:** ${financialInstrumentsValue}
@@ -1270,14 +1270,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 ${projectDescription}
 ---
 **Project Status:** ${projectStatus}
-**Start Date:** ${startDate || 'N/A'}
-**End Date:** ${endDate || 'N/A'}
+**Start Date:** ${startDate}
+**End Date:** ${endDate}
 **Environmental Category:** ${environmental.filter(e => e).join(', ')}
 **Social Safeguard:** ${socialSafeguard.filter(s => s).join(', ')}
-**Key Documents:** ${keyDocuments || 'N/A'}
+**Key Documents:** ${keyDocuments}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
-**Links to Actions:** ${linksToActions || 'N/A'}
+**Links to Actions:** ${linksToActions}
 **Active GAIA Support:** ${activeGaiAASupport}
 **Notes:**
 ${notes}

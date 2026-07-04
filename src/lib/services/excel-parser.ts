@@ -144,7 +144,7 @@ function parseGroupedSpreadsheetProjects(worksheet: XLSX.WorkSheet): ParseResult
     const details = `
 **Region:** ${String(row[regionIndex] || '').trim()}
 **City:** ${String(row[cityIndex] || '').trim()}
-**Project Number:** ${String(row[projectNumberIndex] || '').trim() || 'N/A'}
+**Project Number:** ${String(row[projectNumberIndex] || '').trim()}
 **IFI:** ${ifiValues.join(', ')}
 **Funding Source:** ${String(row[fundingSourceIndex] || '').trim()}
 **Sector:** ${String(row[otherImplementorsIndex] || '').trim()}
@@ -154,10 +154,10 @@ function parseGroupedSpreadsheetProjects(worksheet: XLSX.WorkSheet): ParseResult
 **Project Description:**
 ${String(row[descriptionIndex] || '').trim()}
 ---
-**Project Status:** ${String(row[statusIndex] || '').trim() || 'Proposed'}
-**Approval Date:** ${String(row[approvalDateIndex] || '').trim() || 'N/A'}
-**Start Date:** ${String(row[startDateIndex] || '').trim() || 'N/A'}
-**End Date:** ${String(row[endDateIndex] || '').trim() || 'N/A'}
+**Project Status:** ${String(row[statusIndex] || '').trim()}
+**Approval Date:** ${String(row[approvalDateIndex] || '').trim()}
+**Start Date:** ${String(row[startDateIndex] || '').trim()}
+**End Date:** ${String(row[endDateIndex] || '').trim()}
 **Environmental Category:** ${environmentalValues.join(', ')}
 **Social Safeguard:** ${financialInstruments.join(', ')}
 **Groups in Opposition:** ${groupsAndActions}
@@ -299,7 +299,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 **Region:** ${region}
 **Country:** ${country}
 **City:** ${city}
-**Project Number:** ${projectNumber || 'N/A'}
+**Project Number:** ${projectNumber}
 **IFI:** ${combinedIfi}
 **Funding Source:** ${fundingSource}
 **Sector:** ${sector}
@@ -309,10 +309,10 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 **Project Description:**
 ${projectDescription}
 ---
-**Project Status:** ${projectStatus || 'Proposed'}
-**Approval Date:** ${approvalDate || 'N/A'}
-**Start Date:** ${startDate || 'N/A'}
-**End Date:** ${endDate || 'N/A'}
+**Project Status:** ${projectStatus}
+**Approval Date:** ${approvalDate}
+**Start Date:** ${startDate}
+**End Date:** ${endDate}
 **Environmental Category:** ${environmental}
 **Social Safeguard:** ${socialSafeguard}
 **Groups in Opposition:** ${groupsInOpposition}
