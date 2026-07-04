@@ -50,6 +50,13 @@ type FundingRow = {
     amount: string;
 };
 
+type IFISafeguard = {
+    environment: string;
+    involuntaryResettlement: string;
+    indigenousPeoples: string;
+    ratings: string;
+};
+
 // Region to Countries mapping
 const regionCountries: Record<string, string[]> = {
     'Africa': ['Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cameroon', 'Cabo Verde', 'Central African Republic', 'Chad', 'Comoros', 'Congo', 'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 'Equatorial Guinea', 'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', "Cote d'Ivoire", 'Kenya', 'Lesotho', 'Liberia', 'Libya', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Morocco', 'Mozambique', 'Namibia', 'Niger', 'Nigeria', 'Rwanda', 'Sao Tome and Principe', 'Senegal', 'Seychelles', 'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania', 'Togo', 'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'],
@@ -708,6 +715,7 @@ const emptyFormState = {
     privateSectorBorrowers: [''],
     economicCooperationOrPrograms: '',
     otherImplementors: '',
+    ifiSafeguards: {} as Record<string, IFISafeguard>,
     projectDescription: '',
     projectStatus: '',
     approvalDate: '',
@@ -795,6 +803,24 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             
             const fundingRows = parseFundingRows(detailsMap, totalAmountNum);
             
+            // Parse IFI Safeguards from details
+            const ifiSafeguardsText = detailsMap.get('IFI Safeguards') || '';
+            const ifiSafeguards: Record<string, IFISafeguard> = {};
+            if (ifiSafeguardsText) {
+                ifiSafeguardsText.split('\n').forEach(line => {
+                    const match = line.match(/^(.+?):\s*Environment\s*-\s*(.+?)\s*\|\s*Involuntary Resettlement\s*-\s*(.+?)\s*\|\s*Indigenous Peoples\s*-\s*(.+?)\s*\|\s*Ratings\s*-\s*(.+?)$/);
+                    if (match) {
+                        const [, ifi, env, resettlement, indigenous, ratings] = match;
+                        ifiSafeguards[ifi.trim()] = {
+                            environment: env.trim() === 'N/A' ? '' : env.trim(),
+                            involuntaryResettlement: resettlement.trim() === 'N/A' ? '' : resettlement.trim(),
+                            indigenousPeoples: indigenous.trim() === 'N/A' ? '' : indigenous.trim(),
+                            ratings: ratings.trim() === 'N/A' ? '' : ratings.trim()
+                        };
+                    }
+                });
+            }
+            
             const regionSelections = parseCommaSeparatedList(detailsMap.get('Region'));
             const countrySelections = uniqueStrings(
                 parseCommaSeparatedList(detailsMap.get('Country') || projectToEdit.country || '')
@@ -829,6 +855,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
                 economicCooperationOrPrograms: detailsMap.get('Economic Cooperation or Programs') || '',
                 otherImplementors: detailsMap.get('Other Implementors') || '',
+                ifiSafeguards,
                 projectDescription: detailsMap.get('Project Description') || '',
                 projectStatus: getDetailValue(detailsMap, ['Project Status', 'Status']) || '',
                 approvalDate: sourceProject.date || '',
@@ -1272,8 +1299,8 @@ ${projectDescription}
 **Project Status:** ${projectStatus}
 **Start Date:** ${startDate}
 **End Date:** ${endDate}
-**Environmental Category:** ${environmental.filter(e => e).join(', ')}
-**Social Safeguard:** ${socialSafeguard.filter(s => s).join(', ')}
+**IFI Safeguards:**
+${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => `${ifi}: Environment - ${safeguards.environment || 'N/A'} | Involuntary Resettlement - ${safeguards.involuntaryResettlement || 'N/A'} | Indigenous Peoples - ${safeguards.indigenousPeoples || 'N/A'} | Ratings - ${safeguards.ratings || 'N/A'}`).join('\n')}
 **Key Documents:** ${keyDocuments}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
@@ -1649,195 +1676,141 @@ ${references}
                             </div>
                         </div>
                         <SectionTitle>Environmental and Social Safeguards</SectionTitle>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <FormField label="Environmental">
-                                    {formData.environmental.map((env, index) => (
-                                        <div key={index} className="flex items-center space-x-2 mb-2">
-                                            <Select 
-                                                value={env || undefined} 
-                                                onValueChange={(value) => handleRepeatableChange('environmental', index, value)}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select Category" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {environmentalCategories.map(cat => (
-                                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            {formData.environmental.length > 1 && (
-                                                <button 
-                                                    type="button" 
-                                                    onClick={() => removeRepeatableRow('environmental', index)} 
-                                                    className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
+                        <div className="space-y-4">
+                            {formData.fundingRows.filter(row => row.ifi).map((fundingRow, fundingIndex) => {
+                                const ifiName = fundingRow.ifi;
+                                const safeguard = formData.ifiSafeguards[ifiName] || {
+                                    environment: '',
+                                    involuntaryResettlement: '',
+                                    indigenousPeoples: '',
+                                    ratings: ''
+                                };
+                                
+                                return (
+                                    <div key={fundingIndex} className="border rounded-lg p-4 bg-gray-50">
+                                        <h4 className="font-semibold text-brand-dark-blue mb-3">{ifiName}</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Environment</Label>
+                                                <Select 
+                                                    value={safeguard.environment || undefined}
+                                                    onValueChange={(value) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            ifiSafeguards: {
+                                                                ...prev.ifiSafeguards,
+                                                                [ifiName]: { ...safeguard, environment: value }
+                                                            }
+                                                        }));
+                                                    }}
                                                 >
-                                                    Remove
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    {showAddEnvironmentalCategory ? (
-                                        <div className="flex items-center space-x-2 mb-2">
-                                            <Input 
-                                                type="text"
-                                                value={newEnvironmentalCategory}
-                                                onChange={(e) => setNewEnvironmentalCategory(e.target.value)}
-                                                placeholder="Enter new category"
-                                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddEnvironmentalCategory())}
-                                            />
-                                            <button 
-                                                type="button" 
-                                                onClick={handleAddEnvironmentalCategory}
-                                                className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
-                                            >
-                                                Add
-                                            </button>
-                                            <button 
-                                                type="button" 
-                                                onClick={() => {
-                                                    setShowAddEnvironmentalCategory(false);
-                                                    setNewEnvironmentalCategory('');
-                                                }}
-                                                className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4">
-                                            <button 
-                                                type="button" 
-                                                onClick={() => setShowAddEnvironmentalCategory(true)} 
-                                                className="text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                + Add more category
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowManageEnvironmentalCategories(!showManageEnvironmentalCategories)}
-                                                className="text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                - Manage Categories
-                                            </button>
-                                        </div>
-                                    )}
-                                </FormField>
-                                <div className="mt-2">
-                                    {showManageEnvironmentalCategories && (
-                                        <div className="flex flex-wrap gap-2">
-                                            {environmentalCategories.map(cat => (
-                                                <div key={cat} className="inline-flex items-center bg-gray-100 rounded-md px-2 py-1 text-sm">
-                                                    <span className="text-gray-700">{cat}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteEnvironmentalCategory(cat)}
-                                                        className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                                                        title="Delete category"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div>
-                                <FormField label="Social Safeguard">
-                                    {formData.socialSafeguard.map((safeguard, index) => (
-                                        <div key={index} className="flex items-center space-x-2 mb-2">
-                                            <Select 
-                                                value={safeguard || undefined} 
-                                                onValueChange={(value) => handleRepeatableChange('socialSafeguard', index, value)}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select Category" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {socialSafeguardCategories.map(cat => (
-                                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            {formData.socialSafeguard.length > 1 && (
-                                                <button 
-                                                    type="button" 
-                                                    onClick={() => removeRepeatableRow('socialSafeguard', index)} 
-                                                    className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
+                                                    <SelectTrigger className="mt-1">
+                                                        <SelectValue placeholder="Select Category" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {environmentalCategories.map(cat => (
+                                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Involuntary Resettlement</Label>
+                                                <Select 
+                                                    value={safeguard.involuntaryResettlement || undefined}
+                                                    onValueChange={(value) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            ifiSafeguards: {
+                                                                ...prev.ifiSafeguards,
+                                                                [ifiName]: { ...safeguard, involuntaryResettlement: value }
+                                                            }
+                                                        }));
+                                                    }}
                                                 >
-                                                    Remove
-                                                </button>
-                                            )}
+                                                    <SelectTrigger className="mt-1">
+                                                        <SelectValue placeholder="Select Category" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {socialSafeguardCategories.map(cat => (
+                                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Indigenous Peoples</Label>
+                                                <Select 
+                                                    value={safeguard.indigenousPeoples || undefined}
+                                                    onValueChange={(value) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            ifiSafeguards: {
+                                                                ...prev.ifiSafeguards,
+                                                                [ifiName]: { ...safeguard, indigenousPeoples: value }
+                                                            }
+                                                        }));
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="mt-1">
+                                                        <SelectValue placeholder="Select Category" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {socialSafeguardCategories.map(cat => (
+                                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Ratings</Label>
+                                                <Select 
+                                                    value={safeguard.ratings || undefined}
+                                                    onValueChange={(value) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            ifiSafeguards: {
+                                                                ...prev.ifiSafeguards,
+                                                                [ifiName]: { ...safeguard, ratings: value }
+                                                            }
+                                                        }));
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="mt-1">
+                                                        <SelectValue placeholder="Select Rating" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="High">High</SelectItem>
+                                                        <SelectItem value="Medium">Medium</SelectItem>
+                                                        <SelectItem value="Low">Low</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
-                                    ))}
-                                    {showAddSocialSafeguardCategory ? (
-                                        <div className="flex items-center space-x-2 mb-2">
-                                            <Input 
-                                                type="text"
-                                                value={newSocialSafeguardCategory}
-                                                onChange={(e) => setNewSocialSafeguardCategory(e.target.value)}
-                                                placeholder="Enter new category"
-                                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSocialSafeguardCategory())}
-                                            />
-                                            <button 
-                                                type="button" 
-                                                onClick={handleAddSocialSafeguardCategory}
-                                                className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
-                                            >
-                                                Add
-                                            </button>
-                                            <button 
-                                                type="button" 
-                                                onClick={() => {
-                                                    setShowAddSocialSafeguardCategory(false);
-                                                    setNewSocialSafeguardCategory('');
-                                                }}
-                                                className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4">
-                                            <button 
-                                                type="button" 
-                                                onClick={() => setShowAddSocialSafeguardCategory(true)} 
-                                                className="text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                + Add more category
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowManageSocialSafeguardCategories(!showManageSocialSafeguardCategories)}
-                                                className="text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                - Manage Categories
-                                            </button>
-                                        </div>
-                                    )}
-                                </FormField>
-                                <div className="mt-2">
-                                    {showManageSocialSafeguardCategories && (
-                                        <div className="flex flex-wrap gap-2">
-                                            {socialSafeguardCategories.map(cat => (
-                                                <div key={cat} className="inline-flex items-center bg-gray-100 rounded-md px-2 py-1 text-sm">
-                                                    <span className="text-gray-700">{cat}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteSocialSafeguardCategory(cat)}
-                                                        className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                                                        title="Delete category"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                    </div>
+                                );
+                            })}
+                            {formData.fundingRows.filter(row => row.ifi).length === 0 && (
+                                <div className="text-gray-500 text-sm p-4 bg-gray-50 rounded border border-gray-200">
+                                    Add IFIs in the Financials section to configure social safeguards
                                 </div>
-                            </div>
+                            )}
+                        </div>
+                        <div className="mt-4">
+                            <button 
+                                type="button" 
+                                onClick={() => setShowAddEnvironmentalCategory(true)} 
+                                className="text-sm text-brand-medium-blue hover:underline"
+                            >
+                                + Add more Social Safeguard
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowManageEnvironmentalCategories(!showManageEnvironmentalCategories)}
+                                className="text-sm text-brand-medium-blue hover:underline ml-4"
+                            >
+                                - Manage Social Safeguard
+                            </button>
                         </div>
                         <FormField label="Key documents URL">
                             <Input

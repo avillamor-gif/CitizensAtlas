@@ -173,8 +173,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             title: 'Environmental and Social Safeguards',
             content: (
                 <>
-                    <DetailRow label="Environmental" value={detailsMap.get('Environmental Category')} />
-                    <DetailRow label="Social Safeguard categories" value={detailsMap.get('Social Safeguard Categories')} />
+                    <DetailRow label="IFI Safeguards" value={detailsMap.get('IFI Safeguards')} isHtml={false} />
                 </>
             ),
         },
@@ -184,7 +183,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                 <>
                     <DetailRow label="Gender concerns" value={detailsMap.get('Gender Concerns')} />
                     <DetailRow label="Waste workers" value={detailsMap.get('Waste Workers')} />
-                    <DetailRow label="Displacement" value={detailsMap.get('Displacement')} />
+                    <DetailRow label="Resettlement" value={detailsMap.get('Resettlement')} />
                 </>
             ),
         },
