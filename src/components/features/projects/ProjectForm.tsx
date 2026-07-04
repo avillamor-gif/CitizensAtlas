@@ -54,7 +54,6 @@ type IFISafeguard = {
     environment: string;
     involuntaryResettlement: string;
     indigenousPeoples: string;
-    ratings: string;
 };
 
 // Region to Countries mapping
@@ -808,14 +807,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const ifiSafeguards: Record<string, IFISafeguard> = {};
             if (ifiSafeguardsText) {
                 ifiSafeguardsText.split('\n').forEach(line => {
-                    const match = line.match(/^(.+?):\s*Environment\s*-\s*(.+?)\s*\|\s*Involuntary Resettlement\s*-\s*(.+?)\s*\|\s*Indigenous Peoples\s*-\s*(.+?)\s*\|\s*Ratings\s*-\s*(.+?)$/);
+                    const match = line.match(/^(.+?):\s*Environment\s*-\s*(.+?)\s*\|\s*Involuntary Resettlement\s*-\s*(.+?)\s*\|\s*Indigenous Peoples\s*-\s*(.+?)$/);
                     if (match) {
-                        const [, ifi, env, resettlement, indigenous, ratings] = match;
+                        const [, ifi, env, resettlement, indigenous] = match;
                         ifiSafeguards[ifi.trim()] = {
                             environment: env.trim() === 'N/A' ? '' : env.trim(),
                             involuntaryResettlement: resettlement.trim() === 'N/A' ? '' : resettlement.trim(),
-                            indigenousPeoples: indigenous.trim() === 'N/A' ? '' : indigenous.trim(),
-                            ratings: ratings.trim() === 'N/A' ? '' : ratings.trim()
+                            indigenousPeoples: indigenous.trim() === 'N/A' ? '' : indigenous.trim()
                         };
                     }
                 });
@@ -1300,7 +1298,7 @@ ${projectDescription}
 **Start Date:** ${startDate}
 **End Date:** ${endDate}
 **IFI Safeguards:**
-${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => `${ifi}: Environment - ${safeguards.environment || 'N/A'} | Involuntary Resettlement - ${safeguards.involuntaryResettlement || 'N/A'} | Indigenous Peoples - ${safeguards.indigenousPeoples || 'N/A'} | Ratings - ${safeguards.ratings || 'N/A'}`).join('\n')}
+${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => `${ifi}: Environment - ${safeguards.environment || 'N/A'} | Involuntary Resettlement - ${safeguards.involuntaryResettlement || 'N/A'} | Indigenous Peoples - ${safeguards.indigenousPeoples || 'N/A'}`).join('\n')}
 **Key Documents:** ${keyDocuments}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
@@ -1682,14 +1680,13 @@ ${references}
                                 const safeguard = formData.ifiSafeguards[ifiName] || {
                                     environment: '',
                                     involuntaryResettlement: '',
-                                    indigenousPeoples: '',
-                                    ratings: ''
+                                    indigenousPeoples: ''
                                 };
                                 
                                 return (
                                     <div key={fundingIndex} className="border rounded-lg p-4 bg-gray-50">
                                         <h4 className="font-semibold text-brand-dark-blue mb-3">{ifiName}</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                                             <div>
                                                 <Label className="text-sm font-medium text-gray-700">Environment</Label>
                                                 <Select 
@@ -1759,30 +1756,6 @@ ${references}
                                                         {socialSafeguardCategories.map(cat => (
                                                             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                                                         ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div>
-                                                <Label className="text-sm font-medium text-gray-700">Ratings</Label>
-                                                <Select 
-                                                    value={safeguard.ratings || undefined}
-                                                    onValueChange={(value) => {
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            ifiSafeguards: {
-                                                                ...prev.ifiSafeguards,
-                                                                [ifiName]: { ...safeguard, ratings: value }
-                                                            }
-                                                        }));
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="mt-1">
-                                                        <SelectValue placeholder="Select Rating" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="High">High</SelectItem>
-                                                        <SelectItem value="Medium">Medium</SelectItem>
-                                                        <SelectItem value="Low">Low</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>
