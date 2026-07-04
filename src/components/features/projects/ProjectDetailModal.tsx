@@ -174,8 +174,21 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             content: (
                 <>
                     {detailsMap.get('IFI Safeguards') && (
-                        <div className="text-sm text-gray-700 whitespace-pre-wrap">
-                            {detailsMap.get('IFI Safeguards')}
+                        <div className="text-sm text-gray-700 space-y-4">
+                            {detailsMap.get('IFI Safeguards')!.split('\n\n').map((block, idx) => {
+                                const lines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
+                                if (lines.length === 0) return null;
+                                return (
+                                    <div key={idx}>
+                                        <div className="font-bold text-gray-900">{lines[0]}</div>
+                                        <div className="ml-0">
+                                            {lines.slice(1).map((line, lineIdx) => (
+                                                <div key={lineIdx}>{line}</div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </>

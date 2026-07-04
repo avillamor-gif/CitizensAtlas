@@ -806,14 +806,30 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const ifiSafeguardsText = detailsMap.get('IFI Safeguards') || '';
             const ifiSafeguards: Record<string, IFISafeguard> = {};
             if (ifiSafeguardsText) {
-                ifiSafeguardsText.split('\n').forEach(line => {
-                    const match = line.match(/^(.+?):\s*Environment\s*-\s*(.+?)\s*\|\s*Involuntary Resettlement\s*-\s*(.+?)\s*\|\s*Indigenous Peoples\s*-\s*(.+?)$/);
-                    if (match) {
-                        const [, ifi, env, resettlement, indigenous] = match;
-                        ifiSafeguards[ifi.trim()] = {
-                            environment: env.trim() === 'N/A' ? '' : env.trim(),
-                            involuntaryResettlement: resettlement.trim() === 'N/A' ? '' : resettlement.trim(),
-                            indigenousPeoples: indigenous.trim() === 'N/A' ? '' : indigenous.trim()
+                const ifiBlocks = ifiSafeguardsText.split('\n\n').filter(block => block.trim());
+                ifiBlocks.forEach(block => {
+                    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+                    if (lines.length >= 1) {
+                        const ifiName = lines[0];
+                        let environment = '', involuntaryResettlement = '', indigenousPeoples = '';
+                        
+                        lines.forEach(line => {
+                            if (line.startsWith('Environment - ')) {
+                                environment = line.replace('Environment - ', '').trim();
+                                if (environment === 'N/A') environment = '';
+                            } else if (line.startsWith('Involuntary Resettlement - ')) {
+                                involuntaryResettlement = line.replace('Involuntary Resettlement - ', '').trim();
+                                if (involuntaryResettlement === 'N/A') involuntaryResettlement = '';
+                            } else if (line.startsWith('Indigenous Peoples - ')) {
+                                indigenousPeoples = line.replace('Indigenous Peoples - ', '').trim();
+                                if (indigenousPeoples === 'N/A') indigenousPeoples = '';
+                            }
+                        });
+                        
+                        ifiSafeguards[ifiName] = {
+                            environment,
+                            involuntaryResettlement,
+                            indigenousPeoples
                         };
                     }
                 });
@@ -1298,7 +1314,7 @@ ${projectDescription}
 **Start Date:** ${startDate}
 **End Date:** ${endDate}
 **IFI Safeguards:**
-${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => `${ifi}: Environment - ${safeguards.environment || 'N/A'} | Involuntary Resettlement - ${safeguards.involuntaryResettlement || 'N/A'} | Indigenous Peoples - ${safeguards.indigenousPeoples || 'N/A'}`).join('\n')}
+${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => `${ifi}\nEnvironment - ${safeguards.environment || 'N/A'}\nInvoluntary Resettlement - ${safeguards.involuntaryResettlement || 'N/A'}\nIndigenous Peoples - ${safeguards.indigenousPeoples || 'N/A'}`).join('\n\n')}
 **Key Documents:** ${keyDocuments}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
