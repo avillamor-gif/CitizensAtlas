@@ -173,7 +173,11 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             title: 'Environmental and Social Safeguards',
             content: (
                 <>
-                    <DetailRow label="IFI Safeguards" value={detailsMap.get('IFI Safeguards')} />
+                    {detailsMap.get('IFI Safeguards') && (
+                        <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                            {detailsMap.get('IFI Safeguards')}
+                        </div>
+                    )}
                 </>
             ),
         },
