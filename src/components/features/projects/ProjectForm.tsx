@@ -1314,7 +1314,13 @@ ${projectDescription}
 **Start Date:** ${startDate}
 **End Date:** ${endDate}
 **IFI Safeguards:**
-${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => `${ifi}\nEnvironment - ${safeguards.environment || 'N/A'}\nInvoluntary Resettlement - ${safeguards.involuntaryResettlement || 'N/A'}\nIndigenous Peoples - ${safeguards.indigenousPeoples || 'N/A'}`).join('\n\n')}
+${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => {
+  const fields = [];
+  if (safeguards.environment) fields.push(`Environment - ${safeguards.environment}`);
+  if (safeguards.involuntaryResettlement) fields.push(`Involuntary Resettlement - ${safeguards.involuntaryResettlement}`);
+  if (safeguards.indigenousPeoples) fields.push(`Indigenous Peoples - ${safeguards.indigenousPeoples}`);
+  return [ifi, ...fields].join('\n');
+}).join('\n\n')}
 **Key Documents:** ${keyDocuments}
 **Groups in Opposition:** ${groupsInOpposition.join(', ')}
 **Types of Actions:** ${typesOfActions}
