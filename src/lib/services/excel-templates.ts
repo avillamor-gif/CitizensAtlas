@@ -3,11 +3,24 @@ import * as XLSX from 'xlsx';
 // Generate Excel template for Projects
 export function generateProjectsTemplate() {
   const headers = [
+    // Project Information
     'Project Name*',
     'Project Number',
+    'Project Status',
+    'False Solution Type* (comma-separated)',
+    'False Solution - Waste-to-Energy (X/Yes)',
+    'False Solution - Plastic-to-Fuel Technologies (X/Yes)',
+    'False Solution - Chemical Recycling (X/Yes)',
+    'False Solution - Refuse-derived fuel (X/Yes)',
+    'Project Description',
+    'Approval Date*',
+    'Start Date',
+    'End Date',
     'Region',
     'Country/ies*',
     'City/ies',
+    
+    // Financial Information
     'International Financial Institution (IFI) (comma-separated)',
     'IFI - ADB (X/Yes)',
     'IFI - AIIB (X/Yes)',
@@ -20,20 +33,12 @@ export function generateProjectsTemplate() {
     'Other IFI',
     'Funding Source',
     'Financial Instruments',
-    'False Solution Type* (comma-separated)',
-    'False Solution - Waste-to-Energy (X/Yes)',
-    'False Solution - Plastic-to-Fuel Technologies (X/Yes)',
-    'False Solution - Chemical Recycling (X/Yes)',
-    'False Solution - Refuse-derived fuel (X/Yes)',
     'Owner (Public/ Private / PPP)',
     'Private Sector Borrower (comma-separated)',
     'Economic Cooperation or Programs',
     'Other Implementors',
-    'Project Description',
-    'Project Status',
-    'Approval Date*',
-    'Start Date',
-    'End Date',
+    
+    // Environmental and Social Safeguards
     'ADB - Environment',
     'ADB - Involuntary Resettlement',
     'ADB - Indigenous Peoples',
@@ -58,25 +63,45 @@ export function generateProjectsTemplate() {
     'Others - Environment',
     'Others - Involuntary Resettlement',
     'Others - Indigenous Peoples',
-    'Groups in Opposition (comma-separated)',
-    'Types of Actions',
-    'Links to Actions',
-    'Active GAIA Support (Yes/No)',
-    'Notes',
-    'References',
+    
+    // Key Documents
+    'Key Documents URL',
+    
+    // Just Transition Indicators
     'Gender Concerns',
     'Waste Workers',
     'Resettlement',
+    
+    // Community Opposition & Actions
+    'Groups in Opposition (comma-separated)',
+    'Types of Actions',
+    'Links to Actions',
+    
+    // Additional Information
+    'Notes',
+    'References',
     'Publish Date',
-    'Status',
   ];
 
   const exampleRow = [
+    // Project Information
     'Highway Construction Project',
     'P12345',
+    'Active',
+    'Waste-to-Energy, Chemical Recycling',
+    'x',
+    '',
+    'x',
+    '',
+    'Construction of a new highway connecting major cities',
+    '2024-01-15',
+    '2024-03-01',
+    '2026-12-31',
     'Asia',
     'Philippines',
     'Philippines::Manila',
+    
+    // Financial Information
     'ADB, IFC/ WB, Others',
     'x',
     '',
@@ -89,20 +114,12 @@ export function generateProjectsTemplate() {
     'Development Bank of South Asia',
     'Government Budget',
     'Loans',
-    'Waste-to-Energy, Chemical Recycling',
-    'x',
-    '',
-    'x',
-    '',
     'Public',
     'ABC Construction, XYZ Engineering',
     'RCEP Framework',
     'Ministry, Local NGOs',
-    'Construction of a new highway connecting major cities',
-    'Active',
-    '2024-01-15',
-    '2024-03-01',
-    '2026-12-31',
+    
+    // Environmental and Social Safeguards
     'Category A',
     'Category C',
     'Category C',
@@ -127,17 +144,24 @@ export function generateProjectsTemplate() {
     '',
     '',
     '',
-    'Local Communities, Environmental Groups',
-    'Protests, Legal Action, Media Campaign',
-    'https://example.com/action1, https://example.com/action2',
-    'Yes',
-    'Community groups reported repeated consultation gaps.',
-    'https://example.com/report, https://example.com/investigation',
+    
+    // Key Documents
+    '',
+    
+    // Just Transition Indicators
     'Women-led households face disproportionate care burdens.',
     'Waste pickers may lose access to livelihoods.',
     'Potential relocation of nearby communities.',
+    
+    // Community Opposition & Actions
+    'Local Communities, Environmental Groups',
+    'Protests, Legal Action, Media Campaign',
+    'https://example.com/action1, https://example.com/action2',
+    
+    // Additional Information
+    'Community groups reported repeated consultation gaps.',
+    'https://example.com/report, https://example.com/investigation',
     '2024-11-15',
-    'published',
   ];
 
   const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow]);
