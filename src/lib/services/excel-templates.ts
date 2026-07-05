@@ -164,7 +164,169 @@ export function generateProjectsTemplate() {
     '2024-11-15',
   ];
 
-  const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow]);
+  const exampleRow2 = [
+    // Project Information
+    'Solar Farm Development Project',
+    'P23456',
+    'Proposed',
+    'Plastic-to-Fuel Technologies',
+    '',
+    'x',
+    '',
+    '',
+    'Large-scale solar farm development in rural area',
+    '2024-06-01',
+    '2024-09-15',
+    '2029-09-14',
+    'Southeast Asia',
+    'Vietnam',
+    'Vietnam::Quang Ninh',
+    
+    // Financial Information
+    'IFC/ WB, GCF',
+    '',
+    '',
+    'x',
+    '',
+    '',
+    '',
+    'x',
+    '',
+    '',
+    'Private Investment',
+    'Grants',
+    'Private',
+    'Green Energy Solutions Inc.',
+    'Regional Climate Initiative',
+    'Provincial Government, Environmental NGOs',
+    
+    // Environmental and Social Safeguards
+    'Category B',
+    '',
+    'Category B',
+    '',
+    '',
+    '',
+    'Category A',
+    'Category B',
+    'Category C',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    
+    // Key Documents
+    'https://example.com/solar-farm-eia',
+    
+    // Just Transition Indicators
+    'Training programs for women in renewable energy',
+    'Job creation for local workers',
+    'Land acquisition from 50 households',
+    
+    // Community Opposition & Actions
+    'Local Farmers Association, Indigenous Communities',
+    'Consultations, Petitions',
+    'https://example.com/solar-concerns',
+    
+    // Additional Information
+    'Community engagement ongoing',
+    'https://example.com/solar-report',
+    '2024-12-20',
+  ];
+
+  const exampleRow3 = [
+    // Project Information
+    'Waste Management Facility Upgrade',
+    'P34567',
+    'Completed',
+    'Waste-to-Energy',
+    'x',
+    '',
+    '',
+    '',
+    'Modernization of existing waste facility with energy recovery',
+    '2022-03-20',
+    '2022-06-01',
+    '2024-06-01',
+    'Asia Pacific',
+    'Indonesia',
+    'Indonesia::Jakarta',
+    
+    // Financial Information
+    'ADB, AIIB',
+    'x',
+    'x',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    'Development Bank Loans',
+    'Loans',
+    'Public',
+    'PT Waste Management Services',
+    'ASEAN Development Framework',
+    'Ministry of Environment, City Government',
+    
+    // Environmental and Social Safeguards
+    '',
+    '',
+    '',
+    'Category B',
+    'Category B',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    
+    // Key Documents
+    'https://example.com/waste-facility-eia',
+    
+    // Just Transition Indicators
+    'Equal opportunity policy for waste worker transition',
+    'Skills training and job placement for waste workers',
+    'No resettlement required',
+    
+    // Community Opposition & Actions
+    'Residents Committee',
+    'Community Consultations',
+    'https://example.com/waste-meetings',
+    
+    // Additional Information
+    'Project successfully completed with community support',
+    'https://example.com/waste-final-report',
+    '2024-08-15',
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, exampleRow, exampleRow2, exampleRow3]);
   
   // Set column widths
   ws['!cols'] = headers.map(() => ({ wch: 20 }));
