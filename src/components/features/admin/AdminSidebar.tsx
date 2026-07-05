@@ -355,7 +355,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
                 <Collapsible
                   key={item.title}
                   asChild
-                  defaultOpen={Boolean(item.isActive)}
+                  open={Boolean(item.isActive)}
                   className="group/collapsible"
                 >
                   <SidebarMenuItem>

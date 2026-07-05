@@ -1,6 +1,7 @@
 "use client"
 
 import { ChevronRight, type LucideIcon } from "lucide-react"
+import { useState, useEffect } from "react"
 
 import {
   Collapsible,
@@ -34,6 +35,26 @@ export function NavMainAdmin({
     }[]
   }[]
 }) {
+  // Track open state for each menu to keep them open when active
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+
+  // Update open state when active page changes
+  useEffect(() => {
+    const newOpenMenus: Record<string, boolean> = {};
+    items.forEach((item) => {
+      // Keep menu open if any of its items are active
+      newOpenMenus[item.title] = item.isActive || item.items?.some(subItem => subItem.isActive) || false;
+    });
+    setOpenMenus(newOpenMenus);
+  }, [items]);
+
+  const handleOpenChange = (title: string, isOpen: boolean) => {
+    setOpenMenus(prev => ({
+      ...prev,
+      [title]: isOpen
+    }));
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Content Management</SidebarGroupLabel>
@@ -42,7 +63,8 @@ export function NavMainAdmin({
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={Boolean(item.isActive)}
+            open={openMenus[item.title]}
+            onOpenChange={(isOpen) => handleOpenChange(item.title, isOpen)}
             className="group/collapsible"
           >
             <SidebarMenuItem>
