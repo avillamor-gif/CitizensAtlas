@@ -6,6 +6,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import Supercluster from 'supercluster';
 import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
+import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
 
 const legendData = Object.entries(solutionTypeColors)
     .filter(([key]) => key !== 'default')
@@ -294,6 +295,28 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
         return { longitude: avgLng, latitude: avgLat, zoom };
     }, [projects]);
 
+    // Apply offset to overlapping individual markers (when zoomed in and showing individual markers)
+    const offsetMarkers = useMemo(() => {
+        // Only apply offsetting when zoomed in enough to show individual markers (zoom >= 5)
+        if (zoom < 5) {
+            return clustersAndMarkers.individual;
+        }
+        
+        // Convert to format expected by offsetOverlappingMarkers
+        const markersForOffset = clustersAndMarkers.individual.map((m, idx) => {
+            const markerId = m.id || `marker-${idx}`;
+            return {
+                ...m,
+                id: markerId,
+                latitude: m.latitude,
+                longitude: m.longitude,
+            };
+        });
+
+        // Apply offsetting with 0.05 km (50m) offset distance and 0.1 km (100m) proximity
+        return offsetOverlappingMarkers(markersForOffset, 0.05, 0.1);
+    }, [clustersAndMarkers.individual, zoom]);
+
     return (
         <div className="relative w-full h-full overflow-hidden">
             <Map
@@ -362,7 +385,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 ))}
 
                 {/* Individual project markers */}
-                {clustersAndMarkers.individual.map((project) => (
+                {offsetMarkers.map((project: any) => (
                     <Marker
                         key={`marker-${project.id}`}
                         longitude={project.longitude}
@@ -379,6 +402,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                 height: `${project.size}px`,
                                 backgroundColor: project.bgColor,
                                 opacity: 0.7,
+                                border: project.isOffset ? '2px solid rgba(255,255,255,0.8)' : 'none',
                             }}
                             className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110"
                         >
