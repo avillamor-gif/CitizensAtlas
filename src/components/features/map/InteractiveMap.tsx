@@ -6,6 +6,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import Supercluster from 'supercluster';
 import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor, projectToNaturalEarthCountries } from '@/lib/constants';
+import { countryCoordinates } from '@/lib/country-coordinates';
 import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
 
 const legendData = Object.entries(solutionTypeColors)
@@ -82,62 +83,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
-    const [choropethGeoJSON, setChoropethGeoJSON] = useState<any>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
-
-    // Load and transform Natural Earth GeoJSON with project counts
-    useEffect(() => {
-        const loadChoropethData = async () => {
-            try {
-                const response = await fetch('https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.geojson');
-                const geoJSON = await response.json();
-
-                // Create country count map
-                const countryProjectCounts: Record<string, number> = {};
-                projects.forEach(project => {
-                    const country = project.country?.trim().toUpperCase();
-                    if (country) {
-                        countryProjectCounts[country] = (countryProjectCounts[country] || 0) + 1;
-                    }
-                });
-
-                // Transform features to include project counts
-                const maxCount = Math.max(...Object.values(countryProjectCounts), 1);
-                const transformedFeatures = geoJSON.features.map((feature: any) => {
-                    const countryName = feature.properties?.NAME;
-                    
-                    // Find matching country in our data
-                    let projectCount = 0;
-                    for (const [dbCountry, count] of Object.entries(countryProjectCounts)) {
-                        const mappedName = projectToNaturalEarthCountries[dbCountry] || dbCountry;
-                        if (mappedName === countryName) {
-                            projectCount = count as number;
-                            break;
-                        }
-                    }
-
-                    return {
-                        ...feature,
-                        properties: {
-                            ...feature.properties,
-                            projectCount,
-                            color: getChoropethColor(projectCount, maxCount),
-                        },
-                    };
-                });
-
-                setChoropethGeoJSON({
-                    type: 'FeatureCollection',
-                    features: transformedFeatures,
-                });
-            } catch (error) {
-                console.error('Failed to load choropleth data:', error);
-            }
-        };
-
-        loadChoropethData();
-    }, [projects]);
 
     useEffect(() => {
         setPickedLocation(selectedLocation);
@@ -171,6 +118,39 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const maxProjectCount = useMemo(() => {
         return Math.max(...Object.values(countryProjectCounts), 1);
     }, [countryProjectCounts]);
+
+    // Create choropleth indicators from country coordinates
+    const choropethIndicators = useMemo(() => {
+        return Object.entries(countryProjectCounts).map(([dbCountry, count]) => {
+            // Find the Natural Earth name
+            const naturalEarthName = projectToNaturalEarthCountries[dbCountry] || dbCountry;
+            
+            // Find coordinates - try Natural Earth name first, then original name
+            let coords = countryCoordinates[naturalEarthName] || countryCoordinates[dbCountry];
+            
+            // If still not found, try title case
+            if (!coords) {
+                const titleCase = dbCountry.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                coords = countryCoordinates[titleCase];
+            }
+
+            if (coords) {
+                const intensity = count / maxProjectCount;
+                const size = 8 + intensity * 20; // 8-28px circle
+                
+                return {
+                    country: naturalEarthName,
+                    count,
+                    lat: coords.lat,
+                    lng: coords.lng,
+                    color: getChoropethColor(count, maxProjectCount),
+                    size,
+                    intensity,
+                };
+            }
+            return null;
+        }).filter(Boolean);
+    }, [countryProjectCounts, maxProjectCount]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
@@ -414,32 +394,38 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
             >
-                {/* Choropleth layer using Natural Earth countries */}
-                {choropethGeoJSON && (
-                    <Source
-                        id="countries-source"
-                        type="geojson"
-                        data={choropethGeoJSON}
+                {/* Choropleth indicators using country coordinates */}
+                {choropethIndicators.map((indicator: any) => (
+                    <Marker
+                        key={`choropleth-${indicator.country}`}
+                        longitude={indicator.lng}
+                        latitude={indicator.lat}
+                        anchor="center"
+                        onClick={(e) => {
+                            e.originalEvent.stopPropagation();
+                            setCountryPopup({
+                                country: indicator.country,
+                                count: indicator.count,
+                                lng: indicator.lng,
+                                lat: indicator.lat,
+                            });
+                        }}
                     >
-                        <Layer
-                            id="countries-fill"
-                            type="fill"
-                            paint={{
-                                'fill-color': ['get', 'color'],
-                                'fill-opacity': 0.6,
+                        <div
+                            style={{
+                                width: `${indicator.size}px`,
+                                height: `${indicator.size}px`,
+                                backgroundColor: indicator.color,
+                                opacity: 0.5,
+                                borderRadius: '50%',
+                                border: `2px solid ${indicator.color}`,
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                             }}
+                            className="hover:opacity-70 transition-opacity"
                         />
-                        <Layer
-                            id="countries-line"
-                            type="line"
-                            paint={{
-                                'line-color': '#9ca3af',
-                                'line-width': 1,
-                                'line-opacity': 0.3,
-                            }}
-                        />
-                    </Source>
-                )}
+                    </Marker>
+                ))}
 
                 {/* Cluster markers */}
                 {clustersAndMarkers.clusters.map((cluster) => (
@@ -557,23 +543,23 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
             {!pickerMode && <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs">
                 <div>
-                    <h4 className="font-bold text-sm mb-3 text-brand-dark-blue">Project Density</h4>
+                    <h4 className="font-bold text-sm mb-3 text-brand-dark-blue">Project Density by Country</h4>
                     <ul className="space-y-1 mb-4">
                         <li className="flex items-center">
-                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#f3f4f6' }}></span>
+                            <span className="w-2 h-2 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#f3f4f6', border: '1px solid #d1d5db' }}></span>
                             <span className="text-xs text-gray-700">No projects</span>
                         </li>
                         <li className="flex items-center">
-                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#dbeafe' }}></span>
-                            <span className="text-xs text-gray-700">Low</span>
+                            <span className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#dbeafe' }}></span>
+                            <span className="text-xs text-gray-700">Low density</span>
                         </li>
                         <li className="flex items-center">
-                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#60a5fa' }}></span>
-                            <span className="text-xs text-gray-700">Medium</span>
+                            <span className="w-4 h-4 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#60a5fa' }}></span>
+                            <span className="text-xs text-gray-700">Medium density</span>
                         </li>
                         <li className="flex items-center">
-                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#1e40af' }}></span>
-                            <span className="text-xs text-gray-700">High</span>
+                            <span className="w-5 h-5 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#1e40af' }}></span>
+                            <span className="text-xs text-gray-700">High density</span>
                         </li>
                     </ul>
                     <h4 className="font-bold text-sm mb-2 text-brand-dark-blue">False Solution Types</h4>
