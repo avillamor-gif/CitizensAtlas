@@ -118,23 +118,20 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
         return Math.max(...Object.values(countryProjectCounts), 1);
     }, [countryProjectCounts]);
 
-    // Generate choropleth GeoJSON data
-    const choropethGeoJSON = useMemo(() => {
-        return {
-            type: 'FeatureCollection' as const,
-            features: Object.entries(countryProjectCounts).map(([country, count]) => ({
-                type: 'Feature' as const,
-                properties: {
-                    country,
-                    count,
-                    color: getChoropethColor(count, maxProjectCount),
-                },
-                geometry: {
-                    type: 'Point' as const,
-                    coordinates: [0, 0], // Placeholder - will be replaced with actual country geometries
-                },
-            })),
-        };
+    // Build paint expression for choropleth layer
+    const buildChoropethPaint = useMemo(() => {
+        const caseExpression: any = ['case'];
+        
+        // Add conditions for each country
+        Object.entries(countryProjectCounts).forEach(([country, count]) => {
+            caseExpression.push(['==', ['upcase', ['get', 'NAME']], country]);
+            caseExpression.push(getChoropethColor(count, maxProjectCount));
+        });
+        
+        // Default color for countries with no projects
+        caseExpression.push('#f3f4f6');
+        
+        return caseExpression as any;
     }, [countryProjectCounts, maxProjectCount]);
 
     const { minAmount, maxAmount } = useMemo(() => {
@@ -389,20 +386,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         id="countries-fill"
                         type="fill"
                         paint={{
-                            'fill-color': [
-                                'case',
-                                ['has', ['upcase', ['get', 'NAME']], ['literal', countryProjectCounts]],
-                                [
-                                    'match',
-                                    ['upcase', ['get', 'NAME']],
-                                    ...Object.entries(countryProjectCounts).flatMap(([country, count]) => [
-                                        country,
-                                        getChoropethColor(count, maxProjectCount),
-                                    ]),
-                                    '#f3f4f6',
-                                ],
-                                '#f3f4f6',
-                            ],
+                            'fill-color': buildChoropethPaint,
                             'fill-opacity': 0.6,
                         }}
                     />
