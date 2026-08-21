@@ -56,6 +56,19 @@ const formatAmount = (num: number) => {
     return `$${num}`;
 };
 
+// Get color for choropleth based on project count
+const getChoropethColor = (count: number, maxCount: number): string => {
+    if (count === 0) return '#f3f4f6'; // light gray for no projects
+    const intensity = count / maxCount; // 0 to 1
+    
+    // Color scale from light to dark blue
+    if (intensity < 0.2) return '#dbeafe'; // light blue
+    if (intensity < 0.4) return '#93c5fd'; // lighter blue
+    if (intensity < 0.6) return '#60a5fa'; // medium blue
+    if (intensity < 0.8) return '#3b82f6'; // blue
+    return '#1e40af'; // dark blue
+};
+
 interface InteractiveMapProps {
     projects: Project[];
     onMarkerClick: (project: Project) => void;
@@ -104,6 +117,25 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const maxProjectCount = useMemo(() => {
         return Math.max(...Object.values(countryProjectCounts), 1);
     }, [countryProjectCounts]);
+
+    // Generate choropleth GeoJSON data
+    const choropethGeoJSON = useMemo(() => {
+        return {
+            type: 'FeatureCollection' as const,
+            features: Object.entries(countryProjectCounts).map(([country, count]) => ({
+                type: 'Feature' as const,
+                properties: {
+                    country,
+                    count,
+                    color: getChoropethColor(count, maxProjectCount),
+                },
+                geometry: {
+                    type: 'Point' as const,
+                    coordinates: [0, 0], // Placeholder - will be replaced with actual country geometries
+                },
+            })),
+        };
+    }, [countryProjectCounts, maxProjectCount]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
@@ -347,6 +379,44 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
             >
+                {/* Choropleth layer using Natural Earth countries */}
+                <Source
+                    id="countries-source"
+                    type="geojson"
+                    data="https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.geojson"
+                >
+                    <Layer
+                        id="countries-fill"
+                        type="fill"
+                        paint={{
+                            'fill-color': [
+                                'case',
+                                ['has', ['upcase', ['get', 'NAME']], ['literal', countryProjectCounts]],
+                                [
+                                    'match',
+                                    ['upcase', ['get', 'NAME']],
+                                    ...Object.entries(countryProjectCounts).flatMap(([country, count]) => [
+                                        country,
+                                        getChoropethColor(count, maxProjectCount),
+                                    ]),
+                                    '#f3f4f6',
+                                ],
+                                '#f3f4f6',
+                            ],
+                            'fill-opacity': 0.6,
+                        }}
+                    />
+                    <Layer
+                        id="countries-line"
+                        type="line"
+                        paint={{
+                            'line-color': '#9ca3af',
+                            'line-width': 1,
+                            'line-opacity': 0.3,
+                        }}
+                    />
+                </Source>
+
                 {/* Cluster markers */}
                 {clustersAndMarkers.clusters.map((cluster) => (
                     <Marker
@@ -463,6 +533,25 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
             {!pickerMode && <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs">
                 <div>
+                    <h4 className="font-bold text-sm mb-3 text-brand-dark-blue">Project Density</h4>
+                    <ul className="space-y-1 mb-4">
+                        <li className="flex items-center">
+                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#f3f4f6' }}></span>
+                            <span className="text-xs text-gray-700">No projects</span>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#dbeafe' }}></span>
+                            <span className="text-xs text-gray-700">Low</span>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#60a5fa' }}></span>
+                            <span className="text-xs text-gray-700">Medium</span>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="w-3 h-3 rounded mr-2 flex-shrink-0" style={{ backgroundColor: '#1e40af' }}></span>
+                            <span className="text-xs text-gray-700">High</span>
+                        </li>
+                    </ul>
                     <h4 className="font-bold text-sm mb-2 text-brand-dark-blue">False Solution Types</h4>
                     <ul className="space-y-1">
                         {legendData.map(({ name, colorClass }) => (
