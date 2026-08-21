@@ -169,6 +169,42 @@ export const countryNameToCode: { [key: string]: string } = {
     'VIETNAM': 'vn',
 };
 
+// Map project country names to Natural Earth GeoJSON country names
+export const projectToNaturalEarthCountries: { [key: string]: string } = {
+    'USA': 'United States of America',
+    'SOUTH KOREA': 'South Korea',
+    'SOUTH AFRICA': 'South Africa',
+    'UNITED KINGDOM': 'United Kingdom',
+    'SRI LANKA': 'Sri Lanka',
+    'BANGLADESH': 'Bangladesh',
+    'VIETNAM': 'Vietnam',
+    'THAILAND': 'Thailand',
+    'PHILIPPINES': 'Philippines',
+    'INDONESIA': 'Indonesia',
+    'PAKISTAN': 'Pakistan',
+    'INDIA': 'India',
+    'CAMBODIA': 'Cambodia',
+    'MALAYSIA': 'Malaysia',
+    'EGYPT': 'Egypt',
+    'NIGERIA': 'Nigeria',
+    'GHANA': 'Ghana',
+    'KENYA': 'Kenya',
+    'BRAZIL': 'Brazil',
+    'COLOMBIA': 'Colombia',
+    'PERU': 'Peru',
+    'ECUADOR': 'Ecuador',
+    'CHILE': 'Chile',
+    'ARGENTINA': 'Argentina',
+    'HONDURAS': 'Honduras',
+    'MEXICO': 'Mexico',
+    'GERMANY': 'Germany',
+    'ROMANIA': 'Romania',
+    'POLAND': 'Poland',
+    'TURKEY': 'Turkey',
+    'AUSTRALIA': 'Australia',
+    'TAIWAN': 'Taiwan',
+};
+
 export const projectCardsData: Project[] = [
     { 
         id: 1, 

@@ -5,7 +5,7 @@ import Map, { Marker, Popup, Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Supercluster from 'supercluster';
 import { Project } from '@/types/types';
-import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
+import { solutionTypeColors, getSolutionTypeColor, projectToNaturalEarthCountries } from '@/lib/constants';
 import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
 
 const legendData = Object.entries(solutionTypeColors)
@@ -122,9 +122,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const buildChoropethPaint = useMemo(() => {
         const caseExpression: any = ['case'];
         
-        // Add conditions for each country
+        // Add conditions for each country using Natural Earth naming
         Object.entries(countryProjectCounts).forEach(([country, count]) => {
-            caseExpression.push(['==', ['upcase', ['get', 'NAME']], country]);
+            // Map project country names to Natural Earth names
+            const naturalEarthName = projectToNaturalEarthCountries[country] || country;
+            caseExpression.push(['==', ['get', 'NAME'], naturalEarthName]);
             caseExpression.push(getChoropethColor(count, maxProjectCount));
         });
         
