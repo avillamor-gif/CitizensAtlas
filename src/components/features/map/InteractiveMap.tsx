@@ -82,8 +82,62 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
+    const [choropethGeoJSON, setChoropethGeoJSON] = useState<any>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
+
+    // Load and transform Natural Earth GeoJSON with project counts
+    useEffect(() => {
+        const loadChoropethData = async () => {
+            try {
+                const response = await fetch('https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.geojson');
+                const geoJSON = await response.json();
+
+                // Create country count map
+                const countryProjectCounts: Record<string, number> = {};
+                projects.forEach(project => {
+                    const country = project.country?.trim().toUpperCase();
+                    if (country) {
+                        countryProjectCounts[country] = (countryProjectCounts[country] || 0) + 1;
+                    }
+                });
+
+                // Transform features to include project counts
+                const maxCount = Math.max(...Object.values(countryProjectCounts), 1);
+                const transformedFeatures = geoJSON.features.map((feature: any) => {
+                    const countryName = feature.properties?.NAME;
+                    
+                    // Find matching country in our data
+                    let projectCount = 0;
+                    for (const [dbCountry, count] of Object.entries(countryProjectCounts)) {
+                        const mappedName = projectToNaturalEarthCountries[dbCountry] || dbCountry;
+                        if (mappedName === countryName) {
+                            projectCount = count as number;
+                            break;
+                        }
+                    }
+
+                    return {
+                        ...feature,
+                        properties: {
+                            ...feature.properties,
+                            projectCount,
+                            color: getChoropethColor(projectCount, maxCount),
+                        },
+                    };
+                });
+
+                setChoropethGeoJSON({
+                    type: 'FeatureCollection',
+                    features: transformedFeatures,
+                });
+            } catch (error) {
+                console.error('Failed to load choropleth data:', error);
+            }
+        };
+
+        loadChoropethData();
+    }, [projects]);
 
     useEffect(() => {
         setPickedLocation(selectedLocation);
@@ -117,24 +171,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const maxProjectCount = useMemo(() => {
         return Math.max(...Object.values(countryProjectCounts), 1);
     }, [countryProjectCounts]);
-
-    // Build paint expression for choropleth layer
-    const buildChoropethPaint = useMemo(() => {
-        const caseExpression: any = ['case'];
-        
-        // Add conditions for each country using Natural Earth naming
-        Object.entries(countryProjectCounts).forEach(([country, count]) => {
-            // Map project country names to Natural Earth names
-            const naturalEarthName = projectToNaturalEarthCountries[country] || country;
-            caseExpression.push(['==', ['get', 'NAME'], naturalEarthName]);
-            caseExpression.push(getChoropethColor(count, maxProjectCount));
-        });
-        
-        // Default color for countries with no projects
-        caseExpression.push('#f3f4f6');
-        
-        return caseExpression as any;
-    }, [countryProjectCounts, maxProjectCount]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
@@ -379,29 +415,31 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 }}
             >
                 {/* Choropleth layer using Natural Earth countries */}
-                <Source
-                    id="countries-source"
-                    type="geojson"
-                    data="https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.geojson"
-                >
-                    <Layer
-                        id="countries-fill"
-                        type="fill"
-                        paint={{
-                            'fill-color': buildChoropethPaint,
-                            'fill-opacity': 0.6,
-                        }}
-                    />
-                    <Layer
-                        id="countries-line"
-                        type="line"
-                        paint={{
-                            'line-color': '#9ca3af',
-                            'line-width': 1,
-                            'line-opacity': 0.3,
-                        }}
-                    />
-                </Source>
+                {choropethGeoJSON && (
+                    <Source
+                        id="countries-source"
+                        type="geojson"
+                        data={choropethGeoJSON}
+                    >
+                        <Layer
+                            id="countries-fill"
+                            type="fill"
+                            paint={{
+                                'fill-color': ['get', 'color'],
+                                'fill-opacity': 0.6,
+                            }}
+                        />
+                        <Layer
+                            id="countries-line"
+                            type="line"
+                            paint={{
+                                'line-color': '#9ca3af',
+                                'line-width': 1,
+                                'line-opacity': 0.3,
+                            }}
+                        />
+                    </Source>
+                )}
 
                 {/* Cluster markers */}
                 {clustersAndMarkers.clusters.map((cluster) => (
