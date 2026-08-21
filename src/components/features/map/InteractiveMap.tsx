@@ -106,12 +106,34 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     // Calculate projects per country for choropleth
     const countryProjectCounts = useMemo(() => {
         const counts: Record<string, number> = {};
+        
         projects.forEach(project => {
-            const country = project.country?.trim().toUpperCase();
-            if (country) {
-                counts[country] = (counts[country] || 0) + 1;
+            const countryRaw = project.country?.trim();
+            if (!countryRaw) return;
+            
+            // Try to find matching country in countryCoordinates (case-insensitive)
+            let foundName: string | null = null;
+            const countryUpper = countryRaw.toUpperCase();
+            const countryTitle = countryRaw.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+            
+            // Direct checks
+            if (countryCoordinates[countryRaw]) {
+                foundName = countryRaw;
+            } else if (countryCoordinates[countryTitle]) {
+                foundName = countryTitle;
+            } else {
+                // Try mapping from projectToNaturalEarthCountries
+                const mappedName = projectToNaturalEarthCountries[countryUpper];
+                if (mappedName && countryCoordinates[mappedName]) {
+                    foundName = mappedName;
+                }
+            }
+            
+            if (foundName) {
+                counts[foundName] = (counts[foundName] || 0) + 1;
             }
         });
+        
         return counts;
     }, [projects]);
 
@@ -121,35 +143,33 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
     // Create choropleth indicators from country coordinates
     const choropethIndicators = useMemo(() => {
-        return Object.entries(countryProjectCounts).map(([dbCountry, count]) => {
-            // Find the Natural Earth name
-            const naturalEarthName = projectToNaturalEarthCountries[dbCountry] || dbCountry;
-            
-            // Find coordinates - try Natural Earth name first, then original name
-            let coords = countryCoordinates[naturalEarthName] || countryCoordinates[dbCountry];
-            
-            // If still not found, try title case
-            if (!coords) {
-                const titleCase = dbCountry.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-                coords = countryCoordinates[titleCase];
-            }
+        if (!countryProjectCounts || Object.keys(countryProjectCounts).length === 0) {
+            return [];
+        }
+
+        const indicators: any[] = [];
+        
+        Object.entries(countryProjectCounts).forEach(([countryName, count]) => {
+            // countryName is already normalized from countryProjectCounts
+            const coords = countryCoordinates[countryName];
 
             if (coords) {
                 const intensity = count / maxProjectCount;
                 const size = 8 + intensity * 20; // 8-28px circle
                 
-                return {
-                    country: naturalEarthName,
+                indicators.push({
+                    country: countryName,
                     count,
                     lat: coords.lat,
                     lng: coords.lng,
                     color: getChoropethColor(count, maxProjectCount),
                     size,
                     intensity,
-                };
+                });
             }
-            return null;
-        }).filter(Boolean);
+        });
+
+        return indicators;
     }, [countryProjectCounts, maxProjectCount]);
 
     const { minAmount, maxAmount } = useMemo(() => {
