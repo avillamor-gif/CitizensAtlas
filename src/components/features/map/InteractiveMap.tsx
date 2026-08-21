@@ -83,8 +83,67 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
+    const [countriesGeoJSON, setCountriesGeoJSON] = useState<any>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
+
+    // Load local countries GeoJSON and enrich with project data
+    useEffect(() => {
+        const loadCountriesData = async () => {
+            try {
+                const response = await fetch('/countries.geojson');
+                const geoJSON = await response.json();
+
+                // Count projects by country
+                const countryProjectCounts: Record<string, number> = {};
+                projects.forEach(project => {
+                    const country = project.country?.trim();
+                    if (country) {
+                        countryProjectCounts[country] = (countryProjectCounts[country] || 0) + 1;
+                    }
+                });
+
+                const maxCount = Math.max(...Object.values(countryProjectCounts), 1);
+
+                // Enrich features with project counts and colors
+                const enrichedFeatures = geoJSON.features.map((feature: any) => {
+                    const countryName = feature.properties?.NAME;
+                    
+                    // Find matching project count
+                    let projectCount = 0;
+                    for (const [dbCountry, count] of Object.entries(countryProjectCounts)) {
+                        // Try exact match and various case-insensitive versions
+                        if (
+                            countryName === dbCountry ||
+                            countryName?.toLowerCase() === dbCountry.toLowerCase() ||
+                            projectToNaturalEarthCountries[dbCountry.toUpperCase()] === countryName
+                        ) {
+                            projectCount = count as number;
+                            break;
+                        }
+                    }
+
+                    return {
+                        ...feature,
+                        properties: {
+                            ...feature.properties,
+                            projectCount,
+                            color: getChoropethColor(projectCount, maxCount),
+                        },
+                    };
+                });
+
+                setCountriesGeoJSON({
+                    type: 'FeatureCollection',
+                    features: enrichedFeatures,
+                });
+            } catch (error) {
+                console.error('Failed to load countries GeoJSON:', error);
+            }
+        };
+
+        loadCountriesData();
+    }, [projects]);
 
     useEffect(() => {
         setPickedLocation(selectedLocation);
@@ -103,74 +162,21 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
         }
     }, [selectedLocation]);
 
-    // Calculate projects per country for choropleth
+    // Calculate projects per country for reference
     const countryProjectCounts = useMemo(() => {
         const counts: Record<string, number> = {};
-        
         projects.forEach(project => {
-            const countryRaw = project.country?.trim();
-            if (!countryRaw) return;
-            
-            // Try to find matching country in countryCoordinates (case-insensitive)
-            let foundName: string | null = null;
-            const countryUpper = countryRaw.toUpperCase();
-            const countryTitle = countryRaw.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-            
-            // Direct checks
-            if (countryCoordinates[countryRaw]) {
-                foundName = countryRaw;
-            } else if (countryCoordinates[countryTitle]) {
-                foundName = countryTitle;
-            } else {
-                // Try mapping from projectToNaturalEarthCountries
-                const mappedName = projectToNaturalEarthCountries[countryUpper];
-                if (mappedName && countryCoordinates[mappedName]) {
-                    foundName = mappedName;
-                }
-            }
-            
-            if (foundName) {
-                counts[foundName] = (counts[foundName] || 0) + 1;
+            const country = project.country?.trim();
+            if (country) {
+                counts[country] = (counts[country] || 0) + 1;
             }
         });
-        
         return counts;
     }, [projects]);
 
     const maxProjectCount = useMemo(() => {
         return Math.max(...Object.values(countryProjectCounts), 1);
     }, [countryProjectCounts]);
-
-    // Create choropleth indicators from country coordinates
-    const choropethIndicators = useMemo(() => {
-        if (!countryProjectCounts || Object.keys(countryProjectCounts).length === 0) {
-            return [];
-        }
-
-        const indicators: any[] = [];
-        
-        Object.entries(countryProjectCounts).forEach(([countryName, count]) => {
-            // countryName is already normalized from countryProjectCounts
-            const coords = countryCoordinates[countryName];
-
-            if (coords) {
-                const intensity = count / maxProjectCount;
-                const size = 8 + intensity * 20; // 8-28px circle
-                
-                indicators.push({
-                    country: countryName,
-                    count,
-                    lat: coords.lat,
-                    lng: coords.lng,
-                    color: getChoropethColor(count, maxProjectCount),
-                    size,
-                    intensity,
-                });
-            }
-        });
-
-        return indicators;
-    }, [countryProjectCounts, maxProjectCount]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
@@ -414,38 +420,28 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
             >
-                {/* Choropleth indicators using country coordinates */}
-                {choropethIndicators.map((indicator: any) => (
-                    <Marker
-                        key={`choropleth-${indicator.country}`}
-                        longitude={indicator.lng}
-                        latitude={indicator.lat}
-                        anchor="center"
-                        onClick={(e) => {
-                            e.originalEvent.stopPropagation();
-                            setCountryPopup({
-                                country: indicator.country,
-                                count: indicator.count,
-                                lng: indicator.lng,
-                                lat: indicator.lat,
-                            });
-                        }}
-                    >
-                        <div
-                            style={{
-                                width: `${indicator.size}px`,
-                                height: `${indicator.size}px`,
-                                backgroundColor: indicator.color,
-                                opacity: 0.5,
-                                borderRadius: '50%',
-                                border: `2px solid ${indicator.color}`,
-                                cursor: 'pointer',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                {/* Choropleth layer - countries colored by project density */}
+                {countriesGeoJSON && (
+                    <Source id="countries-source" type="geojson" data={countriesGeoJSON}>
+                        <Layer
+                            id="countries-fill"
+                            type="fill"
+                            paint={{
+                                'fill-color': ['get', 'color'],
+                                'fill-opacity': 0.6,
                             }}
-                            className="hover:opacity-70 transition-opacity"
                         />
-                    </Marker>
-                ))}
+                        <Layer
+                            id="countries-outline"
+                            type="line"
+                            paint={{
+                                'line-color': '#9ca3af',
+                                'line-width': 1,
+                                'line-opacity': 0.4,
+                            }}
+                        />
+                    </Source>
+                )}
 
                 {/* Cluster markers */}
                 {clustersAndMarkers.clusters.map((cluster) => (
