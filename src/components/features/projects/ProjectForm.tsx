@@ -733,6 +733,7 @@ const emptyFormState = {
     countrySelections: [] as string[],
     citySelections: [] as string[],
     cityInput: '',
+    remarks: '',
     latitude: '',
     longitude: '',
     projectName: '',
@@ -790,7 +791,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [showManageSocialSafeguardCategories, setShowManageSocialSafeguardCategories] = useState(false);
     const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
     const [countrySearch, setCountrySearch] = useState('');
+    const [regionSearch, setRegionSearch] = useState('');
+    const [citySearch, setCitySearch] = useState('');
     const [isCountryOpen, setIsCountryOpen] = useState(false);
+    const [isRegionOpen, setIsRegionOpen] = useState(false);
+    const [isCityOpen, setIsCityOpen] = useState(false);
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
         <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
@@ -917,6 +922,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 genderConcerns: detailsMap.get('Gender Concerns') || '',
                 wasteWorkers: detailsMap.get('Waste Workers') || '',
                 displacement: detailsMap.get('Resettlement') || detailsMap.get('Displacement') || '',
+                remarks: detailsMap.get('Remarks') || '',
             });
             
             setIsLoadingData(false);
@@ -1259,7 +1265,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             keyDocuments, groupsInOpposition, typesOfActions, linksToActions,
             activeGaiAASupport, notes, references, genderConcerns,
-            wasteWorkers, displacement, latitude, longitude
+            wasteWorkers, displacement, latitude, longitude, remarks
         } = formData;
 
         const regionValue = regionSelections.join(', ');
@@ -1365,6 +1371,7 @@ ${references}
 **Gender Concerns:** ${genderConcerns}
 **Waste Workers:** ${wasteWorkers}
 **Resettlement:** ${displacement}
+**Remarks:** ${remarks}
         `.trim();
 
         const projectData = {
@@ -1504,13 +1511,84 @@ ${references}
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <FormField label="Region">
-                            <Input
-                                type="text"
-                                value={formData.regionSelections.join(', ')}
-                                placeholder="Auto-filled from map pin"
-                                readOnly
-                                className="bg-gray-50"
-                            />
+                            <div className="border border-gray-300 rounded-md p-2 bg-white">
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {formData.regionSelections.map((region) => (
+                                        <div
+                                            key={region}
+                                            className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                                        >
+                                            <span>{region}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        regionSelections: prev.regionSelections.filter(r => r !== region)
+                                                    }));
+                                                }}
+                                                className="hover:text-green-900 font-bold"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Popover open={isRegionOpen} onOpenChange={setIsRegionOpen}>
+                                    <PopoverTrigger asChild>
+                                        <button type="button" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-left flex justify-between items-center">
+                                            <span className="text-gray-500">Add region...</span>
+                                            <ChevronDown className="h-4 w-4" />
+                                        </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80 p-0" side="bottom" align="start">
+                                        <div className="p-3 border-b">
+                                            <Input
+                                                type="text"
+                                                placeholder="Search regions..."
+                                                value={regionSearch}
+                                                onChange={(e) => setRegionSearch(e.target.value)}
+                                                className="w-full"
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className="max-h-64 overflow-y-auto">
+                                            {Array.from(new Set(Array.from(countryToRegionMap.values())))
+                                                .filter(region =>
+                                                    region.toLowerCase().includes(regionSearch.toLowerCase()) &&
+                                                    !formData.regionSelections.includes(region)
+                                                )
+                                                .sort()
+                                                .map(region => (
+                                                    <button
+                                                        type="button"
+                                                        key={region}
+                                                        onClick={() => {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                regionSelections: [...prev.regionSelections, region]
+                                                            }));
+                                                            setRegionSearch('');
+                                                            setIsRegionOpen(false);
+                                                        }}
+                                                        className="w-full text-left px-4 py-2 hover:bg-green-50 text-sm"
+                                                    >
+                                                        {region}
+                                                    </button>
+                                                ))}
+                                            {Array.from(new Set(Array.from(countryToRegionMap.values())))
+                                                .filter(region =>
+                                                    region.toLowerCase().includes(regionSearch.toLowerCase()) &&
+                                                    !formData.regionSelections.includes(region)
+                                                ).length === 0 && (
+                                                <div className="px-4 py-3 text-center text-sm text-gray-500">
+                                                    {regionSearch ? 'No regions found' : 'All regions selected'}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
                         </FormField>
                         <FormField label="Country" required>
                             <div className="border border-gray-300 rounded-md p-2 bg-white">
@@ -1594,13 +1672,89 @@ ${references}
                                 </Popover>
                             </div>
                         </FormField>
-                        <FormField label="City/ies (comma-separated)">
-                            <Input
-                                type="text"
-                                name="cityInput"
-                                value={formData.cityInput}
+                        <FormField label="Cities">
+                            <div className="border border-gray-300 rounded-md p-2 bg-white">
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {formData.cityInput.split(',').map(city => city.trim()).filter(Boolean).map((city) => (
+                                        <div
+                                            key={city}
+                                            className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                                        >
+                                            <span>{city}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const cities = formData.cityInput.split(',').map(c => c.trim()).filter(c => c !== city);
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        cityInput: cities.join(', ')
+                                                    }));
+                                                }}
+                                                className="hover:text-purple-900 font-bold"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Popover open={isCityOpen} onOpenChange={setIsCityOpen}>
+                                    <PopoverTrigger asChild>
+                                        <button type="button" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-left flex justify-between items-center">
+                                            <span className="text-gray-500">Add city...</span>
+                                            <ChevronDown className="h-4 w-4" />
+                                        </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80 p-0" side="bottom" align="start">
+                                        <div className="p-3 border-b">
+                                            <Input
+                                                type="text"
+                                                placeholder="Type city name..."
+                                                value={citySearch}
+                                                onChange={(e) => setCitySearch(e.target.value)}
+                                                className="w-full"
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className="max-h-64 overflow-y-auto">
+                                            {citySearch.length > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const currentCities = formData.cityInput.split(',').map(c => c.trim()).filter(Boolean);
+                                                        if (!currentCities.includes(citySearch)) {
+                                                            const newCities = [...currentCities, citySearch].join(', ');
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                cityInput: newCities
+                                                            }));
+                                                        }
+                                                        setCitySearch('');
+                                                        setIsCityOpen(false);
+                                                    }}
+                                                    className="w-full text-left px-4 py-2 hover:bg-purple-50 text-sm bg-purple-50 font-semibold"
+                                                >
+                                                    Add "{citySearch}"
+                                                </button>
+                                            )}
+                                            {citySearch.length === 0 && (
+                                                <div className="px-4 py-3 text-center text-sm text-gray-500">Type a city name to add</div>
+                                            )}
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                        </FormField>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                        <FormField label="Remarks">
+                            <Textarea
+                                name="remarks"
+                                value={formData.remarks}
                                 onChange={handleInputChange}
-                                placeholder="e.g. Manila, Quezon City, Cebu City"
+                                placeholder="Any additional information or notes about the project's geographic coverage..."
+                                className="resize-none"
+                                rows={3}
                             />
                         </FormField>
                     </div>
