@@ -392,6 +392,11 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                 <p className="text-sm text-gray-600 mb-4">
                     Download the Excel template for {contentType}, fill in your data, and save the file.
                 </p>
+                {contentType === 'projects' && (
+                    <div className="mb-3 text-sm text-gray-600">
+                        <strong>Available projects:</strong> {projects?.length || 0}
+                    </div>
+                )}
                 <div className="flex flex-col gap-3 sm:flex-row">
                     <button
                         onClick={handleDownloadTemplate}
@@ -405,29 +410,29 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                     </button>
                     <button
                         onClick={handleDownloadTemplateWithData}
-                        disabled={contentType !== 'projects' || projects.length === 0}
+                        disabled={contentType !== 'projects' || !projects || projects.length === 0}
                         className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors ${
-                            contentType !== 'projects' || projects.length === 0
+                            contentType !== 'projects' || !projects || projects.length === 0
                                 ? 'cursor-not-allowed opacity-50'
-                                : ''
+                                : 'cursor-pointer'
                         }`}
                         style={{
-                            backgroundColor: contentType === 'projects' && projects.length > 0 ? '#16a34a' : '#9ca3af',
+                            backgroundColor: contentType === 'projects' && projects && projects.length > 0 ? '#16a34a' : '#9ca3af',
                         }}
                         onMouseEnter={(e) => {
-                            if (contentType === 'projects' && projects.length > 0) {
+                            if (contentType === 'projects' && projects && projects.length > 0) {
                                 e.currentTarget.style.backgroundColor = '#15803d';
                             }
                         }}
                         onMouseLeave={(e) => {
-                            if (contentType === 'projects' && projects.length > 0) {
+                            if (contentType === 'projects' && projects && projects.length > 0) {
                                 e.currentTarget.style.backgroundColor = '#16a34a';
                             }
                         }}
-                        title={contentType !== 'projects' ? 'Only available for Projects' : projects.length === 0 ? 'No projects available' : 'Download all projects'}
+                        title={contentType !== 'projects' ? 'Only available for Projects' : !projects || projects.length === 0 ? 'No projects available' : 'Download all projects'}
                     >
                         <DownloadIcon className="w-5 h-5" />
-                        Download Template with All Current Data ({projects.length} projects)
+                        Download Template with All Current Data ({projects?.length || 0} projects)
                     </button>
                 </div>
             </div>
