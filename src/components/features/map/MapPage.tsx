@@ -96,7 +96,8 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
     // Filter projects based on local filters state
     const filteredProjects = useMemo(() => {
         const parseDetail = (details: string, key: string) => {
-            const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`));
+            // Handle both single-line (same line as key) and multi-line (next line) content
+            const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm'));
             return match ? match[1].trim() : '';
         };
 

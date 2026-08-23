@@ -5,7 +5,8 @@ import { getIfiAbbreviation, solutionTypeColors } from '@/lib/constants';
 
 // Helper functions (can be moved to a utils file later)
 const parseDetail = (details: string, key: string): string => {
-    const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`));
+    // Handle both single-line (same line as key) and multi-line (next line) content
+    const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm'));
     return match ? match[1].trim() : 'N/A';
 };
 
