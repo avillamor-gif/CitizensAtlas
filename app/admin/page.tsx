@@ -34,8 +34,9 @@ export default function Admin() {
   // Load data when component mounts or user changes
   useEffect(() => {
     if (!authLoading) {
-      // Only load categories initially - they're small and always needed
+      // Load both categories and projects when admin page loads
       loadCategories()
+      loadProjects()
     }
   }, [authLoading, user])
 

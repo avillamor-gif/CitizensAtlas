@@ -392,11 +392,6 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                 <p className="text-sm text-gray-600 mb-4">
                     Download the Excel template for {contentType}, fill in your data, and save the file.
                 </p>
-                {contentType === 'projects' && (
-                    <div className="mb-3 text-sm text-gray-600">
-                        <strong>Available projects:</strong> {projects?.length || 0}
-                    </div>
-                )}
                 <div className="flex flex-col gap-3 sm:flex-row">
                     <button
                         onClick={handleDownloadTemplate}
