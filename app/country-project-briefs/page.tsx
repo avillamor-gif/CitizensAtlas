@@ -58,10 +58,13 @@ function CountryProjectBriefsContent() {
         // Fetch published project briefs (no auth required)
         const allBriefs = await DataService.getPublishedProjectBriefs()
         
-        // Filter by country (case-insensitive)
-        const countryBriefs = allBriefs.filter(
-          b => b.country?.toUpperCase() === country.toUpperCase()
-        )
+        // Filter by country (case-insensitive, handling multi-country entries)
+        const countryBriefs = allBriefs.filter(b => {
+          const briefCountries = b.country
+            ? b.country.split(',').map(c => c.trim().toUpperCase())
+            : [];
+          return briefCountries.includes(country.toUpperCase());
+        })
         
         setBriefs(countryBriefs)
       } catch (err) {

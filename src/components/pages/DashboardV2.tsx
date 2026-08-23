@@ -516,17 +516,23 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
               <div className="mt-3 pt-3 border-t border-brand-dark-blue/20">
                 <p className="text-sm text-brand-dark-blue/80 mb-1">Total Cases</p>
                 <p className="text-3xl font-bold text-brand-dark-blue">
-                  {projects.filter(p => 
-                    p.country?.toUpperCase() === filters.country.toUpperCase() && 
-                    (p.status === 'published' || !p.status)
-                  ).length}
+                  {projects.filter(p => {
+                    const projectCountries = p.country
+                      ? p.country.split(',').map(c => c.trim().toUpperCase())
+                      : [];
+                    return projectCountries.includes(filters.country.toUpperCase()) && 
+                      (p.status === 'published' || !p.status);
+                  }).length}
                 </p>
               </div>
               {(() => {
-                const matchingBriefs = projectBriefs.filter(brief => 
-                  brief.country?.toUpperCase() === filters.country.toUpperCase() &&
-                  (brief.status === 'published' || !brief.status)
-                )
+                const matchingBriefs = projectBriefs.filter(brief => {
+                  const briefCountries = brief.country
+                    ? brief.country.split(',').map(c => c.trim().toUpperCase())
+                    : [];
+                  return briefCountries.includes(filters.country.toUpperCase()) &&
+                    (brief.status === 'published' || !brief.status);
+                })
                 console.log('🔍 Checking briefs for country:', filters.country)
                 console.log('🔍 All project briefs:', projectBriefs)
                 console.log('🔍 Matching briefs:', matchingBriefs)
@@ -558,11 +564,14 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
               </p>
             </div>
             {(() => {
-              const matchingBriefs = projectBriefs.filter(brief => 
-                filters.country !== 'all' && 
-                brief.country?.toUpperCase() === filters.country.toUpperCase() &&
-                (brief.status === 'published' || !brief.status)
-              )
+              const matchingBriefs = projectBriefs.filter(brief => {
+                const briefCountries = brief.country
+                  ? brief.country.split(',').map(c => c.trim().toUpperCase())
+                  : [];
+                return filters.country !== 'all' && 
+                  briefCountries.includes(filters.country.toUpperCase()) &&
+                  (brief.status === 'published' || !brief.status);
+              })
               
               return matchingBriefs.length > 0 && (
                 <button

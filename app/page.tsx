@@ -1187,7 +1187,13 @@ function HomePageContent() {
     return projects.filter(project => {
       // Only show published projects in public view
       const publishedMatch = project.status === 'published' || project.status === undefined
-      const countryMatch = filters.country === 'all' || toTitleCase(project.country || '') === filters.country
+      
+      // Handle multi-country projects: split by comma and check if any match the filter
+      const projectCountries = project.country
+        ? project.country.split(',').map(c => toTitleCase(c.trim()))
+        : []
+      const countryMatch = filters.country === 'all' || projectCountries.includes(filters.country)
+      
       const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType)
       const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi
       const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus
