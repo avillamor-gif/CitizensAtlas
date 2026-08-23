@@ -1513,58 +1513,86 @@ ${references}
                             />
                         </FormField>
                         <FormField label="Country" required>
-                            <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
-                                <PopoverTrigger asChild>
-                                    <button type="button" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex justify-between items-center">
-                                        <span>{formData.countrySelections[0] || 'Select a country...'}</span>
-                                        <ChevronDown className="h-4 w-4" />
-                                    </button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-80 p-0" side="bottom" align="start">
-                                    <div className="p-3 border-b">
-                                        <Input
-                                            type="text"
-                                            placeholder="Search countries..."
-                                            value={countrySearch}
-                                            onChange={(e) => setCountrySearch(e.target.value)}
-                                            className="w-full"
-                                            autoFocus
-                                        />
-                                    </div>
-                                    <div className="max-h-64 overflow-y-auto">
-                                        {getAllCountries()
-                                            .filter(country =>
-                                                country.toLowerCase().includes(countrySearch.toLowerCase())
-                                            )
-                                            .map(country => (
-                                                <button
-                                                    type="button"
-                                                    key={country}
-                                                    onClick={() => {
-                                                        const region = getRegionFromCountry(country);
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            countrySelections: [country],
-                                                            regionSelections: region ? [region] : prev.regionSelections
-                                                        }));
-                                                        setCountrySearch('');
-                                                        setIsCountryOpen(false);
-                                                    }}
-                                                    className={`w-full text-left px-4 py-2 hover:bg-blue-50 text-sm ${
-                                                        formData.countrySelections[0] === country ? 'bg-blue-100 font-semibold' : ''
-                                                    }`}
-                                                >
-                                                    {country}
-                                                </button>
-                                            ))}
-                                        {getAllCountries().filter(country =>
-                                            country.toLowerCase().includes(countrySearch.toLowerCase())
-                                        ).length === 0 && (
-                                            <div className="px-4 py-3 text-center text-sm text-gray-500">No countries found</div>
-                                        )}
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
+                            <div className="border border-gray-300 rounded-md p-2 bg-white">
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {formData.countrySelections.map((country) => (
+                                        <div
+                                            key={country}
+                                            className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                                        >
+                                            <span>{country}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        countrySelections: prev.countrySelections.filter(c => c !== country)
+                                                    }));
+                                                }}
+                                                className="hover:text-blue-900 font-bold"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
+                                    <PopoverTrigger asChild>
+                                        <button type="button" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex justify-between items-center">
+                                            <span className="text-gray-500">Add country...</span>
+                                            <ChevronDown className="h-4 w-4" />
+                                        </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80 p-0" side="bottom" align="start">
+                                        <div className="p-3 border-b">
+                                            <Input
+                                                type="text"
+                                                placeholder="Search countries..."
+                                                value={countrySearch}
+                                                onChange={(e) => setCountrySearch(e.target.value)}
+                                                className="w-full"
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className="max-h-64 overflow-y-auto">
+                                            {getAllCountries()
+                                                .filter(country =>
+                                                    country.toLowerCase().includes(countrySearch.toLowerCase()) &&
+                                                    !formData.countrySelections.includes(country)
+                                                )
+                                                .map(country => (
+                                                    <button
+                                                        type="button"
+                                                        key={country}
+                                                        onClick={() => {
+                                                            const region = getRegionFromCountry(country);
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                countrySelections: [...prev.countrySelections, country],
+                                                                regionSelections: region && !prev.regionSelections.includes(region) 
+                                                                    ? [...prev.regionSelections, region] 
+                                                                    : prev.regionSelections
+                                                            }));
+                                                            setCountrySearch('');
+                                                            setIsCountryOpen(false);
+                                                        }}
+                                                        className="w-full text-left px-4 py-2 hover:bg-blue-50 text-sm"
+                                                    >
+                                                        {country}
+                                                    </button>
+                                                ))}
+                                            {getAllCountries().filter(country =>
+                                                country.toLowerCase().includes(countrySearch.toLowerCase()) &&
+                                                !formData.countrySelections.includes(country)
+                                            ).length === 0 && (
+                                                <div className="px-4 py-3 text-center text-sm text-gray-500">
+                                                    {countrySearch ? 'No countries found' : 'All countries selected'}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
                         </FormField>
                         <FormField label="City/ies (comma-separated)">
                             <Input
