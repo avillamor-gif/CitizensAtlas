@@ -5,8 +5,7 @@ import Map, { Marker, Popup, Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Supercluster from 'supercluster';
 import { Project } from '@/types/types';
-import { solutionTypeColors, getSolutionTypeColor, projectToNaturalEarthCountries } from '@/lib/constants';
-import { countryCoordinates } from '@/lib/country-coordinates';
+import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
 import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
 
 const legendData = Object.entries(solutionTypeColors)
@@ -57,19 +56,6 @@ const formatAmount = (num: number) => {
     return `$${num}`;
 };
 
-// Get color for choropleth based on project count
-const getChoropethColor = (count: number, maxCount: number): string => {
-    if (count === 0) return '#f3f4f6'; // light gray for no projects
-    const intensity = count / maxCount; // 0 to 1
-    
-    // Color scale from light to dark blue
-    if (intensity < 0.2) return '#dbeafe'; // light blue
-    if (intensity < 0.4) return '#93c5fd'; // lighter blue
-    if (intensity < 0.6) return '#60a5fa'; // medium blue
-    if (intensity < 0.8) return '#3b82f6'; // blue
-    return '#1e40af'; // dark blue
-};
-
 interface InteractiveMapProps {
     projects: Project[];
     onMarkerClick: (project: Project) => void;
@@ -80,70 +66,10 @@ interface InteractiveMapProps {
 }
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false }) => {
-    const [countryPopup, setCountryPopup] = useState<{ country: string; count: number; lng: number; lat: number } | null>(null);
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
-    const [countriesGeoJSON, setCountriesGeoJSON] = useState<any>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
-
-    // Load local countries GeoJSON and enrich with project data
-    useEffect(() => {
-        const loadCountriesData = async () => {
-            try {
-                const response = await fetch('/countries.geojson');
-                const geoJSON = await response.json();
-
-                // Count projects by country
-                const countryProjectCounts: Record<string, number> = {};
-                projects.forEach(project => {
-                    const country = project.country?.trim();
-                    if (country) {
-                        countryProjectCounts[country] = (countryProjectCounts[country] || 0) + 1;
-                    }
-                });
-
-                const maxCount = Math.max(...Object.values(countryProjectCounts), 1);
-
-                // Enrich features with project counts and colors
-                const enrichedFeatures = geoJSON.features.map((feature: any) => {
-                    const countryName = feature.properties?.NAME;
-                    
-                    // Find matching project count
-                    let projectCount = 0;
-                    for (const [dbCountry, count] of Object.entries(countryProjectCounts)) {
-                        // Try exact match and various case-insensitive versions
-                        if (
-                            countryName === dbCountry ||
-                            countryName?.toLowerCase() === dbCountry.toLowerCase() ||
-                            projectToNaturalEarthCountries[dbCountry.toUpperCase()] === countryName
-                        ) {
-                            projectCount = count as number;
-                            break;
-                        }
-                    }
-
-                    return {
-                        ...feature,
-                        properties: {
-                            ...feature.properties,
-                            projectCount,
-                            color: getChoropethColor(projectCount, maxCount),
-                        },
-                    };
-                });
-
-                setCountriesGeoJSON({
-                    type: 'FeatureCollection',
-                    features: enrichedFeatures,
-                });
-            } catch (error) {
-                console.error('Failed to load countries GeoJSON:', error);
-            }
-        };
-
-        loadCountriesData();
-    }, [projects]);
 
     useEffect(() => {
         setPickedLocation(selectedLocation);
@@ -161,22 +87,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
             });
         }
     }, [selectedLocation]);
-
-    // Calculate projects per country for reference
-    const countryProjectCounts = useMemo(() => {
-        const counts: Record<string, number> = {};
-        projects.forEach(project => {
-            const country = project.country?.trim();
-            if (country) {
-                counts[country] = (counts[country] || 0) + 1;
-            }
-        });
-        return counts;
-    }, [projects]);
-
-    const maxProjectCount = useMemo(() => {
-        return Math.max(...Object.values(countryProjectCounts), 1);
-    }, [countryProjectCounts]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
@@ -408,7 +318,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     setZoom(e.viewState.zoom);
                 }}
                 onClick={(e) => {
-                    setCountryPopup(null);
                     // If onMapClick is provided and user clicks on empty map area (not a marker)
                     if (onMapClick && e.lngLat) {
                         const nextLocation = {
@@ -420,29 +329,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     }
                 }}
             >
-                {/* Choropleth layer - countries colored by project density */}
-                {countriesGeoJSON && (
-                    <Source id="countries-source" type="geojson" data={countriesGeoJSON}>
-                        <Layer
-                            id="countries-fill"
-                            type="fill"
-                            paint={{
-                                'fill-color': ['get', 'color'],
-                                'fill-opacity': 0.6,
-                            }}
-                        />
-                        <Layer
-                            id="countries-outline"
-                            type="line"
-                            paint={{
-                                'line-color': '#9ca3af',
-                                'line-width': 1,
-                                'line-opacity': 0.4,
-                            }}
-                        />
-                    </Source>
-                )}
-
                 {/* Cluster markers */}
                 {clustersAndMarkers.clusters.map((cluster) => (
                     <Marker
@@ -527,25 +413,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     </Marker>
                 )}
 
-                {countryPopup && (
-                    <Popup
-                        longitude={countryPopup.lng}
-                        latitude={countryPopup.lat}
-                        anchor="bottom"
-                        onClose={() => setCountryPopup(null)}
-                        closeOnClick={false}
-                        maxWidth="280px"
-                        closeButton={true}
-                    >
-                        <div className="font-sans p-4">
-                            <p className="font-bold text-lg text-brand-dark-blue mb-2">{countryPopup.country}</p>
-                            <p className="text-sm text-gray-700">
-                                <span className="font-semibold text-2xl text-brand-dark-blue">{countryPopup.count}</span>
-                                {' '}project{countryPopup.count !== 1 ? 's' : ''} submitted
-                            </p>
-                        </div>
-                    </Popup>
-                )}
             </Map>
 
             {projects.length === 0 && !pickerMode && (
@@ -559,25 +426,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
             {!pickerMode && <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs">
                 <div>
-                    <h4 className="font-bold text-sm mb-3 text-brand-dark-blue">Project Density by Country</h4>
-                    <ul className="space-y-1 mb-4">
-                        <li className="flex items-center">
-                            <span className="w-2 h-2 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#f3f4f6', border: '1px solid #d1d5db' }}></span>
-                            <span className="text-xs text-gray-700">No projects</span>
-                        </li>
-                        <li className="flex items-center">
-                            <span className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#dbeafe' }}></span>
-                            <span className="text-xs text-gray-700">Low density</span>
-                        </li>
-                        <li className="flex items-center">
-                            <span className="w-4 h-4 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#60a5fa' }}></span>
-                            <span className="text-xs text-gray-700">Medium density</span>
-                        </li>
-                        <li className="flex items-center">
-                            <span className="w-5 h-5 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: '#1e40af' }}></span>
-                            <span className="text-xs text-gray-700">High density</span>
-                        </li>
-                    </ul>
                     <h4 className="font-bold text-sm mb-2 text-brand-dark-blue">False Solution Types</h4>
                     <ul className="space-y-1">
                         {legendData.map(({ name, colorClass }) => (
