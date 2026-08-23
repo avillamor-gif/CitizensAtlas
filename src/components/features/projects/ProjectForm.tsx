@@ -904,7 +904,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 economicCooperationOrPrograms: detailsMap.get('Economic Cooperation or Programs') || '',
                 otherImplementors: detailsMap.get('Other Implementors') || '',
                 ifiSafeguards,
-                projectDescription: detailsMap.get('Project Description') || '',
+                projectDescription: getDetailValue(detailsMap, ['Project Description', 'Description']) || '',
                 projectStatus: getDetailValue(detailsMap, ['Project Status', 'Status']) || '',
                 approvalDate: sourceProject.date || '',
                 startDate: detailsMap.get('Start Date') || '',

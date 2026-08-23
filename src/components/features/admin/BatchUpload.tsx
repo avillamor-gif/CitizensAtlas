@@ -139,10 +139,18 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             'Publish Date',
         ];
 
-        const parseDetail = (details: string, key: string) => {
-            // Handle both single-line (same line as key) and multi-line (next line) content
-            const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm'));
-            return match ? match[1].trim() : '';
+        const parseDetail = (details: string, key: string, alternativeKeys?: string[]) => {
+            // Try primary key first, then alternatives (like import parser does)
+            const keysToTry = [key, ...(alternativeKeys || [])];
+            
+            for (const tryKey of keysToTry) {
+                // Handle both single-line (same line as key) and multi-line (next line) content
+                const match = details.match(new RegExp(`\\*\\*${tryKey}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm'));
+                if (match && match[1].trim()) {
+                    return match[1].trim();
+                }
+            }
+            return '';
         };
 
         const rows = projects.map((project) => [
@@ -154,13 +162,13 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             project.corruptionType.includes('Plastic-to-Fuel') ? 'x' : '',
             project.corruptionType.includes('Chemical Recycling') ? 'x' : '',
             project.corruptionType.includes('Refuse-Derived') ? 'x' : '',
-            parseDetail(project.details, 'Project Description'),
+            parseDetail(project.details, 'Project Description', ['Description']),
             parseDetail(project.details, 'Approval Date'),
             parseDetail(project.details, 'Start Date'),
             parseDetail(project.details, 'End Date'),
             parseDetail(project.details, 'Region'),
             project.country || '',
-            parseDetail(project.details, 'City'),
+            parseDetail(project.details, 'City', ['City/ies']),
             parseDetail(project.details, 'Remarks'),
             parseDetail(project.details, 'IFI'),
             parseDetail(project.details, 'IFI').includes('ADB') ? 'x' : '',
@@ -175,9 +183,9 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             parseDetail(project.details, 'Funding Source'),
             parseDetail(project.details, 'Financial Instruments'),
             parseDetail(project.details, 'Total Project Amount'),
-            parseDetail(project.details, 'Owner'),
-            parseDetail(project.details, 'Private Sector Borrowers'),
-            parseDetail(project.details, 'Economic Cooperation'),
+            parseDetail(project.details, 'Owner', ['Owner (Public/ Private / PPP)']),
+            parseDetail(project.details, 'Private Sector Borrowers', ['Private Sector Borrower']),
+            parseDetail(project.details, 'Economic Cooperation', ['Economic Cooperation or Programs']),
             parseDetail(project.details, 'Other Implementors'),
             parseDetail(project.details, 'ADB - Environment'),
             parseDetail(project.details, 'ADB - Involuntary Resettlement'),
