@@ -403,18 +403,32 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                         <DownloadIcon className="w-5 h-5" />
                         Download Empty Template
                     </button>
-                    {contentType === 'projects' && projects.length > 0 && (
-                        <button
-                            onClick={handleDownloadTemplateWithData}
-                            className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
-                            style={{ backgroundColor: '#16a34a' }}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#15803d'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#16a34a'}
-                        >
-                            <DownloadIcon className="w-5 h-5" />
-                            Download Template with All Current Data
-                        </button>
-                    )}
+                    <button
+                        onClick={handleDownloadTemplateWithData}
+                        disabled={contentType !== 'projects' || projects.length === 0}
+                        className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors ${
+                            contentType !== 'projects' || projects.length === 0
+                                ? 'cursor-not-allowed opacity-50'
+                                : ''
+                        }`}
+                        style={{
+                            backgroundColor: contentType === 'projects' && projects.length > 0 ? '#16a34a' : '#9ca3af',
+                        }}
+                        onMouseEnter={(e) => {
+                            if (contentType === 'projects' && projects.length > 0) {
+                                e.currentTarget.style.backgroundColor = '#15803d';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (contentType === 'projects' && projects.length > 0) {
+                                e.currentTarget.style.backgroundColor = '#16a34a';
+                            }
+                        }}
+                        title={contentType !== 'projects' ? 'Only available for Projects' : projects.length === 0 ? 'No projects available' : 'Download all projects'}
+                    >
+                        <DownloadIcon className="w-5 h-5" />
+                        Download Template with All Current Data ({projects.length} projects)
+                    </button>
                 </div>
             </div>
 
