@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
+import { Project } from '@/types/types';
 import { 
     generateProjectsTemplate, 
     generateProjectBriefsTemplate,
@@ -21,9 +22,10 @@ type ContentType = 'projects' | 'project-briefs' | 'news' | 'publications' | 'vi
 
 interface BatchUploadProps {
     onSuccess?: () => void;
+    projects?: Project[];
 }
 
-const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
+const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) => {
     const [contentType, setContentType] = useState<ContentType>('projects');
     const [file, setFile] = useState<File | null>(null);
     const [sheetUrl, setSheetUrl] = useState('');
@@ -59,6 +61,160 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                 filename = 'videos_template.xlsx';
                 break;
         }
+    };
+
+    const handleDownloadTemplateWithData = () => {
+        if (contentType !== 'projects' || projects.length === 0) {
+            alert('No project data available to download.');
+            return;
+        }
+
+        const headers = [
+            'Project Name*',
+            'Project Number',
+            'Project Status',
+            'False Solution Type* (comma-separated)',
+            'False Solution - Waste-to-Energy (X/Yes)',
+            'False Solution - Plastic-to-Fuel Technologies (X/Yes)',
+            'False Solution - Chemical Recycling (X/Yes)',
+            'False Solution - Refuse-derived fuel (X/Yes)',
+            'Project Description',
+            'Approval Date*',
+            'Start Date',
+            'End Date',
+            'Region',
+            'Country/ies*',
+            'City/ies',
+            'International Financial Institution (IFI) (comma-separated)',
+            'IFI - ADB (X/Yes)',
+            'IFI - AIIB (X/Yes)',
+            'IFI - GCF (X/Yes)',
+            'IFI - GIZ (X/Yes)',
+            'IFI - JICA (X/Yes)',
+            'IFI - KOICA (X/Yes)',
+            'IFI - IFC/ WB (X/Yes)',
+            'IFI - Others (X/Yes)',
+            'Other IFI',
+            'Funding Source',
+            'Financial Instruments',
+            'Owner (Public/ Private / PPP)',
+            'Private Sector Borrower (comma-separated)',
+            'Economic Cooperation or Programs',
+            'Other Implementors',
+            'ADB - Environment',
+            'ADB - Involuntary Resettlement',
+            'ADB - Indigenous Peoples',
+            'AIIB - Environment',
+            'AIIB - Involuntary Resettlement',
+            'AIIB - Indigenous Peoples',
+            'GCF - Environment',
+            'GCF - Involuntary Resettlement',
+            'GCF - Indigenous Peoples',
+            'GIZ - Environment',
+            'GIZ - Involuntary Resettlement',
+            'GIZ - Indigenous Peoples',
+            'JICA - Environment',
+            'JICA - Involuntary Resettlement',
+            'JICA - Indigenous Peoples',
+            'KOICA - Environment',
+            'KOICA - Involuntary Resettlement',
+            'KOICA - Indigenous Peoples',
+            'IFC/ WB - Environment',
+            'IFC/ WB - Involuntary Resettlement',
+            'IFC/ WB - Indigenous Peoples',
+            'Others - Environment',
+            'Others - Involuntary Resettlement',
+            'Others - Indigenous Peoples',
+            'Key Documents URL',
+            'Gender Concerns',
+            'Waste Workers',
+            'Resettlement',
+            'Groups in Opposition (comma-separated)',
+            'Types of Actions',
+            'Links to Actions',
+            'Notes',
+            'References',
+            'Publish Date',
+        ];
+
+        const parseDetail = (details: string, key: string) => {
+            const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*(.*)`));
+            return match ? match[1].trim() : '';
+        };
+
+        const rows = projects.map((project) => [
+            project.title || '',
+            parseDetail(project.details, 'Project Number'),
+            parseDetail(project.details, 'Project Status'),
+            project.corruptionType || '',
+            project.corruptionType.includes('Waste-to-Energy') ? 'x' : '',
+            project.corruptionType.includes('Plastic-to-Fuel') ? 'x' : '',
+            project.corruptionType.includes('Chemical Recycling') ? 'x' : '',
+            project.corruptionType.includes('Refuse-Derived') ? 'x' : '',
+            parseDetail(project.details, 'Project Description'),
+            parseDetail(project.details, 'Approval Date'),
+            parseDetail(project.details, 'Start Date'),
+            parseDetail(project.details, 'End Date'),
+            parseDetail(project.details, 'Region'),
+            project.country || '',
+            parseDetail(project.details, 'City'),
+            parseDetail(project.details, 'IFI'),
+            parseDetail(project.details, 'IFI').includes('ADB') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('AIIB') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('GCF') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('GIZ') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('JICA') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('KOICA') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('IFC') || parseDetail(project.details, 'IFI').includes('WB') ? 'x' : '',
+            parseDetail(project.details, 'IFI').includes('Others') ? 'x' : '',
+            '',
+            parseDetail(project.details, 'Funding Source'),
+            parseDetail(project.details, 'Financial Instruments'),
+            parseDetail(project.details, 'Owner'),
+            parseDetail(project.details, 'Private Sector Borrowers'),
+            parseDetail(project.details, 'Economic Cooperation'),
+            parseDetail(project.details, 'Other Implementors'),
+            parseDetail(project.details, 'ADB - Environment'),
+            parseDetail(project.details, 'ADB - Involuntary Resettlement'),
+            parseDetail(project.details, 'ADB - Indigenous Peoples'),
+            parseDetail(project.details, 'AIIB - Environment'),
+            parseDetail(project.details, 'AIIB - Involuntary Resettlement'),
+            parseDetail(project.details, 'AIIB - Indigenous Peoples'),
+            parseDetail(project.details, 'GCF - Environment'),
+            parseDetail(project.details, 'GCF - Involuntary Resettlement'),
+            parseDetail(project.details, 'GCF - Indigenous Peoples'),
+            parseDetail(project.details, 'GIZ - Environment'),
+            parseDetail(project.details, 'GIZ - Involuntary Resettlement'),
+            parseDetail(project.details, 'GIZ - Indigenous Peoples'),
+            parseDetail(project.details, 'JICA - Environment'),
+            parseDetail(project.details, 'JICA - Involuntary Resettlement'),
+            parseDetail(project.details, 'JICA - Indigenous Peoples'),
+            parseDetail(project.details, 'KOICA - Environment'),
+            parseDetail(project.details, 'KOICA - Involuntary Resettlement'),
+            parseDetail(project.details, 'KOICA - Indigenous Peoples'),
+            parseDetail(project.details, 'IFC/ WB - Environment'),
+            parseDetail(project.details, 'IFC/ WB - Involuntary Resettlement'),
+            parseDetail(project.details, 'IFC/ WB - Indigenous Peoples'),
+            parseDetail(project.details, 'Others - Environment'),
+            parseDetail(project.details, 'Others - Involuntary Resettlement'),
+            parseDetail(project.details, 'Others - Indigenous Peoples'),
+            parseDetail(project.details, 'Key Documents'),
+            parseDetail(project.details, 'Gender Concerns'),
+            parseDetail(project.details, 'Waste Workers'),
+            parseDetail(project.details, 'Resettlement'),
+            parseDetail(project.details, 'Groups in Opposition'),
+            parseDetail(project.details, 'Types of Actions'),
+            parseDetail(project.details, 'Links to Actions'),
+            parseDetail(project.details, 'Notes'),
+            parseDetail(project.details, 'References'),
+            project.date || '',
+        ]);
+
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+        ws['!cols'] = headers.map(() => ({ wch: 20 }));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Projects');
+        XLSX.writeFile(wb, `projects-data-${new Date().toISOString().split('T')[0]}.xlsx`);
     };
 
     const processSelectedFile = async (selectedFile: File) => {
@@ -234,16 +390,30 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess }) => {
                 <p className="text-sm text-gray-600 mb-4">
                     Download the Excel template for {contentType}, fill in your data, and save the file.
                 </p>
-                <button
-                    onClick={handleDownloadTemplate}
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
-                    style={{ backgroundColor: '#0d234f' }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
-                >
-                    <DownloadIcon className="w-5 h-5" />
-                    Download {contentType.charAt(0).toUpperCase() + contentType.slice(1)} Template
-                </button>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                    <button
+                        onClick={handleDownloadTemplate}
+                        className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
+                        style={{ backgroundColor: '#0d234f' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#081629'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d234f'}
+                    >
+                        <DownloadIcon className="w-5 h-5" />
+                        Download Empty Template
+                    </button>
+                    {contentType === 'projects' && projects.length > 0 && (
+                        <button
+                            onClick={handleDownloadTemplateWithData}
+                            className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
+                            style={{ backgroundColor: '#16a34a' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#15803d'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#16a34a'}
+                        >
+                            <DownloadIcon className="w-5 h-5" />
+                            Download Template with All Current Data
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Upload File */}

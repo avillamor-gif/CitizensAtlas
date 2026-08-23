@@ -417,7 +417,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 return <BatchUpload onSuccess={() => {
                     // Optionally refresh data or show success message
                     alert('Batch upload completed successfully!');
-                }} />;
+                }} projects={projects} />;
             case 'team-management':
                 if (!canManageTeam) return <AccessDenied />;
                 return <TeamManagement />;
