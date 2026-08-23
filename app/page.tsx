@@ -1152,12 +1152,12 @@ function HomePageContent() {
     }
 
     // Get unique countries from published projects only, normalize to title case, and sort alphabetically
+    // Split comma-separated countries so each country appears as a separate filter option
     const uniqueCountries = Array.from(
         new Set(
             projects
                 .filter(p => p.status === 'published' || p.status === undefined)
-                .map(p => p.country)
-                .filter(c => c) // Remove empty values
+                .flatMap(p => p.country ? p.country.split(',').map(c => c.trim()).filter(c => c !== '') : [])
                 .map(c => toTitleCase(c))
         )
     ).sort((a, b) => a.localeCompare(b))

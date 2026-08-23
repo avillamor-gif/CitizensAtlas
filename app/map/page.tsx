@@ -50,10 +50,10 @@ export default function Map() {
     }
 
     // Ensure 'all' is always included, even if no data yet
+    // Split comma-separated countries so each country appears as a separate filter option
     const countries = ['all', ...Array.from(new Set(projects
       .filter(p => p.status === 'published' || p.status === undefined)
-      .map(p => p.country)
-      .filter(c => c && c.trim() !== '')
+      .flatMap(p => p.country ? p.country.split(',').map(c => c.trim()).filter(c => c !== '') : [])
     )).sort()]
     const solutionTypes = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
     const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
