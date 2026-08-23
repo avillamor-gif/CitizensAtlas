@@ -19,6 +19,7 @@ export function generateProjectsTemplate() {
     'Region',
     'Country/ies*',
     'City/ies',
+    'Remarks',
     
     // Financial Information
     'International Financial Institution (IFI) (comma-separated)',
@@ -71,7 +72,6 @@ export function generateProjectsTemplate() {
     'Gender Concerns',
     'Waste Workers',
     'Resettlement',
-    'Remarks',
     
     // Community Opposition & Actions
     'Groups in Opposition (comma-separated)',
@@ -101,6 +101,7 @@ export function generateProjectsTemplate() {
     'South Asia, Asia',
     'India',
     'Chennai',
+    'Project covers urban waste management in Chennai metro area.',
     
     // Financial Information
     'AIIB, IFC/ WB, Others',
@@ -153,7 +154,6 @@ export function generateProjectsTemplate() {
     'AIIB and WB acknowledge women may be excluded from benefits. A Gender Lab proposed under the project.',
     'Informal waste pickers and SWM workers recognized with identity cards. Need to integrate authorized waste-pickers and facilitate formation of SHGs.',
     'WB screening criteria exclude land acquisition from private owners. No RAP currently in place.',
-    'Project covers urban waste management in Chennai metro area.',
     
     // Community Opposition & Actions
     'NA',
@@ -183,6 +183,7 @@ export function generateProjectsTemplate() {
     'South Asia',
     'Bangladesh',
     'Dhaka, Chittagong',
+    'Multi-country project covering Bangladesh, India, and regional cooperation.',
     
     // Financial Information
     'ADB, IFC/ WB',
@@ -235,7 +236,6 @@ export function generateProjectsTemplate() {
     'Female participation in waste management activities and training programs',
     'Informal waste workers and waste pickers to be formalized and provided livelihood training',
     'Potential land acquisition for waste processing facilities in Chittagong',
-    'Multi-country project covering Bangladesh, India, and regional cooperation.',
     
     // Community Opposition & Actions
     'Local residents in waste processing areas',
@@ -265,6 +265,7 @@ export function generateProjectsTemplate() {
     'South Asia, Asia',
     'India',
     'Kochi, Thiruvananthapuram, Kozhikode',
+    'Kerala project focused on plastic-to-fuel technologies in multiple municipalities.',
     
     // Financial Information
     'IFC/ WB, GCF',
@@ -317,7 +318,6 @@ export function generateProjectsTemplate() {
     'Women entrepreneurs in waste collection and sorting units',
     'Skills training for informal waste workers on plastic-to-fuel processing',
     'No major resettlement; land use through lease agreements',
-    'Kerala project focused on plastic-to-fuel technologies in multiple municipalities.',
     
     // Community Opposition & Actions
     'NA',
