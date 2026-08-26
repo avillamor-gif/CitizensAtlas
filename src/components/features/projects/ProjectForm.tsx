@@ -1271,11 +1271,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const regionValue = regionSelections.join(', ');
         const countryValue = countrySelections.join(', ');
 
-        if (!countryValue.trim()) {
-            alert('Country is required. Please click on the map to select a location.');
-            return;
-        }
-
         const cityValue = cityInput
             .split(',')
             .map((item) => item.trim())
@@ -1292,15 +1287,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             }))
             .filter((row) => row.ifi || row.financialInstrument || row.amount);
 
-        const hasIncompleteFundingRow = normalizedFundingRows.some(
-            (row) => !row.ifi || !row.financialInstrument || !row.amount || Number.isNaN(Number.parseFloat(row.amount))
-        );
-
-        if (hasIncompleteFundingRow) {
-            alert('Please complete IFI, Financial Instrument, and Amount for every funding source row.');
-            return;
-        }
-
         const ifiValue = normalizedFundingRows.map((row) => row.ifi).join(', ');
         const falseSolutionsValue = falseSolutions.filter(s => s).join(', ');
         
@@ -1311,16 +1297,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 .map((row) => `${row.ifi} | ${row.financialInstrument} | ${row.amount} M USD`)
                 .join('\n')
             : 'N/A';
-
-        if (!falseSolutionsValue.trim()) {
-            alert('False solution type is required. Please select at least one option.');
-            return;
-        }
-
-        if (!projectStatus.trim()) {
-            alert('Project Status is required. Please select a status.');
-            return;
-        }
 
         const latNum = parseFloat(latitude);
         const lngNum = parseFloat(longitude);
@@ -1426,8 +1402,8 @@ ${references}
             <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
                 <div className={isModal ? "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" : "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
                     <SectionTitle isFirst={true}>Project Information</SectionTitle>
-                    <FormField label="Project Name" required>
-                        <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} required />
+                    <FormField label="Project Name">
+                        <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} />
                     </FormField>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                         <FormField label="Project Number">
@@ -1481,7 +1457,7 @@ ${references}
                     </FormField>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                         <div className="w-full">
-                            <FormField label="Approval date" required>
+                            <FormField label="Approval date">
                                 <DatePicker
                                     value={formData.approvalDate}
                                     onChange={(date) => handleSelectChange('approvalDate', date)}
@@ -1590,7 +1566,7 @@ ${references}
                                 </Popover>
                             </div>
                         </FormField>
-                        <FormField label="Country" required>
+                        <FormField label="Country">
                             <div className="border border-gray-300 rounded-md p-2 bg-white">
                                 <div className="flex flex-wrap gap-2 mb-2">
                                     {formData.countrySelections.map((country) => (
