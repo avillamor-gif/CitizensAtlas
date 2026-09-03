@@ -232,14 +232,6 @@ const TeamManagement: React.FC = () => {
       setChangingRole(null);
     }
   };
-      await loadTeamMembers();
-    } catch (err: any) {
-      console.error('❌ Role change error:', err);
-      alert(`Failed to change role: ${err.message}`);
-    } finally {
-      setChangingRole(null);
-    }
-  };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
