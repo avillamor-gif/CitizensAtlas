@@ -16,7 +16,7 @@ async function deleteAllProjects() {
     const { data, error } = await supabase
       .from('projects')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      .gt('id', 0); // Delete all rows (id > 0)
 
     if (error) {
       console.error('Error deleting projects:', error);

@@ -80,3 +80,42 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+// PUT - Update user role
+export async function PUT(request: NextRequest) {
+  try {
+    const { userId, role } = await request.json();
+
+    if (!userId || !role) {
+      return NextResponse.json(
+        { error: 'User ID and role are required' },
+        { status: 400 }
+      );
+    }
+
+    // Update user metadata via admin API
+    const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      user_metadata: { role },
+    });
+
+    if (error) {
+      console.error('Error updating user role:', error);
+      return NextResponse.json(
+        { error: error.message || 'Failed to update user role' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'User role updated successfully',
+      user: data.user,
+    });
+  } catch (error: any) {
+    console.error('Server error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

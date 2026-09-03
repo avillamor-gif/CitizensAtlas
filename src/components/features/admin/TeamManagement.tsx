@@ -70,31 +70,18 @@ const TeamManagement: React.FC = () => {
 
       // Map confirmed users to TeamMember format
       console.log('🔄 Mapping confirmed users...');
-      const confirmedMembers = await Promise.all(
-        (data.confirmedUsers || []).map(async (user: any) => {
-          console.log('👤 Processing user:', user.email);
-          // Try to get profile data
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-
-          if (profileError) {
-            console.warn('⚠️ Profile fetch error for', user.email, ':', profileError);
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            full_name: (profile as any)?.full_name || user.user_metadata?.full_name || '',
-            role: (profile as any)?.role || user.user_metadata?.role || 'contributor',
-            avatar_url: (profile as any)?.avatar_url || '',
-            created_at: user.created_at,
-            last_sign_in_at: user.last_sign_in_at,
-          };
-        })
-      );
+      const confirmedMembers = (data.confirmedUsers || []).map((user: any) => {
+        console.log('👤 Processing user:', user.email);
+        return {
+          id: user.id,
+          email: user.email,
+          full_name: user.user_metadata?.full_name || '',
+          role: user.user_metadata?.role || 'contributor',
+          avatar_url: user.user_metadata?.avatar_url || '',
+          created_at: user.created_at,
+          last_sign_in_at: user.last_sign_in_at,
+        };
+      });
 
       console.log('✅ Team data loaded:', {
         confirmedMembers: confirmedMembers.length,
@@ -216,18 +203,35 @@ const TeamManagement: React.FC = () => {
     try {
       setChangingRole(userId);
 
-      // Update role in profiles table
-      const { error } = await supabase
-        .from('profiles')
-        // @ts-expect-error - Supabase typing issue with profiles table
-        .update({ role: newRole })
-        .eq('id', userId);
+      // Update role in user_metadata via admin API
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          userId,
+          role: newRole 
+        }),
+      });
 
-      if (error) throw error;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update role');
+      }
 
       alert(`Role updated successfully to ${newRole}`);
       
       // Refresh the list to show updated role
+      await loadTeamMembers();
+    } catch (err: any) {
+      console.error('❌ Error updating role:', err);
+      alert(`Failed to update role: ${err.message}`);
+    } finally {
+      setChangingRole(null);
+    }
+  };
       await loadTeamMembers();
     } catch (err: any) {
       console.error('❌ Role change error:', err);
