@@ -268,10 +268,19 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           });
 
           const falseSolutionCheckboxValues = getCheckedLabels(row, {
-            'Waste-to-Energy': ['False Solution - Waste-to-Energy (X/Yes)', 'False Solution - Waste-to-Energy'],
+            'Waste-to-Energy Incineration': ['False Solution - Waste-to-Energy Incineration (X/Yes)', 'False Solution - Waste-to-Energy Incineration'],
+            'Medical Incineration': ['False Solution - Medical Incineration (X/Yes)', 'False Solution - Medical Incineration'],
             'Plastic-to-Fuel Technologies': ['False Solution - Plastic-to-Fuel Technologies (X/Yes)', 'False Solution - Plastic-to-Fuel Technologies'],
+            'Plastic Recycling': ['False Solution - Plastic Recycling (X/Yes)', 'False Solution - Plastic Recycling'],
+            'Refuse-Derived Plastics': ['False Solution - Refuse-Derived Plastics (X/Yes)', 'False Solution - Refuse-Derived Plastics'],
+            'Plastic-to-Roads': ['False Solution - Plastic-to-Roads (X/Yes)', 'False Solution - Plastic-to-Roads'],
+            'Plastic Credit Schemes': ['False Solution - Plastic Credit Schemes (X/Yes)', 'False Solution - Plastic Credit Schemes'],
+            'Bioplastics': ['False Solution - Bioplastics (X/Yes)', 'False Solution - Bioplastics'],
+            'Plastic to Nuclear Energy': ['False Solution - Plastic to Nuclear Energy (X/Yes)', 'False Solution - Plastic to Nuclear Energy'],
             'Chemical Recycling': ['False Solution - Chemical Recycling (X/Yes)', 'False Solution - Chemical Recycling'],
+            'Carbon Capture on Landfill': ['False Solution - Carbon Capture on Landfill (X/Yes)', 'False Solution - Carbon Capture on Landfill'],
             'Refuse-derived fuel': ['False Solution - Refuse-derived fuel (X/Yes)', 'False Solution - Refuse-derived fuel'],
+            'Carbon Credits': ['False Solution - Carbon Credits (X/Yes)', 'False Solution - Carbon Credits'],
           });
 
           const corruptionType = [

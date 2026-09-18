@@ -1426,7 +1426,7 @@ ${references}
                     </div>
                     <FormField label="False solution type">
                         <div className="grid grid-cols-3 gap-3">
-                            {['Waste-to-Energy (WtE)', 'Plastic-to-Fuel Technologies', 'Chemical Recycling', 'Refuse-Derived Fuel (RDF)', 'Plastic & Carbon Credit Schemes', 'Bioplastics', 'Carbon Capture on Landfills'].map((solution) => (
+                            {['Waste-to-Energy Incineration', 'Medical Incineration', 'Plastic-to-Fuel Technologies', 'Plastic Recycling', 'Refuse-Derived Plastics', 'Plastic-to-Roads', 'Plastic Credit Schemes', 'Bioplastics', 'Plastic to Nuclear Energy', 'Chemical Recycling', 'Carbon Capture on Landfill', 'Refuse-derived fuel', 'Carbon Credits'].map((solution) => (
                                 <div key={solution} className="flex items-center space-x-2">
                                     <input
                                         type="checkbox"

@@ -56,13 +56,19 @@ export const publicationsData: Article[] = [
 ];
 
 export const solutionTypeColors: { readonly [key: string]: { readonly hex: string; readonly tailwind: string } } = {
-    'Waste-to-Energy (WtE)': { hex: '#ef4444', tailwind: 'bg-red-500' },
-    'Plastic-to-Fuel Technologies': { hex: '#f97316', tailwind: 'bg-orange-500' },
-    'Chemical Recycling': { hex: '#eab308', tailwind: 'bg-yellow-500' },
-    'Refuse-Derived Fuel (RDF)': { hex: '#a855f7', tailwind: 'bg-purple-500' },
-    'Plastic & Carbon Credit Schemes': { hex: '#22c55e', tailwind: 'bg-green-500' },
-    'Bioplastics': { hex: '#06b6d4', tailwind: 'bg-cyan-500' },
-    'Carbon Capture on Landfills': { hex: '#ec4899', tailwind: 'bg-pink-500' },
+    'Waste-to-Energy Incineration': { hex: '#ef4444', tailwind: 'bg-red-500' },
+    'Medical Incineration': { hex: '#f97316', tailwind: 'bg-orange-500' },
+    'Plastic-to-Fuel Technologies': { hex: '#fbbf24', tailwind: 'bg-amber-400' },
+    'Plastic Recycling': { hex: '#eab308', tailwind: 'bg-yellow-500' },
+    'Refuse-Derived Plastics': { hex: '#a855f7', tailwind: 'bg-purple-500' },
+    'Plastic-to-Roads': { hex: '#06b6d4', tailwind: 'bg-cyan-500' },
+    'Plastic Credit Schemes': { hex: '#22c55e', tailwind: 'bg-green-500' },
+    'Bioplastics': { hex: '#10b981', tailwind: 'bg-emerald-500' },
+    'Plastic to Nuclear Energy': { hex: '#8b5cf6', tailwind: 'bg-violet-500' },
+    'Chemical Recycling': { hex: '#ec4899', tailwind: 'bg-pink-500' },
+    'Carbon Capture on Landfill': { hex: '#f43f5e', tailwind: 'bg-rose-500' },
+    'Refuse-derived fuel': { hex: '#6366f1', tailwind: 'bg-indigo-500' },
+    'Carbon Credits': { hex: '#14b8a6', tailwind: 'bg-teal-500' },
     'default': { hex: '#3b82f6', tailwind: 'bg-blue-500' }
 };
 
@@ -73,26 +79,44 @@ export const normalizeSolutionType = (rawType: string): string => {
     const lower = rawType.toLowerCase();
     
     // Map raw types to standardized solution types
-    if (lower.includes('wte') || lower.includes('waste-to-energy') || lower.includes('incineration')) {
-        return 'Waste-to-Energy (WtE)';
+    if (lower.includes('waste-to-energy') || lower.includes('wte') || (lower.includes('incineration') && lower.includes('waste'))) {
+        return 'Waste-to-Energy Incineration';
+    }
+    if (lower.includes('medical') && lower.includes('incineration')) {
+        return 'Medical Incineration';
     }
     if (lower.includes('plastic') && lower.includes('fuel')) {
         return 'Plastic-to-Fuel Technologies';
     }
-    if (lower.includes('chemical recycl')) {
-        return 'Chemical Recycling';
+    if (lower.includes('plastic') && lower.includes('recycl')) {
+        return 'Plastic Recycling';
     }
-    if (lower.includes('rdf') || lower.includes('refuse-derived')) {
-        return 'Refuse-Derived Fuel (RDF)';
+    if (lower.includes('refuse-derived') && lower.includes('plastic')) {
+        return 'Refuse-Derived Plastics';
     }
-    if ((lower.includes('plastic') && lower.includes('credit')) || lower.includes('carbon credit') || lower.includes('carbon scheme')) {
-        return 'Plastic & Carbon Credit Schemes';
+    if (lower.includes('plastic') && lower.includes('road')) {
+        return 'Plastic-to-Roads';
+    }
+    if ((lower.includes('plastic') && lower.includes('credit')) || lower.includes('plastic credit')) {
+        return 'Plastic Credit Schemes';
     }
     if (lower.includes('bioplastic')) {
         return 'Bioplastics';
     }
-    if (lower.includes('carbon capture') || lower.includes('landfill')) {
-        return 'Carbon Capture on Landfills';
+    if (lower.includes('plastic') && lower.includes('nuclear')) {
+        return 'Plastic to Nuclear Energy';
+    }
+    if (lower.includes('chemical recycl')) {
+        return 'Chemical Recycling';
+    }
+    if (lower.includes('carbon capture') && lower.includes('landfill')) {
+        return 'Carbon Capture on Landfill';
+    }
+    if (lower.includes('refuse-derived') && lower.includes('fuel')) {
+        return 'Refuse-derived fuel';
+    }
+    if (lower.includes('carbon credit') && !lower.includes('plastic')) {
+        return 'Carbon Credits';
     }
     
     return 'default';
