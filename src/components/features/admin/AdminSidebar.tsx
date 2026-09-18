@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useState } from "react"
 import {
   Newspaper,
   FileText,
@@ -51,6 +52,7 @@ interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AdminSidebar({ activePage, setActivePage, currentUser, ...props }: AdminSidebarProps) {
+  const [teamManagementOpen, setTeamManagementOpen] = useState(false);
   const userRole = currentUser?.role;
   
   // If no user is provided, render a minimal sidebar
@@ -333,7 +335,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
             }))
           }))} 
         />
-        {adminItems.length > 0 && (
+        {(adminItems.length > 0 || teamManagementItems.length > 0) && (
           <SidebarGroup>
             <SidebarGroupLabel>Administration</SidebarGroupLabel>
             <SidebarMenu>
@@ -355,7 +357,8 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
                 <Collapsible
                   key={item.title}
                   asChild
-                  open={Boolean(item.isActive)}
+                  open={teamManagementOpen}
+                  onOpenChange={setTeamManagementOpen}
                   className="group/collapsible"
                 >
                   <SidebarMenuItem>
