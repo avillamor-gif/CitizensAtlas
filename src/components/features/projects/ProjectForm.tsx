@@ -1676,7 +1676,7 @@ ${references}
                                 <Popover open={isCityOpen} onOpenChange={setIsCityOpen}>
                                     <PopoverTrigger asChild>
                                         <button type="button" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-left flex justify-between items-center">
-                                            <span className="text-gray-500">Add city...</span>
+                                            <span className="text-gray-500">{formData.countrySelections.length === 0 ? 'Select a country first...' : 'Select or add cities...'}</span>
                                             <ChevronDown className="h-4 w-4" />
                                         </button>
                                     </PopoverTrigger>
@@ -1692,28 +1692,65 @@ ${references}
                                             />
                                         </div>
                                         <div className="max-h-64 overflow-y-auto">
-                                            {citySearch.length > 0 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        const currentCities = formData.cityInput.split(',').map(c => c.trim()).filter(Boolean);
-                                                        if (!currentCities.includes(citySearch)) {
-                                                            const newCities = [...currentCities, citySearch].join(', ');
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                cityInput: newCities
-                                                            }));
-                                                        }
-                                                        setCitySearch('');
-                                                        setIsCityOpen(false);
-                                                    }}
-                                                    className="w-full text-left px-4 py-2 hover:bg-purple-50 text-sm bg-purple-50 font-semibold"
-                                                >
-                                                    Add "{citySearch}"
-                                                </button>
-                                            )}
-                                            {citySearch.length === 0 && (
-                                                <div className="px-4 py-3 text-center text-sm text-gray-500">Type a city name to add</div>
+                                            {formData.countrySelections.length === 0 ? (
+                                                <div className="px-4 py-3 text-center text-sm text-gray-500">Please select a country first</div>
+                                            ) : (
+                                                <>
+                                                    {getCityOptionsForCountries(formData.countrySelections)
+                                                        .filter((option) =>
+                                                            option.label.toLowerCase().includes(citySearch.toLowerCase())
+                                                        )
+                                                        .map((option) => (
+                                                            <button
+                                                                key={option.value}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const currentCities = formData.cityInput.split(',').map(c => c.trim()).filter(Boolean);
+                                                                    if (!currentCities.includes(option.label)) {
+                                                                        const newCities = [...currentCities, option.label].join(', ');
+                                                                        setFormData(prev => ({
+                                                                            ...prev,
+                                                                            cityInput: newCities
+                                                                        }));
+                                                                    }
+                                                                    setCitySearch('');
+                                                                    setIsCityOpen(false);
+                                                                }}
+                                                                className="w-full text-left px-4 py-2 hover:bg-purple-50 text-sm border-b last:border-b-0"
+                                                            >
+                                                                <div className="font-medium">{option.label}</div>
+                                                                <div className="text-xs text-gray-500">{option.description}</div>
+                                                            </button>
+                                                        ))}
+                                                    {citySearch.length > 0 && getCityOptionsForCountries(formData.countrySelections).filter((option) =>
+                                                        option.label.toLowerCase().includes(citySearch.toLowerCase())
+                                                    ).length === 0 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const currentCities = formData.cityInput.split(',').map(c => c.trim()).filter(Boolean);
+                                                                if (!currentCities.includes(citySearch)) {
+                                                                    const newCities = [...currentCities, citySearch].join(', ');
+                                                                    setFormData(prev => ({
+                                                                        ...prev,
+                                                                        cityInput: newCities
+                                                                    }));
+                                                                }
+                                                                setCitySearch('');
+                                                                setIsCityOpen(false);
+                                                            }}
+                                                            className="w-full text-left px-4 py-2 hover:bg-purple-50 text-sm bg-purple-50 font-semibold"
+                                                        >
+                                                            Add "{citySearch}" (custom)
+                                                        </button>
+                                                    )}
+                                                    {citySearch.length === 0 && getCityOptionsForCountries(formData.countrySelections).length === 0 && (
+                                                        <div className="px-4 py-3 text-center text-sm text-gray-500">No cities available for selected countries</div>
+                                                    )}
+                                                    {citySearch.length === 0 && getCityOptionsForCountries(formData.countrySelections).length > 0 && (
+                                                        <div className="px-4 py-3 text-center text-xs text-gray-500">Type to filter cities</div>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                     </PopoverContent>
