@@ -34,7 +34,7 @@ export const allCountries = [
   'Central African Republic',
   'Chad',
   'Chile',
-  'China',
+  'Mainland China',
   'Colombia',
   'Comoros',
   'Congo',

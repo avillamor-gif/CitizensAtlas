@@ -35,7 +35,7 @@ export const countryCoordinates: Record<string, { lat: number; lng: number; name
   'Central African Republic': { lat: 4.3573, lng: 18.5790, name: 'Bangui' },
   'Chad': { lat: 12.1348, lng: 15.0557, name: "N'Djamena" },
   'Chile': { lat: -33.4489, lng: -70.6693, name: 'Santiago' },
-  'China': { lat: 39.9042, lng: 116.4074, name: 'Beijing' },
+  'Mainland China': { lat: 39.9042, lng: 116.4074, name: 'Beijing' },
   'Colombia': { lat: 4.7110, lng: -74.0721, name: 'Bogota' },
   'Comoros': { lat: -11.8789, lng: 43.3732, name: 'Moroni' },
   'Congo': { lat: -4.2630, lng: 15.2429, name: 'Brazzaville' },
