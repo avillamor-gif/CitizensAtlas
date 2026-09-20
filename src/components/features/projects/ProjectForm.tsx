@@ -732,6 +732,8 @@ const calculateFundingTotal = (rows: FundingRow[]) => {
 const emptyFormState = {
     regionSelections: [] as string[],
     countrySelections: [] as string[],
+    primaryCountry: '' as string,
+    secondaryCountries: [] as string[],
     citySelections: [] as string[],
     cityInput: '',
     remarks: '',
@@ -887,9 +889,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             ).map((item) => item.value);
             
             
+            const primaryCountry = countrySelections.length > 0 ? countrySelections[0] : '';
+            const secondaryCountries = countrySelections.length > 1 ? countrySelections.slice(1) : [];
+            
             setFormData({
                 regionSelections: mergedRegions,
                 countrySelections,
+                primaryCountry,
+                secondaryCountries,
                 citySelections,
                 cityInput: parseCommaSeparatedList(detailsMap.get('City')).join(', '),
                 latitude: sourceProject.latitude?.toString() || '',
@@ -944,6 +951,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 ...emptyFormState,
                 regionSelections: region ? [region] : [],
                 countrySelections: country ? [country] : [],
+                primaryCountry: country || '',
+                secondaryCountries: [],
                 citySelections: city ? [`${country || 'Unknown'}::${city}`] : [],
                 cityInput: city,
                 latitude: prefilledLocation.latitude?.toString() || '',
@@ -1078,10 +1087,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         );
         const allowedCityValues = getCityOptionsForCountries(normalizedCountries).map((option) => option.value);
 
+        // Auto-assign primary and secondary countries
+        const primaryCountry = normalizedCountries.length > 0 ? normalizedCountries[0] : '';
+        const secondaryCountries = normalizedCountries.length > 1 ? normalizedCountries.slice(1) : [];
+
         setFormData((prev) => ({
             ...prev,
             regionSelections: Array.from(new Set([...prev.regionSelections, ...nextRegions])),
             countrySelections: normalizedCountries,
+            primaryCountry: primaryCountry,
+            secondaryCountries: secondaryCountries,
             citySelections: prev.citySelections.filter((city) => allowedCityValues.includes(city)),
         }));
     };
@@ -1261,7 +1276,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         e.preventDefault();
         const {
             projectName, approvalDate, publishDate, falseSolutions,
-            regionSelections, countrySelections, cityInput, projectNumber, fundingRows,
+            regionSelections, countrySelections, primaryCountry, secondaryCountries, cityInput, projectNumber, fundingRows,
             owner, privateSectorBorrowers, economicCooperationOrPrograms, otherImplementors, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             keyDocuments, groupsInOpposition, typesOfActions, linksToActions,
@@ -1270,7 +1285,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         } = formData;
 
         const regionValue = regionSelections.join(', ');
-        const countryValue = countrySelections.join(', ');
+        // Format country value with primary and secondary designation
+        const countryValue = formData.primaryCountry
+            ? formData.secondaryCountries.length > 0
+                ? `${formData.primaryCountry} (Primary), ${formData.secondaryCountries.join(', ')} (Secondary)`
+                : formData.primaryCountry
+            : countrySelections.join(', ');
 
         const cityValue = cityInput
             .split(',')
@@ -1570,26 +1590,41 @@ ${references}
                         <FormField label="Country">
                             <div className="border border-gray-300 rounded-md p-2 bg-white">
                                 <div className="flex flex-wrap gap-2 mb-2">
-                                    {formData.countrySelections.map((country) => (
-                                        <div
-                                            key={country}
-                                            className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
-                                        >
-                                            <span>{country}</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        countrySelections: prev.countrySelections.filter(c => c !== country)
-                                                    }));
-                                                }}
-                                                className="hover:text-blue-900 font-bold"
+                                    {formData.countrySelections.map((country, index) => {
+                                        const isPrimary = country === formData.primaryCountry;
+                                        return (
+                                            <div
+                                                key={country}
+                                                className={`px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium ${
+                                                    isPrimary 
+                                                        ? 'bg-green-100 text-green-800 border border-green-300' 
+                                                        : 'bg-blue-100 text-blue-800 border border-blue-300'
+                                                }`}
                                             >
-                                                ×
-                                            </button>
-                                        </div>
-                                    ))}
+                                                <span>
+                                                    {country}
+                                                    {isPrimary ? ' (Primary)' : ' (Secondary)'}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const updatedCountries = formData.countrySelections.filter(c => c !== country);
+                                                        const newPrimary = updatedCountries.length > 0 ? updatedCountries[0] : '';
+                                                        const newSecondary = updatedCountries.length > 1 ? updatedCountries.slice(1) : [];
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            countrySelections: updatedCountries,
+                                                            primaryCountry: newPrimary,
+                                                            secondaryCountries: newSecondary
+                                                        }));
+                                                    }}
+                                                    className="hover:opacity-70 font-bold"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                                 <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
                                     <PopoverTrigger asChild>
@@ -1620,14 +1655,7 @@ ${references}
                                                         type="button"
                                                         key={country}
                                                         onClick={() => {
-                                                            const region = getRegionFromCountry(country);
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                countrySelections: [...prev.countrySelections, country],
-                                                                regionSelections: region && !prev.regionSelections.includes(region) 
-                                                                    ? [...prev.regionSelections, region] 
-                                                                    : prev.regionSelections
-                                                            }));
+                                                            handleCountrySelectionsChange([...formData.countrySelections, country]);
                                                             setCountrySearch('');
                                                             setIsCountryOpen(false);
                                                         }}
