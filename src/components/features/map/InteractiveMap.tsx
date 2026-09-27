@@ -452,7 +452,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                         height: `${secondarySize}px`,
                                         backgroundColor: project.bgColor,
                                         opacity: 0.5,
-                                        border: '2px dashed rgba(255,255,255,0.8)',
+                                        border: '1px solid rgba(255,255,255,0.8)',
                                     }}
                                     className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition-all hover:scale-110"
                                     title={`Secondary: ${secondaryCountry}`}
