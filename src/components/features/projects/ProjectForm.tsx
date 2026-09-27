@@ -1341,12 +1341,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         } = formData;
 
         const regionValue = regionSelections.join(', ');
-        // Format country value with primary and secondary designation
-        const countryValue = formData.primaryCountry
-            ? formData.secondaryCountries.length > 0
-                ? `${formData.primaryCountry} (Primary), ${formData.secondaryCountries.join(', ')} (Secondary)`
-                : formData.primaryCountry
-            : countrySelections.join(', ');
+        // Store only primary country in country field; secondary countries go in secondaryCountries field
+        const countryValue = formData.primaryCountry || countrySelections.join(', ');
 
         const cityValue = cityInput
             .split(',')
@@ -1385,7 +1381,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const details = `
     **Region:** ${regionValue}
-    **Country:** ${countryValue}
+    **Country:** ${formData.primaryCountry}
     **City:** ${cityValue}
 **Project Number:** ${projectNumber}
     **False Solution Type:** ${falseSolutionsValue}
