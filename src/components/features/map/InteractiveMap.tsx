@@ -405,11 +405,20 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
                 {/* Secondary country markers */}
                 {offsetMarkers.map((project: any) => {
+                    // Debug: log secondary countries data
+                    if (project.id) {
+                        console.log(`Project ${project.id} (${project.title}): secondaryCountries =`, project.secondaryCountries);
+                    }
+                    
                     if (!project.secondaryCountries) return null;
                     
+                    // Handle both "Philippines" and "Philippines (secondary)" formats
                     const secondaryCountryList = project.secondaryCountries
                         .split(',')
-                        .map((c: string) => c.trim().toLowerCase())
+                        .map((c: string) => {
+                            // Remove "(secondary)" label if present
+                            return c.trim().toLowerCase().replace(/\s*\(secondary\)\s*/gi, '').trim();
+                        })
                         .filter((c: string) => c);
                     
                     return secondaryCountryList.map((secondaryCountry: string) => {
@@ -419,6 +428,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         );
                         
                         if (!countryKey || !countryCoordinates[countryKey]) {
+                            console.warn(`Secondary country "${secondaryCountry}" not found in countryCoordinates`);
                             return null;
                         }
                         

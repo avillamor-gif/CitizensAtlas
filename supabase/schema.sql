@@ -28,6 +28,7 @@ CREATE TABLE projects (
   date TEXT,
   "publishDate" TEXT,
   country TEXT NOT NULL,
+  "secondaryCountries" TEXT,
   "corruptionType" TEXT NOT NULL,
   details TEXT NOT NULL,
   latitude DOUBLE PRECISION,
