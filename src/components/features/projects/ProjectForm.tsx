@@ -1141,26 +1141,33 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             )
         );
 
-        // Combine existing countries with inferred ones and get primary
-        const combinedCountries = Array.from(new Set([...inferredCountries]));
-        const primaryCountry = combinedCountries.length > 0 ? combinedCountries[0] : '';
+        // Combine existing countries with inferred ones
+        const allCountries = Array.from(new Set([...inferredCountries]));
         
-        // Auto-populate latitude and longitude from primary country coordinates
-        let newLatitude = '';
-        let newLongitude = '';
-        if (primaryCountry && countryCoordinates[primaryCountry]) {
-            newLatitude = countryCoordinates[primaryCountry].lat.toString();
-            newLongitude = countryCoordinates[primaryCountry].lng.toString();
-        }
+        // Determine primary country: use existing if available, otherwise use first inferred
+        setFormData((prev) => {
+            const updatedCountries = Array.from(new Set([...prev.countrySelections, ...inferredCountries]));
+            const primaryCountry = updatedCountries.length > 0 ? updatedCountries[0] : '';
+            
+            // Auto-populate latitude and longitude from primary country coordinates
+            let newLatitude = '';
+            let newLongitude = '';
+            if (primaryCountry && countryCoordinates[primaryCountry]) {
+                newLatitude = countryCoordinates[primaryCountry].lat.toString();
+                newLongitude = countryCoordinates[primaryCountry].lng.toString();
+            }
 
-        setFormData((prev) => ({
-            ...prev,
-            regionSelections: Array.from(new Set([...prev.regionSelections, ...inferredRegions])),
-            countrySelections: Array.from(new Set([...prev.countrySelections, ...inferredCountries])),
-            citySelections: normalizedCities,
-            latitude: newLatitude,
-            longitude: newLongitude,
-        }));
+            return {
+                ...prev,
+                regionSelections: Array.from(new Set([...prev.regionSelections, ...inferredRegions])),
+                countrySelections: updatedCountries,
+                primaryCountry,
+                secondaryCountries: updatedCountries.length > 1 ? updatedCountries.slice(1) : [],
+                citySelections: normalizedCities,
+                latitude: newLatitude,
+                longitude: newLongitude,
+            };
+        });
     };
 
     const applyResolvedLocation = (params: {
