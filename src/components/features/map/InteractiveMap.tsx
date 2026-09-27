@@ -8,6 +8,7 @@ import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
 import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
 import { countryCoordinates } from '@/lib/country-coordinates';
+import { cityCoordinates } from '@/lib/city-coordinates';
 
 const legendData = Object.entries(solutionTypeColors)
     .filter(([key]) => key !== 'default')
@@ -412,32 +413,53 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     
                     if (!project.secondaryCountries) return null;
                     
-                    // Handle both "Philippines" and "Philippines (secondary)" formats
-                    const secondaryCountryList = project.secondaryCountries
+                    // Parse secondary countries - can be "country" or "country::city" format
+                    const secondaryEntries = project.secondaryCountries
                         .split(',')
-                        .map((c: string) => {
-                            // Remove "(secondary)" label if present
-                            return c.trim().toLowerCase().replace(/\s*\(secondary\)\s*/gi, '').trim();
-                        })
-                        .filter((c: string) => c);
+                        .map((entry: string) => entry.trim())
+                        .filter((entry: string) => entry);
                     
-                    return secondaryCountryList.map((secondaryCountry: string) => {
-                        // Find matching country in countryCoordinates (case-insensitive)
-                        const countryKey = Object.keys(countryCoordinates).find(
-                            key => key.toLowerCase() === secondaryCountry
-                        );
+                    return secondaryEntries.map((entry: string) => {
+                        // Split by :: to get city and country
+                        const [cityOrCountry, countryName] = entry.includes('::') 
+                            ? entry.split('::')
+                            : [null, entry];
                         
-                        if (!countryKey || !countryCoordinates[countryKey]) {
-                            console.warn(`Secondary country "${secondaryCountry}" not found in countryCoordinates`);
+                        let coords = null;
+                        let displayName = '';
+                        
+                        // Try to get city coordinates first if city is specified
+                        if (cityOrCountry && countryName) {
+                            const cityKey = `${cityOrCountry}::${countryName}`;
+                            if (cityCoordinates[cityKey]) {
+                                coords = cityCoordinates[cityKey];
+                                displayName = `${cityOrCountry}, ${countryName}`;
+                            }
+                        }
+                        
+                        // Fall back to country coordinates if no city found
+                        if (!coords) {
+                            const countryKey = Object.keys(countryCoordinates).find(
+                                key => key.toLowerCase() === (countryName || entry).toLowerCase()
+                            );
+                            
+                            if (countryKey && countryCoordinates[countryKey]) {
+                                coords = countryCoordinates[countryKey];
+                                displayName = countryKey;
+                            }
+                        }
+                        
+                        if (!coords) {
+                            console.warn(`Secondary location "${entry}" not found in city or country coordinates`);
                             return null;
                         }
                         
-                        const coords = countryCoordinates[countryKey];
                         const secondarySize = project.size * 0.6; // 60% of primary marker size
+                        const markerKey = `secondary-marker-${project.id}-${entry}`.replace(/[^a-zA-Z0-9-_]/g, '_');
                         
                         return (
                             <Marker
-                                key={`secondary-marker-${project.id}-${secondaryCountry}`}
+                                key={markerKey}
                                 longitude={coords.lng}
                                 latitude={coords.lat}
                                 anchor="center"
@@ -455,7 +477,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                         border: '1px solid rgba(255,255,255,0.8)',
                                     }}
                                     className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition-all hover:scale-110"
-                                    title={`Secondary: ${secondaryCountry}`}
+                                    title={`Secondary: ${displayName}`}
                                 >
                                 </div>
                             </Marker>

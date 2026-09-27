@@ -1426,7 +1426,21 @@ ${references}
         const projectData = {
             title: projectName,
             country: countryValue,
-            secondaryCountries: formData.secondaryCountries.length > 0 ? formData.secondaryCountries.join(',') : '',
+            secondaryCountries: (() => {
+                if (formData.secondaryCountries.length === 0) return '';
+                
+                // For each secondary country, find its cities from citySelections
+                const secondaryWithCities = formData.secondaryCountries.map(country => {
+                    const citiesForCountry = formData.citySelections
+                        .filter(cityValue => cityValue.startsWith(`${country}::`))
+                        .map(cityValue => cityValue.split('::')[1])
+                        .join('::');
+                    
+                    return citiesForCountry ? `${country}::${citiesForCountry}` : country;
+                });
+                
+                return secondaryWithCities.join(',');
+            })(),
             date: approvalDate,
             publishDate: publishDate,
             corruptionType: falseSolutionsValue,
