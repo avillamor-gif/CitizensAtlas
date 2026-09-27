@@ -901,7 +901,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             if ((sourceProject as any).secondaryCountries) {
                 const dbSecondary = (sourceProject as any).secondaryCountries
                     .split(',')
-                    .map((c: string) => c.trim())
+                    .map((c: string) => {
+                        const trimmed = c.trim();
+                        // Extract country name from "country::city" format if present
+                        const parts = trimmed.split('::');
+                        const country = parts[0].trim();
+                        // Normalize the country name (strips legacy suffixes like "(primary)", "(secondary)")
+                        const normalized = normalizeCountryName(country);
+                        // Return "country::city" format if cities exist, otherwise just country
+                        return parts.length > 1 ? `${normalized}::${parts.slice(1).join('::')}` : normalized;
+                    })
                     .filter((c: string) => c);
                 if (dbSecondary.length > 0) {
                     secondaryCountries = dbSecondary;
@@ -1347,7 +1356,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const regionValue = regionSelections.join(', ');
         // Store only primary country in country field; secondary countries go in secondaryCountries field
-        const countryValue = formData.primaryCountry || countrySelections.join(', ');
+        // Apply normalizeCountryName to ensure no legacy suffixes like "(primary)" or "(secondary)"
+        const countryValue = normalizeCountryName(formData.primaryCountry || countrySelections.join(', '));
 
         const cityValue = cityInput
             .split(',')
