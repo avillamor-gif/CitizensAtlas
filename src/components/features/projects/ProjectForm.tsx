@@ -489,7 +489,12 @@ const canonicalCountryByLower = (() => {
 })();
 
 const normalizeCountryName = (country: string) => {
-    const trimmed = country.trim();
+    let trimmed = country.trim();
+    if (!trimmed) {
+        return '';
+    }
+    // Strip legacy "(primary)" and "(secondary)" suffixes
+    trimmed = trimmed.replace(/\s*\((?:primary|secondary)\)\s*/gi, '').trim();
     if (!trimmed) {
         return '';
     }
