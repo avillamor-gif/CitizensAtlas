@@ -413,6 +413,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     
                     if (!project.secondaryCountries) return null;
                     
+                    // Parse cities from details field for fallback
+                    const citiesFromDetails = parseDetail(project.details, 'City')
+                        .split(',')
+                        .map((c: string) => c.trim())
+                        .filter((c: string) => c);
+                    
                     // Parse secondary countries - can be "country" or "country::city" format
                     // Also handle legacy format with "(secondary)" suffix
                     const secondaryEntries = project.secondaryCountries
@@ -431,13 +437,26 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         
                         let coords = null;
                         let displayName = '';
+                        let selectedCity = cityOrCountry;
+                        
+                        // If no city in the entry (legacy format) but we have cities from details, try them
+                        if (!cityOrCountry && citiesFromDetails.length > 0) {
+                            // Try each city from details to find one that matches this country
+                            for (const city of citiesFromDetails) {
+                                const cityKey = `${city}::${countryName}`;
+                                if (cityCoordinates[cityKey]) {
+                                    selectedCity = city;
+                                    break;
+                                }
+                            }
+                        }
                         
                         // Try to get city coordinates first if city is specified
-                        if (cityOrCountry && countryName) {
-                            const cityKey = `${cityOrCountry}::${countryName}`;
+                        if (selectedCity && countryName) {
+                            const cityKey = `${selectedCity}::${countryName}`;
                             if (cityCoordinates[cityKey]) {
                                 coords = cityCoordinates[cityKey];
-                                displayName = `${cityOrCountry}, ${countryName}`;
+                                displayName = `${selectedCity}, ${countryName}`;
                             }
                         }
                         
