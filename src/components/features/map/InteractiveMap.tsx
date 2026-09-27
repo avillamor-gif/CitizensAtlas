@@ -414,9 +414,13 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     if (!project.secondaryCountries) return null;
                     
                     // Parse secondary countries - can be "country" or "country::city" format
+                    // Also handle legacy format with "(secondary)" suffix
                     const secondaryEntries = project.secondaryCountries
                         .split(',')
-                        .map((entry: string) => entry.trim())
+                        .map((entry: string) => {
+                            // Remove "(secondary)" suffix if present (legacy format)
+                            return entry.trim().replace(/\s*\(secondary\)\s*/gi, '').trim();
+                        })
                         .filter((entry: string) => entry);
                     
                     return secondaryEntries.map((entry: string) => {
