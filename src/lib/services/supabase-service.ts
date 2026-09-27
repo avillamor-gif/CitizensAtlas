@@ -71,7 +71,7 @@ export async function getProjects() {
   
   try {
     // Include full edit-critical fields so ProjectForm has complete state in edit mode.
-    const fields = 'id,title,country,date,corruptionType,details,status,submittedBy,submittedAt,publishDate,latitude,longitude'
+    const fields = 'id,title,country,secondaryCountries,date,corruptionType,details,status,submittedBy,submittedAt,publishDate,latitude,longitude'
     const response = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=${fields}&order=id.desc`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -98,7 +98,7 @@ export async function getPublishedProjects() {
     // OPTIMIZED: Server-side filtering + selective fields for faster queries
     const { data, error } = await supabase
       .from('projects')
-      .select('id,title,country,status,submittedBy,submittedAt,publishDate,latitude,longitude')
+      .select('id,title,country,secondaryCountries,status,submittedBy,submittedAt,publishDate,latitude,longitude')
       .or('status.eq.published,status.is.null')
       .order('id', { ascending: false })
     

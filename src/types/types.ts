@@ -63,6 +63,7 @@ export interface Project {
     details: string;
     latitude: number;
     longitude: number;
+    secondaryCountries?: string;
     status?: 'draft' | 'published';
     submittedBy?: string;
     submittedAt?: string;

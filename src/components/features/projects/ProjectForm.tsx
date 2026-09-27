@@ -891,7 +891,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             
             
             const primaryCountry = countrySelections.length > 0 ? countrySelections[0] : '';
-            const secondaryCountries = countrySelections.length > 1 ? countrySelections.slice(1) : [];
+            // Use secondaryCountries from database if available, otherwise derive from countrySelections
+            let secondaryCountries = countrySelections.length > 1 ? countrySelections.slice(1) : [];
+            if ((sourceProject as any).secondaryCountries) {
+                const dbSecondary = (sourceProject as any).secondaryCountries
+                    .split(',')
+                    .map((c: string) => c.trim())
+                    .filter((c: string) => c);
+                if (dbSecondary.length > 0) {
+                    secondaryCountries = dbSecondary;
+                }
+            }
             
             // Determine latitude/longitude to use
             let latitude = sourceProject.latitude?.toString() || '';
@@ -1420,6 +1430,7 @@ ${references}
         const projectData = {
             title: projectName,
             country: countryValue,
+            secondaryCountries: formData.secondaryCountries.length > 0 ? formData.secondaryCountries.join(',') : '',
             date: approvalDate,
             publishDate: publishDate,
             corruptionType: falseSolutionsValue,

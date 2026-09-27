@@ -7,6 +7,7 @@ import Supercluster from 'supercluster';
 import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
 import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
+import { countryCoordinates } from '@/lib/country-coordinates';
 
 const legendData = Object.entries(solutionTypeColors)
     .filter(([key]) => key !== 'default')
@@ -401,6 +402,56 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         </div>
                     </Marker>
                 ))}
+
+                {/* Secondary country markers */}
+                {offsetMarkers.map((project: any) => {
+                    if (!project.secondaryCountries) return null;
+                    
+                    const secondaryCountryList = project.secondaryCountries
+                        .split(',')
+                        .map((c: string) => c.trim().toLowerCase())
+                        .filter((c: string) => c);
+                    
+                    return secondaryCountryList.map((secondaryCountry: string) => {
+                        // Find matching country in countryCoordinates (case-insensitive)
+                        const countryKey = Object.keys(countryCoordinates).find(
+                            key => key.toLowerCase() === secondaryCountry
+                        );
+                        
+                        if (!countryKey || !countryCoordinates[countryKey]) {
+                            return null;
+                        }
+                        
+                        const coords = countryCoordinates[countryKey];
+                        const secondarySize = project.size * 0.6; // 60% of primary marker size
+                        
+                        return (
+                            <Marker
+                                key={`secondary-marker-${project.id}-${secondaryCountry}`}
+                                longitude={coords.lng}
+                                latitude={coords.lat}
+                                anchor="center"
+                                onClick={(e) => {
+                                    e.originalEvent.stopPropagation();
+                                    onMarkerClick(project);
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        width: `${secondarySize}px`,
+                                        height: `${secondarySize}px`,
+                                        backgroundColor: project.bgColor,
+                                        opacity: 0.5,
+                                        border: '2px dashed rgba(255,255,255,0.8)',
+                                    }}
+                                    className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition-all hover:scale-110"
+                                    title={`Secondary: ${secondaryCountry}`}
+                                >
+                                </div>
+                            </Marker>
+                        );
+                    });
+                })}
 
                 {(pickedLocation || selectedLocation) && (
                     <Marker
