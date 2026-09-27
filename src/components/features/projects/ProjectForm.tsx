@@ -12,6 +12,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { cn } from '@/lib/utils';
 import * as DataService from '@/lib/services/data-service';
 import { allCountries } from '@/lib/countries';
+import { countryCoordinates } from '@/lib/country-coordinates';
 
 interface ProjectFormProps {
     onClose: () => void;
@@ -892,6 +893,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             const primaryCountry = countrySelections.length > 0 ? countrySelections[0] : '';
             const secondaryCountries = countrySelections.length > 1 ? countrySelections.slice(1) : [];
             
+            // Determine latitude/longitude to use
+            let latitude = sourceProject.latitude?.toString() || '';
+            let longitude = sourceProject.longitude?.toString() || '';
+            
+            // If coordinates are missing or invalid (0,0), use primary country coordinates
+            const lat = parseFloat(latitude);
+            const lng = parseFloat(longitude);
+            if (!latitude || !longitude || (lat === 0 && lng === 0)) {
+                if (primaryCountry && countryCoordinates[primaryCountry]) {
+                    latitude = countryCoordinates[primaryCountry].lat.toString();
+                    longitude = countryCoordinates[primaryCountry].lng.toString();
+                }
+            }
+            
             setFormData({
                 regionSelections: mergedRegions,
                 countrySelections,
@@ -899,8 +914,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 secondaryCountries,
                 citySelections,
                 cityInput: parseCommaSeparatedList(detailsMap.get('City')).join(', '),
-                latitude: sourceProject.latitude?.toString() || '',
-                longitude: sourceProject.longitude?.toString() || '',
+                latitude,
+                longitude,
                 projectName: sourceProject.title || '',
                 projectNumber: detailsMap.get('Project Number') || '',
                 falseSolutions: savedFalseSolutions
@@ -1091,6 +1106,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const primaryCountry = normalizedCountries.length > 0 ? normalizedCountries[0] : '';
         const secondaryCountries = normalizedCountries.length > 1 ? normalizedCountries.slice(1) : [];
 
+        // Auto-populate latitude and longitude from primary country coordinates
+        let newLatitude = '';
+        let newLongitude = '';
+        if (primaryCountry && countryCoordinates[primaryCountry]) {
+            newLatitude = countryCoordinates[primaryCountry].lat.toString();
+            newLongitude = countryCoordinates[primaryCountry].lng.toString();
+        }
+
         setFormData((prev) => ({
             ...prev,
             regionSelections: Array.from(new Set([...prev.regionSelections, ...nextRegions])),
@@ -1098,6 +1121,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             primaryCountry: primaryCountry,
             secondaryCountries: secondaryCountries,
             citySelections: prev.citySelections.filter((city) => allowedCityValues.includes(city)),
+            latitude: newLatitude,
+            longitude: newLongitude,
         }));
     };
 
@@ -1116,11 +1141,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             )
         );
 
+        // Combine existing countries with inferred ones and get primary
+        const combinedCountries = Array.from(new Set([...inferredCountries]));
+        const primaryCountry = combinedCountries.length > 0 ? combinedCountries[0] : '';
+        
+        // Auto-populate latitude and longitude from primary country coordinates
+        let newLatitude = '';
+        let newLongitude = '';
+        if (primaryCountry && countryCoordinates[primaryCountry]) {
+            newLatitude = countryCoordinates[primaryCountry].lat.toString();
+            newLongitude = countryCoordinates[primaryCountry].lng.toString();
+        }
+
         setFormData((prev) => ({
             ...prev,
             regionSelections: Array.from(new Set([...prev.regionSelections, ...inferredRegions])),
             countrySelections: Array.from(new Set([...prev.countrySelections, ...inferredCountries])),
             citySelections: normalizedCities,
+            latitude: newLatitude,
+            longitude: newLongitude,
         }));
     };
 
