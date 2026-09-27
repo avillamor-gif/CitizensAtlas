@@ -308,6 +308,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 initialViewState={mapCenter}
                 style={{ width: '100%', height: '100%' }}
                 mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                renderWorldCopies={false}
                 onLoad={(e) => {
                     const map = e.target;
                     
