@@ -87,6 +87,7 @@ export const cityCoordinates: Record<string, { lat: number; lng: number; name: s
   'Da Nang::Vietnam': { lat: 16.0544, lng: 108.2022, name: 'Da Nang' },
   'Haiphong::Vietnam': { lat: 20.8449, lng: 106.6881, name: 'Haiphong' },
   'Can Tho::Vietnam': { lat: 10.0379, lng: 105.7869, name: 'Can Tho' },
+  'Mekong Delta::Vietnam': { lat: 9.5, lng: 105.5, name: 'Mekong Delta' },
 
   // Malaysia cities
   'Kuala Lumpur::Malaysia': { lat: 3.1390, lng: 101.6869, name: 'Kuala Lumpur' },
