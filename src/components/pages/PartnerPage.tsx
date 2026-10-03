@@ -161,19 +161,15 @@ const PartnerPage: React.FC = () => {
                                         checked={privacyAccepted}
                                         onChange={(e) => {
                                             setPrivacyAccepted(e.target.checked);
+                                            if (e.target.checked) {
+                                                setShowPrivacyModal(true);
+                                            }
                                         }}
                                         className="mt-1 h-5 w-5 rounded border-[#244068] bg-[#071936] text-[#f3b23c] cursor-pointer accent-[#f3b23c]"
                                     />
                                     <div>
                                         <p className="text-sm text-white font-medium">
-                                            I accept the{' '}
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPrivacyModal(true)}
-                                                className="text-[#f3b23c] hover:underline transition"
-                                            >
-                                                Privacy Policy and Data Use Statement
-                                            </button>
+                                            I accept the Privacy Policy and Data Use Statement
                                         </p>
                                         <p className="text-xs text-[#9cabc2] mt-1">
                                             Please review our privacy policy before submitting your report
