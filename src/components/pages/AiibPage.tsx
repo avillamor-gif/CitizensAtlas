@@ -5,19 +5,26 @@ import Link from 'next/link'
 
 function AiibPage() {
   const investmentByCountry = [
-    { country: 'Bangladesh', amount: 520 },
-    { country: 'India', amount: 680 },
-    { country: 'Indonesia', amount: 450 },
-    { country: 'Philippines', amount: 380 },
-    { country: 'Vietnam', amount: 290 },
+    { country: 'India', amount: 1001 },
+    { country: 'Bangladesh', amount: 698 },
+    { country: 'Pakistan', amount: 650 },
+    { country: 'Philippines', amount: 500 },
+    { country: 'Indonesia', amount: 210 },
+    { country: 'Türkiye', amount: 173.764 },
+    { country: 'Maldives', amount: 151.13 },
   ]
 
   const aiibProjects = [
-    { name: 'North Dhaka Waste-to-Energy Project', country: 'Bangladesh', amount: 100 },
-    { name: 'Jakarta Integrated Waste Management', country: 'Indonesia', amount: 85 },
-    { name: 'Manila WtE Facility', country: 'Philippines', amount: 75 },
-    { name: 'Ho Chi Minh City Waste Infrastructure', country: 'Vietnam', amount: 65 },
-    { name: 'Kolkata Incineration Project', country: 'India', amount: 95 },
+    { name: 'India: Chennai City Partnership: Sustainable Urban Services Program', country: 'India', amount: 701 },
+    { name: 'Pakistan: Khyber Pakhtunkhwa Cities Improvement Project', country: 'Pakistan', amount: 650 },
+    { name: 'Multicountry: Everbright Infrastructure Investment Fund II', country: 'Multicountry', amount: 600 },
+    { name: 'Philippines: Metro Manila Flood Management', country: 'Philippines', amount: 500 },
+    { name: 'India: Kerala Solid Waste Management Project', country: 'India', amount: 300 },
+    { name: 'Bangladesh Integrated Solid Waste Management Improvement Project', country: 'Bangladesh', amount: 231 },
+    { name: 'Indonesia: Solid Waste Management for Sustainable Urban Development', country: 'Indonesia', amount: 210 },
+    { name: 'Türkiye: Istanbul Seismic Mitigation and Emergency Preparedness', country: 'Türkiye', amount: 174.6 },
+    { name: 'Maldives: Greater Malé Waste-to-Energy Project', country: 'Maldives', amount: 151.13 },
+    { name: 'North Dhaka Waste to Energy Project', country: 'Bangladesh', amount: 467 },
   ]
 
   return (

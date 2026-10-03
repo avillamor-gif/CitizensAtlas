@@ -5,11 +5,35 @@ import Link from 'next/link'
 
 function ADBPage() {
   const investmentByCountry = [
-    { country: 'Indonesia', amount: 850 },
-    { country: 'Philippines', amount: 720 },
-    { country: 'Vietnam', amount: 580 },
-    { country: 'Thailand', amount: 450 },
-    { country: 'Pakistan', amount: 380 },
+    { country: 'India', amount: 8050.4 },
+    { country: 'Indonesia', amount: 4183.32 },
+    { country: 'China', amount: 1205.62 },
+    { country: 'Pakistan', amount: 707.43 },
+    { country: 'Maldives', amount: 154.66 },
+    { country: 'Thailand', amount: 154.1 },
+    { country: 'Sri Lanka', amount: 150 },
+    { country: 'Vietnam', amount: 126 },
+  ]
+
+  const adbProjects = [
+    { name: 'India: SAEL Biomass Energy Project', country: 'India', amount: 7540.4 },
+    { name: 'Indonesia: Sustainable and Inclusive Energy Program (Subprogram 1)', country: 'Indonesia', amount: 1350 },
+    { name: 'Indonesia: Reducing Marine Debris Program, Subprogram 1', country: 'Indonesia', amount: 1150.22 },
+    { name: 'Pakistan: Emergency Assistance for Fighting the COVID-19 Pandemic', country: 'Pakistan', amount: 526.43 },
+    { name: 'China: Hunan Xiangjiang River Watershed Existing Solid Waste Treatment', country: 'China', amount: 258 },
+    { name: 'China: AGRICULTURAL AND MUNICIPAL WASTE TO ENERGY PROJECT', country: 'China', amount: 200 },
+    { name: 'Swachh Bharat Mission 2.0–Comprehensive Municipal Waste Management', country: 'India', amount: 203.5 },
+    { name: 'ASEAN distributed power project Phase 2', country: 'Regional', amount: 235 },
+    { name: 'Canvest Waste Management Project', country: 'China', amount: 184.8 },
+    { name: 'Pakistan: Developing Resilient Environments and Advancing Municipal Services', country: 'Pakistan', amount: 181 },
+    { name: 'China: Guangxi Zero-Waste City Development Program', country: 'China', amount: 150 },
+    { name: 'Sri Lanka: Responsive COVID-19 Vaccines for Recovery Project', country: 'Sri Lanka', amount: 150 },
+    { name: 'Maldives: Greater Male Waste-to-Energy Project', country: 'Maldives', amount: 143.89 },
+    { name: 'Thailand: Cornerstone Investment in Leading Independent Power Producer', country: 'Thailand', amount: 120 },
+    { name: 'South Tangerang Waste Management PPP Project', country: 'Indonesia', amount: 122.9 },
+    { name: 'Southern Thailand Waste-to-Energy Project', country: 'Thailand', amount: 34.1 },
+    { name: 'Indonesia: Alba Blue Loan for Recycling', country: 'Indonesia', amount: 44.2 },
+    { name: 'Viet Nam: Binh Duong Waste Management and Energy Efficiency Project', country: 'Vietnam', amount: 26 },
   ]
 
   return (
@@ -72,6 +96,30 @@ function ADBPage() {
           </Section>
 
           <BarBlock title="ADB · Investment per country (USD millions)" data={investmentByCountry} />
+
+          <section className="my-12">
+            <h2 className="text-3xl font-bold mb-5 text-gray-900">Largest ADB projects in the database</h2>
+            <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-widest text-gray-600 bg-gray-100 border-b border-gray-200">
+                    <th className="px-4 py-3 font-medium">Project</th>
+                    <th className="px-4 py-3 font-medium">Country</th>
+                    <th className="px-4 py-3 font-medium text-right">USD M</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adbProjects.map((p) => (
+                    <tr key={p.name} className="border-t border-gray-200 hover:bg-gray-100 transition">
+                      <td className="px-4 py-3 text-gray-900">{p.name}</td>
+                      <td className="px-4 py-3 text-gray-600">{p.country}</td>
+                      <td className="px-4 py-3 text-right text-blue-600 font-medium tabular-nums">{typeof p.amount === 'number' ? p.amount.toLocaleString() : p.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
 
           <div className="mt-12 rounded-lg p-6 border border-gray-200 bg-gray-50">
             <h3 className="text-2xl font-bold mb-2 text-gray-900">Read the policy brief</h3>
