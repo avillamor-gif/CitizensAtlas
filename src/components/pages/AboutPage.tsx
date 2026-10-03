@@ -13,10 +13,10 @@ const trackedTechnologies = [
 ]
 
 const trackedInstitutions = [
-  { code: 'ADB', name: 'Asian Development Bank', desc: null },
-  { code: 'AIIB', name: 'Asian Infrastructure Investment Bank', desc: null },
-  { code: 'WBG', name: 'World Bank Group', desc: 'primarily IBRD and IFC' },
-  { code: 'JICA', name: 'Japan International Cooperation Agency', desc: null },
+  { code: 'ADB', name: 'Asian Development Bank', desc: '68 member countries · Japan & US most influential' },
+  { code: 'AIIB', name: 'Asian Infrastructure Investment Bank', desc: '109 members · China holds >25% voting power' },
+  { code: 'WBG', name: 'World Bank Group (IBRD · IFC)', desc: '189 members · US holds de facto veto' },
+  { code: 'JICA', name: 'Japan International Cooperation Agency', desc: 'Bilateral aid agency · minimal disclosure' },
 ]
 
 const limitations = [
@@ -146,16 +146,26 @@ const AboutPage: React.FC = () => {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {trackedInstitutions.map((i) => (
-              <div
-                key={i.code}
-                className="rounded-lg p-6 border border-gray-200 bg-gray-50"
-              >
-                <div className="font-bold text-4xl mb-6 text-blue-600">{i.code}</div>
-                <div className="text-gray-900 font-medium leading-snug">{i.name}</div>
-                {i.desc && <div className="text-xs text-gray-600 mt-2">{i.desc}</div>}
-              </div>
-            ))}
+            {trackedInstitutions.map((i) => {
+              const slugMap: { [key: string]: string } = {
+                'ADB': '/adb',
+                'AIIB': '/aiib',
+                'WBG': '/wbg',
+                'JICA': '/jica',
+              }
+              return (
+                <Link href={slugMap[i.code] || '/'} key={i.code}>
+                  <div
+                    className="rounded-lg p-6 border-2 bg-gray-900 text-white h-full cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-700"
+                  >
+                    <div className="font-bold text-4xl mb-4 text-yellow-400">{i.code}</div>
+                    <div className="text-white font-medium leading-snug text-sm mb-3">{i.name}</div>
+                    {i.desc && <div className="text-xs text-gray-300 mb-4">{i.desc}</div>}
+                    <div className="text-blue-400 text-sm font-medium">READ PROFILE →</div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
           <p className="text-gray-700 leading-relaxed max-w-3xl">
             These bodies often work with national and municipal governments, state-owned entities,
