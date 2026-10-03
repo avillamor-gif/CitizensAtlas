@@ -18,7 +18,6 @@ interface HeaderProps {
 
 const pageToPath: Record<string, string> = {
     about: '/about',
-    'what-we-do': '/what-we-do',
     publications: '/publications',
     map: '/map',
     'partner-with-us': '/partner-with-us',
@@ -76,7 +75,6 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
                         <NavLink href="/about" isActive={isActive('about')}>About</NavLink>
-                        <NavLink href="/what-we-do" isActive={isActive('what-we-do')}>What we do</NavLink>
                         <NavLink href="/publications" isActive={isActive('publications')}>Publications</NavLink>
                         <NavLink href="/map" isActive={isActive('map')}>Map</NavLink>
                         <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
@@ -138,17 +136,6 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             }`}
                         >
                             About
-                        </Link>
-                        <Link
-                            href="/what-we-do"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
-                                isActive('what-we-do')
-                                    ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
-                            }`}
-                        >
-                            What we do
                         </Link>
                         <Link
                             href="/publications"
