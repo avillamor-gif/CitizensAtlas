@@ -81,7 +81,8 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
                         <Link
                             href="/active-fight-sites"
-                            className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-medium transition-colors"
+                            className="px-4 py-2 rounded-lg text-gray-900 font-medium transition-colors hover:opacity-90"
+                            style={{ backgroundColor: '#facc26' }}
                         >
                             Active Fight Sites
                         </Link>
@@ -180,7 +181,8 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <Link
                             href="/active-fight-sites"
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="text-left py-2.5 px-4 rounded-lg font-medium transition-colors bg-amber-500 hover:bg-amber-600 text-white"
+                            className="text-left py-2.5 px-4 rounded-lg font-medium transition-colors text-gray-900 hover:opacity-90"
+                            style={{ backgroundColor: '#facc26' }}
                         >
                             Active Fight Sites
                         </Link>
