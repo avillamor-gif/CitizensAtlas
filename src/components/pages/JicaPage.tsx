@@ -20,10 +20,8 @@ function JicaPage() {
           <h1 className="text-6xl mb-6">
             <span className="text-blue-600">JICA</span> · Japan International Cooperation Agency
           </h1>
-          <p className="text-xl text-gray-700 leading-relaxed mb-12">
-            A bilateral aid agency established in 1954 dedicated to Japan's Official Development Assistance (ODA).
-            Provides development cooperation including technical assistance, loans, and grants, primarily in
-            Asia-Pacific and African regions.
+          <p className="text-lg text-gray-700 leading-relaxed mb-6">
+            A bilateral aid agency established in 1954 dedicated to Japan's Official Development Assistance (ODA). Provides development cooperation including technical assistance, loans, and grants, primarily in Asia-Pacific and African regions.
           </p>
         </div>
       </section>

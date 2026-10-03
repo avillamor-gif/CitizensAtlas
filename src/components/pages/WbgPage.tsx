@@ -50,11 +50,8 @@ function WbgPage() {
           <h1 className="text-6xl mb-6">
             <span className="text-blue-600">WBG</span> · World Bank Group
           </h1>
-          <p className="text-xl text-gray-700 leading-relaxed mb-12">
-            One of the most influential multilateral financial institutions shaping global development
-            priorities. Established in 1944, governed by 189 member countries, dominated by the US,
-            Japan, Germany, France, the UK, and China — with the United States holding de facto veto
-            power.
+          <p className="text-lg text-gray-700 leading-relaxed mb-6">
+            One of the most influential multilateral financial institutions shaping global development priorities. Established in 1944, governed by 189 member countries, dominated by the US, Japan, Germany, France, the UK, and China — with the United States holding de facto veto power.
           </p>
         </div>
       </section>

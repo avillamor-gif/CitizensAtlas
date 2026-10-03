@@ -35,9 +35,8 @@ function AiibPage() {
           <h1 className="text-6xl mb-6">
             <span className="text-blue-600">AIIB</span> · Asian Infrastructure Investment Bank
           </h1>
-          <p className="text-xl text-gray-700 leading-relaxed mb-12">
-            Founded in 2016, initiated by China under the slogan "lean, clean and green." By mid-2024
-            it had 109 member countries, with China holding over a quarter of voting power.
+          <p className="text-lg text-gray-700 leading-relaxed mb-6">
+            Founded in 2016, initiated by China under the slogan "lean, clean and green." By mid-2024 it had 109 member countries, with China holding over a quarter of voting power.
           </p>
         </div>
       </section>

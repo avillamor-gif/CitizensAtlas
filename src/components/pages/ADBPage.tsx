@@ -44,10 +44,8 @@ function ADBPage() {
           <h1 className="text-6xl mb-6">
             <span className="text-blue-600">ADB</span> · Asian Development Bank
           </h1>
-          <p className="text-xl text-gray-700 leading-relaxed mb-12">
-            A regional multilateral founded in the late 1960s by the United States and Japan. 68 member
-            countries — 49 of them in the Asia-Pacific — with Japan and the US holding the most
-            influential voting blocs.
+          <p className="text-lg text-gray-700 leading-relaxed mb-6">
+            A regional multilateral founded in the late 1960s by the United States and Japan. 68 member countries — 49 of them in the Asia-Pacific — with Japan and the US holding the most influential voting blocs.
           </p>
 
           <div className="space-y-4 border-t border-gray-200">
