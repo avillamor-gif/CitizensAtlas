@@ -13,6 +13,10 @@ function WbgPage() {
     { country: 'Bangladesh', amount: 375 },
     { country: 'Vietnam', amount: 314 },
     { country: 'Sri Lanka', amount: 303 },
+    { country: 'Malaysia', amount: 123 },
+    { country: 'Cambodia', amount: 67.3 },
+    { country: 'Lao People\'s Democratic Republic', amount: 45.08 },
+    { country: 'Papua New Guinea', amount: 15 },
   ]
 
   const wbgProjects = [

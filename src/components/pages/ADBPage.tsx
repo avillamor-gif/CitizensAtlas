@@ -13,6 +13,7 @@ function ADBPage() {
     { country: 'Thailand', amount: 154.1 },
     { country: 'Sri Lanka', amount: 150 },
     { country: 'Vietnam', amount: 126 },
+    { country: 'Philippines', amount: 1.575 },
   ]
 
   const adbProjects = [
