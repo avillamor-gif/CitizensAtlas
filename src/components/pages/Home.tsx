@@ -44,11 +44,11 @@ const Home: React.FC<HomeProps> = (props) => {
             setActiveView={props.setActiveView}
             currentUser={props.currentUser}
             />
-            <div className="bg-brand-section-blue">
-            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
-            </div>
             <div className="bg-white">
             <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} />
+            </div>
+            <div className="bg-brand-section-blue">
+            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
             </div>
             <Collaborate />
             <div className="bg-brand-section-blue">
