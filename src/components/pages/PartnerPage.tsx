@@ -11,9 +11,9 @@ const PartnerPage: React.FC = () => {
     };
 
     return (
-        <div className="bg-white">
-            <section className="bg-[#071936] px-4 py-8 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-6xl rounded-[28px] bg-[#081a39] px-6 py-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.28)] sm:px-10 sm:py-10 lg:px-16 lg:py-14">
+        <div style={{ backgroundColor: 'var(--deep)' }}>
+            <section style={{ backgroundColor: 'var(--deep)' }} className="px-4 py-8 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-6xl rounded-[28px] px-6 py-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.28)] sm:px-10 sm:py-10 lg:px-16 lg:py-14" style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#1a5f7a', borderWidth: '2px' }}>
                     <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
                         <div className="max-w-xl pt-2">
                             <p className="mb-4 text-xs uppercase tracking-[0.32em] text-[#9eaac2]">Partner With Us</p>
@@ -206,24 +206,25 @@ const PartnerPage: React.FC = () => {
             {/* Privacy Modal */}
             {showPrivacyModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-                    <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
-                        <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-                            <h2 className="text-xl font-bold text-gray-900">Privacy Policy and Data Use Statement</h2>
+                    <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg shadow-lg" style={{ backgroundColor: 'var(--deep)', borderColor: '#1a5f7a', borderWidth: '2px' }}>
+                        <div className="sticky top-0 flex items-center justify-between px-6 py-4" style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderBottomColor: '#1a5f7a', borderBottomWidth: '1px' }}>
+                            <h2 className="text-xl font-bold text-white">Privacy Policy and Data Use Statement</h2>
                             <button
                                 onClick={() => setShowPrivacyModal(false)}
-                                className="text-gray-500 hover:text-gray-700 transition"
+                                className="transition hover:opacity-70"
+                                style={{ color: '#aeb9cc' }}
                             >
                                 ✕
                             </button>
                         </div>
 
-                        <div className="space-y-6 px-6 py-6 text-gray-700">
+                        <div className="space-y-6 px-6 py-6" style={{ color: '#aeb9cc' }}>
                             <p>
                                 The Citizen's Atlas collects, validates, and shares community experiences on false solutions projects across Asia and the Pacific. We value your privacy and are committed to handling the information you provide responsibly.
                             </p>
 
                             <div>
-                                <h3 className="mb-3 text-lg font-semibold text-gray-900">How will we use your information?</h3>
+                                <h3 className="mb-3 text-lg font-semibold text-white">How will we use your information?</h3>
                                 <div className="space-y-3">
                                     <p>
                                         We may use the contact information you provide to <strong>get in touch with you about your submission</strong>, clarify information, or request additional details.
@@ -238,7 +239,7 @@ const PartnerPage: React.FC = () => {
                             </div>
 
                             <div>
-                                <h3 className="mb-3 text-lg font-semibold text-gray-900">Language and accessibility</h3>
+                                <h3 className="mb-3 text-lg font-semibold text-white">Language and accessibility</h3>
                                 <div className="space-y-3">
                                     <p>
                                         <strong>English is currently the primary language used by the Citizen's Atlas team, and our capacity to translate submissions is currently limited.</strong> However, we welcome submissions in local and regional languages. Please share information in the language you are most comfortable using.
@@ -253,10 +254,11 @@ const PartnerPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <div className="flex justify-end gap-3 px-6 py-4" style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderTopColor: '#1a5f7a', borderTopWidth: '1px' }}>
                             <button
                                 onClick={() => setShowPrivacyModal(false)}
-                                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                                className="rounded-md px-4 py-2 text-sm font-medium transition"
+                                style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}
                             >
                                 Close
                             </button>
