@@ -106,18 +106,10 @@ const AboutPage: React.FC = () => {
             <span style={{ color: 'var(--highlight)' }}>visible.</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed mb-6">
-            The Citizens' Atlas on False Solutions on Waste is a crowd-sourced, open-access website
-            documenting how waste "solutions" are rationalised and financed across the Asia-Pacific
-            region. It brings together information on projects, technologies, development banks,
-            governments, private actors, and environmental and social impacts to make climate and
-            development finance more visible and easier to scrutinise.
+            The climate crisis demands urgent action—but urgency cannot come at the expense of accountability. Investments made today can lock communities and countries into development pathways for decades. As governments and International Financial Institutions (IFIs) promote climate action, circular economy and a just transition, we must ask: is their money accelerating the transition—or deepening the crisis?
           </p>
           <p className="text-lg text-gray-300 max-w-3xl leading-relaxed">
-            By bringing together information scattered across project documents, social media, and
-            grey literature, the Atlas asks:{' '}
-            <span style={{ color: 'var(--highlight)' }}>
-              who is financing which waste technologies, where, and with what consequences?
-            </span>
+            Public and IFI finance can support infrastructure that perpetuates extraction, consumption and disposal, including incineration, waste-to-energy (WTE), chemical and advanced recycling, carbon capture and other false solutions. For peoples' movements, the questions are: Who finances it? Who profits? Who bears the costs? What gets locked in? And whose solutions are displaced? Financing capital intensive waste technologies in the Global South while neglecting prevention, reuse, repair, recycling, composting and waste-worker livelihoods risks reinforcing waste colonialism and inequality.
           </p>
         </div>
       </section>
