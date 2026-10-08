@@ -91,13 +91,14 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
       {hasActiveFilters && (
         <button
           onClick={handleClearFilters}
-          className="text-sm font-semibold text-brand-dark-blue hover:text-brand-medium-blue underline whitespace-nowrap"
+          className="text-sm font-semibold underline whitespace-nowrap transition-colors hover:opacity-80"
+          style={{ color: 'var(--highlight)' }}
         >
           Clear Filters
         </button>
       )}
       {hasActiveFilters && (
-        <p className="text-sm text-gray-500 w-full">
+        <p className="text-sm w-full" style={{ color: '#aeb9cc' }}>
           Showing {filtered.length} of {items.length} articles
         </p>
       )}
@@ -105,15 +106,20 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
   );
 
   return (
-    <div>
-      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
-        <div>
-          <h1 className="text-5xl font-extrabold mb-4">Latest News</h1>
-          <p className="text-xl max-w-3xl mx-auto">
-            Stay up to date with the latest news, reports, and community stories on false solutions to the climate and circularity crisis.
+    <div style={{ backgroundColor: 'var(--deep)' }}>
+      {/* Header Section */}
+      <section className="py-16 px-4 sm:px-8 text-white border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+        <div className="container mx-auto">
+          <div className="text-xs uppercase tracking-[0.32em] mb-4" style={{ color: '#aeb9cc' }}>From the Field</div>
+          <h1 className="text-5xl font-bold mb-4">
+            <span style={{ color: 'white' }}>Latest </span>
+            <span style={{ color: 'var(--highlight)' }}>News</span>
+          </h1>
+          <p className="text-lg max-w-3xl" style={{ color: '#aeb9cc' }}>
+            Waste, development finance and the communities at the heart of it.
           </p>
         </div>
-      </div>
+      </section>
       <ArticleListPage
         title="Latest News"
         items={filtered}
