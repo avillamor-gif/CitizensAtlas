@@ -12,6 +12,37 @@ const trackedTechnologies = [
   'Carbon capture on landfills',
 ]
 
+const falseSolutions = [
+  {
+    title: 'Waste-to-Energy (WtE)',
+    description: 'Thermal technologies — mass burn, pyrolysis, gasification, plasma arc — that incinerate municipal solid waste and biomass. Highly polluting and costly regardless of "advancements".',
+  },
+  {
+    title: 'Plastic-to-Fuel',
+    description: 'Pyrolysis, gasification and plasma arc applications. Unsustainable, polluting, and justifies continued plastic production.',
+  },
+  {
+    title: 'Chemical Recycling',
+    description: 'Framed as innovative but fails to tackle plastic pollution at the source — essentially converts plastic into another fossil fuel to be burned.',
+  },
+  {
+    title: 'Refuse-Derived Fuel (RDF)',
+    description: 'Pellets, bricks or fluff made of waste, burned in cement kilns and WtE plants. Contributes toxic air pollution and hazardous ash.',
+  },
+  {
+    title: 'Plastic & carbon credit schemes',
+    description: 'Offsetting frameworks that allow continued overproduction while claiming neutrality.',
+  },
+  {
+    title: 'Bioplastics',
+    description: 'Often non-biodegradable in practice, requiring industrial composting infrastructure that rarely exists.',
+  },
+  {
+    title: 'Carbon capture on landfills',
+    description: 'Carbon capture, utilisation and storage approaches grafted onto existing waste systems.',
+  },
+]
+
 const trackedInstitutions = [
   { code: 'ADB', name: 'Asian Development Bank', desc: null },
   { code: 'AIIB', name: 'Asian Infrastructure Investment Bank', desc: null },
@@ -95,43 +126,31 @@ const AboutPage: React.FC = () => {
       <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
         <div className="container mx-auto">
           <SectionLabel>
-            <span className="text-white">False solutions</span>
+            <span className="text-white">What we mean by</span>
           </SectionLabel>
-          <h2 className="text-4xl font-bold mb-6 max-w-3xl">What are false solutions?</h2>
-          <div className="grid lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-7 space-y-5 text-gray-300 leading-relaxed">
-              <p>
-                False solutions describe approaches to the waste crisis that do not address their
-                underlying causes: overproduction, overconsumption, and the linear
-                take-make-dispose model. In some cases, they can create or intensify new
-                environmental and social harms while allowing governments and corporations to claim
-                progress without a plan for long-term change to the climate status quo.
-              </p>
-              <p>
-                They can divert public and private resources from waste prevention and effective,
-                local-first, and cheaper circular systems in favour of waste colonialism that
-                encourage knowledge and finance transfer abroad. They may also depend on narratives
-                such as green growth, carbon neutrality, or plastic neutrality while leaving the
-                volume of waste to be dealt with, largely unchanged. They are also detrimental to
-                environmental justice in the project area.
-              </p>
-            </div>
-            <div className="lg:col-span-5">
-              <div className="text-sm text-white font-medium mb-4">
-                The Atlas currently tracks several such technologies including:
+          <h2 className="text-5xl font-bold mb-12 max-w-3xl">False solutions.</h2>
+          
+          <div className="mb-12 max-w-4xl">
+            <p className="text-lg text-gray-300 leading-relaxed mb-6">
+              A false solution presents itself as addressing the waste and plastic crisis but in practice fails to tackle — and often exacerbates — its root causes: overproduction, overconsumption, and the absence of systemic commitments. They preserve the status quo while creating new environmental and social harms.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            {falseSolutions.map((solution, idx) => (
+              <div
+                key={idx}
+                className="rounded-lg p-6 border-2 h-full"
+                style={{ borderColor: '#366b8a', backgroundColor: 'rgba(32, 71, 104, 0.3)' }}
+              >
+                <h3 className="font-bold text-lg mb-3" style={{ color: 'var(--highlight)' }}>
+                  {solution.title}
+                </h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  {solution.description}
+                </p>
               </div>
-              <div className="space-y-3">
-                {trackedTechnologies.map((t) => (
-                  <div
-                    key={t}
-                    className="rounded p-4 text-sm leading-relaxed text-gray-300 border-2"
-                    style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.2)' }}
-                  >
-                    {t}
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
