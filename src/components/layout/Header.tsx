@@ -29,7 +29,7 @@ const pageToPath: Record<string, string> = {
 const NavLink: React.FC<{ href: string; isActive: boolean; children: React.ReactNode }> = ({ href, isActive, children }) => (
     <Link
         href={href}
-        className={`font-medium pb-1 transition-colors duration-200 ${isActive ? 'text-brand-dark-blue border-b-2 border-brand-dark-blue' : 'text-gray-700 hover:text-brand-dark-blue'}`}
+        className={`font-medium pb-1 transition-colors duration-200 ${isActive ? 'text-brand-medium-blue border-b-2 border-brand-medium-blue' : 'text-gray-300 hover:text-white'}`}
     >
         {children}
     </Link>
@@ -61,15 +61,15 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
 
     return (
         <>
-            <header className="bg-white py-2.5 px-4 sm:px-6 lg:px-16 shadow-md sticky top-0 z-40">
+            <header className="bg-gray-900 py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b border-gray-800">
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1">
                         <Link href="/" className="text-left block">
-                            <h1 className="text-brand-dark-blue text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Sora', sans-serif", fontVariantCaps: 'small-caps'}}>
+                            <h1 className="text-white text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Sora', sans-serif", fontVariantCaps: 'small-caps'}}>
                                 CITIZENS' ATLAS
                             </h1>
-                            <p className="text-xs sm:text-sm text-gray-600 leading-tight">on False Solutions to Climate and Circularity</p>
-                            <div className="w-1/3 h-0.5 bg-brand-dark-blue mt-0.5"></div>
+                            <p className="text-xs sm:text-sm text-gray-400 leading-tight">on False Solutions to Climate and Circularity</p>
+                            <div className="w-1/3 h-0.5 bg-brand-medium-blue mt-0.5"></div>
                         </Link>
                     </div>
 
@@ -82,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <Link
                             href="/active-fight-sites"
                             className="px-4 py-2 rounded-lg text-gray-900 font-medium transition-colors hover:opacity-90"
-                            style={{ backgroundColor: '#facc26' }}
+                            style={{ backgroundColor: '#FBBF24' }}
                         >
                             Active Fight Sites
                         </Link>
@@ -111,13 +111,13 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="md:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors"
                         aria-label="Toggle menu"
                     >
                         {isMobileMenuOpen ? (
-                            <X className="w-6 h-6 text-gray-700" />
+                            <X className="w-6 h-6 text-white" />
                         ) : (
-                            <Menu className="w-6 h-6 text-gray-700" />
+                            <Menu className="w-6 h-6 text-white" />
                         )}
                     </button>
                 </div>
@@ -132,15 +132,15 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
                     {/* Menu Content */}
-                    <div className="md:hidden fixed top-[88px] left-0 right-0 bg-white z-50 shadow-lg animate-in slide-in-from-top">
+                    <div className="md:hidden fixed top-[88px] left-0 right-0 bg-gray-900 border-b border-gray-800 z-50 shadow-lg animate-in slide-in-from-top">
                         <nav className="flex flex-col p-6 space-y-1">
                         <Link
                             href="/about"
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('about')
-                                    ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                                    ? 'bg-brand-medium-blue text-white' 
+                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
                             }`}
                         >
                             About
@@ -150,8 +150,8 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('publications')
-                                    ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                                    ? 'bg-brand-medium-blue text-white' 
+                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
                             }`}
                         >
                             Publications
@@ -161,8 +161,8 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('map')
-                                    ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                                    ? 'bg-brand-medium-blue text-white' 
+                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
                             }`}
                         >
                             Map
@@ -172,8 +172,8 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('partner-with-us')
-                                    ? 'bg-brand-dark-blue text-white' 
-                                    : 'text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                                    ? 'bg-brand-medium-blue text-white' 
+                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
                             }`}
                         >
                             Partner with us
@@ -182,40 +182,40 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             href="/active-fight-sites"
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="text-left py-2.5 px-4 rounded-lg font-medium transition-colors text-gray-900 hover:opacity-90"
-                            style={{ backgroundColor: '#facc26' }}
+                            style={{ backgroundColor: '#FBBF24' }}
                         >
                             Active Fight Sites
                         </Link>
 
                         {/* Mobile User Section */}
-                        <div className="pt-4 border-t border-gray-200">
+                        <div className="pt-4 border-t border-gray-800">
                             {resolvedUser ? (
                                 <Link 
                                     href="/admin/account-profile" 
-                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors"
+                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-800 active:bg-gray-700 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     <Avatar className="h-10 w-10">
                                         <AvatarImage src={resolvedUser.avatar_url} alt={resolvedUser.full_name} />
-                                        <AvatarFallback className="bg-brand-dark-blue text-white">
+                                        <AvatarFallback className="bg-brand-medium-blue text-white">
                                             {getInitials(resolvedUser.full_name)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <p className="font-medium text-gray-900">{resolvedUser.full_name}</p>
-                                        <p className="text-sm text-gray-500">Admin Dashboard</p>
+                                        <p className="font-medium text-white">{resolvedUser.full_name}</p>
+                                        <p className="text-sm text-gray-400">Admin Dashboard</p>
                                     </div>
                                 </Link>
                             ) : (
                                 <Link 
                                     href="/auth/login"
-                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors"
+                                    className="flex items-center space-x-3 py-2.5 px-4 rounded-lg hover:bg-gray-800 active:bg-gray-700 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    <div className="p-2 bg-gray-100 rounded-full">
-                                        <UserIcon className="w-6 h-6 text-gray-700" />
+                                    <div className="p-2 bg-gray-800 rounded-full">
+                                        <UserIcon className="w-6 h-6 text-gray-300" />
                                     </div>
-                                    <span className="font-medium text-gray-900">Login</span>
+                                    <span className="font-medium text-gray-300">Login</span>
                                 </Link>
                             )}
                         </div>
