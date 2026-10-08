@@ -90,7 +90,7 @@ const AboutPage: React.FC = () => {
   return (
     <div style={{ backgroundColor: 'var(--deep)' }}>
       {/* Hero Section */}
-      <section className="relative overflow-hidden text-white py-20 md:py-28">
+      <section className="relative overflow-hidden text-white py-20 md:py-28 px-4 sm:px-8">
         <div
           aria-hidden
           className="absolute inset-0 opacity-30"
@@ -99,7 +99,7 @@ const AboutPage: React.FC = () => {
               'radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)',
           }}
         />
-        <div className="container mx-auto relative px-4 sm:px-8">
+        <div className="container mx-auto relative">
           <SectionLabel>About the Atlas</SectionLabel>
           <h1 className="text-5xl md:text-7xl leading-[1.02] font-bold mb-8">
             Tracking false solutions. Making finance <span style={{ color: '#ffa51d' }}>accountable.</span> Strengthening community <span style={{ color: '#ffa51d' }}>voices</span>
