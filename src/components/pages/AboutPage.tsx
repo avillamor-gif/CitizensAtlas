@@ -216,7 +216,7 @@ const AboutPage: React.FC = () => {
                       Bilateral aid agency · minimal disclosure
                     </div>
                   )}
-                  <div style={{ color: '#92a1b3' }} className="text-sm font-medium">
+                  <div style={{ color: '#92a1b3' }} className="text-xs font-medium">
                     READ PROFILE →
                   </div>
                 </div>
