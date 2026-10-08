@@ -121,7 +121,7 @@ function ADBPage() {
 
           <section className="my-12">
             <h2 className="text-3xl font-bold mb-5" style={{ color: 'white' }}>Largest ADB projects in the database</h2>
-            <div className="overflow-hidden rounded-lg" style={{ borderColor: '#2f4059', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+            <div className="overflow-hidden rounded-lg border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-widest" style={{ color: '#aeb9cc', backgroundColor: 'rgba(26, 95, 122, 0.2)', borderBottomColor: '#2f4059', borderBottomWidth: '1px' }}>
@@ -143,7 +143,7 @@ function ADBPage() {
             </div>
           </section>
 
-          <div className="mt-12 rounded-lg p-6" style={{ borderColor: '#2f4059', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+          <div className="mt-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
             <h3 className="text-2xl font-bold mb-2 text-white">Read the policy brief</h3>
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For deeper findings on emissions, costs to communities, and the role of informal waste workers,
@@ -180,7 +180,7 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
 function BarBlock({ title, data }: { title: string; data: { country: string; amount: number }[] }) {
   const max = Math.max(...data.map((d) => d.amount))
   return (
-    <div className="my-12 rounded-lg p-6" style={{ borderColor: '#2f4059', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+    <div className="my-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
       <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>{title}</div>
       <div className="space-y-2">
         {data.map((d) => (

@@ -17,8 +17,14 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
         <button
             type="button"
             onClick={() => onViewArticle(item)}
-            className="w-full text-left rounded-lg hover:opacity-90 transition-opacity duration-300 flex flex-col overflow-hidden group border-2"
+            className="w-full text-left rounded-lg hover:opacity-90 transition-all duration-300 flex flex-col overflow-hidden group border"
             style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#ffa51d';
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#2f4059';
+            }}
         >
             <div className="h-48 overflow-hidden relative">
                 <img

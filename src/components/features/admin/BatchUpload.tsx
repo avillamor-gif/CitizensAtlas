@@ -402,7 +402,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                                 setContentType(type);
                                 handleReset();
                             }}
-                            className={`p-4 rounded-lg border-2 transition-all ${
+                            className={`p-4 rounded-lg border transition-all ${
                                 contentType === type
                                     ? 'text-white'
                                     : 'border-gray-200 hover:border-gray-400'
@@ -468,7 +468,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                     Select your filled Excel file to preview and validate the data.
                 </p>
                 <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg cursor-pointer hover:border-brand-light-blue transition-colors">
+                    <label className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-brand-light-blue transition-colors">
                         <ArrowUpTrayIcon className="w-5 h-5 text-gray-600" />
                         <span className="text-gray-700">Choose File</span>
                         <input

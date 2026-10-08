@@ -515,7 +515,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         anchor="bottom"
                     >
                         <div className="flex flex-col items-center pointer-events-none">
-                            <div className="w-4 h-4 rounded-full bg-red-600 border-2 border-white shadow-lg" />
+                            <div className="w-4 h-4 rounded-full bg-red-600 border border-white shadow-lg" />
                             <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-l-transparent border-r-transparent border-t-red-600 -mt-[2px]" />
                         </div>
                     </Marker>

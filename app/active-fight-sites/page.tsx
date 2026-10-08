@@ -10,7 +10,7 @@ import { projectBriefsToArticles } from '@/lib/utils/slug-utils'
 function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
   
   const cardContent = (
-    <div className="border-2 rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl cursor-pointer" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+    <div className="border rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl cursor-pointer" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
       <div className="p-6 flex flex-col flex-grow">
         <span className="text-xs font-bold px-2 py-1 inline-block mb-3 self-start rounded" style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}>
           {brief.project_type || 'Project Brief'}

@@ -17,8 +17,14 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
         <button
             type="button"
             onClick={() => onViewArticle(item)}
-            className="w-full text-left rounded-lg hover:opacity-90 transition-opacity duration-300 flex flex-col sm:flex-row overflow-hidden group border-2"
+            className="w-full text-left rounded-lg hover:opacity-90 transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group border"
             style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#ffa51d';
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#2f4059';
+            }}
         >
             <div className="sm:w-1/3 flex-shrink-0 h-48 sm:h-auto overflow-hidden relative">
                 <img
