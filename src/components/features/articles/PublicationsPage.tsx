@@ -141,13 +141,14 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
       {hasActiveFilters && (
         <button
           onClick={handleClearFilters}
-          className="text-sm font-semibold text-brand-dark-blue hover:text-brand-medium-blue underline whitespace-nowrap"
+          className="text-sm font-semibold hover:opacity-80 underline whitespace-nowrap transition-colors"
+          style={{ color: 'var(--highlight)' }}
         >
           Clear Filters
         </button>
       )}
       {hasActiveFilters && (
-        <p className="text-sm text-gray-500 w-full">
+        <p className="text-sm text-gray-400 w-full">
           Showing {filtered.length} of {items.length} publications
         </p>
       )}
@@ -155,12 +156,20 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
   );
 
   return (
-    <div>
-      {/* Blue banner */}
-      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
-        <div>
-          <h1 className="text-5xl font-extrabold mb-4">Publications</h1>
-          <p className="text-xl max-w-3xl mx-auto">
+    <div style={{ backgroundColor: 'var(--deep)' }}>
+      {/* Hero banner */}
+      <div className="text-white px-4 sm:px-8 text-center py-20 md:py-28 relative overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-30"
+          style={{
+            background:
+              'radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)',
+          }}
+        />
+        <div className="relative z-10">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">Publications</h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Explore our research, reports, and resources on false solutions to the climate and circularity crisis.
           </p>
         </div>

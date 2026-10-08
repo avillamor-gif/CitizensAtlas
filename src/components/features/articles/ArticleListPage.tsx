@@ -66,14 +66,14 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
     }, [loadMore, hasMore, isLoading]);
 
     return (
-        <div className="bg-white py-12 px-4 sm:px-8 lg:px-16">
+        <div className="py-12 px-4 sm:px-8 lg:px-16 text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <div className="container mx-auto">
                 <div className="mb-8">
                     {!hideTitle && (
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-dark-blue">{title}</h1>
-                                <div className="w-16 h-1 bg-brand-dark-blue mt-2"></div>
+                                <h1 className="text-4xl font-extrabold" style={{ color: 'var(--highlight)' }}>{title}</h1>
+                                <div className="w-16 h-1 mt-2" style={{ backgroundColor: 'var(--highlight)' }}></div>
                             </div>
                             {!filterBar && <ViewToggle activeView={view} setActiveView={setView} />}
                         </div>
