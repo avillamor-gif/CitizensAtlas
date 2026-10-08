@@ -102,8 +102,7 @@ const AboutPage: React.FC = () => {
         <div className="container mx-auto relative px-4 sm:px-8">
           <SectionLabel>About the Atlas</SectionLabel>
           <h1 className="text-5xl md:text-7xl leading-[1.02] max-w-4xl font-bold mb-8">
-            Tracking false solutions. Making finance{' '}
-            <span style={{ color: '#ffa51d' }}>accountable.</span> Strengthening community{' '}
+            Tracking false solutions. Making finance <span style={{ color: '#ffa51d' }}>accountable.</span> Strengthening community{' '}
             <span style={{ color: '#ffa51d' }}>voices</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-6">
