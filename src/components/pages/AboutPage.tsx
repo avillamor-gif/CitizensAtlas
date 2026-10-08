@@ -210,7 +210,7 @@ const AboutPage: React.FC = () => {
                     }
                   }}
                 >
-                  <div className="font-normal text-6xl mb-4" style={{ color: '#ffa51d', fontFamily: 'Fraunces', fontWeight: 400 }}>
+                  <div className="font-normal mb-4" style={{ color: '#ffa51d', fontFamily: 'Fraunces', fontWeight: 400, fontSize: '36px' }}>
                     {i.code}
                   </div>
                   <div className="text-white font-medium leading-snug text-base mb-3">{i.name}</div>
