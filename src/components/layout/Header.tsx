@@ -29,7 +29,8 @@ const pageToPath: Record<string, string> = {
 const NavLink: React.FC<{ href: string; isActive: boolean; children: React.ReactNode }> = ({ href, isActive, children }) => (
     <Link
         href={href}
-        className={`font-medium pb-1 transition-colors duration-200 ${isActive ? 'text-brand-medium-blue border-b-2 border-brand-medium-blue' : 'text-gray-300 hover:text-white'}`}
+        className={`font-medium pb-1 transition-colors duration-200 ${isActive ? 'border-b-2' : 'text-gray-300 hover:text-white'}`}
+        style={isActive ? { color: 'var(--highlight)', borderColor: 'var(--highlight)' } : {}}
     >
         {children}
     </Link>
@@ -61,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
 
     return (
         <>
-            <header className="bg-gray-900 py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b border-gray-800">
+            <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1">
                         <Link href="/" className="text-left block">
@@ -69,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                                 CITIZENS' ATLAS
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-400 leading-tight">on False Solutions to Climate and Circularity</p>
-                            <div className="w-1/3 h-0.5 bg-brand-medium-blue mt-0.5"></div>
+                            <div className="w-1/3 h-0.5 mt-0.5" style={{ backgroundColor: 'var(--highlight)' }}></div>
                         </Link>
                     </div>
 
@@ -82,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <Link
                             href="/active-fight-sites"
                             className="px-4 py-2 rounded-lg text-gray-900 font-medium transition-colors hover:opacity-90"
-                            style={{ backgroundColor: '#FBBF24' }}
+                            style={{ backgroundColor: 'var(--highlight)' }}
                         >
                             Active Fight Sites
                         </Link>
@@ -132,16 +133,17 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
                     {/* Menu Content */}
-                    <div className="md:hidden fixed top-[88px] left-0 right-0 bg-gray-900 border-b border-gray-800 z-50 shadow-lg animate-in slide-in-from-top">
+                    <div className="md:hidden fixed top-[88px] left-0 right-0 border-b z-50 shadow-lg animate-in slide-in-from-top" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                         <nav className="flex flex-col p-6 space-y-1">
                         <Link
                             href="/about"
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('about')
-                                    ? 'bg-brand-medium-blue text-white' 
-                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
+                                    ? 'text-white' 
+                                    : 'text-gray-300 hover:bg-opacity-50 active:bg-opacity-70'
                             }`}
+                            style={isActive('about') ? { backgroundColor: 'var(--surface)' } : {}}
                         >
                             About
                         </Link>
@@ -150,9 +152,10 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('publications')
-                                    ? 'bg-brand-medium-blue text-white' 
-                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
+                                    ? 'text-white' 
+                                    : 'text-gray-300 hover:bg-opacity-50 active:bg-opacity-70'
                             }`}
+                            style={isActive('publications') ? { backgroundColor: 'var(--surface)' } : {}}
                         >
                             Publications
                         </Link>
@@ -161,9 +164,10 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('map')
-                                    ? 'bg-brand-medium-blue text-white' 
-                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
+                                    ? 'text-white' 
+                                    : 'text-gray-300 hover:bg-opacity-50 active:bg-opacity-70'
                             }`}
+                            style={isActive('map') ? { backgroundColor: 'var(--surface)' } : {}}
                         >
                             Map
                         </Link>
@@ -172,9 +176,10 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
                                 isActive('partner-with-us')
-                                    ? 'bg-brand-medium-blue text-white' 
-                                    : 'text-gray-300 hover:bg-gray-800 active:bg-gray-700'
+                                    ? 'text-white' 
+                                    : 'text-gray-300 hover:bg-opacity-50 active:bg-opacity-70'
                             }`}
+                            style={isActive('partner-with-us') ? { backgroundColor: 'var(--surface)' } : {}}
                         >
                             Partner with us
                         </Link>
@@ -182,13 +187,13 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             href="/active-fight-sites"
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="text-left py-2.5 px-4 rounded-lg font-medium transition-colors text-gray-900 hover:opacity-90"
-                            style={{ backgroundColor: '#FBBF24' }}
+                            style={{ backgroundColor: 'var(--highlight)' }}
                         >
                             Active Fight Sites
                         </Link>
 
                         {/* Mobile User Section */}
-                        <div className="pt-4 border-t border-gray-800">
+                        <div className="pt-4 border-t" style={{ borderColor: 'var(--surface)' }}>
                             {resolvedUser ? (
                                 <Link 
                                     href="/admin/account-profile" 

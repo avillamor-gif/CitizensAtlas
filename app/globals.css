@@ -94,6 +94,10 @@ h1, h2, h3, h4, h5, h6 {
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 217 65% 20%;
     --sidebar-ring: 215 62% 57%;
+    /* Design system colors */
+    --highlight: #FFA500;
+    --deep: #0a1628;
+    --surface: #1a2a3a;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -128,6 +132,10 @@ h1, h2, h3, h4, h5, h6 {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Design system colors - dark mode */
+    --highlight: #FFA500;
+    --deep: #0a1628;
+    --surface: #1a2a3a;
   }
 }
 
