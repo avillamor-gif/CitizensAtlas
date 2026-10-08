@@ -189,13 +189,13 @@ const AboutPage: React.FC = () => {
             {trackedInstitutions.map((i) => (
               <Link href={`/${i.code.toLowerCase()}`} key={i.code}>
                 <div
-                  className="rounded-lg p-6 h-full cursor-pointer transition-all duration-300 border-2 group"
+                  className="rounded-lg p-6 h-full cursor-pointer transition-all duration-300 border group"
                   style={{ 
                     borderColor: '#2f4059',
+                    backgroundColor: 'rgba(26, 95, 122, 0.1)',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#ffa51d';
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.05)';
                     const readProfile = e.currentTarget.querySelector('[data-read-profile]');
                     if (readProfile) {
                       (readProfile as HTMLElement).style.color = '#ffa51d';
@@ -203,7 +203,6 @@ const AboutPage: React.FC = () => {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = '#2f4059';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 95, 122, 0.1)';
                     const readProfile = e.currentTarget.querySelector('[data-read-profile]');
                     if (readProfile) {
                       (readProfile as HTMLElement).style.color = '#92a1b3';
