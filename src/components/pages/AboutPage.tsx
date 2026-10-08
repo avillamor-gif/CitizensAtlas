@@ -125,7 +125,7 @@ const AboutPage: React.FC = () => {
                   <div
                     key={t}
                     className="rounded p-4 text-sm leading-relaxed text-gray-300 border-2"
-                    style={{ borderColor: '#1a5f7a', backgroundColor: 'rgba(26, 95, 122, 0.2)' }}
+                    style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.2)' }}
                   >
                     {t}
                   </div>
@@ -154,7 +154,7 @@ const AboutPage: React.FC = () => {
               <Link href={`/${i.code.toLowerCase()}`} key={i.code}>
                 <div
                   className="rounded p-6 h-full cursor-pointer transition-all duration-300 border-2 hover:border-opacity-100"
-                  style={{ borderColor: '#1a5f7a', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
+                  style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
                 >
                   <div className="font-bold text-4xl mb-4" style={{ color: 'var(--highlight)' }}>
                     {i.code}
@@ -184,7 +184,7 @@ const AboutPage: React.FC = () => {
           </SectionLabel>
           <h2 className="text-4xl font-bold mb-10 max-w-3xl">Methodology and data sources.</h2>
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="rounded p-6 border-2" style={{ borderColor: '#1a5f7a', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+            <div className="rounded p-6 border-2" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>01</div>
               <div className="text-base font-medium mb-3 text-white">Where the data comes from</div>
               <p className="text-sm text-gray-300 leading-relaxed">
@@ -195,7 +195,7 @@ const AboutPage: React.FC = () => {
                 microsites. We use OpenStreetMap to show project locations.
               </p>
             </div>
-            <div className="rounded p-6 border-2" style={{ borderColor: '#1a5f7a', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+            <div className="rounded p-6 border-2" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>02</div>
               <div className="text-base font-medium mb-3 text-white">How it is compiled</div>
               <p className="text-sm text-gray-300 leading-relaxed">
@@ -206,7 +206,7 @@ const AboutPage: React.FC = () => {
                 campaigns, social media, and grey literature in local languages.
               </p>
             </div>
-            <div className="rounded p-6 border-2" style={{ borderColor: '#1a5f7a', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+            <div className="rounded p-6 border-2" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>03</div>
               <div className="text-base font-medium mb-3 text-white">What comes next</div>
               <p className="text-sm text-gray-300 leading-relaxed">
@@ -233,7 +233,7 @@ const AboutPage: React.FC = () => {
           </p>
           <div className="space-y-4 max-w-4xl">
             {limitations.map((l) => (
-              <div key={l.n} className="rounded p-6 border-2" style={{ borderColor: '#1a5f7a', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+              <div key={l.n} className="rounded p-6 border-2" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
                 <div className="flex items-baseline gap-4 mb-4">
                   <span className="font-bold text-2xl" style={{ color: 'var(--highlight)' }}>
                     {l.n}
@@ -268,7 +268,7 @@ const AboutPage: React.FC = () => {
             <Link href="/partner-with-us" className="px-6 py-3 rounded font-medium transition-all hover:opacity-90 text-gray-900" style={{ backgroundColor: 'var(--highlight)' }}>
               Report a project →
             </Link>
-            <Link href="/" className="px-6 py-3 rounded font-medium border-2 transition-colors hover:opacity-80" style={{ borderColor: '#1a5f7a' }}>
+            <Link href="/" className="px-6 py-3 rounded font-medium border-2 transition-colors hover:opacity-80" style={{ borderColor: '#2f4059' }}>
               Back to overview
             </Link>
           </div>

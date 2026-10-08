@@ -72,7 +72,7 @@ function ADBPage() {
             A regional multilateral founded in the late 1960s by the United States and Japan. 68 member countries — 49 of them in the Asia-Pacific — with Japan and the US holding the most influential voting blocs.
           </p>
 
-          <div className="space-y-4" style={{ borderTopColor: '#1a5f7a', borderTopWidth: '1px' }}>
+          <div className="space-y-4" style={{ borderTopColor: '#2f4059', borderTopWidth: '1px' }}>
             <Stat label="False-solutions projects surveyed by GAIA AP" value="48" />
             <Stat label="Projects with Gender Action Plans" value="5 of 20" highlight />
             <Stat label="Stated climate-finance commitment by 2030" value="USD 100B+" />
@@ -121,10 +121,10 @@ function ADBPage() {
 
           <section className="my-12">
             <h2 className="text-3xl font-bold mb-5" style={{ color: 'white' }}>Largest ADB projects in the database</h2>
-            <div className="overflow-hidden rounded-lg" style={{ borderColor: '#1a5f7a', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+            <div className="overflow-hidden rounded-lg" style={{ borderColor: '#2f4059', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs uppercase tracking-widest" style={{ color: '#aeb9cc', backgroundColor: 'rgba(26, 95, 122, 0.2)', borderBottomColor: '#1a5f7a', borderBottomWidth: '1px' }}>
+                  <tr className="text-left text-xs uppercase tracking-widest" style={{ color: '#aeb9cc', backgroundColor: 'rgba(26, 95, 122, 0.2)', borderBottomColor: '#2f4059', borderBottomWidth: '1px' }}>
                     <th className="px-4 py-3 font-medium">Project</th>
                     <th className="px-4 py-3 font-medium">Country</th>
                     <th className="px-4 py-3 font-medium text-right">USD M</th>
@@ -132,7 +132,7 @@ function ADBPage() {
                 </thead>
                 <tbody>
                   {adbProjects.map((p) => (
-                    <tr key={p.name} className="transition" style={{ borderTopColor: '#1a5f7a', borderTopWidth: '1px' }}>
+                    <tr key={p.name} className="transition" style={{ borderTopColor: '#2f4059', borderTopWidth: '1px' }}>
                       <td className="px-4 py-3" style={{ color: 'white' }}>{p.name}</td>
                       <td className="px-4 py-3" style={{ color: '#aeb9cc' }}>{p.country}</td>
                       <td className="px-4 py-3 text-right font-medium tabular-nums" style={{ color: 'var(--highlight)' }}>{typeof p.amount === 'number' ? p.amount.toLocaleString() : p.amount}</td>
@@ -143,7 +143,7 @@ function ADBPage() {
             </div>
           </section>
 
-          <div className="mt-12 rounded-lg p-6" style={{ borderColor: '#1a5f7a', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+          <div className="mt-12 rounded-lg p-6" style={{ borderColor: '#2f4059', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
             <h3 className="text-2xl font-bold mb-2 text-white">Read the policy brief</h3>
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For deeper findings on emissions, costs to communities, and the role of informal waste workers,
@@ -170,7 +170,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex items-baseline justify-between py-4" style={{ borderBottomColor: '#1a5f7a', borderBottomWidth: '1px' }}>
+    <div className="flex items-baseline justify-between py-4" style={{ borderBottomColor: '#2f4059', borderBottomWidth: '1px' }}>
       <span className="text-sm uppercase tracking-wider" style={{ color: '#aeb9cc' }}>{label}</span>
       <span className={`text-3xl font-bold`} style={{ color: 'var(--highlight)' }}>{value}</span>
     </div>
@@ -180,7 +180,7 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
 function BarBlock({ title, data }: { title: string; data: { country: string; amount: number }[] }) {
   const max = Math.max(...data.map((d) => d.amount))
   return (
-    <div className="my-12 rounded-lg p-6" style={{ borderColor: '#1a5f7a', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+    <div className="my-12 rounded-lg p-6" style={{ borderColor: '#2f4059', borderWidth: '2px', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
       <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>{title}</div>
       <div className="space-y-2">
         {data.map((d) => (

@@ -18,7 +18,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
             type="button"
             onClick={() => onViewArticle(item)}
             className="w-full text-left rounded-lg hover:opacity-90 transition-opacity duration-300 flex flex-col overflow-hidden group border-2"
-            style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#1a5f7a' }}
+            style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}
         >
             <div className="h-48 overflow-hidden relative">
                 <img
