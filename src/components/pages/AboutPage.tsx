@@ -13,10 +13,10 @@ const trackedTechnologies = [
 ]
 
 const trackedInstitutions = [
-  { code: 'ADB', name: 'Asian Development Bank', desc: '68 member countries · Japan & US most influential' },
-  { code: 'AIIB', name: 'Asian Infrastructure Investment Bank', desc: '109 members · China holds >25% voting power' },
-  { code: 'WBG', name: 'World Bank Group (IBRD · IFC)', desc: '189 members · US holds de facto veto' },
-  { code: 'JICA', name: 'Japan International Cooperation Agency', desc: 'Bilateral aid agency · minimal disclosure' },
+  { code: 'ADB', name: 'Asian Development Bank', desc: null },
+  { code: 'AIIB', name: 'Asian Infrastructure Investment Bank', desc: null },
+  { code: 'WBG', name: 'World Bank Group', desc: 'primarily IBRD and IFC' },
+  { code: 'JICA', name: 'Japan International Cooperation Agency', desc: null },
 ]
 
 const limitations = [
@@ -25,7 +25,7 @@ const limitations = [
     title: 'Development-finance data is not consistently reported',
     body: [
       'The IFIs surveyed use different systems for environmental and social risk classification and disclose different types of information. This makes direct comparison difficult.',
-      'For example, ADB uses A-C classifications across environment, involuntary resettlement and Indigenous Peoples, while Technical Assistance projects generally do not receive any consolidated ratings. The World Bank, IFC, and IBRD use different risk-classification systems, and AIIB uses a consolidated A-C environmental and social classification. JICA\'s disclosure and rating practices are limited and highly variable. Projects with apparently comparable technologies, scales, or impacts can be classified differently, while some projects contain contradictory risk ratings. These features themselves are relevant to understanding how development finance institutions assess waste projects.',
+      'For example, ADB uses A–C classifications across environment, involuntary resettlement and Indigenous Peoples, while Technical Assistance projects generally do not receive any consolidated ratings. The World Bank, IFC, and IBRD use different risk-classification systems, and AIIB uses a consolidated A–C environmental and social classification. JICA\'s disclosure and rating practices are limited and highly variable. Projects with apparently comparable technologies, scales, or impacts can be classified differently, while some projects contain contradictory risk ratings. These features themselves are relevant to understanding how development finance institutions assess waste projects.',
       'These classifications are not direct equivalents to project risk and are to be clearly distinguished from GAIA\'s own assessment.',
     ],
   },
@@ -48,8 +48,8 @@ const limitations = [
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="text-xs uppercase tracking-[0.25em] text-gray-600 mb-3 flex items-center gap-3">
-      <span className="h-px w-10 bg-blue-600" />
+    <div className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
+      <span className="h-px w-10" style={{ backgroundColor: 'var(--highlight)' }} />
       {children}
     </div>
   )
@@ -57,47 +57,47 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 const AboutPage: React.FC = () => {
   return (
-    <div className="bg-white">
+    <div>
       <section className="relative overflow-hidden">
         <div
           aria-hidden
           className="absolute inset-0 opacity-60"
           style={{
             background:
-              'radial-gradient(ellipse at 20% 10%, rgba(59, 130, 246, 0.3), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(59, 130, 246, 0.18), transparent 55%)',
+              'radial-gradient(ellipse at 20% 10%, color-mix(in oklab, var(--accent) 30%, transparent), transparent 60%), radial-gradient(ellipse at 80% 90%, color-mix(in oklab, var(--highlight) 18%, transparent), transparent 55%)',
           }}
         />
         <div className="container mx-auto relative py-20 px-4 sm:px-8 md:py-28">
           <SectionLabel>About the Atlas</SectionLabel>
-          <h1 className="text-5xl md:text-7xl leading-[1.02] max-w-4xl font-bold text-gray-900 mb-8">
+          <h1 className="text-5xl md:text-7xl leading-[1.02] max-w-4xl font-bold text-foreground mb-8">
             Tracking false solutions. Making development finance{' '}
-            <span className="text-blue-600">visible.</span>
+            <span style={{ color: 'var(--highlight)' }}>visible.</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 max-w-3xl leading-relaxed mb-6">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed mb-6">
             The Citizens' Atlas on False Solutions on Waste is a crowd-sourced, open-access website
             documenting how waste "solutions" are rationalised and financed across the Asia-Pacific
             region. It brings together information on projects, technologies, development banks,
             governments, private actors, and environmental and social impacts to make climate and
             development finance more visible and easier to scrutinise.
           </p>
-          <p className="text-lg text-gray-700 max-w-3xl leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
             By bringing together information scattered across project documents, social media, and
             grey literature, the Atlas asks:{' '}
-            <span className="text-blue-600">
+            <span style={{ color: 'var(--highlight)' }}>
               who is financing which waste technologies, where, and with what consequences?
             </span>
           </p>
         </div>
       </section>
 
-      <section className="bg-gray-900 py-16 px-4 sm:px-8">
+      <section className="py-16 px-4 sm:px-8 border-t border-border" style={{ backgroundColor: 'var(--deep)' }}>
         <div className="container mx-auto">
           <SectionLabel>
-            <span className="text-white">False solutions</span>
+            <span className="text-foreground">False solutions</span>
           </SectionLabel>
-          <h2 className="text-4xl font-bold text-white mb-6 max-w-3xl">What are false solutions?</h2>
+          <h2 className="text-4xl font-bold text-foreground mb-6 max-w-3xl">What are false solutions?</h2>
           <div className="grid lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-7 space-y-5 text-gray-300 leading-relaxed">
+            <div className="lg:col-span-7 space-y-5 text-muted-foreground leading-relaxed">
               <p>
                 False solutions describe approaches to the waste crisis that do not address their
                 underlying causes: overproduction, overconsumption, and the linear
@@ -115,14 +115,15 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
             <div className="lg:col-span-5">
-              <div className="text-sm text-white font-medium mb-4">
+              <div className="text-sm text-foreground font-medium mb-4">
                 The Atlas currently tracks several such technologies including:
               </div>
               <div className="space-y-3">
                 {trackedTechnologies.map((t) => (
                   <div
                     key={t}
-                    className="rounded-lg p-4 border border-gray-700 text-sm leading-relaxed text-gray-300 bg-gray-800"
+                    className="rounded-lg p-4 border border-border text-sm leading-relaxed text-muted-foreground"
+                    style={{ backgroundColor: 'var(--surface)' }}
                   >
                     {t}
                   </div>
@@ -138,36 +139,31 @@ const AboutPage: React.FC = () => {
           <div className="flex items-end justify-between flex-wrap gap-6 mb-12">
             <div>
               <SectionLabel>Who we track</SectionLabel>
-              <h2 className="text-4xl font-bold max-w-2xl text-gray-900">What does the Atlas track?</h2>
+              <h2 className="text-4xl font-bold max-w-2xl text-foreground">What does the Atlas track?</h2>
             </div>
-            <p className="text-sm text-gray-600 max-w-md">
+            <p className="text-sm text-muted-foreground max-w-md">
               The Atlas currently tracks projects supported by four major financial institutions.
               The database will expand in future to include projects supported by GIZ and KOICA.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {trackedInstitutions.map((i) => {
-              const slugMap: { [key: string]: string } = {
-                'ADB': '/adb',
-                'AIIB': '/aiib',
-                'WBG': '/wbg',
-                'JICA': '/jica',
-              }
-              return (
-                <Link href={slugMap[i.code] || '/'} key={i.code}>
-                  <div
-                    className="rounded-lg p-6 border-2 bg-gray-900 text-white h-full cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-700"
-                  >
-                    <div className="font-bold text-4xl mb-4 text-yellow-400">{i.code}</div>
-                    <div className="text-white font-medium leading-snug text-sm mb-3">{i.name}</div>
-                    {i.desc && <div className="text-xs text-gray-300 mb-4">{i.desc}</div>}
-                    <div className="text-blue-400 text-sm font-medium">READ PROFILE →</div>
+            {trackedInstitutions.map((i) => (
+              <Link href={`/${i.code.toLowerCase()}`} key={i.code}>
+                <div
+                  className="rounded-lg p-6 border border-border h-full cursor-pointer transition-all duration-300 hover:border-brand-medium-blue"
+                  style={{ backgroundColor: 'var(--surface)' }}
+                >
+                  <div className="font-bold text-4xl mb-4" style={{ color: 'var(--highlight)' }}>
+                    {i.code}
                   </div>
-                </Link>
-              )
-            })}
+                  <div className="text-foreground font-medium leading-snug text-sm mb-3">{i.name}</div>
+                  {i.desc && <div className="text-xs text-muted-foreground mb-4">{i.desc}</div>}
+                  <div style={{ color: 'var(--highlight)' }} className="text-sm font-medium">READ PROFILE →</div>
+                </div>
+              </Link>
+            ))}
           </div>
-          <p className="text-gray-700 leading-relaxed max-w-3xl">
+          <p className="text-muted-foreground leading-relaxed max-w-3xl">
             These bodies often work with national and municipal governments, state-owned entities,
             and corporations. Their involvement can take many forms, including loans, equity,
             grants, technical assistance, guarantees, and other financial instruments.
@@ -175,17 +171,17 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-gray-900 py-16 px-4 sm:px-8">
+      <section className="py-16 px-4 sm:px-8 border-t border-border" style={{ backgroundColor: 'var(--deep)' }}>
         <div className="container mx-auto">
           <SectionLabel>
-            <span className="text-white">Methodology</span>
+            <span className="text-foreground">Methodology</span>
           </SectionLabel>
-          <h2 className="text-4xl font-bold text-white mb-10 max-w-3xl">Methodology and data sources.</h2>
+          <h2 className="text-4xl font-bold text-foreground mb-10 max-w-3xl">Methodology and data sources.</h2>
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="rounded-lg p-6 border border-gray-700 bg-gray-800">
-              <div className="font-bold text-2xl mb-3 text-blue-400">01</div>
-              <div className="text-base font-medium mb-3 text-white">Where the data comes from</div>
-              <p className="text-sm text-gray-300 leading-relaxed">
+            <div className="rounded-lg p-6 border border-border" style={{ backgroundColor: 'var(--surface)' }}>
+              <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>01</div>
+              <div className="text-base font-medium mb-3 text-foreground">Where the data comes from</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 The Atlas is not based on a single source of information. Project data is collated
                 from existing GAIA repositories (including all its campaigns, member meetings, and
                 participation in climate events from around the world), and publicly available
@@ -193,10 +189,10 @@ const AboutPage: React.FC = () => {
                 microsites. We use OpenStreetMap to show project locations.
               </p>
             </div>
-            <div className="rounded-lg p-6 border border-gray-700 bg-gray-800">
-              <div className="font-bold text-2xl mb-3 text-blue-400">02</div>
-              <div className="text-base font-medium mb-3 text-white">How it is compiled</div>
-              <p className="text-sm text-gray-300 leading-relaxed">
+            <div className="rounded-lg p-6 border border-border" style={{ backgroundColor: 'var(--surface)' }}>
+              <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>02</div>
+              <div className="text-base font-medium mb-3 text-foreground">How it is compiled</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 The Atlas brings together project descriptions, risk assessments, financiers, and
                 key environmental and social issues raised around each project. Because official
                 documentation does not always capture local experiences and impacts fully, the
@@ -204,10 +200,10 @@ const AboutPage: React.FC = () => {
                 campaigns, social media, and grey literature in local languages.
               </p>
             </div>
-            <div className="rounded-lg p-6 border border-gray-700 bg-gray-800">
-              <div className="font-bold text-2xl mb-3 text-blue-400">03</div>
-              <div className="text-base font-medium mb-3 text-white">What comes next</div>
-              <p className="text-sm text-gray-300 leading-relaxed">
+            <div className="rounded-lg p-6 border border-border" style={{ backgroundColor: 'var(--surface)' }}>
+              <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>03</div>
+              <div className="text-base font-medium mb-3 text-foreground">What comes next</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 To complement our main database, we also publish factsheets that examine IFI-wise
                 investments and cross-cutting just-transition concerns, including the inclusion of
                 waste workers across projects. In the future, we hope to put out more research at
@@ -223,19 +219,21 @@ const AboutPage: React.FC = () => {
       <section className="py-16 px-4 sm:px-8">
         <div className="container mx-auto">
           <SectionLabel>Transparency</SectionLabel>
-          <h2 className="text-4xl font-bold mb-4 max-w-3xl text-gray-900">What are the limitations of this project?</h2>
-          <p className="text-gray-700 max-w-2xl mb-12">
+          <h2 className="text-4xl font-bold text-foreground mb-4 max-w-3xl">What are the limitations of this project?</h2>
+          <p className="text-muted-foreground max-w-2xl mb-12">
             We publish these limitations in the interest of transparency, so every entry can be
             read with its context in mind.
           </p>
           <div className="space-y-4 max-w-4xl">
             {limitations.map((l) => (
-              <div key={l.n} className="rounded-lg p-6 border border-gray-200 bg-gray-50">
+              <div key={l.n} className="rounded-lg p-6 border border-border" style={{ backgroundColor: 'var(--surface)' }}>
                 <div className="flex items-baseline gap-4 mb-4">
-                  <span className="font-bold text-2xl text-blue-600">{l.n}</span>
-                  <h3 className="text-xl font-semibold text-gray-900">{l.title}</h3>
+                  <span className="font-bold text-2xl" style={{ color: 'var(--highlight)' }}>
+                    {l.n}
+                  </span>
+                  <h3 className="text-xl font-bold text-foreground">{l.title}</h3>
                 </div>
-                <div className="space-y-3 text-sm text-gray-700 leading-relaxed md:pl-12">
+                <div className="space-y-3 text-sm text-muted-foreground leading-relaxed md:pl-12">
                   {l.body.map((p, idx) => (
                     <p key={idx}>{p}</p>
                   ))}
@@ -247,22 +245,20 @@ const AboutPage: React.FC = () => {
       </section>
 
       <section className="py-16 px-4 sm:px-8">
-        <div className="container mx-auto rounded-2xl p-10 md:p-16 relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-900 text-white">
-          <SectionLabel>
-            <span className="text-white">Get involved</span>
-          </SectionLabel>
-          <h2 className="text-4xl md:text-5xl font-bold max-w-3xl mb-6">Help us keep the Atlas honest.</h2>
-          <p className="text-gray-200 max-w-2xl mb-8 leading-relaxed">
+        <div className="container mx-auto rounded-2xl p-10 md:p-16 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--surface), var(--deep))' }}>
+          <SectionLabel>Get involved</SectionLabel>
+          <h2 className="text-4xl md:text-5xl font-bold max-w-3xl mb-6 text-foreground">Help us keep the Atlas honest.</h2>
+          <p className="text-muted-foreground max-w-2xl mb-8 leading-relaxed">
             Communities, waste-worker collectives, journalists and researchers — share on-ground
             information about waste-to-energy projects, livelihood impacts, or gaps in official
             reporting. Every submission is vetted by the Atlas team and GAIA partners before being
             included.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/partner-with-us" className="px-6 py-3 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700 transition">
+            <Link href="/partner-with-us" className="px-6 py-3 rounded-md font-medium transition-all hover:opacity-90" style={{ backgroundColor: 'var(--highlight)', color: 'var(--deep)' }}>
               Report a project →
             </Link>
-            <Link href="/" className="px-6 py-3 rounded-md font-medium border border-gray-300 hover:bg-gray-200 transition">
+            <Link href="/" className="px-6 py-3 rounded-md font-medium border border-border hover:opacity-80 transition-colors text-foreground">
               Back to overview
             </Link>
           </div>
