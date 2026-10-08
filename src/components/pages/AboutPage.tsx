@@ -111,13 +111,10 @@ const AboutPage: React.FC = () => {
             Public and IFI finance can support infrastructure that perpetuates extraction, consumption and disposal, including incineration, waste-to-energy (WTE), chemical and advanced recycling, carbon capture and other false solutions. For peoples' movements, the questions are: Who finances it? Who profits? Who bears the costs? What gets locked in? And whose solutions are displaced? Financing capital intensive waste technologies in the Global South while neglecting prevention, reuse, repair, recycling, composting and waste-worker livelihoods risks reinforcing waste colonialism and inequality.
           </p>
 
-          {/* Two Column Cards */}
+          {/* Two Column Section */}
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Card 1 */}
-            <div
-              className="rounded-lg p-8 border-2"
-              style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
-            >
+            {/* Column 1 */}
+            <div>
               <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
                 Every data represents a community at risk.
               </h3>
@@ -126,11 +123,8 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Card 2 */}
-            <div
-              className="rounded-lg p-8 border-2"
-              style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
-            >
+            {/* Column 2 */}
+            <div>
               <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
                 A wealth of evidence for countering greenwashing
               </h3>
