@@ -141,7 +141,7 @@ const AboutPage: React.FC = () => {
               <div
                 key={idx}
                 className="rounded-lg p-6 border-2 h-full"
-                style={{ borderColor: '#366b8a', backgroundColor: 'rgba(32, 71, 104, 0.3)' }}
+                style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
               >
                 <h3 className="font-bold text-lg mb-3" style={{ color: 'var(--highlight)' }}>
                   {solution.title}
