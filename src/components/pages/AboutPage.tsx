@@ -189,13 +189,28 @@ const AboutPage: React.FC = () => {
             {trackedInstitutions.map((i) => (
               <Link href={`/${i.code.toLowerCase()}`} key={i.code}>
                 <div
-                  className="rounded p-6 h-full cursor-pointer transition-all duration-300 border-2 hover:border-orange-500 group"
+                  className="rounded p-6 h-full cursor-pointer transition-all duration-300 border-2 group"
                   style={{ 
-                    borderColor: '#2f4059', 
-                    backgroundColor: 'rgba(26, 95, 122, 0.1)',
+                    borderColor: '#2f4059',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#ffa51d';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.05)';
+                    const readProfile = e.currentTarget.querySelector('[data-read-profile]');
+                    if (readProfile) {
+                      (readProfile as HTMLElement).style.color = '#ffa51d';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#2f4059';
+                    e.currentTarget.style.backgroundColor = 'rgba(26, 95, 122, 0.1)';
+                    const readProfile = e.currentTarget.querySelector('[data-read-profile]');
+                    if (readProfile) {
+                      (readProfile as HTMLElement).style.color = '#92a1b3';
+                    }
                   }}
                 >
-                  <div className="font-bold text-6xl mb-4" style={{ color: '#ffa51d' }}>
+                  <div className="font-normal text-6xl mb-4" style={{ color: '#ffa51d', fontFamily: 'Fraunces', fontWeight: 400 }}>
                     {i.code}
                   </div>
                   <div className="text-white font-medium leading-snug text-base mb-3">{i.name}</div>
@@ -219,7 +234,7 @@ const AboutPage: React.FC = () => {
                       Bilateral aid agency · minimal disclosure
                     </div>
                   )}
-                  <div className="text-xs font-medium group-hover:text-orange-500 transition-colors" style={{ color: '#92a1b3' }}>
+                  <div className="text-xs font-medium transition-colors" data-read-profile style={{ color: '#92a1b3' }}>
                     READ PROFILE →
                   </div>
                 </div>
