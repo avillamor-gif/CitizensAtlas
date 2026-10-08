@@ -114,6 +114,42 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Two Info Cards Section */}
+      <section className="py-16 px-4 sm:px-8 text-white" style={{ borderColor: 'rgba(255, 165, 0, 0.1)', borderTopWidth: '1px', borderBottomWidth: '1px' }}>
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Card 1 */}
+            <div
+              className="rounded-lg p-8 border-2"
+              style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
+            >
+              <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
+                Every data represents a community at risk.
+              </h3>
+              <p className="text-base leading-relaxed" style={{ color: '#aeb9cc' }}>
+                The Citizens' Atlas of False Solutions and Circularity responds by mapping IFI  projects, technologies, policies and financial flows promoted as climate or circular solutions. Building on the Global Atlas of Environmental Justice, it connects financial data with community experiences, impacts, campaigns, complaints, legal actions and reprisals, showing who finances projects, what they claim to achieve, and what alternatives they may displace.
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div
+              className="rounded-lg p-8 border-2"
+              style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
+            >
+              <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
+                A wealth of evidence for countering greenwashing
+              </h3>
+              <p className="text-base leading-relaxed" style={{ color: '#aeb9cc' }}>
+                The Atlas is an open citizen reporting and evidence platform, enabling communities, workers, researchers and civil society to report projects, impacts, threats and reprisals—including intimidation, harassment, surveillance, criminalization and displacement—with appropriate verification, privacy and security safeguards. It will connect struggles across countries, support collaborative action, and share expert views, research and publications that challenge misleading climate and circularity narratives.
+              </p>
+              <p className="text-base leading-relaxed mt-4" style={{ color: '#aeb9cc' }}>
+                Ultimately, the Atlas turns financial data and community stories into evidence, accountability and collective action—making visible who benefits, who bears the costs, what gets locked in, and whose solutions are being ignored.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* False Solutions Section */}
       <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
         <div className="container mx-auto">
