@@ -105,15 +105,19 @@ const VideosPage: React.FC<VideosPageProps> = ({ items, onViewArticle }) => {
   );
 
   return (
-    <div>
-      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
-        <div>
-          <h1 className="text-5xl font-extrabold mb-4">Videos</h1>
-          <p className="text-xl max-w-3xl mx-auto">
+    <div style={{ backgroundColor: 'var(--deep)' }}>
+      {/* Header Section */}
+      <section className="py-16 px-4 sm:px-8 text-white border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+        <div className="container mx-auto">
+          <div className="text-xs uppercase tracking-[0.32em] mb-4" style={{ color: '#aeb9cc' }}>From the Field</div>
+          <h1 className="text-5xl font-bold mb-4">
+            <span style={{ color: 'white' }}>Videos</span>
+          </h1>
+          <p className="text-lg max-w-3xl" style={{ color: '#aeb9cc' }}>
             Watch documentaries, community testimonies, and campaign videos on environmental justice and resistance to false solutions.
           </p>
         </div>
-      </div>
+      </section>
       <ArticleListPage
         title="Videos"
         items={filtered}

@@ -157,23 +157,18 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
 
   return (
     <div style={{ backgroundColor: 'var(--deep)' }}>
-      {/* Hero banner */}
-      <div className="text-white px-4 sm:px-8 text-center py-20 md:py-28 relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-30"
-          style={{
-            background:
-              'radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)',
-          }}
-        />
-        <div className="relative z-10">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">Publications</h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Explore our research, reports, and resources on false solutions to the climate and circularity crisis.
+      {/* Header Section */}
+      <section className="py-16 px-4 sm:px-8 text-white border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+        <div className="container mx-auto">
+          <div className="text-xs uppercase tracking-[0.32em] mb-4" style={{ color: '#aeb9cc' }}>Research & Analysis</div>
+          <h1 className="text-5xl font-bold mb-4">
+            <span style={{ color: 'white' }}>Publications</span>
+          </h1>
+          <p className="text-lg max-w-3xl" style={{ color: '#aeb9cc' }}>
+            In-depth research, reports, and analysis on false solutions to waste and climate change.
           </p>
         </div>
-      </div>
+      </section>
 
       <ArticleListPage
         title="Publications"
