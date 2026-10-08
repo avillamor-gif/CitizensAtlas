@@ -192,11 +192,30 @@ const AboutPage: React.FC = () => {
                   className="rounded p-6 h-full cursor-pointer transition-all duration-300 border-2 hover:border-opacity-100"
                   style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
                 >
-                  <div className="font-bold text-4xl mb-4" style={{ color: 'var(--highlight)' }}>
+                  <div className="font-bold text-4xl mb-4" style={{ color: '#ffa51d' }}>
                     {i.code}
                   </div>
-                  <div className="text-white font-medium leading-snug text-sm mb-3">{i.name}</div>
-                  {i.desc && <div className="text-xs text-gray-400 mb-4">{i.desc}</div>}
+                  <div className="text-white font-medium leading-snug text-base mb-3">{i.name}</div>
+                  {i.code === 'ADB' && (
+                    <div className="text-gray-400 text-sm mb-4 leading-relaxed">
+                      68 member countries · Japan & US most influential
+                    </div>
+                  )}
+                  {i.code === 'AIIB' && (
+                    <div className="text-gray-400 text-sm mb-4 leading-relaxed">
+                      109 members · China holds {">"} 25% voting power
+                    </div>
+                  )}
+                  {i.code === 'WBG' && (
+                    <div className="text-gray-400 text-sm mb-4 leading-relaxed">
+                      189 members · US holds de facto veto
+                    </div>
+                  )}
+                  {i.code === 'JICA' && (
+                    <div className="text-gray-400 text-sm mb-4 leading-relaxed">
+                      Bilateral aid agency · minimal disclosure
+                    </div>
+                  )}
                   <div style={{ color: '#64b5ff' }} className="text-sm font-medium">
                     READ PROFILE →
                   </div>
