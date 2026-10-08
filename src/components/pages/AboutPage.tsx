@@ -189,7 +189,7 @@ const AboutPage: React.FC = () => {
             {trackedInstitutions.map((i) => (
               <Link href={`/${i.code.toLowerCase()}`} key={i.code}>
                 <div
-                  className="rounded-3xl p-6 h-full cursor-pointer transition-all duration-300 border-2 group"
+                  className="rounded-lg p-6 h-full cursor-pointer transition-all duration-300 border-2 group"
                   style={{ 
                     borderColor: '#2f4059',
                   }}
