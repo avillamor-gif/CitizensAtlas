@@ -102,11 +102,7 @@ const AboutPage: React.FC = () => {
         <div className="relative px-4 sm:px-8 w-full">
           <SectionLabel>About the Atlas</SectionLabel>
           <h1 className="text-5xl md:text-7xl leading-[1.02] font-bold mb-8">
-            Tracking false solutions.
-            <br />
-            Making finance <span style={{ color: '#ffa51d' }}>accountable.</span>
-            <br />
-            Strengthening community <span style={{ color: '#ffa51d' }}>voices</span>
+            Tracking false solutions. Making finance <span style={{ color: '#ffa51d' }}>accountable.</span> Strengthening community <span style={{ color: '#ffa51d' }}>voices</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-6">
             The climate crisis demands urgent action—but urgency cannot come at the expense of accountability. Investments made today can lock communities and countries into development pathways for decades. As governments and International Financial Institutions (IFIs) promote climate action, circular economy and a just transition, we must ask: is their money accelerating the transition—or deepening the crisis?
