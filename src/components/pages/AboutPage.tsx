@@ -105,7 +105,7 @@ const AboutPage: React.FC = () => {
             Tracking false solutions. Making development finance{' '}
             <span style={{ color: 'var(--highlight)' }}>visible.</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed mb-6">
+          <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-6">
             The climate crisis demands urgent action—but urgency cannot come at the expense of accountability. Investments made today can lock communities and countries into development pathways for decades. As governments and International Financial Institutions (IFIs) promote climate action, circular economy and a just transition, we must ask: is their money accelerating the transition—or deepening the crisis?
           </p>
           <p className="text-lg text-gray-300 leading-relaxed">
