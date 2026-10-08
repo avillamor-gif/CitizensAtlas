@@ -107,9 +107,41 @@ const AboutPage: React.FC = () => {
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-6">
             The climate crisis demands urgent action—but urgency cannot come at the expense of accountability. Investments made today can lock communities and countries into development pathways for decades. As governments and International Financial Institutions (IFIs) promote climate action, circular economy and a just transition, we must ask: is their money accelerating the transition—or deepening the crisis?
           </p>
-          <p className="text-lg text-gray-300 leading-relaxed">
+          <p className="text-lg text-gray-300 leading-relaxed mb-12">
             Public and IFI finance can support infrastructure that perpetuates extraction, consumption and disposal, including incineration, waste-to-energy (WTE), chemical and advanced recycling, carbon capture and other false solutions. For peoples' movements, the questions are: Who finances it? Who profits? Who bears the costs? What gets locked in? And whose solutions are displaced? Financing capital intensive waste technologies in the Global South while neglecting prevention, reuse, repair, recycling, composting and waste-worker livelihoods risks reinforcing waste colonialism and inequality.
           </p>
+
+          {/* Two Column Cards */}
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Card 1 */}
+            <div
+              className="rounded-lg p-8 border-2"
+              style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
+            >
+              <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
+                Every data represents a community at risk.
+              </h3>
+              <p className="text-base leading-relaxed" style={{ color: '#aeb9cc' }}>
+                The Citizens' Atlas of False Solutions and Circularity responds by mapping IFI  projects, technologies, policies and financial flows promoted as climate or circular solutions. Building on the Global Atlas of Environmental Justice, it connects financial data with community experiences, impacts, campaigns, complaints, legal actions and reprisals, showing who finances projects, what they claim to achieve, and what alternatives they may displace.
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div
+              className="rounded-lg p-8 border-2"
+              style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
+            >
+              <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
+                A wealth of evidence for countering greenwashing
+              </h3>
+              <p className="text-base leading-relaxed mb-4" style={{ color: '#aeb9cc' }}>
+                The Atlas is an open citizen reporting and evidence platform, enabling communities, workers, researchers and civil society to report projects, impacts, threats and reprisals—including intimidation, harassment, surveillance, criminalization and displacement—with appropriate verification, privacy and security safeguards. It will connect struggles across countries, support collaborative action, and share expert views, research and publications that challenge misleading climate and circularity narratives.
+              </p>
+              <p className="text-base leading-relaxed" style={{ color: '#aeb9cc' }}>
+                Ultimately, the Atlas turns financial data and community stories into evidence, accountability and collective action—making visible who benefits, who bears the costs, what gets locked in, and whose solutions are being ignored.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
