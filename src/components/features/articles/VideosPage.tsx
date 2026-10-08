@@ -91,14 +91,13 @@ const VideosPage: React.FC<VideosPageProps> = ({ items, onViewArticle }) => {
       {hasActiveFilters && (
         <button
           onClick={handleClearFilters}
-          className="text-sm font-semibold underline whitespace-nowrap transition hover:opacity-80"
-          style={{ color: 'var(--highlight)' }}
+          className="text-sm font-semibold text-brand-dark-blue hover:text-brand-medium-blue underline whitespace-nowrap"
         >
           Clear Filters
         </button>
       )}
       {hasActiveFilters && (
-        <p className="text-sm w-full" style={{ color: '#aeb9cc' }}>
+        <p className="text-sm text-gray-500 w-full">
           Showing {filtered.length} of {items.length} videos
         </p>
       )}
@@ -107,7 +106,7 @@ const VideosPage: React.FC<VideosPageProps> = ({ items, onViewArticle }) => {
 
   return (
     <div>
-      <div style={{ backgroundColor: 'var(--deep)' }} className="text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
+      <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
         <div>
           <h1 className="text-5xl font-extrabold mb-4">Videos</h1>
           <p className="text-xl max-w-3xl mx-auto">
