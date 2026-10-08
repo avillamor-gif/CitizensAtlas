@@ -189,10 +189,13 @@ const AboutPage: React.FC = () => {
             {trackedInstitutions.map((i) => (
               <Link href={`/${i.code.toLowerCase()}`} key={i.code}>
                 <div
-                  className="rounded p-6 h-full cursor-pointer transition-all duration-300 border-2 hover:border-opacity-100"
-                  style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
+                  className="rounded p-6 h-full cursor-pointer transition-all duration-300 border-2 hover:border-orange-500 group"
+                  style={{ 
+                    borderColor: '#2f4059', 
+                    backgroundColor: 'rgba(26, 95, 122, 0.1)',
+                  }}
                 >
-                  <div className="font-bold text-4xl mb-4" style={{ color: '#ffa51d' }}>
+                  <div className="font-bold text-6xl mb-4" style={{ color: '#ffa51d' }}>
                     {i.code}
                   </div>
                   <div className="text-white font-medium leading-snug text-base mb-3">{i.name}</div>
@@ -216,7 +219,7 @@ const AboutPage: React.FC = () => {
                       Bilateral aid agency · minimal disclosure
                     </div>
                   )}
-                  <div style={{ color: '#92a1b3' }} className="text-xs font-medium">
+                  <div className="text-xs font-medium group-hover:text-orange-500 transition-colors" style={{ color: '#92a1b3' }}>
                     READ PROFILE →
                   </div>
                 </div>
