@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Page, User } from '@/types/types';
 import { UserIcon } from '@/components/ui/icons';
@@ -64,7 +65,15 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
         <>
             <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                 <div className="container mx-auto flex justify-between items-center">
-                    <div className="flex-1">
+                    <div className="flex-1 flex items-start gap-3">
+                        <Image 
+                            src="/zero-waste-logo.png" 
+                            alt="Zero Waste Logo" 
+                            width={140}
+                            height={60}
+                            className="object-contain"
+                            priority
+                        />
                         <Link href="/" className="text-left block">
                             <h1 className="text-white text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Fraunces', serif", fontWeight: 600}}>
                                 Citizens' Atlas
