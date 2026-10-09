@@ -65,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
         <>
             <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                 <div className="container mx-auto flex justify-between items-center">
-                    <div className="flex-1 flex items-start gap-3">
+                    <div className="flex-1 flex items-center gap-3">
                         <Image 
                             src="/zero-waste-logo.png" 
                             alt="Zero Waste Logo" 
