@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1">
                         <Link href="/" className="text-left block">
-                            <h1 className="text-white text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Sora', sans-serif", fontVariantCaps: 'small-caps'}}>
+                            <h1 className="text-white text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Fraunces', serif", fontWeight: 600}}>
                                 CITIZENS' ATLAS
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-400 leading-tight">on False Solutions to Climate and Circularity</p>
