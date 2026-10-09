@@ -235,7 +235,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 hasAccess = false;
             } else if (activeAdminPage === 'pending-approvals' && !canApproveDrafts) {
                 hasAccess = false;
-            } else if (activeAdminPage === 'notification-emails-config' && userRole !== 'super_admin') {
+            } else if (activeAdminPage === 'notification-emails-config' && !canManageTeam && !canManageRoles) {
                 hasAccess = false;
             } else if (activeAdminPage === 'team-management' && !canManageTeam) {
                 hasAccess = false;
@@ -494,7 +494,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                     />
                 );
             case 'notification-emails-config':
-                if (userRole !== 'super_admin') return <AccessDenied />;
+                if (!canManageTeam && !canManageRoles) return <AccessDenied />;
                 return <NotificationEmailList />;
             case 'projects-add':
                 if (!canViewProjects) return <AccessDenied />;

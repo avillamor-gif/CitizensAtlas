@@ -251,7 +251,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   }
 
   // Notification Email Configuration (Super Admin only)
-  if (userRole === 'super_admin') {
+  if (canManageTeam || canManageRoles) {
     adminItems.push({
       title: "Notification Emails",
       page: "notification-emails-config" as AdminPage,
