@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Newspaper,
   FileText,
@@ -55,6 +55,13 @@ interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AdminSidebar({ activePage, setActivePage, currentUser, ...props }: AdminSidebarProps) {
   const [teamManagementOpen, setTeamManagementOpen] = useState(false);
   const userRole = currentUser?.role;
+  
+  // Auto-open Team Management menu when team-related pages are active
+  useEffect(() => {
+    if (activePage === 'team-management' || activePage === 'role-management') {
+      setTeamManagementOpen(true);
+    }
+  }, [activePage]);
   
   // If no user is provided, render a minimal sidebar
   if (!currentUser) {
@@ -385,11 +392,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               isActive={activePage === subItem.page}
-                              onClick={() => {
-                                setActivePage(subItem.page);
-                                // Keep the menu open after clicking submenu
-                                setTeamManagementOpen(true);
-                              }}
+                              onClick={() => setActivePage(subItem.page)}
                               className="cursor-pointer"
                             >
                               <span>{subItem.title}</span>
