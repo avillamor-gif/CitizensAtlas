@@ -26,7 +26,6 @@ export const metadata: Metadata = {
     description: "A collaborative platform for mapping and documenting false solutions in circular economy and climate action.",
     creator: "@citizensatlas",
   },
-  manifest: "/manifest.json",
 }
 
 export const viewport = {
