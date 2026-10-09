@@ -140,7 +140,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* False Solutions Section */}
-      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)', backgroundColor: '#00071b' }}>
         <div className="container mx-auto">
           <SectionLabel>
             <span className="text-white">What we mean by</span>
@@ -173,7 +173,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Track Section */}
-      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)', backgroundColor: '#00112b' }}>
         <div className="container mx-auto">
           <div className="flex items-end justify-between flex-wrap gap-6 mb-12">
             <div>
@@ -249,7 +249,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Methodology Section */}
-      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)', backgroundColor: '#00071b' }}>
         <div className="container mx-auto">
           <SectionLabel>
             <span className="text-white">Methodology</span>
@@ -295,7 +295,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Limitations Section */}
-      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)', backgroundColor: '#00112b' }}>
         <div className="container mx-auto">
           <SectionLabel>Transparency</SectionLabel>
           <h2 className="text-4xl font-bold mb-4 max-w-3xl">What are the limitations of this project?</h2>
