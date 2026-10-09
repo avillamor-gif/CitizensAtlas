@@ -385,7 +385,11 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               isActive={activePage === subItem.page}
-                              onClick={() => setActivePage(subItem.page)}
+                              onClick={() => {
+                                setActivePage(subItem.page);
+                                // Keep the menu open after clicking submenu
+                                setTeamManagementOpen(true);
+                              }}
                               className="cursor-pointer"
                             >
                               <span>{subItem.title}</span>
