@@ -186,6 +186,8 @@ const TeamManagement: React.FC = () => {
   };
 
   const handleRoleChange = async (userId: string, newRole: string, memberEmail: string) => {
+    console.log('🔄 handleRoleChange called:', { userId, newRole, memberEmail, isSuperAdmin });
+    
     if (!isSuperAdmin) {
       alert('Only super admins can change user roles');
       return;
@@ -202,6 +204,7 @@ const TeamManagement: React.FC = () => {
 
     try {
       setChangingRole(userId);
+      console.log('📤 Sending role update request...');
 
       // Update role in user_metadata via admin API
       const response = await fetch('/api/admin/users', {
@@ -215,12 +218,16 @@ const TeamManagement: React.FC = () => {
         }),
       });
 
+      console.log('📥 Response received:', { status: response.status, statusText: response.statusText });
+
       const data = await response.json();
+      console.log('📦 Response data:', data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to update role');
       }
 
+      console.log('✅ Role update successful');
       alert(`Role updated successfully to ${newRole}`);
       
       // Refresh the list to show updated role

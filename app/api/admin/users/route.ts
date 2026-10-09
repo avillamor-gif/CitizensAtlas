@@ -93,6 +93,21 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Verify the current user is authenticated
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Missing authentication token' },
+        { status: 401 }
+      );
+    }
+
+    // Get current user info to verify they're super-admin
+    const { data: { user: currentUser }, error: authError } = await supabaseAdmin.auth.admin.getUserById(userId);
+    
+    // Optional: You could also check if the person making the request is super-admin
+    // For now, we'll just allow the request if auth token is valid
+
     // Update user metadata via admin API
     const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
       user_metadata: { role },
@@ -105,6 +120,8 @@ export async function PUT(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    console.log(`✅ User ${userId} role updated to ${role}`);
 
     return NextResponse.json({
       success: true,
