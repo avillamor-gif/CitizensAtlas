@@ -67,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     <div className="flex-1">
                         <Link href="/" className="text-left block">
                             <h1 className="text-white text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight" style={{fontFamily: "'Fraunces', serif", fontWeight: 600}}>
-                                CITIZENS' ATLAS
+                                Citizens' Atlas
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-400 leading-tight">on False Solutions to Climate and Circularity</p>
                             <div className="w-1/3 h-0.5 mt-0.5" style={{ backgroundColor: 'var(--highlight)' }}></div>
