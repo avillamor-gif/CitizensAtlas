@@ -38,8 +38,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
                 )}
             </div>
             <div className="p-1">
-                <span className="bg-yellow-400 text-xs font-bold px-2 py-1 inline-block mb-2">{item.category}</span>
-                <h4 className={`${hasBackground ? 'text-brand-dark-blue' : 'text-white'} font-bold group-hover:text-brand-light-blue transition-colors`}>{item.title}</h4>
+                <span style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }} className="text-xs font-bold px-2 py-1 inline-block mb-2">{item.category}</span>
+                <h4 className="text-white font-bold group-hover:text-brand-yellow transition-colors">{item.title}</h4>
             </div>
         </button>
     </div>
@@ -53,9 +53,10 @@ interface ContentCarouselProps {
     page?: Page;
     onViewArticle: (article: Article, sourcePage?: Page) => void;
     isVideoCarousel?: boolean;
+    isDarkTheme?: boolean;
 }
 
-const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBackground = true, onNavigate, page, onViewArticle, isVideoCarousel = false }) => {
+const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBackground = true, onNavigate, page, onViewArticle, isVideoCarousel = false, isDarkTheme = false }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleScroll = (direction: 'left' | 'right') => {
@@ -68,9 +69,11 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
         }
     };
 
-    const textColor = hasBackground ? 'text-white' : 'text-brand-dark-blue';
-    const borderColor = hasBackground ? 'border-white' : 'border-gray-400';
-    const hoverColor = hasBackground ? 'hover:bg-white hover:text-brand-dark-blue' : 'hover:bg-gray-200';
+    // Use isDarkTheme for text colors, fallback to hasBackground logic
+    const textColor = isDarkTheme ? 'text-white' : (hasBackground ? 'text-white' : 'text-brand-dark-blue');
+    const borderColor = isDarkTheme ? 'border-gray-600' : (hasBackground ? 'border-white' : 'border-gray-400');
+    const hoverColor = isDarkTheme ? 'hover:border-brand-yellow hover:text-brand-yellow' : (hasBackground ? 'hover:bg-white hover:text-brand-dark-blue' : 'hover:bg-gray-200');
+    const lineColor = isDarkTheme ? 'bg-brand-yellow' : (hasBackground ? 'bg-white' : 'bg-brand-dark-blue');
 
     return (
         <section className="py-12 px-4 sm:px-8 lg:px-16">
@@ -78,7 +81,7 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h2 className={`text-3xl font-extrabold ${textColor}`}>{title}</h2>
-                        <div className={`w-16 h-1 mt-2 ${hasBackground ? 'bg-white' : 'bg-brand-dark-blue'}`}></div>
+                        <div className={`w-16 h-1 mt-2 ${lineColor}`}></div>
                     </div>
                     <div className="flex items-center space-x-4">
                         {page && (

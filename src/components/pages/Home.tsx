@@ -34,7 +34,7 @@ const Home: React.FC<HomeProps> = (props) => {
     const videosWithSlugs = reconstructArticleSlugs(props.videosData);
 
     return (
-        <>
+        <div style={{ backgroundColor: 'var(--deep)' }}>
             <Hero
             projects={props.projects}
             onAddProject={props.onAddProject}
@@ -44,21 +44,21 @@ const Home: React.FC<HomeProps> = (props) => {
             setActiveView={props.setActiveView}
             currentUser={props.currentUser}
             />
-            <div className="bg-white">
-            <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} />
+            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
-            <div className="bg-brand-section-blue">
-            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} />
+            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
             <Collaborate />
-            <div className="bg-brand-section-blue">
-            <ContentCarousel title="VIDEOS" items={videosWithSlugs} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} />
+            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <ContentCarousel title="VIDEOS" items={videosWithSlugs} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} isDarkTheme={true} />
             </div>
-            <div className="bg-white">
-            <ContentCarousel title="PUBLICATIONS" items={publicationsWithSlugs} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={props.onViewArticle} />
+            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <ContentCarousel title="PUBLICATIONS" items={publicationsWithSlugs} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
             <Newsletter />
-        </>
+        </div>
     );
 };
 

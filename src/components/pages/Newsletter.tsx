@@ -69,19 +69,19 @@ const Newsletter: React.FC = () => {
     };
 
     return (
-        <section className="bg-white py-16 px-4 sm:px-8">
+        <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <div className="container mx-auto text-center max-w-3xl">
-                <h2 className="text-4xl font-extrabold text-brand-dark-blue mb-2">STAY INFORMED</h2>
-                <div className="w-16 h-1 bg-brand-dark-blue mx-auto mb-4"></div>
-                <p className="text-gray-600 mb-8">
+                <h2 className="text-4xl font-extrabold mb-2" style={{ color: 'var(--highlight)' }}>STAY INFORMED</h2>
+                <div className="w-16 h-1 mx-auto mb-4" style={{ backgroundColor: 'var(--highlight)' }}></div>
+                <p className="text-gray-300 mb-8">
                     Subscribe to our weekly newsletter to get the latest news and updates from Citizens' Atlas.
                 </p>
                 
                 {message && (
                     <div className={`mb-6 p-4 rounded-md ${
                         message.type === 'success' 
-                            ? 'bg-green-50 text-green-800 border border-green-200' 
-                            : 'bg-red-50 text-red-800 border border-red-200'
+                            ? 'bg-green-900 text-green-200 border border-green-700' 
+                            : 'bg-red-900 text-red-200 border border-red-700'
                     }`}>
                         {message.text}
                     </div>
@@ -125,17 +125,19 @@ const Newsletter: React.FC = () => {
                             type="checkbox" 
                             checked={formData.privacyAccepted}
                             onChange={handleChange}
-                            className="h-4 w-4 text-brand-medium-blue border-gray-300 rounded focus:ring-brand-medium-blue mt-1"
+                            className="h-4 w-4 border-gray-600 rounded mt-1"
+                            style={{ borderColor: '#2f4059' }}
                             disabled={loading}
                         />
-                        <label htmlFor="privacy-policy" className="ml-2 text-sm text-gray-600">
-                            View our <a href="#" className="text-brand-medium-blue hover:underline">Privacy Policy</a>.
+                        <label htmlFor="privacy-policy" className="ml-2 text-sm text-gray-300">
+                            View our <a href="#" className="hover:underline" style={{ color: 'var(--highlight)' }}>Privacy Policy</a>.
                         </label>
                     </div>
                     <div className="text-center">
                         <button 
                             type="submit" 
-                            className="bg-brand-dark-blue text-white font-bold py-3 px-12 rounded-md hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="text-gray-900 font-bold py-3 px-12 rounded-md hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{ backgroundColor: 'var(--highlight)' }}
                             disabled={loading}
                         >
                             {loading ? 'Subscribing...' : 'Subscribe'}

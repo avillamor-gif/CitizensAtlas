@@ -156,26 +156,26 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
     }, [projects, filters]);
 
     return (
-        <section className="bg-white py-12 px-4 sm:px-8 lg:px-16">
+        <section className="py-12 px-4 sm:px-8 lg:px-16 text-white" style={{ backgroundColor: 'var(--deep)' }}>
             <div className="container mx-auto">
                                 <div className="text-left max-w-4xl mb-8">
-                    <p className="text-gray-700 mb-4">
+                    <p className="text-gray-300 mb-4">
                         The Citizens' Atlas is a crowdsourced platform mapping false solutions to waste and climate, empowering communities with data, tools, and stories to expose harms and promote real Zero Waste solutions.
                     </p>
-                    <p className="text-gray-700 font-medium">
-                        Select a <span className="font-bold text-brand-dark-blue">country</span> to dig into their false solution projects.
+                    <p className="text-gray-300 font-medium">
+                        Select a <span className="font-bold" style={{ color: 'var(--highlight)' }}>country</span> to dig into their false solution projects.
                     </p>
                 </div>
 
                 {/* Sticky Toggle for Mobile */}
-                <div className="lg:hidden sticky top-[88px] z-30 bg-white pb-4 mb-4 border-b border-gray-200">
+                <div className="lg:hidden sticky top-[88px] z-30 pb-4 mb-4 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
                     <div className="flex gap-2">
                         <div className="flex-1">
                             <MapToggle active={activeView} setActive={setActiveView} />
                         </div>
                         <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                             <SheetTrigger asChild>
-                                <button className="relative bg-brand-dark-blue text-white px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md">
+                                <button className="relative text-white px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md" style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}>
                                     <Filter className="w-4 h-4" />
                                     <span>Filters</span>
                                     {activeFilterCount > 0 && (
@@ -198,7 +198,8 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                                     {activeFilterCount > 0 && (
                                         <button
                                             onClick={clearAllFilters}
-                                            className="w-full mt-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                                            className="w-full mt-6 py-3 rounded-lg font-medium hover:opacity-90 transition-colors"
+                                            style={{ backgroundColor: 'rgba(255, 165, 0, 0.2)', color: 'var(--highlight)' }}
                                         >
                                             Clear All Filters
                                         </button>
@@ -213,7 +214,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     {/* Left Column: Map or Projects */}
                     <div className="lg:col-span-3">
                         {activeView === 'Map' ? (
-                           <div className="relative border rounded-lg shadow-lg overflow-hidden h-[400px] md:h-[600px] bg-gray-200">
+                           <div className="relative border rounded-lg shadow-lg overflow-hidden h-[400px] md:h-[600px]" style={{ borderColor: 'rgba(255, 165, 0, 0.2)', backgroundColor: '#051121' }}>
                                 <InteractiveMap 
                                     projects={filteredProjects} 
                                     onMarkerClick={handleMarkerClick}
@@ -229,7 +230,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                         <div className="mb-4 hidden lg:block">
                             <MapToggle active={activeView} setActive={setActiveView} />
                         </div>
-                        <div className="bg-[#f7f8f9] p-6 border rounded-lg shadow-lg hidden lg:block">
+                        <div className="p-6 border rounded-lg shadow-lg hidden lg:block text-white" style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}>
                             <FilterPanel 
                                 filters={filters}
                                 onFilterChange={onFilterChange}
@@ -238,7 +239,8 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                             {activeFilterCount > 0 && (
                                 <button
                                     onClick={clearAllFilters}
-                                    className="w-full mt-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                    className="w-full mt-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
+                                    style={{ backgroundColor: 'rgba(255, 165, 0, 0.2)', color: 'var(--highlight)' }}
                                 >
                                     Clear All Filters
                                 </button>
@@ -247,7 +249,8 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                         {activeView === 'Map' && (
                             <button 
                                 onClick={() => setIsDashboardVisible(!isDashboardVisible)}
-                                className="mt-4 w-full bg-brand-dark-blue text-white p-4 rounded-lg shadow-md hover:bg-opacity-90 flex justify-center items-center gap-3 transition-all duration-300"
+                                className="mt-4 w-full text-white p-4 rounded-lg shadow-md hover:opacity-90 flex justify-center items-center gap-3 transition-all duration-300"
+                                style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}
                             >
                                 <span className="uppercase font-semibold tracking-wide">
                                     {isDashboardVisible ? 'Hide dashboard' : 'Show dashboard'}
