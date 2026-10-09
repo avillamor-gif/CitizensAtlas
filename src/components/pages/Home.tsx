@@ -34,7 +34,7 @@ const Home: React.FC<HomeProps> = (props) => {
     const videosWithSlugs = reconstructArticleSlugs(props.videosData);
 
     return (
-        <div style={{ backgroundColor: 'var(--deep)' }}>
+        <div>
             <Hero
             projects={props.projects}
             onAddProject={props.onAddProject}
@@ -44,20 +44,24 @@ const Home: React.FC<HomeProps> = (props) => {
             setActiveView={props.setActiveView}
             currentUser={props.currentUser}
             />
-            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <div className="text-white border-t" style={{ backgroundColor: 'rgba(10, 22, 40, 0.7)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
-            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <div className="text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
+            <div style={{ backgroundColor: 'rgba(10, 22, 40, 0.7)' }}>
             <Collaborate />
-            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            </div>
+            <div className="text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <ContentCarousel title="VIDEOS" items={videosWithSlugs} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} isDarkTheme={true} />
             </div>
-            <div className="text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <div className="text-white border-t" style={{ backgroundColor: 'rgba(10, 22, 40, 0.7)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <ContentCarousel title="PUBLICATIONS" items={publicationsWithSlugs} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
+            <div style={{ backgroundColor: 'var(--deep)' }}>
             <Newsletter />
+            </div>
         </div>
     );
 };
