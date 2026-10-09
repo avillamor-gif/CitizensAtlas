@@ -398,7 +398,7 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Collapsible open={showPasswordSection} onOpenChange={setShowPasswordSection}>
+          <Collapsible open={showPasswordSection ?? false} onOpenChange={setShowPasswordSection}>
             <CollapsibleTrigger asChild>
               <div className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                 <div>
