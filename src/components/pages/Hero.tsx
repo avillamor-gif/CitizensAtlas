@@ -156,8 +156,16 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
     }, [projects, filters]);
 
     return (
-        <section className="py-12 px-4 sm:px-8 lg:px-16 text-white" style={{ backgroundColor: 'var(--deep)' }}>
-            <div className="container mx-auto">
+        <section className="py-12 px-4 sm:px-8 lg:px-16 text-white relative overflow-hidden" style={{ backgroundColor: 'var(--deep)' }}>
+            <div
+        aria-hidden
+        className="absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse at 20% 10%, color-mix(in oklab, var(--accent) 30%, transparent), transparent 60%), radial-gradient(ellipse at 80% 90%, color-mix(in oklab, var(--highlight) 18%, transparent), transparent 55%)",
+        }}
+      />
+            <div className="container mx-auto relative z-10">
                                 <div className="text-left max-w-4xl mb-8">
                     <p className="text-gray-300 mb-4">
                         The Citizens' Atlas is a crowdsourced platform mapping false solutions to waste and climate, empowering communities with data, tools, and stories to expose harms and promote real Zero Waste solutions.
