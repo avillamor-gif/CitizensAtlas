@@ -159,10 +159,10 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         <section className="py-12 px-4 sm:px-8 lg:px-16 text-white relative overflow-hidden" style={{ backgroundColor: 'var(--deep)' }}>
             <div
         aria-hidden
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0 opacity-30"
         style={{
           background:
-            "radial-gradient(ellipse at 20% 10%, color-mix(in oklab, var(--accent) 30%, transparent), transparent 60%), radial-gradient(ellipse at 80% 90%, color-mix(in oklab, var(--highlight) 18%, transparent), transparent 55%)",
+            "radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)",
         }}
       />
             <div className="container mx-auto relative z-10">
