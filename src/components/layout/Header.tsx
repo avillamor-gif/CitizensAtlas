@@ -79,8 +79,14 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <NavLink href="/about" isActive={isActive('about')}>About</NavLink>
                         <NavLink href="/publications" isActive={isActive('publications')}>Publications</NavLink>
                         <NavLink href="/map" isActive={isActive('map')}>Map</NavLink>
-                        <NavLink href="/active-fight-sites" isActive={isActive('active-fight-sites')}>Active Fight Sites</NavLink>
                         <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
+                        <Link
+                            href="/active-fight-sites"
+                            className="px-4 py-2 rounded-lg text-gray-900 font-medium transition-colors hover:opacity-90"
+                            style={{ backgroundColor: 'var(--highlight)', fontSize: '14px' }}
+                        >
+                            Active Fight Sites
+                        </Link>
                         
                         {/* User Avatar or Login Link */}
                         {resolvedUser ? (
