@@ -67,9 +67,9 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1 flex items-center gap-3">
                         <Image 
-                            src="/zero-waste-logo.png" 
-                            alt="Zero Waste Logo" 
-                            width={140}
+                            src="/citizens-atlas-logo.png" 
+                            alt="Citizens' Atlas Logo" 
+                            width={60}
                             height={60}
                             className="object-contain"
                             priority
