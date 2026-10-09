@@ -102,11 +102,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Get current user info to verify they're super-admin
-    const { data: { user: currentUser }, error: authError } = await supabaseAdmin.auth.admin.getUserById(userId);
-    
-    // Optional: You could also check if the person making the request is super-admin
-    // For now, we'll just allow the request if auth token is valid
+    console.log(`📝 Updating user ${userId} role to ${role}`);
 
     // Update user metadata via admin API
     const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
@@ -114,14 +110,31 @@ export async function PUT(request: NextRequest) {
     });
 
     if (error) {
-      console.error('Error updating user role:', error);
+      console.error('Error updating user role in auth:', error);
       return NextResponse.json(
         { error: error.message || 'Failed to update user role' },
         { status: 500 }
       );
     }
 
-    console.log(`✅ User ${userId} role updated to ${role}`);
+    console.log(`✅ User ${userId} role updated in auth.users to ${role}`);
+
+    // Also update the profiles table to keep it in sync
+    try {
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .update({ role })
+        .eq('id', userId);
+
+      if (profileError) {
+        console.warn(`⚠️ Failed to update role in profiles table:`, profileError);
+        // Don't fail if profiles table update fails - user_metadata is primary source
+      } else {
+        console.log(`✅ User ${userId} role updated in profiles table to ${role}`);
+      }
+    } catch (profileErr) {
+      console.warn(`⚠️ Exception updating profiles table:`, profileErr);
+    }
 
     return NextResponse.json({
       success: true,

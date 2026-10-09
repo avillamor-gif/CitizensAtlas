@@ -125,10 +125,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (profile) {
         console.log('✅ Profile found:', (profile as any).role);
+        
+        // Priority: user_metadata.role > profiles.role > default 'contributor'
+        const roleFromMetadata = supabaseUser.user_metadata?.role;
+        const roleFromProfile = (profile as any).role;
+        const finalRole = roleFromMetadata || roleFromProfile || 'contributor';
+        
+        console.log('🔑 Role resolution:', {
+          fromMetadata: roleFromMetadata,
+          fromProfile: roleFromProfile,
+          final: finalRole,
+        });
+        
         const userData = {
           id: (profile as any).id,
           email: (profile as any).email,
-          role: (profile as any).role,
+          role: finalRole,
           name: (profile as any).full_name || (profile as any).email,
           full_name: (profile as any).full_name,
           avatar_url: (profile as any).avatar_url || '',
@@ -136,11 +148,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('👤 Setting user data:', userData);
         setUserWithPersistence(userData);
       } else {
-        console.log('⚠️ No profile found in database, using default contributor role');
+        console.log('⚠️ No profile found in database, checking user_metadata for role');
+        
+        // Try to get role from user_metadata even if profile not found
+        const roleFromMetadata = supabaseUser.user_metadata?.role || 'contributor';
+        
         setUserWithPersistence({
           id: supabaseUser.id,
           email: supabaseUser.email!,
-          role: 'contributor',
+          role: roleFromMetadata,
           name: supabaseUser.email!,
         });
       }
