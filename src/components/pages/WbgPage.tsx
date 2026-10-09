@@ -76,55 +76,56 @@ function WbgPage() {
   ]
 
   return (
-    <article className="bg-white">
+    <article style={{ backgroundColor: 'var(--deep)' }}>
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
-          <div className="text-xs uppercase tracking-[0.25em] text-gray-600 mb-3">IFI Profile</div>
+          <div className="text-xs uppercase tracking-[0.25em] mb-3" style={{ color: '#aeb9cc' }}>IFI Profile</div>
           <h1 className="text-6xl mb-6">
-            <span className="text-blue-600">WBG</span> · World Bank Group
+            <span style={{ color: 'var(--highlight)' }}>WBG</span> · <span style={{ color: 'white' }}>World Bank Group</span>
           </h1>
-          <p className="text-lg text-gray-700 leading-relaxed mb-6">
+          <p className="text-lg leading-relaxed mb-6" style={{ color: '#aeb9cc' }}>
             One of the most influential multilateral financial institutions shaping global development priorities. Established in 1944, governed by 189 member countries, dominated by the US, Japan, Germany, France, the UK, and China — with the United States holding de facto veto power.
           </p>
+
+          <div className="space-y-4" style={{ borderTopColor: '#2f4059', borderTopWidth: '1px' }}>
+            <Stat label="False-solutions projects surveyed by GAIA AP" value="48" />
+            <Stat label="Projects with accountability concerns" value="15 of 48" highlight />
+            <Stat label="WBG components tracked" value="3" />
+          </div>
         </div>
       </section>
 
       <section className="py-16 px-4 sm:px-8">
         <div className="container mx-auto max-w-4xl">
-          <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5 text-gray-900">Composition</h2>
+          <Section title="Composition">
             <div className="grid md:grid-cols-3 gap-4">
               {wbgComponents.map((b) => (
-                <div key={b.code} className="rounded-lg p-5 border border-gray-200 bg-gray-50">
-                  <div className="text-2xl font-bold mb-2 text-blue-600">{b.code}</div>
-                  <p className="text-sm text-gray-700 leading-relaxed">{b.desc}</p>
+                <div key={b.code} className="rounded-lg p-5 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+                  <div className="text-2xl font-bold mb-2" style={{ color: 'var(--highlight)' }}>{b.code}</div>
+                  <p className="text-sm leading-relaxed" style={{ color: '#aeb9cc' }}>{b.desc}</p>
                 </div>
               ))}
             </div>
-          </section>
+          </Section>
 
-          <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5 text-gray-900">WBG's false-solutions trends</h2>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
-              <p>
-                WBG's recent portfolio, as tracked in the database, reveals a troubling pattern of
-                promoting false solutions to environmental and waste crises. The Bank publicly emphasises
-                "just transition" and "circular economy" goals, but continues to fund waste-to-energy
-                plants, advanced plastic recycling projects, and waste-to-roads initiatives. These
-                technologies have been criticised for perpetuating fossil fuel dependence and undermining
-                the hierarchy of priorities in waste management — beginning with reduction.
-              </p>
-              <p>
-                Its growing interest in plastic circularity, especially marine plastics, is also a point
-                of concern for GAIA, given the proliferation of techno-fixes that reinforce the
-                industrial waste systems they claim to address.
-              </p>
-            </div>
-          </section>
+          <Section title="WBG's false-solutions trends">
+            <p>
+              WBG's recent portfolio, as tracked in the database, reveals a troubling pattern of
+              promoting false solutions to environmental and waste crises. The Bank publicly emphasises
+              "just transition" and "circular economy" goals, but continues to fund waste-to-energy
+              plants, advanced plastic recycling projects, and waste-to-roads initiatives. These
+              technologies have been criticised for perpetuating fossil fuel dependence and undermining
+              the hierarchy of priorities in waste management — beginning with reduction.
+            </p>
+            <p>
+              Its growing interest in plastic circularity, especially marine plastics, is also a point
+              of concern for GAIA, given the proliferation of techno-fixes that reinforce the
+              industrial waste systems they claim to address.
+            </p>
+          </Section>
 
-          <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5 text-gray-900">Reporting inconsistencies</h2>
-            <p className="text-gray-700 leading-relaxed">
+          <Section title="Reporting inconsistencies">
+            <p>
               The WBG applies a dual risk system, categorising projects as "high" to "moderate", while
               the IFC uses letter ratings — most often "B" (limited). These coexist confusingly: a
               project may be listed as "Environmental Category: B" yet "Environmental and Social Risk:
@@ -134,16 +135,16 @@ function WbgPage() {
               health and safety risks, and historical groundwater and soil pollution — impacts that
               clearly exceed "limited" risk.
             </p>
-          </section>
+          </Section>
 
           <BarBlock title="WBG · Investment per country (USD millions)" data={investmentByCountry} />
 
           <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5 text-gray-900">Largest WBG projects in the database</h2>
-            <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+            <h2 className="text-3xl font-bold mb-5 text-white">Largest WBG projects in the database</h2>
+            <div className="overflow-hidden rounded-lg border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs uppercase tracking-widest text-gray-600 bg-gray-100 border-b border-gray-200">
+                  <tr className="text-left text-xs uppercase tracking-widest" style={{ color: '#aeb9cc', backgroundColor: 'rgba(26, 95, 122, 0.2)', borderBottomColor: '#2f4059', borderBottomWidth: '1px' }}>
                     <th className="px-4 py-3 font-medium">Project</th>
                     <th className="px-4 py-3 font-medium">Country</th>
                     <th className="px-4 py-3 font-medium text-right">USD M</th>
@@ -151,10 +152,10 @@ function WbgPage() {
                 </thead>
                 <tbody>
                   {wbgProjects.map((p) => (
-                    <tr key={p.name} className="border-t border-gray-200 hover:bg-gray-100 transition">
-                      <td className="px-4 py-3 text-gray-900">{p.name}</td>
-                      <td className="px-4 py-3 text-gray-600">{p.country}</td>
-                      <td className="px-4 py-3 text-right text-blue-600 font-medium tabular-nums">{typeof p.amount === 'number' ? p.amount.toLocaleString() : p.amount}</td>
+                    <tr key={p.name} className="transition" style={{ borderTopColor: '#2f4059', borderTopWidth: '1px' }}>
+                      <td className="px-4 py-3" style={{ color: 'white' }}>{p.name}</td>
+                      <td className="px-4 py-3" style={{ color: '#aeb9cc' }}>{p.country}</td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums" style={{ color: 'var(--highlight)' }}>{typeof p.amount === 'number' ? p.amount.toLocaleString() : p.amount}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -162,31 +163,55 @@ function WbgPage() {
             </div>
           </section>
 
-          <Link href="/" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition">
-            ← Back to overview
-          </Link>
+          <div className="mt-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+            <h3 className="text-2xl font-bold mb-2 text-white">Learn more about WBG</h3>
+            <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
+              For more information about the World Bank Group's role in false solutions financing, see the Atlas.
+            </p>
+            <Link href="/" className="text-sm font-medium transition" style={{ color: 'var(--highlight)' }}>
+              ← Back to overview
+            </Link>
+          </div>
         </div>
       </section>
     </article>
   )
 }
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="my-12">
+      <h2 className="text-3xl font-bold mb-5 text-white">{title}</h2>
+      <div className="space-y-4 leading-relaxed" style={{ color: '#aeb9cc' }}>{children}</div>
+    </section>
+  )
+}
+
+function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between py-4" style={{ borderBottomColor: '#2f4059', borderBottomWidth: '1px' }}>
+      <span className="text-sm uppercase tracking-wider" style={{ color: '#aeb9cc' }}>{label}</span>
+      <span className={`text-3xl font-bold`} style={{ color: 'var(--highlight)' }}>{value}</span>
+    </div>
+  )
+}
+
 function BarBlock({ title, data }: { title: string; data: { country: string; amount: number }[] }) {
   const max = Math.max(...data.map((d) => d.amount))
   return (
-    <div className="my-12 rounded-lg p-6 border border-gray-200 bg-gray-50">
-      <div className="text-xs uppercase tracking-widest text-gray-600 mb-5">{title}</div>
+    <div className="my-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+      <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>{title}</div>
       <div className="space-y-2">
         {data.map((d) => (
           <div key={d.country} className="grid grid-cols-[8rem_1fr_6rem] items-center gap-3 text-sm">
-            <span className="text-gray-600">{d.country}</span>
-            <div className="h-2 rounded-full bg-gray-200">
+            <span style={{ color: '#aeb9cc' }}>{d.country}</span>
+            <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
               <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all"
-                style={{ width: `${(d.amount / max) * 100}%` }}
+                className="h-full rounded-full transition-all"
+                style={{ background: 'linear-gradient(to right, #1a5f7a, var(--highlight))', width: `${(d.amount / max) * 100}%` }}
               />
             </div>
-            <span className="text-right text-gray-700 font-medium">{d.amount.toLocaleString()}</span>
+            <span className="text-right font-medium tabular-nums" style={{ color: '#aeb9cc' }}>{d.amount.toLocaleString()}</span>
           </div>
         ))}
       </div>
