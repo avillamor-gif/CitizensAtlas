@@ -63,7 +63,7 @@ export function NavMainAdmin({
           <Collapsible
             key={item.title}
             asChild
-            open={openMenus[item.title]}
+            open={openMenus[item.title] ?? false}
             onOpenChange={(isOpen) => handleOpenChange(item.title, isOpen)}
             className="group/collapsible"
           >
