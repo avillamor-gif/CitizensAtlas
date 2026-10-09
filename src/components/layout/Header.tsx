@@ -79,7 +79,6 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                                 Citizens' Atlas
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-400 leading-tight">on False Solutions to Climate and Circularity</p>
-                            <div className="w-1/3 h-0.5 mt-0.5" style={{ backgroundColor: 'var(--highlight)' }}></div>
                         </Link>
                     </div>
 
