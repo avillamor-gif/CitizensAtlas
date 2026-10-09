@@ -2,7 +2,7 @@
  * Email Notification System for Draft Approval Workflow
  * 
  * This module handles sending email notifications for:
- * - New draft submissions (to super admin)
+ * - New draft submissions (to configured admin emails)
  * - Draft approvals (to contributor)
  * - Draft rejections (to contributor)
  */
@@ -18,6 +18,7 @@ export interface DraftSubmissionNotification {
   contentType: 'project' | 'news' | 'publication' | 'video';
   contentTitle: string;
   submittedAt: string;
+  contentId?: number; // For direct link to the content
 }
 
 export interface DraftStatusNotification {
@@ -29,6 +30,13 @@ export interface DraftStatusNotification {
   adminName?: string;
 }
 
+export interface NotificationEmail {
+  id: number;
+  email: string;
+  label: string | null;
+  is_active: boolean;
+}
+
 // Default configuration - should be set from environment variables
 const defaultConfig: NotificationConfig = {
   superAdminEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@atlas.org',
@@ -36,7 +44,26 @@ const defaultConfig: NotificationConfig = {
 };
 
 /**
+ * Fetch all active notification email addresses from the database
+ */
+export async function getNotificationEmails(): Promise<NotificationEmail[]> {
+  try {
+    const response = await fetch('/api/notification-emails');
+    if (!response.ok) {
+      console.warn('Failed to fetch notification emails from database');
+      return [];
+    }
+    const data = await response.json();
+    return data.emails?.filter((e: NotificationEmail) => e.is_active) || [];
+  } catch (error) {
+    console.error('Error fetching notification emails:', error);
+    return [];
+  }
+}
+
+/**
  * Sends email notification when a contributor submits new content
+ * Sends to all configured notification emails
  */
 export async function notifyAdminOfNewSubmission(
   notification: DraftSubmissionNotification,
@@ -44,30 +71,53 @@ export async function notifyAdminOfNewSubmission(
 ): Promise<boolean> {
   const finalConfig = { ...defaultConfig, ...config };
 
-  const emailData = {
-    to: finalConfig.superAdminEmail,
-    subject: `New ${notification.contentType} submission awaiting approval`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #2563eb;">New Content Submission</h2>
-        <p>A new ${notification.contentType} has been submitted and is awaiting your approval.</p>
-        
-        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Content Type:</strong> ${notification.contentType.charAt(0).toUpperCase() + notification.contentType.slice(1)}</p>
-          <p><strong>Title:</strong> ${notification.contentTitle}</p>
-          <p><strong>Submitted By:</strong> ${notification.contributorName} (${notification.contributorEmail})</p>
-          <p><strong>Submitted At:</strong> ${new Date(notification.submittedAt).toLocaleString()}</p>
+  // Get configured notification emails
+  let notificationEmails = await getNotificationEmails();
+  
+  // Fallback to default if no configured emails
+  if (notificationEmails.length === 0) {
+    notificationEmails = [{ 
+      id: 0, 
+      email: finalConfig.superAdminEmail, 
+      label: 'Default Admin',
+      is_active: true 
+    }];
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const pendingApprovalsLink = `${appUrl}/admin/pending-approvals`;
+
+  // Send to each configured email
+  let allSuccessful = true;
+  for (const notifEmail of notificationEmails) {
+    const emailData = {
+      to: notifEmail.email,
+      subject: `New ${notification.contentType} submission awaiting approval`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">New Content Submission</h2>
+          <p>A new ${notification.contentType} has been submitted and is awaiting your approval.</p>
+          
+          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Content Type:</strong> ${notification.contentType.charAt(0).toUpperCase() + notification.contentType.slice(1)}</p>
+            <p><strong>Title:</strong> ${notification.contentTitle}</p>
+            <p><strong>Submitted By:</strong> ${notification.contributorName} (${notification.contributorEmail})</p>
+            <p><strong>Submitted At:</strong> ${new Date(notification.submittedAt).toLocaleString()}</p>
+          </div>
+          
+          <p>Please click the button below to review and approve or reject this submission.</p>
+          
+          <a href="${pendingApprovalsLink}" 
+             style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px; font-weight: bold;">
+            Review Pending Approvals
+          </a>
+          
+          <p style="margin-top: 30px; font-size: 12px; color: #6b7280;">
+            Email recipient: ${notifEmail.label ? `${notifEmail.label} (${notifEmail.email})` : notifEmail.email}
+          </p>
         </div>
-        
-        <p>Please log in to the admin dashboard to review and approve or reject this submission.</p>
-        
-        <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/pending-approvals" 
-           style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">
-          Review Submission
-        </a>
-      </div>
-    `,
-    text: `
+      `,
+      text: `
 New ${notification.contentType} submission awaiting approval
 
 Content Type: ${notification.contentType}
@@ -75,37 +125,39 @@ Title: ${notification.contentTitle}
 Submitted By: ${notification.contributorName} (${notification.contributorEmail})
 Submitted At: ${new Date(notification.submittedAt).toLocaleString()}
 
-Please log in to the admin dashboard to review this submission.
-    `,
-  };
+Please click the link below to review this submission:
+${pendingApprovalsLink}
+      `,
+    };
 
-  try {
-    // If email service URL is configured, send via API
-    if (finalConfig.emailServiceUrl) {
-      const response = await fetch(finalConfig.emailServiceUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(emailData),
-      });
+    try {
+      // If email service URL is configured, send via API
+      if (finalConfig.emailServiceUrl) {
+        const response = await fetch(finalConfig.emailServiceUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emailData),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Email service responded with status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`Email service responded with status: ${response.status}`);
+        }
+
+        console.log(`✅ Admin notification sent to ${notifEmail.email}`);
+      } else {
+        // Fallback: Log to console (for development)
+        console.log('📧 Email Notification (Admin):', emailData);
+        console.log('⚠️ Email service not configured. Set NEXT_PUBLIC_EMAIL_SERVICE_URL to enable email sending.');
       }
-
-      console.log('✅ Admin notification sent successfully');
-      return true;
-    } else {
-      // Fallback: Log to console (for development)
-      console.log('📧 Email Notification (Admin):', emailData);
-      console.log('⚠️ Email service not configured. Set NEXT_PUBLIC_EMAIL_SERVICE_URL to enable email sending.');
-      return true;
+    } catch (error) {
+      console.error(`❌ Failed to send admin notification to ${notifEmail.email}:`, error);
+      allSuccessful = false;
     }
-  } catch (error) {
-    console.error('❌ Failed to send admin notification:', error);
-    return false;
   }
+
+  return allSuccessful;
 }
 
 /**

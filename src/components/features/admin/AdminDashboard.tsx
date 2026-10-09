@@ -29,6 +29,7 @@ import BatchUpload from './BatchUpload';
 import TeamManagement from './TeamManagement';
 import RoleManagement from './RoleManagement';
 import AccountProfile from './AccountProfile';
+import NotificationEmailList from './NotificationEmailList';
 
 interface AdminDashboardProps {
     projects: Project[];
@@ -233,6 +234,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             } else if (activeAdminPage === 'batch-upload' && !canBatchUpload) {
                 hasAccess = false;
             } else if (activeAdminPage === 'pending-approvals' && !canApproveDrafts) {
+                hasAccess = false;
+            } else if (activeAdminPage === 'notification-emails-config' && userRole !== 'super_admin') {
                 hasAccess = false;
             } else if (activeAdminPage === 'team-management' && !canManageTeam) {
                 hasAccess = false;
@@ -490,6 +493,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         filterType="all"
                     />
                 );
+            case 'notification-emails-config':
+                if (userRole !== 'super_admin') return <AccessDenied />;
+                return <NotificationEmailList />;
             case 'projects-add':
                 if (!canViewProjects) return <AccessDenied />;
                 return (

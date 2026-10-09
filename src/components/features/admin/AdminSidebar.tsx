@@ -17,6 +17,7 @@ import {
   Tags,
   ChevronRight,
   Briefcase,
+  Mail,
 } from "lucide-react"
 
 import { NavMainAdmin } from "./NavMainAdmin"
@@ -43,7 +44,7 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
 
-export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'project-briefs-list' | 'project-briefs-add' | 'project-briefs-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-categories' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
+export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'project-briefs-list' | 'project-briefs-add' | 'project-briefs-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-categories' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'notification-emails-config' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
 
 interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   activePage: AdminPage;
@@ -246,6 +247,15 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
       title: "Pending Approvals",
       page: "pending-approvals" as AdminPage,
       icon: FolderOpen,
+    });
+  }
+
+  // Notification Email Configuration (Super Admin only)
+  if (userRole === 'super_admin') {
+    adminItems.push({
+      title: "Notification Emails",
+      page: "notification-emails-config" as AdminPage,
+      icon: Mail,
     });
   }
 
