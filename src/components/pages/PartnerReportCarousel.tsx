@@ -163,7 +163,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Name</label>
                                     <p className="text-gray-700 mt-1">{selectedReport.name}</p>
@@ -174,7 +174,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Phone</label>
                                     <p className="text-gray-700 mt-1">{selectedReport.phone || 'N/A'}</p>
@@ -185,7 +185,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Date</label>
                                     <p className="text-gray-700 mt-1">{selectedReport.date}</p>

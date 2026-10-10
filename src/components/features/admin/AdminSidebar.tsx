@@ -270,7 +270,7 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
           icon: FolderOpen,
         },
         {
-          title: "Project List",
+          title: "Report List",
           page: "reports-list" as AdminPage,
           icon: List,
         },
