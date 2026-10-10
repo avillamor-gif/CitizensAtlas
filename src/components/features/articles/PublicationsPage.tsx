@@ -106,9 +106,19 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
                 onClick={() => setCategoryFilter(cat)}
                 className="px-4 py-2 rounded-full font-medium transition-all duration-200"
                 style={{
-                  backgroundColor: categoryFilter === cat ? 'var(--highlight)' : '#1a2e3a',
+                  backgroundColor: categoryFilter === cat ? '#e2982b' : '#112649',
                   color: categoryFilter === cat ? '#000' : '#a0b0c8',
-                  border: categoryFilter === cat ? 'none' : '1px solid rgba(255, 165, 0, 0.2)',
+                  border: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  if (categoryFilter !== cat) {
+                    e.currentTarget.style.backgroundColor = '#0e2141';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (categoryFilter !== cat) {
+                    e.currentTarget.style.backgroundColor = '#112649';
+                  }
                 }}
               >
                 {cat === 'all' ? 'All publications' : cat}
