@@ -160,24 +160,6 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                             </>
                                         )}
                                     </div>
-
-                                    {selectedReport.photos.length > 1 && (
-                                        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-                                            {selectedReport.photos.map((photo, idx) => (
-                                                <button
-                                                    key={idx}
-                                                    onClick={() => setPhotoSliderIndex(idx)}
-                                                    className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${
-                                                        idx === photoSliderIndex 
-                                                            ? 'border-blue-500 ring-2 ring-blue-300' 
-                                                            : 'border-gray-300 hover:border-gray-400'
-                                                    }`}
-                                                >
-                                                    <img src={photo} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
                                 </div>
                             )}
 
