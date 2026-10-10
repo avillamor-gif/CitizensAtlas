@@ -268,54 +268,6 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
             </div>
 
             <div className="space-y-6 px-6 py-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold text-gray-900">Name</label>
-                  <p className="text-gray-700 mt-1">{selectedReport.name}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-900">Email</label>
-                  <p className="text-gray-700 mt-1">{selectedReport.email}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold text-gray-900">Phone</label>
-                  <p className="text-gray-700 mt-1">{selectedReport.phone || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-900">Region</label>
-                  <p className="text-gray-700 mt-1">{selectedReport.region}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold text-gray-900">Date</label>
-                  <p className="text-gray-700 mt-1">{selectedReport.date}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-900">Consulted</label>
-                  <p className="text-gray-700 mt-1">{selectedReport.consulted}</p>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-900">Operating Company</label>
-                <p className="text-gray-700 mt-1">{selectedReport.operatingCompany || 'N/A'}</p>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-900">Issue Description</label>
-                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.issue}</p>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-900">Observations & Impact</label>
-                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.observations}</p>
-              </div>
-
               {selectedReport.photos && selectedReport.photos.length > 0 && (
                 <div>
                   <label className="text-sm font-semibold text-gray-900 block mb-3">
@@ -386,6 +338,54 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
                   )}
                 </div>
               )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Name</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.name}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Email</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.email}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Phone</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Region</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.region}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Date</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.date}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Consulted</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.consulted}</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900">Operating Company</label>
+                <p className="text-gray-700 mt-1">{selectedReport.operatingCompany || 'N/A'}</p>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900">Issue Description</label>
+                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.issue}</p>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900">Observations & Impact</label>
+                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.observations}</p>
+              </div>
 
               {selectedReport.relevantLinks && selectedReport.relevantLinks.length > 0 && (
                 <div>
