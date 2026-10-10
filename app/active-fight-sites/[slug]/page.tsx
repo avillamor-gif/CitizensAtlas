@@ -7,15 +7,7 @@ import { ProjectBrief } from '@/types/types'
 import * as dataService from '@/lib/services/data-service'
 import { projectBriefsToArticles } from '@/lib/utils/slug-utils'
 
-const globalStyles = `
-  .project-brief-content a {
-    color: #FFA500 !important;
-    text-decoration: none !important;
-  }
-  .project-brief-content a:hover {
-    color: #FFB84D !important;
-  }
-`
+const globalStyles = ``
 
 function BriefFieldRow({
   label,

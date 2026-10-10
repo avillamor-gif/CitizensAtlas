@@ -163,6 +163,22 @@ h1, h2, h3, h4, h5, h6 {
   @apply text-purple-600 decoration-purple-600;
 }
 
+/* Override link styles for project brief content */
+.project-brief-content a {
+  color: #FFA500 !important;
+  text-decoration: none !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+}
+
+.project-brief-content a:hover {
+  color: #FFB84D !important;
+}
+
+.project-brief-content a:visited {
+  color: #FFA500 !important;
+}
+
 /* Slide-up animation for mobile filter modal */
 @keyframes slide-up {
   from {
