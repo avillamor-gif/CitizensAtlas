@@ -22,11 +22,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
         >
             <div className="bg-gray-300 h-40 mb-2 overflow-hidden rounded-lg relative">
                 <img
-                    src={item.imageUrl || '/fallback.jpg'}
+                    src={item.imageUrl || '/fallback-project-image.svg'}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = '/fallback.jpg';
+                        (e.currentTarget as HTMLImageElement).src = '/fallback-project-image.svg';
                     }}
                 />
                 {isVideo && (
