@@ -75,10 +75,10 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                             priority
                         />
                         <Link href="/" className="text-left block">
-                            <h1 style={{fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: '34px', color: '#7cbe31'}}>
+                            <h1 style={{fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: '34px', color: '#7cbe31', lineHeight: 1}}>
                                 Citizens' Atlas
                             </h1>
-                            <p className="text-xs sm:text-sm leading-tight" style={{ color: '#2f9030' }}>on False Solutions to Climate and Circularity</p>
+                            <p className="text-xs sm:text-sm" style={{ color: '#2f9030', lineHeight: 1 }}>on False Solutions to Climate and Circularity</p>
                         </Link>
                     </div>
 
