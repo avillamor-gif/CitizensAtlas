@@ -859,7 +859,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
 
     const fetchAllReports = async () => {
         try {
-            const response = await fetch('/api/partner-reports');
+            const response = await fetch('/api/partner-reports?status=approved');
             const data = await response.json();
             setAllReports(data.reports || []);
         } catch (error) {
