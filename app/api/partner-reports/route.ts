@@ -48,6 +48,7 @@ async function sendSubmissionEmail(report: PartnerReport) {
       <p><strong>Consulted:</strong> ${report.consulted}</p>
       <p><strong>Observations:</strong> ${report.observations}</p>
       <p><strong>Relevant Links:</strong> ${report.relevantLinks?.join(', ') || 'None'}</p>
+      ${report.photos && report.photos.length > 0 ? `<p><strong>Photos:</strong> ${report.photos.length} image(s) attached</p>` : ''}
       <p><strong>Report ID:</strong> ${report.id}</p>
       <p><strong>Submitted At:</strong> ${report.submittedAt}</p>
       <hr style="margin: 20px 0;">
@@ -90,7 +91,15 @@ export async function POST(request: NextRequest) {
       submittedAt: new Date().toISOString(),
     };
 
-    addReport(newReport);
+    // Save to database
+    const savedReport = await addReport(newReport);
+
+    if (!savedReport) {
+      return NextResponse.json(
+        { error: 'Failed to save report to database' },
+        { status: 500 }
+      );
+    }
 
     // Send email notifications (non-blocking)
     sendSubmissionEmail(newReport);
@@ -114,12 +123,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
 
-    // Filter by status if provided, otherwise return all
-    const filtered = status
-      ? getReportsByStatus(status)
-      : [];
+    // Fetch from database
+    const reports = status
+      ? await getReportsByStatus(status)
+      : await getReportsByStatus('pending'); // Default to pending if no status specified
 
-    return NextResponse.json({ reports: filtered });
+    return NextResponse.json({ reports });
   } catch (error) {
     console.error('Error fetching partner reports:', error);
     return NextResponse.json(

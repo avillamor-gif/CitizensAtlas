@@ -1,31 +1,162 @@
-// Shared data storage for partner reports
-// In production, this should be replaced with a real database (Supabase, MongoDB, etc.)
+// Partner Reports Database Functions using Supabase
+// Replaces in-memory storage with persistent PostgreSQL
 
 import { PartnerReport } from '@/types/types';
+import { createClient } from '@supabase/supabase-js';
 
-// In-memory store
-export const partnerReportsStore: PartnerReport[] = [];
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-export function addReport(report: PartnerReport): void {
-  partnerReportsStore.push(report);
+export async function addReport(report: PartnerReport): Promise<PartnerReport | null> {
+  try {
+    const { data, error } = await supabase
+      .from('partner_reports')
+      .insert({
+        id: report.id,
+        name: report.name,
+        email: report.email,
+        phone: report.phone || null,
+        date: report.date,
+        region: report.region,
+        photos: report.photos || [],
+        issue: report.issue,
+        consulted: report.consulted,
+        operating_company: report.operatingCompany || null,
+        observations: report.observations,
+        relevant_links: report.relevantLinks || [],
+        privacy_accepted: report.privacyAccepted,
+        status: report.status,
+        submitted_at: report.submittedAt,
+        approved_at: report.approvedAt || null,
+        approved_by: report.approvedBy || null,
+        rejection_reason: report.rejectionReason || null,
+      })
+      .select();
+
+    if (error) {
+      console.error('Error adding report to database:', error);
+      return null;
+    }
+
+    return data?.[0] ? convertToPartnerReport(data[0]) : null;
+  } catch (error) {
+    console.error('Error adding report:', error);
+    return null;
+  }
 }
 
-export function getReportById(id: string): PartnerReport | undefined {
-  return partnerReportsStore.find(r => r.id === id);
+export async function getReportById(id: string): Promise<PartnerReport | undefined> {
+  try {
+    const { data, error } = await supabase
+      .from('partner_reports')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') return undefined; // Not found
+      console.error('Error fetching report:', error);
+      return undefined;
+    }
+
+    return data ? convertToPartnerReport(data) : undefined;
+  } catch (error) {
+    console.error('Error fetching report:', error);
+    return undefined;
+  }
 }
 
-export function getReportsByStatus(status: string): PartnerReport[] {
-  return partnerReportsStore.filter(r => r.status === status);
+export async function getReportsByStatus(status: string): Promise<PartnerReport[]> {
+  try {
+    const { data, error } = await supabase
+      .from('partner_reports')
+      .select('*')
+      .eq('status', status)
+      .order('submitted_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching reports by status:', error);
+      return [];
+    }
+
+    return data ? data.map(convertToPartnerReport) : [];
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    return [];
+  }
 }
 
-export function getAllReports(): PartnerReport[] {
-  return partnerReportsStore;
+export async function getAllReports(): Promise<PartnerReport[]> {
+  try {
+    const { data, error } = await supabase
+      .from('partner_reports')
+      .select('*')
+      .order('submitted_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching all reports:', error);
+      return [];
+    }
+
+    return data ? data.map(convertToPartnerReport) : [];
+  } catch (error) {
+    console.error('Error fetching all reports:', error);
+    return [];
+  }
 }
 
-export function updateReport(id: string, updates: Partial<PartnerReport>): PartnerReport | null {
-  const index = partnerReportsStore.findIndex(r => r.id === id);
-  if (index === -1) return null;
-  
-  partnerReportsStore[index] = { ...partnerReportsStore[index], ...updates };
-  return partnerReportsStore[index];
+export async function updateReport(id: string, updates: Partial<PartnerReport>): Promise<PartnerReport | null> {
+  try {
+    const updateData: any = {};
+
+    if (updates.status) updateData.status = updates.status;
+    if (updates.approvedAt) updateData.approved_at = updates.approvedAt;
+    if (updates.approvedBy) updateData.approved_by = updates.approvedBy;
+    if (updates.rejectionReason) updateData.rejection_reason = updates.rejectionReason;
+    if (updates.observations) updateData.observations = updates.observations;
+    if (updates.photos) updateData.photos = updates.photos;
+
+    const { data, error } = await supabase
+      .from('partner_reports')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating report:', error);
+      return null;
+    }
+
+    return data ? convertToPartnerReport(data) : null;
+  } catch (error) {
+    console.error('Error updating report:', error);
+    return null;
+  }
+}
+
+// Helper function to convert database row to PartnerReport type
+function convertToPartnerReport(row: any): PartnerReport {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    date: row.date,
+    region: row.region,
+    photos: row.photos || [],
+    issue: row.issue,
+    consulted: row.consulted,
+    operatingCompany: row.operating_company,
+    observations: row.observations,
+    relevantLinks: row.relevant_links || [],
+    privacyAccepted: row.privacy_accepted,
+    status: row.status,
+    submittedAt: row.submitted_at,
+    approvedAt: row.approved_at,
+    approvedBy: row.approved_by,
+    rejectionReason: row.rejection_reason,
+  };
 }

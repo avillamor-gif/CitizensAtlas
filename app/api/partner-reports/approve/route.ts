@@ -9,7 +9,7 @@ interface ApprovalRequest {
 
 async function sendApprovalEmail(reportId: string, action: 'approve' | 'reject', reason?: string) {
   try {
-    const report = getReportById(reportId);
+    const report = await getReportById(reportId);
     if (!report) return;
 
     const isApproval = action === 'approve';
@@ -58,7 +58,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const report = getReportById(body.reportId);
+    const report = await getReportById(body.reportId);
     if (!report) {
       return NextResponse.json(
         { error: 'Report not found' },
@@ -76,7 +76,7 @@ export async function PATCH(request: NextRequest) {
       updates.rejectionReason = body.reason;
     }
 
-    const updated = updateReport(body.reportId, updates);
+    const updated = await updateReport(body.reportId, updates);
 
     if (!updated) {
       return NextResponse.json(
