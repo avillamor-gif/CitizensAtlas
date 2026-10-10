@@ -60,6 +60,7 @@ export default function ActiveFightSiteDetailPage() {
   const router = useRouter()
   const [brief, setBrief] = useState<ProjectBrief | null>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null)
 
   useEffect(() => {
     const loadBrief = async () => {
@@ -133,7 +134,7 @@ export default function ActiveFightSiteDetailPage() {
                     <h2 className="text-2xl font-semibold mb-6 text-white">Project Photos</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {brief.photos.map((photo, index) => (
-                        <div key={index} className="relative overflow-hidden rounded-lg aspect-video group">
+                        <div key={index} className="relative overflow-hidden rounded-lg aspect-video group cursor-pointer" onClick={() => setSelectedPhoto(photo)}>
                           <img
                             src={photo}
                             alt={`${brief.project_name} - Photo ${index + 1}`}
@@ -141,6 +142,25 @@ export default function ActiveFightSiteDetailPage() {
                           />
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Photo Modal */}
+                {selectedPhoto && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setSelectedPhoto(null)}>
+                    <div className="relative max-w-4xl max-h-[90vh] w-full" onClick={(e) => e.stopPropagation()}>
+                      <img
+                        src={selectedPhoto}
+                        alt="Zoomed photo"
+                        className="w-full h-full object-contain rounded-lg"
+                      />
+                      <button
+                        onClick={() => setSelectedPhoto(null)}
+                        className="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
                 )}
