@@ -29,33 +29,107 @@ async function sendInvitationEmail(email: string, fullName: string, role: string
     const roleDisplay = role === 'super-admin' ? 'Super Admin' : role.charAt(0).toUpperCase() + role.slice(1);
 
     const emailContent = `
-      <h2>You're Invited to Citizens' Atlas ${roleDisplay}</h2>
-      <p>Hi ${fullName},</p>
-      <p>You have been invited to join the Citizens' Atlas Admin Team as a <strong>${roleDisplay}</strong>.</p>
-      <p>Citizens' Atlas is a collaborative, public effort documenting waste-to-energy projects and false climate solutions across Asia-Pacific.</p>
-      <hr style="margin: 20px 0;">
-      <h3>Your Role: ${roleDisplay}</h3>
-      <p>
-        ${role === 'admin' ? 
-          'As an Admin, you can:<br/>• Review and approve citizen reports<br/>• Manage content (news, publications, videos)<br/>• Invite new team members<br/>• View analytics and statistics' :
-          role === 'super-admin' ?
-          'As a Super Admin, you have full access to:<br/>• All admin functions<br/>• System settings and configuration<br/>• User and role management<br/>• Complete data access' :
-          'As a Contributor, you can:<br/>• Submit project information<br/>• Upload reports and documentation<br/>• Collaborate with the team'}
-      </p>
-      <hr style="margin: 20px 0;">
-      <p>
-        <a href="${inviteLink}" style="display: inline-block; padding: 12px 24px; background-color: #f3b23c; color: #0a1628; text-decoration: none; font-weight: bold; border-radius: 6px; margin: 20px 0;">
-          Accept Invitation
-        </a>
-      </p>
-      <p style="font-size: 12px; color: #999;">
-        Or copy this link: <a href="${inviteLink}">${inviteLink}</a>
-      </p>
-      <p style="margin-top: 30px; font-size: 12px; color: #999;">
-        This invitation link will expire in 24 hours.
-      </p>
-      <hr style="margin: 20px 0;">
-      <p>Welcome to Citizens' Atlas!<br/>The Citizens' Atlas Team</p>
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; background: #f9f9f9; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .header { background: linear-gradient(135deg, #0a1628 0%, #1a2f4a 100%); color: white; padding: 40px 20px; text-align: center; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+            .header p { margin: 8px 0 0 0; font-size: 14px; opacity: 0.9; }
+            .content { padding: 40px 30px; background: white; }
+            .role-badge { display: inline-block; background: #f3b23c; color: #0a1628; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; margin: 16px 0; }
+            .section { margin: 24px 0; }
+            .section h3 { color: #0a1628; font-size: 18px; margin: 16px 0 12px 0; }
+            .section ul { margin: 12px 0; padding-left: 20px; }
+            .section li { margin: 8px 0; color: #555; }
+            .cta-button { display: inline-block; background: #f3b23c; color: #0a1628; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 24px 0; border: none; cursor: pointer; transition: background 0.2s; }
+            .cta-button:hover { background: #e5a828; }
+            .divider { border-top: 1px solid #eee; margin: 24px 0; }
+            .footer { background: #f9f9f9; padding: 24px 30px; font-size: 12px; color: #888; text-align: center; border-top: 1px solid #eee; }
+            .footer a { color: #f3b23c; text-decoration: none; }
+            .highlight { color: #f3b23c; font-weight: 600; }
+            .link-fallback { font-size: 11px; color: #999; word-break: break-all; padding: 12px; background: #f5f5f5; border-radius: 4px; margin: 12px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <!-- Header -->
+            <div class="header">
+              <h1>Citizens' Atlas</h1>
+              <p>Tracking False Solutions to Waste</p>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+              <p>Hi <span class="highlight">${fullName}</span>,</p>
+              
+              <p>You have been invited to join the <strong>Citizens' Atlas Admin Team</strong>!</p>
+              
+              <div class="role-badge">🔑 Role: ${roleDisplay}</div>
+
+              <div class="section">
+                <h3>Your Role: ${roleDisplay}</h3>
+                <ul>
+                  ${role === 'admin' ? `
+                    <li>Review and approve citizen reports about false climate solutions</li>
+                    <li>Manage content: news, publications, and videos</li>
+                    <li>Monitor the public database and ensure data quality</li>
+                    <li>Collaborate with team members</li>
+                  ` : role === 'super-admin' ? `
+                    <li>Full administrative access to all functions</li>
+                    <li>Manage users and assign roles</li>
+                    <li>System settings and configuration</li>
+                    <li>Access all analytics and reports</li>
+                  ` : `
+                    <li>Submit project information and reports</li>
+                    <li>Upload documentation and evidence</li>
+                    <li>Collaborate with the Citizens' Atlas team</li>
+                    <li>Help document false climate solutions</li>
+                  `}
+                </ul>
+              </div>
+
+              <div class="section">
+                <p>Citizens' Atlas is a collaborative, public effort documenting waste-to-energy projects, plastic-to-fuel facilities, and other false climate fixes across Asia-Pacific. Together, we're making development finance visible and amplifying community voices.</p>
+              </div>
+
+              <!-- CTA Button -->
+              <div style="text-align: center;">
+                <a href="${inviteLink}" class="cta-button">Accept Invitation →</a>
+              </div>
+
+              <div class="link-fallback">
+                Or copy this link: <a href="${inviteLink}">${inviteLink}</a>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="section" style="font-size: 13px; color: #666;">
+                <p><strong>⏰ This invitation expires in 24 hours</strong></p>
+                <p>If you didn't expect this invitation or have questions, please contact us.</p>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+              <p style="margin: 0 0 8px 0;">
+                <strong style="color: #333;">Citizens' Atlas</strong> — A collaboration with no-burn.org and AidData
+              </p>
+              <p style="margin: 0;">
+                <a href="https://citizensatlas.org">citizensatlas.org</a> • 
+                <a href="https://no-burn.org">no-burn.org</a>
+              </p>
+              <p style="margin: 8px 0 0 0; color: #aaa;">
+                © 2025 Citizens' Atlas – All rights reserved
+              </p>
+            </div>
+          </div>
+        </body>
+      </html>
     `;
 
     const mailgunUrl = `https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`;
@@ -63,7 +137,7 @@ async function sendInvitationEmail(email: string, fullName: string, role: string
     const formData = new FormData();
     formData.append('from', MAILGUN_FROM);
     formData.append('to', email);
-    formData.append('subject', `You're Invited to Citizens' Atlas ${roleDisplay}`);
+    formData.append('subject', `You're Invited to Citizens' Atlas as a ${roleDisplay}`);
     formData.append('html', emailContent);
     formData.append('text', `You have been invited to join Citizens' Atlas as a ${roleDisplay}. Click the link to accept: ${inviteLink}`);
 
