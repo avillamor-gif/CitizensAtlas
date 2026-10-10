@@ -20,12 +20,12 @@ export async function addReport(report: PartnerReport): Promise<PartnerReport | 
         phone: report.phone || null,
         date: report.date,
         region: report.region,
-        photos: report.photos || [],
+        photos: report.photos && report.photos.length > 0 ? report.photos : [],
         issue: report.issue,
         consulted: report.consulted,
         operating_company: report.operatingCompany || null,
         observations: report.observations,
-        relevant_links: report.relevantLinks || [],
+        relevant_links: report.relevantLinks && report.relevantLinks.length > 0 ? report.relevantLinks : [],
         privacy_accepted: report.privacyAccepted,
         status: report.status,
         submitted_at: report.submittedAt,
@@ -37,8 +37,15 @@ export async function addReport(report: PartnerReport): Promise<PartnerReport | 
 
     if (error) {
       console.error('Error adding report to database:', error);
+      console.error('Report data that failed:', {
+        photos: report.photos,
+        relevantLinks: report.relevantLinks,
+      });
       return null;
     }
+
+    console.log('✅ Report saved successfully:', data?.[0]?.id);
+    console.log('📸 Saved photos:', data?.[0]?.photos);
 
     return data?.[0] ? convertToPartnerReport(data[0]) : null;
   } catch (error) {
@@ -79,6 +86,12 @@ export async function getReportsByStatus(status: string): Promise<PartnerReport[
     if (error) {
       console.error('Error fetching reports by status:', error);
       return [];
+    }
+
+    console.log(`📥 Fetched ${data?.length || 0} reports with status "${status}"`);
+    if (data && data.length > 0) {
+      console.log('🔍 First report raw data:', data[0]);
+      console.log('📸 First report photos field:', data[0].photos);
     }
 
     return data ? data.map(convertToPartnerReport) : [];
