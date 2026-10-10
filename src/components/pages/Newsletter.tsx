@@ -70,13 +70,7 @@ const Newsletter: React.FC = () => {
 
     return (
         <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
-            <div className="container mx-auto text-center max-w-3xl">
-                <h2 className="text-4xl font-extrabold mb-2" style={{ color: 'var(--highlight)' }}>STAY INFORMED</h2>
-                <div className="w-16 h-1 mx-auto mb-4" style={{ backgroundColor: 'var(--highlight)' }}></div>
-                <p className="text-gray-300 mb-8">
-                    Subscribe to our weekly newsletter to get the latest news and updates from Citizens' Atlas.
-                </p>
-                
+            <div className="container mx-auto text-left max-w-3xl">
                 {message && (
                     <div className={`mb-6 p-4 rounded-md ${
                         message.type === 'success' 
@@ -133,7 +127,7 @@ const Newsletter: React.FC = () => {
                             View our <a href="#" className="hover:underline" style={{ color: 'var(--highlight)' }}>Privacy Policy</a>.
                         </label>
                     </div>
-                    <div className="text-center">
+                    <div className="text-left">
                         <button 
                             type="submit" 
                             className="text-gray-900 font-bold py-3 px-12 rounded-md hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
