@@ -111,7 +111,7 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
       <section className="py-16 px-4 sm:px-8 text-white border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
         <div className="container mx-auto">
           <div className="text-xs uppercase tracking-[0.32em] mb-4" style={{ color: '#aeb9cc' }}>From the Field</div>
-          <h1 className="text-5xl font-bold mb-4">
+          <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: '72px', lineHeight: '73px', marginBottom: '1rem' }}>
             <span style={{ color: 'white' }}>Latest </span>
             <span style={{ color: 'var(--highlight)' }}>News</span>
           </h1>
