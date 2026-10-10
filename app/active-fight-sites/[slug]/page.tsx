@@ -110,6 +110,12 @@ export default function ActiveFightSiteDetailPage() {
                 }}
               />
               <div className="container mx-auto relative">
+                <button
+                  onClick={() => router.push('/active-fight-sites')}
+                  className="mb-6 text-white border border-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-md transition-colors text-sm font-medium"
+                >
+                  ← Back to Active Fight Sites
+                </button>
                 <div className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-3 flex items-center gap-3">
                   <span className="h-px w-10" style={{ backgroundColor: 'var(--highlight)' }} />
                   {brief.country || 'Active Fight Site'}
