@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
 
 /**
- * API Route for sending email notifications using Resend
+ * API Route for sending email notifications using Mailgun
  * 
- * Setup:
- * 1. Sign up at https://resend.com/
- * 2. Get your API key from dashboard (takes 30 seconds!)
- * 3. Add to .env.local:
- *    RESEND_API_KEY=re_xxxxx
- *    RESEND_FROM=onboarding@resend.dev (or your verified domain)
- * 
- * No phone verification needed! ✅
+ * Configuration in .env.local:
+ *    MAILGUN_API_KEY=xxxxx
+ *    MAILGUN_DOMAIN=mg.zerowaste.asia
+ *    PARTNER_REPORT_ADMIN_EMAIL=admin@example.com
  */
 
 export async function POST(request: NextRequest) {
@@ -27,58 +22,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if Resend is configured
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const RESEND_FROM = process.env.RESEND_FROM || 'onboarding@resend.dev';
+    // Check if Mailgun is configured
+    const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
+    const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || 'mg.zerowaste.asia';
+    const MAILGUN_FROM = process.env.MAILGUN_FROM || `Citizens' Atlas <noreply@${MAILGUN_DOMAIN}>`;
 
-    if (!RESEND_API_KEY) {
+    if (!MAILGUN_API_KEY) {
       // Development mode - log to console
-      console.log('📧 Email would be sent (Resend not configured):');
+      console.log('📧 Email would be sent (Mailgun not configured):');
       console.log('To:', to);
       console.log('Subject:', subject);
-      console.log('From:', RESEND_FROM);
+      console.log('From:', MAILGUN_FROM);
       console.log('Body:', text || html.substring(0, 100) + '...');
-      console.log('\n⚠️ To enable Resend, set RESEND_API_KEY in .env.local');
-      console.log('Sign up: https://resend.com/ (no phone verification!)');
+      console.log('\n⚠️ To enable Mailgun, set MAILGUN_API_KEY and MAILGUN_DOMAIN in .env.local');
 
       return NextResponse.json(
         {
           success: true,
-          message: 'Email logged (Resend not configured)',
-          preview: { to, subject, from: RESEND_FROM },
+          message: 'Email logged (Mailgun not configured)',
+          preview: { to, subject, from: MAILGUN_FROM },
         },
         { status: 200 }
       );
     }
 
-    // Initialize Resend client
-    const resend = new Resend(RESEND_API_KEY);
+    // Prepare Mailgun request
+    const mailgunUrl = `https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`;
+    
+    const formData = new FormData();
+    formData.append('from', MAILGUN_FROM);
+    formData.append('to', Array.isArray(to) ? to.join(',') : to);
+    formData.append('subject', subject);
+    if (html) formData.append('html', html);
+    if (text) formData.append('text', text);
 
-    // Send email via Resend
-    const result = await resend.emails.send({
-      from: RESEND_FROM,
-      to: Array.isArray(to) ? to : [to],
-      subject,
-      html,
-      text,
-    });
+    // Send via Mailgun
+    const response = await fetch(mailgunUrl, {
+      method: 'POST',
+      auth: {
+        username: 'api',
+        password: MAILGUN_API_KEY,
+      },
+      body: formData,
+    } as any);
 
-    if (result.error) {
-      throw new Error(result.error.message);
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Mailgun API error');
     }
 
-    console.log('✅ Email sent successfully via Resend:', result.data?.id);
+    console.log('✅ Email sent successfully via Mailgun:', result.id);
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Email sent successfully via Resend',
-        messageId: result.data?.id,
+        message: 'Email sent successfully via Mailgun',
+        messageId: result.id,
       },
       { status: 200 }
     );
   } catch (error: any) {
-    console.error('❌ Error sending email via Resend:', error);
+    console.error('❌ Error sending email via Mailgun:', error);
 
     return NextResponse.json(
       { 
@@ -88,9 +93,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// Handle OPTIONS for CORS if needed
-export async function OPTIONS(request: NextRequest) {
-  return NextResponse.json({}, { status: 200 });
 }
