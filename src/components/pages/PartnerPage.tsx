@@ -1,13 +1,104 @@
 'use client'
 
 import React, { useState } from 'react';
+import { PartnerReport } from '@/types/types';
 
 const PartnerPage: React.FC = () => {
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+    const [submitMessage, setSubmitMessage] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        date: '',
+        contact: '',
+        region: '',
+        photos: [] as string[],
+        issue: '',
+        consulted: 'No' as 'Yes' | 'No' | 'Not sure',
+        operator: '',
+        observations: '',
+        links: '',
+    });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        if (!formData.name || !formData.contact || !formData.observations) {
+            setSubmitStatus('error');
+            setSubmitMessage('Please fill in all required fields');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const [email, phone] = formData.contact.includes('@')
+                ? [formData.contact, '']
+                : ['', formData.contact];
+
+            const relevantLinks = formData.links
+                .split('\n')
+                .map(link => link.trim())
+                .filter(link => link.length > 0);
+
+            const reportData: Omit<PartnerReport, 'id' | 'status' | 'submittedAt'> = {
+                name: formData.name,
+                email: email || formData.contact,
+                phone: phone || undefined,
+                date: formData.date,
+                region: formData.region,
+                photos: formData.photos,
+                issue: formData.issue,
+                consulted: formData.consulted,
+                operatingCompany: formData.operator || undefined,
+                observations: formData.observations,
+                relevantLinks: relevantLinks.length > 0 ? relevantLinks : undefined,
+                privacyAccepted: true,
+            };
+
+            const response = await fetch('/api/partner-reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSubmitStatus('success');
+                setSubmitMessage('Report submitted successfully! Our team will review it shortly.');
+                setFormData({
+                    name: '',
+                    date: '',
+                    contact: '',
+                    region: '',
+                    photos: [],
+                    issue: '',
+                    consulted: 'No',
+                    operator: '',
+                    observations: '',
+                    links: '',
+                });
+                setPrivacyAccepted(false);
+            } else {
+                setSubmitStatus('error');
+                setSubmitMessage(data.error || 'Failed to submit report');
+            }
+        } catch (error) {
+            setSubmitStatus('error');
+            setSubmitMessage('An error occurred while submitting your report');
+            console.error('Submission error:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -35,6 +126,12 @@ const PartnerPage: React.FC = () => {
 
                         <div className="rounded-2xl border border-[#22385d] bg-[#0d2348] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-8">
                         <form onSubmit={handleSubmit} className="space-y-5">
+                            {submitStatus && (
+                                <div className={`rounded-md p-4 ${submitStatus === 'success' ? 'bg-green-50 text-green-900' : 'bg-red-50 text-red-900'}`}>
+                                    {submitMessage}
+                                </div>
+                            )}
+                            
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <label htmlFor="name" className="mb-2 block text-[11px] uppercase tracking-[0.22em] text-[#9cabc2]">
@@ -43,6 +140,8 @@ const PartnerPage: React.FC = () => {
                                     <input
                                         id="name"
                                         type="text"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
                                         className="h-11 w-full rounded-md border border-[#244068] bg-[#071936] px-4 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                     />
                                 </div>
@@ -53,6 +152,8 @@ const PartnerPage: React.FC = () => {
                                     <input
                                         id="date"
                                         type="date"
+                                        value={formData.date}
+                                        onChange={handleInputChange}
                                         className="h-11 w-full rounded-md border border-[#244068] bg-[#071936] px-4 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                     />
                                 </div>
@@ -66,6 +167,8 @@ const PartnerPage: React.FC = () => {
                                     <input
                                         id="contact"
                                         type="text"
+                                        value={formData.contact}
+                                        onChange={handleInputChange}
                                         className="h-11 w-full rounded-md border border-[#244068] bg-[#071936] px-4 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                     />
                                 </div>
@@ -76,6 +179,8 @@ const PartnerPage: React.FC = () => {
                                     <input
                                         id="region"
                                         type="text"
+                                        value={formData.region}
+                                        onChange={handleInputChange}
                                         placeholder="City, Country"
                                         className="h-11 w-full rounded-md border border-[#244068] bg-[#071936] px-4 text-sm text-white placeholder:text-[#7e8fae] outline-none transition focus:border-[#f3b23c]"
                                     />
@@ -101,6 +206,8 @@ const PartnerPage: React.FC = () => {
                                 <textarea
                                     id="issue"
                                     rows={3}
+                                    value={formData.issue}
+                                    onChange={handleInputChange}
                                     className="w-full rounded-md border border-[#244068] bg-[#071936] px-4 py-3 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                 />
                             </div>
@@ -111,7 +218,8 @@ const PartnerPage: React.FC = () => {
                                 </label>
                                 <select
                                     id="consulted"
-                                    defaultValue="No"
+                                    value={formData.consulted}
+                                    onChange={handleInputChange}
                                     className="h-11 w-full rounded-md border border-[#244068] bg-[#071936] px-4 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                 >
                                     <option>Yes</option>
@@ -127,6 +235,8 @@ const PartnerPage: React.FC = () => {
                                 <input
                                     id="operator"
                                     type="text"
+                                    value={formData.operator}
+                                    onChange={handleInputChange}
                                     className="h-11 w-full rounded-md border border-[#244068] bg-[#071936] px-4 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                 />
                             </div>
@@ -138,6 +248,8 @@ const PartnerPage: React.FC = () => {
                                 <textarea
                                     id="observations"
                                     rows={5}
+                                    value={formData.observations}
+                                    onChange={handleInputChange}
                                     className="w-full rounded-md border border-[#244068] bg-[#071936] px-4 py-3 text-sm text-white outline-none transition focus:border-[#f3b23c]"
                                 />
                             </div>
@@ -149,6 +261,8 @@ const PartnerPage: React.FC = () => {
                                 <textarea
                                     id="links"
                                     rows={3}
+                                    value={formData.links}
+                                    onChange={handleInputChange}
                                     placeholder="One URL per line"
                                     className="w-full rounded-md border border-[#244068] bg-[#071936] px-4 py-3 text-sm text-white placeholder:text-[#7e8fae] outline-none transition focus:border-[#f3b23c]"
                                 />
@@ -181,20 +295,35 @@ const PartnerPage: React.FC = () => {
                             <div className="flex items-center justify-between gap-4 pt-1">
                                 <button
                                     type="reset"
+                                    onClick={() => {
+                                        setFormData({
+                                            name: '',
+                                            date: '',
+                                            contact: '',
+                                            region: '',
+                                            photos: [],
+                                            issue: '',
+                                            consulted: 'No',
+                                            operator: '',
+                                            observations: '',
+                                            links: '',
+                                        });
+                                        setPrivacyAccepted(false);
+                                    }}
                                     className="text-sm text-[#c2cbdb] transition hover:text-white"
                                 >
                                     ← Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={!privacyAccepted}
+                                    disabled={!privacyAccepted || isSubmitting}
                                     className={`rounded-md px-6 py-3 text-sm font-semibold transition ${
-                                        privacyAccepted
+                                        privacyAccepted && !isSubmitting
                                             ? 'bg-[#f3b23c] text-[#13284a] hover:bg-[#f7bf57]'
                                             : 'bg-[#6b7d9a] text-[#4a5568] cursor-not-allowed opacity-50'
                                     }`}
                                 >
-                                    Submit report
+                                    {isSubmitting ? 'Submitting...' : 'Submit report'}
                                 </button>
                             </div>
                         </form>

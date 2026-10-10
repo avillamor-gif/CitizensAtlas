@@ -30,6 +30,7 @@ import TeamManagement from './TeamManagement';
 import RoleManagement from './RoleManagement';
 import AccountProfile from './AccountProfile';
 import NotificationEmailList from './NotificationEmailList';
+import PartnerReportsList from './PartnerReportsList';
 
 interface AdminDashboardProps {
     projects: Project[];
@@ -493,6 +494,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         filterType="all"
                     />
                 );
+            case 'partner-reports-pending':
+                if (!canApproveDrafts) return <AccessDenied />;
+                return <PartnerReportsList status="pending" />;
             case 'notification-emails-config':
                 if (!canManageTeam && !canManageRoles) return <AccessDenied />;
                 return <NotificationEmailList />;

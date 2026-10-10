@@ -105,3 +105,24 @@ export interface FilterOptions {
     ifis: string[];
     projectStatuses: string[];
 }
+
+export interface PartnerReport {
+    id?: string;
+    name: string;
+    email: string;
+    phone?: string;
+    date: string;
+    region: string;
+    photos?: string[];
+    issue: string;
+    consulted: 'Yes' | 'No' | 'Not sure';
+    operatingCompany?: string;
+    observations: string;
+    relevantLinks?: string[];
+    privacyAccepted: boolean;
+    status: 'pending' | 'approved' | 'rejected';
+    submittedAt: string;
+    approvedAt?: string;
+    approvedBy?: string;
+    rejectionReason?: string;
+}
