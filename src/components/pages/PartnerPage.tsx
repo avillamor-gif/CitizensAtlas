@@ -21,12 +21,58 @@ const PartnerPage: React.FC = () => {
         observations: '',
         links: '',
     });
+    const [uploadingPhotos, setUploadingPhotos] = useState(false);
+    const [selectedPhotos, setSelectedPhotos] = useState<File[]>([]);
 
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        setSelectedPhotos(files);
+
+        if (files.length > 0) {
+            setUploadingPhotos(true);
+            try {
+                const uploadFormData = new FormData();
+                files.forEach(file => uploadFormData.append('files', file));
+
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: uploadFormData,
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.urls) {
+                    setFormData(prev => ({
+                        ...prev,
+                        photos: [...prev.photos, ...data.urls],
+                    }));
+                    setSubmitMessage('Photos uploaded successfully!');
+                } else {
+                    setSubmitStatus('error');
+                    setSubmitMessage(data.error || 'Failed to upload photos');
+                }
+            } catch (error) {
+                setSubmitStatus('error');
+                setSubmitMessage('Error uploading photos');
+                console.error('Photo upload error:', error);
+            } finally {
+                setUploadingPhotos(false);
+            }
+        }
+    };
+
+    const removePhoto = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            photos: prev.photos.filter((_, i) => i !== index),
+        }));
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -195,8 +241,37 @@ const PartnerPage: React.FC = () => {
                                     id="photos"
                                     type="file"
                                     multiple
-                                    className="block w-full text-sm text-[#aeb9cc] file:mr-4 file:rounded-md file:border-0 file:bg-[#284a79] file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#32568b]"
+                                    accept="image/*"
+                                    onChange={handlePhotoSelect}
+                                    disabled={uploadingPhotos}
+                                    className="block w-full text-sm text-[#aeb9cc] file:mr-4 file:rounded-md file:border-0 file:bg-[#284a79] file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#32568b] disabled:opacity-50"
                                 />
+                                {uploadingPhotos && (
+                                    <p className="mt-2 text-sm text-[#f3b23c]">Uploading photos...</p>
+                                )}
+                                {formData.photos.length > 0 && (
+                                    <div className="mt-4 space-y-2">
+                                        <p className="text-xs text-[#9cabc2]">{formData.photos.length} photo(s) uploaded</p>
+                                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                                            {formData.photos.map((url, index) => (
+                                                <div key={index} className="relative group">
+                                                    <img
+                                                        src={url}
+                                                        alt={`Upload ${index + 1}`}
+                                                        className="h-20 w-20 rounded-md border border-[#244068] object-cover"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removePhoto(index)}
+                                                        className="absolute -top-2 -right-2 hidden rounded-full bg-red-600 w-6 h-6 flex items-center justify-center text-white text-xs group-hover:flex hover:bg-red-700 transition"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div>
@@ -309,6 +384,8 @@ const PartnerPage: React.FC = () => {
                                             links: '',
                                         });
                                         setPrivacyAccepted(false);
+                                        setSelectedPhotos([]);
+                                        setSubmitStatus(null);
                                     }}
                                     className="text-sm text-[#c2cbdb] transition hover:text-white"
                                 >
@@ -316,14 +393,14 @@ const PartnerPage: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={!privacyAccepted || isSubmitting}
+                                    disabled={!privacyAccepted || isSubmitting || uploadingPhotos}
                                     className={`rounded-md px-6 py-3 text-sm font-semibold transition ${
-                                        privacyAccepted && !isSubmitting
+                                        privacyAccepted && !isSubmitting && !uploadingPhotos
                                             ? 'bg-[#f3b23c] text-[#13284a] hover:bg-[#f7bf57]'
                                             : 'bg-[#6b7d9a] text-[#4a5568] cursor-not-allowed opacity-50'
                                     }`}
                                 >
-                                    {isSubmitting ? 'Submitting...' : 'Submit report'}
+                                    {isSubmitting ? 'Submitting...' : uploadingPhotos ? 'Uploading photos...' : 'Submit report'}
                                 </button>
                             </div>
                         </form>

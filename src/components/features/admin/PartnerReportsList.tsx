@@ -38,9 +38,12 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
       });
 
       if (response.ok) {
-        setReports(reports.filter(r => r.id !== reportId));
+        // Refresh the list to remove the approved report
+        await fetchReports();
         setSelectedReport(null);
-        alert('Report approved successfully!');
+        alert('Report approved successfully! Confirmation email sent to submitter.');
+      } else {
+        alert('Failed to approve report');
       }
     } catch (error) {
       console.error('Error approving report:', error);
@@ -57,9 +60,12 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
       });
 
       if (response.ok) {
-        setReports(reports.filter(r => r.id !== reportId));
+        // Refresh the list to remove the rejected report
+        await fetchReports();
         setSelectedReport(null);
-        alert('Report rejected successfully!');
+        alert('Report rejected successfully! Notification email sent to submitter.');
+      } else {
+        alert('Failed to reject report');
       }
     } catch (error) {
       console.error('Error rejecting report:', error);

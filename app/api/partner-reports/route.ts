@@ -1,9 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PartnerReport } from '@/types/types';
+import { addReport, getReportsByStatus } from '@/lib/partner-reports';
 
-// In-memory storage for partner reports (in production, use a database)
-// This could be replaced with Supabase, MongoDB, PostgreSQL, etc.
-const partnerReports: PartnerReport[] = [];
+async function sendSubmissionEmail(report: PartnerReport) {
+  try {
+    const submitterEmail = report.email;
+    const adminEmail = process.env.PARTNER_REPORT_ADMIN_EMAIL || 'admin@citizensatlas.org';
+
+    const emailContent = `
+      <h2>Thank you for your report submission!</h2>
+      <p>Hi ${report.name},</p>
+      <p>We have received your report about a waste-to-energy facility or related false solution. Our team will review your submission and contact you if we need additional information.</p>
+      <hr style="margin: 20px 0;">
+      <h3>Report Details:</h3>
+      <p><strong>Issue:</strong> ${report.issue}</p>
+      <p><strong>Region:</strong> ${report.region}</p>
+      <p><strong>Company:</strong> ${report.operatingCompany || 'Not provided'}</p>
+      <p><strong>Observations:</strong> ${report.observations}</p>
+      <p><strong>Report ID:</strong> ${report.id}</p>
+      <hr style="margin: 20px 0;">
+      <p>Thank you for helping us document false climate solutions and support affected communities.</p>
+      <p>Best regards,<br/>The Citizens' Atlas Team</p>
+    `;
+
+    // Send confirmation email to submitter
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://citizensatlas.vercel.app'}/api/send-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: submitterEmail,
+        subject: 'Report Received - Citizens\' Atlas',
+        html: emailContent,
+        text: `Report received for ${report.issue} in ${report.region}. Report ID: ${report.id}`,
+      }),
+    });
+
+    // Send notification to admin
+    const adminContent = `
+      <h2>New Partner Report Submitted</h2>
+      <p><strong>Submitted by:</strong> ${report.name}</p>
+      <p><strong>Email:</strong> ${report.email}</p>
+      <p><strong>Phone:</strong> ${report.phone || 'Not provided'}</p>
+      <p><strong>Region:</strong> ${report.region}</p>
+      <p><strong>Date of Issue:</strong> ${report.date}</p>
+      <p><strong>Issue:</strong> ${report.issue}</p>
+      <p><strong>Operating Company:</strong> ${report.operatingCompany || 'Not provided'}</p>
+      <p><strong>Consulted:</strong> ${report.consulted}</p>
+      <p><strong>Observations:</strong> ${report.observations}</p>
+      <p><strong>Relevant Links:</strong> ${report.relevantLinks?.join(', ') || 'None'}</p>
+      <p><strong>Report ID:</strong> ${report.id}</p>
+      <p><strong>Submitted At:</strong> ${report.submittedAt}</p>
+      <hr style="margin: 20px 0;">
+      <p><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://citizensatlas.vercel.app'}/admin?page=partner-reports-pending">Review in Admin Dashboard</a></p>
+    `;
+
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://citizensatlas.vercel.app'}/api/send-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: adminEmail,
+        subject: `New Partner Report: ${report.issue}`,
+        html: adminContent,
+      }),
+    });
+
+    console.log('✅ Submission emails sent for report:', report.id);
+  } catch (error) {
+    console.error('Error sending submission emails:', error);
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,7 +90,10 @@ export async function POST(request: NextRequest) {
       submittedAt: new Date().toISOString(),
     };
 
-    partnerReports.push(newReport);
+    addReport(newReport);
+
+    // Send email notifications (non-blocking)
+    sendSubmissionEmail(newReport);
 
     return NextResponse.json({
       success: true,
@@ -46,10 +114,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
 
-    // Filter by status if provided
+    // Filter by status if provided, otherwise return all
     const filtered = status
-      ? partnerReports.filter(r => r.status === status)
-      : partnerReports;
+      ? getReportsByStatus(status)
+      : [];
 
     return NextResponse.json({ reports: filtered });
   } catch (error) {
