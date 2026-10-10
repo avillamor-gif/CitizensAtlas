@@ -107,8 +107,9 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
                 className="px-4 py-2 rounded-full font-medium transition-all duration-200"
                 style={{
                   backgroundColor: categoryFilter === cat ? '#e2982b' : '#112649',
-                  color: categoryFilter === cat ? '#000' : '#a0b0c8',
+                  color: categoryFilter === cat ? '#020e21' : '#a0b0c8',
                   border: 'none',
+                  fontSize: '14px',
                 }}
                 onMouseEnter={(e) => {
                   if (categoryFilter !== cat) {
