@@ -113,9 +113,9 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
       )}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">
-          {status === 'pending' && "Pending Citizens' Reports"}
-          {status === 'approved' && "Approved Citizens' Reports"}
-          {status === 'rejected' && "Rejected Citizens' Reports"}
+          {status === 'pending' && "Pending Citizens Reports"}
+          {status === 'approved' && "Approved Citizens Reports"}
+          {status === 'rejected' && "Rejected Citizens Reports"}
         </h2>
         <span className="text-sm text-gray-500">{reports.length} reports</span>
       </div>
