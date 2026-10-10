@@ -107,11 +107,11 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                     ) : (
                         <div className="mb-8">
                             <img 
-                                src={article.imageUrl || '/fallback.jpg'} 
+                                src={article.imageUrl || '/fallback-project-image.svg'} 
                                 alt={article.title}
                                 className="w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
                                 onError={(e) => {
-                                    (e.currentTarget as HTMLImageElement).src = '/fallback.jpg';
+                                    (e.currentTarget as HTMLImageElement).src = '/fallback-project-image.svg';
                                 }}
                             />
                         </div>
