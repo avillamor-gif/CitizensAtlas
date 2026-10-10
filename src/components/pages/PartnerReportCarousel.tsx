@@ -163,7 +163,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-2 gap-4 w-full">
+                            <div className="grid grid-cols-2 gap-4 w-full text-left">
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Name</label>
                                     <p className="text-gray-700 mt-1">{selectedReport.name}</p>
@@ -174,7 +174,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 w-full">
+                            <div className="grid grid-cols-2 gap-4 w-full text-left">
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Phone</label>
                                     <p className="text-gray-700 mt-1">{selectedReport.phone || 'N/A'}</p>
@@ -185,7 +185,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 w-full">
+                            <div className="grid grid-cols-2 gap-4 w-full text-left">
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Date</label>
                                     <p className="text-gray-700 mt-1">{selectedReport.date}</p>
@@ -196,23 +196,23 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             </div>
 
-                            <div>
+                            <div className="text-left">
                                 <label className="text-sm font-semibold text-gray-900">Operating Company</label>
                                 <p className="text-gray-700 mt-1">{selectedReport.operatingCompany || 'N/A'}</p>
                             </div>
 
-                            <div>
+                            <div className="text-left">
                                 <label className="text-sm font-semibold text-gray-900">Issue Description</label>
                                 <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.issue}</p>
                             </div>
 
-                            <div>
+                            <div className="text-left">
                                 <label className="text-sm font-semibold text-gray-900">Observations & Impact</label>
                                 <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.observations}</p>
                             </div>
 
                             {selectedReport.relevantLinks && selectedReport.relevantLinks.length > 0 && (
-                                <div>
+                                <div className="text-left">
                                     <label className="text-sm font-semibold text-gray-900">Relevant Links</label>
                                     <ul className="mt-1 space-y-1">
                                         {selectedReport.relevantLinks.map((link, idx) => (
