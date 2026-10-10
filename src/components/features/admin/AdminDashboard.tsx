@@ -861,6 +861,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         try {
             const response = await fetch('/api/partner-reports?status=approved');
             const data = await response.json();
+            console.log('📊 Fetched Reports:', data.reports);
+            if (data.reports && data.reports.length > 0) {
+                console.log('📸 First report photos:', data.reports[0].photos);
+            }
             setAllReports(data.reports || []);
         } catch (error) {
             console.error('Error fetching all reports:', error);
