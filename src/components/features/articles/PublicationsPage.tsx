@@ -83,7 +83,7 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
   return (
     <div style={{ backgroundColor: 'var(--deep)' }}>
       {/* Header Section */}
-      <section className="py-16 px-4 sm:px-8 text-white border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+      <section className="py-16 px-4 sm:px-8 text-white border-b" style={{ borderColor: '#2a394c' }}>
         <div className="container mx-auto">
           <div className="text-xs uppercase tracking-[0.32em] mb-4" style={{ color: '#aeb9cc' }}>Research & Analysis</div>
           <h1 className="text-5xl font-bold mb-4">
@@ -96,10 +96,10 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
       </section>
 
       {/* Filters Section */}
-      <section className="px-4 sm:px-8 py-8 text-white border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+      <section className="px-4 sm:px-8 py-8 text-white border-b" style={{ borderColor: '#2a394c' }}>
         <div className="container mx-auto">
           {/* Category Buttons */}
-          <div className="flex flex-wrap gap-2 pb-6 border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+          <div className="flex flex-wrap gap-2 pb-6 border-b" style={{ borderColor: '#2a394c' }}>
             {categories.map(cat => (
               <button
                 key={cat}
