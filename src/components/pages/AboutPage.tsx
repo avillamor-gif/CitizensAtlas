@@ -115,7 +115,7 @@ const AboutPage: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Column 1 */}
             <div>
-              <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
+              <h3 className="text-2xl font-normal mb-6" style={{ color: 'var(--highlight)' }}>
                 Every data represents a community at risk.
               </h3>
               <p className="text-base leading-relaxed" style={{ color: '#aeb9cc' }}>
@@ -125,7 +125,7 @@ const AboutPage: React.FC = () => {
 
             {/* Column 2 */}
             <div>
-              <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--highlight)' }}>
+              <h3 className="text-2xl font-normal mb-6" style={{ color: 'var(--highlight)' }}>
                 A wealth of evidence for countering greenwashing
               </h3>
               <p className="text-base leading-relaxed mb-4" style={{ color: '#aeb9cc' }}>
@@ -145,7 +145,7 @@ const AboutPage: React.FC = () => {
           <SectionLabel>
             <span className="text-white">What we mean by</span>
           </SectionLabel>
-          <h2 className="text-5xl font-bold mb-12 max-w-3xl">False solutions.</h2>
+          <h2 className="text-5xl font-normal mb-12 max-w-3xl">False solutions.</h2>
           
           <div className="mb-12 max-w-4xl">
             <p className="text-lg text-gray-300 leading-relaxed mb-6">
@@ -160,7 +160,7 @@ const AboutPage: React.FC = () => {
                 className="rounded-lg p-6 border h-full"
                 style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}
               >
-                <h3 className="font-bold text-lg mb-3" style={{ color: 'var(--highlight)' }}>
+                <h3 className="font-normal text-lg mb-3" style={{ color: 'var(--highlight)' }}>
                   {solution.title}
                 </h3>
                 <p className="text-sm text-gray-300 leading-relaxed">
@@ -178,7 +178,7 @@ const AboutPage: React.FC = () => {
           <div className="flex items-end justify-between flex-wrap gap-6 mb-12">
             <div>
               <SectionLabel>Who we track</SectionLabel>
-              <h2 className="text-4xl font-bold max-w-2xl">What does the Atlas track?</h2>
+              <h2 className="text-4xl font-normal max-w-2xl">What does the Atlas track?</h2>
             </div>
             <p className="text-sm text-gray-400 max-w-md">
               The Atlas currently tracks projects supported by four major financial institutions.
@@ -254,10 +254,10 @@ const AboutPage: React.FC = () => {
           <SectionLabel>
             <span className="text-white">Methodology</span>
           </SectionLabel>
-          <h2 className="text-4xl font-bold mb-10 max-w-3xl">Methodology and data sources.</h2>
+          <h2 className="text-4xl font-normal mb-10 max-w-3xl">Methodology and data sources.</h2>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-              <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>01</div>
+              <div className="font-normal text-2xl mb-3" style={{ color: 'var(--highlight)' }}>01</div>
               <div className="text-base font-medium mb-3 text-white">Where the data comes from</div>
               <p className="text-sm text-gray-300 leading-relaxed">
                 The Atlas is not based on a single source of information. Project data is collated
@@ -268,7 +268,7 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
             <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-              <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>02</div>
+              <div className="font-normal text-2xl mb-3" style={{ color: 'var(--highlight)' }}>02</div>
               <div className="text-base font-medium mb-3 text-white">How it is compiled</div>
               <p className="text-sm text-gray-300 leading-relaxed">
                 The Atlas brings together project descriptions, risk assessments, financiers, and
@@ -279,7 +279,7 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
             <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-              <div className="font-bold text-2xl mb-3" style={{ color: 'var(--highlight)' }}>03</div>
+              <div className="font-normal text-2xl mb-3" style={{ color: 'var(--highlight)' }}>03</div>
               <div className="text-base font-medium mb-3 text-white">What comes next</div>
               <p className="text-sm text-gray-300 leading-relaxed">
                 To complement our main database, we also publish factsheets that examine IFI-wise
@@ -298,7 +298,7 @@ const AboutPage: React.FC = () => {
       <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)', backgroundColor: '#00112b' }}>
         <div className="container mx-auto">
           <SectionLabel>Transparency</SectionLabel>
-          <h2 className="text-4xl font-bold mb-4 max-w-3xl">What are the limitations of this project?</h2>
+          <h2 className="text-4xl font-normal mb-4 max-w-3xl">What are the limitations of this project?</h2>
           <p className="text-gray-400 max-w-2xl mb-12">
             We publish these limitations in the interest of transparency, so every entry can be
             read with its context in mind.
@@ -307,10 +307,10 @@ const AboutPage: React.FC = () => {
             {limitations.map((l) => (
               <div key={l.n} className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
                 <div className="flex items-baseline gap-4 mb-4">
-                  <span className="font-bold text-2xl" style={{ color: 'var(--highlight)' }}>
+                  <span className="font-normal text-2xl" style={{ color: 'var(--highlight)' }}>
                     {l.n}
                   </span>
-                  <h3 className="text-xl font-bold text-white">{l.title}</h3>
+                  <h3 className="text-xl font-normal text-white">{l.title}</h3>
                 </div>
                 <div className="space-y-3 text-sm text-gray-300 leading-relaxed md:pl-12">
                   {l.body.map((p, idx) => (
