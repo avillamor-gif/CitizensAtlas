@@ -44,7 +44,7 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
 
-export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'project-briefs-list' | 'project-briefs-add' | 'project-briefs-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-categories' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'partner-reports-pending' | 'notification-emails-config' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
+export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'project-briefs-list' | 'project-briefs-add' | 'project-briefs-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-categories' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'partner-reports-pending' | 'reports-list' | 'notification-emails-config' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
 
 interface AdminSidebarProps extends React.ComponentProps<typeof Sidebar> {
   activePage: AdminPage;
@@ -262,6 +262,12 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
     adminItems.push({
       title: "Partner Reports",
       page: "partner-reports-pending" as AdminPage,
+      icon: FileText,
+    });
+    // Add Reports List for managing all reports
+    adminItems.push({
+      title: "All Reports",
+      page: "reports-list" as AdminPage,
       icon: FileText,
     });
   }

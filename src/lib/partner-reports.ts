@@ -160,3 +160,22 @@ function convertToPartnerReport(row: any): PartnerReport {
     rejectionReason: row.rejection_reason,
   };
 }
+
+export async function deleteReport(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('partner_reports')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting report:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting report:', error);
+    return false;
+  }
+}

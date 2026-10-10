@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Project, Article, ProjectBrief } from '@/types/types';
+import { Project, Article, ProjectBrief, PartnerReport } from '@/types/types';
 import { AdminSidebar, AdminPage } from './AdminSidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -31,6 +31,7 @@ import RoleManagement from './RoleManagement';
 import AccountProfile from './AccountProfile';
 import NotificationEmailList from './NotificationEmailList';
 import PartnerReportsList from './PartnerReportsList';
+import ReportList from './ReportList';
 
 interface AdminDashboardProps {
     projects: Project[];
@@ -112,6 +113,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     const [videoToEdit, setVideoToEdit] = useState<Article | null>(null);
     const [isPageStateHydrated, setIsPageStateHydrated] = useState(false);
     const [isLoadingPageData, setIsLoadingPageData] = useState(true);
+    const [allReports, setAllReports] = useState<PartnerReport[]>([]);
 
     const persistEditId = (key: string, id: string | number) => {
         if (typeof window === 'undefined') return;
@@ -311,6 +313,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         onLoadVideos?.()
                     ])
                     console.log('✅ All data loaded for Pending Approvals')
+                } else if (activeAdminPage === 'reports-list') {
+                    // Load all partner reports for management
+                    await fetchAllReports()
                 }
             } catch (error) {
                 console.error('Error loading page data:', error)
@@ -497,6 +502,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             case 'partner-reports-pending':
                 if (!canApproveDrafts) return <AccessDenied />;
                 return <PartnerReportsList status="pending" />;
+            case 'reports-list':
+                if (!canApproveDrafts) return <AccessDenied />;
+                return (
+                    <ReportList
+                        reports={allReports}
+                        onDeleteReports={onDeleteReports}
+                    />
+                );
             case 'notification-emails-config':
                 if (!canManageTeam && !canManageRoles) return <AccessDenied />;
                 return <NotificationEmailList />;
@@ -841,6 +854,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 );
             default:
                 return <div>Select a category</div>;
+        }
+    };
+
+    const fetchAllReports = async () => {
+        try {
+            const response = await fetch('/api/partner-reports');
+            const data = await response.json();
+            setAllReports(data.reports || []);
+        } catch (error) {
+            console.error('Error fetching all reports:', error);
+        }
+    };
+
+    const onDeleteReports = async (reportIds: string[]) => {
+        try {
+            const response = await fetch('/api/partner-reports/delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reportIds }),
+            });
+
+            if (response.ok) {
+                // Remove deleted reports from state
+                setAllReports(allReports.filter(r => !reportIds.includes(r.id!)));
+                alert('Report(s) deleted successfully!');
+            } else {
+                alert('Failed to delete report(s)');
+            }
+        } catch (error) {
+            console.error('Error deleting reports:', error);
+            alert('Error deleting report(s)');
         }
     };
 
