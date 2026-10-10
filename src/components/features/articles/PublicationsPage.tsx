@@ -22,6 +22,7 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [tagFilter, setTagFilter] = useState('all');
   const [yearFilter, setYearFilter] = useState('all');
+  const [sortOrder, setSortOrder] = useState('newest');
 
   const publicationTypes = useMemo(() => {
     const types = items.map(p => p.category).filter(Boolean);
@@ -53,7 +54,7 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
     yearFilter !== 'all';
 
   const filtered = useMemo(() => {
-    return items.filter(pub => {
+    let results = items.filter(pub => {
       const matchesSearch =
         search === '' ||
         pub.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,7 +69,16 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
         (pub.publishDate && new Date(pub.publishDate).getFullYear().toString() === yearFilter);
       return matchesSearch && matchesType && matchesCategory && matchesTag && matchesYear;
     });
-  }, [items, search, typeFilter, categoryFilter, tagFilter, yearFilter]);
+
+    // Apply sorting
+    results.sort((a, b) => {
+      const dateA = a.publishDate ? new Date(a.publishDate).getTime() : 0;
+      const dateB = b.publishDate ? new Date(b.publishDate).getTime() : 0;
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return results;
+  }, [items, search, typeFilter, categoryFilter, tagFilter, yearFilter, sortOrder]);
 
   const handleClearFilters = () => {
     setSearch('');
@@ -79,45 +89,81 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
   };
 
   const filterBar = (
-    <div className="flex flex-col md:flex-row gap-3 items-start md:items-center flex-wrap">
-      <Input
-        placeholder="Search publications..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        className="w-full md:w-64 h-11"
-      />
+    <div className="flex flex-col gap-4">
+      {/* Category Filter Buttons */}
+      <div className="flex flex-wrap gap-2">
+        {categories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setCategoryFilter(cat)}
+            className="px-4 py-2 rounded font-medium transition-all duration-200"
+            style={{
+              backgroundColor: categoryFilter === cat ? 'var(--highlight)' : '#1a2e3a',
+              color: categoryFilter === cat ? '#000' : '#a0b0c8',
+              border: categoryFilter === cat ? 'none' : '1px solid rgba(255, 165, 0, 0.2)',
+            }}
+          >
+            {cat === 'all' ? 'All publications' : cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Search and Filter Bar */}
+      <div className="flex flex-col md:flex-row gap-3 items-start md:items-center flex-wrap">
+        <Input
+          placeholder="Search publications..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full md:w-64 h-11"
+        />
       <Select value={typeFilter} onValueChange={setTypeFilter}>
-        <SelectTrigger className="w-full md:w-48 h-11">
+        <SelectTrigger className="w-full md:w-48 h-11 border-1" style={{
+          borderColor: '#2f4059',
+          backgroundColor: '#0d1b2a',
+          color: '#a0b0c8',
+        }}>
           <SelectValue placeholder="All Publication Types" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent style={{
+          backgroundColor: '#0d1b2a',
+          borderColor: '#2f4059',
+        }}>
           {publicationTypes.map(type => (
-            <SelectItem key={type} value={type}>
+            <SelectItem 
+              key={type} 
+              value={type}
+              className="hover:bg-cyan-500/20"
+              style={{
+                color: typeFilter === type ? '#06b6d4' : '#a0b0c8',
+              }}
+            >
               {type === 'all' ? 'All Publication Types' : type}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-        <SelectTrigger className="w-full md:w-48 h-11">
-          <SelectValue placeholder="All Publication Categories" />
-        </SelectTrigger>
-        <SelectContent>
-          {categories.map(cat => (
-            <SelectItem key={cat} value={cat}>
-              {cat === 'all' ? 'All Publication Categories' : cat}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
       {tags.length > 1 && (
         <Select value={tagFilter} onValueChange={setTagFilter}>
-          <SelectTrigger className="w-full md:w-48 h-11">
+          <SelectTrigger className="w-full md:w-48 h-11" style={{
+            borderColor: '#2f4059',
+            backgroundColor: '#0d1b2a',
+            color: '#a0b0c8',
+          }}>
             <SelectValue placeholder="All Tags" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent style={{
+            backgroundColor: '#0d1b2a',
+            borderColor: '#2f4059',
+          }}>
             {tags.map(tag => (
-              <SelectItem key={tag} value={tag}>
+              <SelectItem 
+                key={tag} 
+                value={tag}
+                className="hover:bg-cyan-500/20"
+                style={{
+                  color: tagFilter === tag ? '#06b6d4' : '#a0b0c8',
+                }}
+              >
                 {tag === 'all' ? 'All Tags' : tag}
               </SelectItem>
             ))}
@@ -126,18 +172,64 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
       )}
       {years.length > 1 && (
         <Select value={yearFilter} onValueChange={setYearFilter}>
-          <SelectTrigger className="w-full md:w-36 h-11">
+          <SelectTrigger className="w-full md:w-36 h-11" style={{
+            borderColor: '#2f4059',
+            backgroundColor: '#0d1b2a',
+            color: '#a0b0c8',
+          }}>
             <SelectValue placeholder="All Years" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent style={{
+            backgroundColor: '#0d1b2a',
+            borderColor: '#2f4059',
+          }}>
             {years.map(year => (
-              <SelectItem key={year} value={year}>
+              <SelectItem 
+                key={year} 
+                value={year}
+                className="hover:bg-cyan-500/20"
+                style={{
+                  color: yearFilter === year ? '#06b6d4' : '#a0b0c8',
+                }}
+              >
                 {year === 'all' ? 'All Years' : year}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       )}
+      <Select value={sortOrder} onValueChange={setSortOrder}>
+        <SelectTrigger className="w-full md:w-40 h-11" style={{
+          borderColor: '#2f4059',
+          backgroundColor: '#0d1b2a',
+          color: '#a0b0c8',
+        }}>
+          <SelectValue placeholder="Sort by" />
+        </SelectTrigger>
+        <SelectContent style={{
+          backgroundColor: '#0d1b2a',
+          borderColor: '#2f4059',
+        }}>
+          <SelectItem 
+            value="newest"
+            className="hover:bg-cyan-500/20"
+            style={{
+              color: sortOrder === 'newest' ? '#06b6d4' : '#a0b0c8',
+            }}
+          >
+            Newest first
+          </SelectItem>
+          <SelectItem 
+            value="oldest"
+            className="hover:bg-cyan-500/20"
+            style={{
+              color: sortOrder === 'oldest' ? '#06b6d4' : '#a0b0c8',
+            }}
+          >
+            Oldest first
+          </SelectItem>
+        </SelectContent>
+      </Select>
       {hasActiveFilters && (
         <button
           onClick={handleClearFilters}
@@ -148,10 +240,11 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
         </button>
       )}
       {hasActiveFilters && (
-        <p className="text-sm text-gray-400 w-full">
+        <p className="text-sm text-gray-400">
           Showing {filtered.length} of {items.length} publications
         </p>
       )}
+    </div>
     </div>
   );
 
