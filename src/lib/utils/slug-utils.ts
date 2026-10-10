@@ -55,7 +55,7 @@ export function projectBriefsToArticles(briefs: ProjectBrief[]): Article[] {
     category: brief.project_type || 'Active Fight Site',
     title: brief.project_name,
     description: `${brief.location}${brief.financing_amount ? ` - ${brief.financing_amount}` : ''}`,
-    imageUrl: `https://picsum.photos/400/300?random=${index || brief.id}`,
+    imageUrl: brief.photos && brief.photos.length > 0 ? brief.photos[0] : `https://picsum.photos/400/300?random=${index || brief.id}`,
     tagColor: '#FFEB3B',
     publishDate: brief.created_at || brief.submitted_at,
     status: brief.status || 'published',
