@@ -28,6 +28,7 @@ interface ProjectBriefFormData {
   reprisals?: string
   advocacy_timeline?: string
   other_information?: string
+  photos?: string[]
 }
 
 interface ProjectBriefFormProps {
@@ -79,6 +80,7 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
       reprisals: '',
       advocacy_timeline: '',
       other_information: '',
+      photos: [],
     }
   )
 
@@ -120,6 +122,34 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files) {
+      const fileArray = Array.from(files).map(file => {
+        const reader = new FileReader()
+        return new Promise<string>((resolve) => {
+          reader.onload = (event) => {
+            resolve(event.target?.result as string)
+          }
+          reader.readAsDataURL(file)
+        })
+      })
+      Promise.all(fileArray).then(dataUrls => {
+        setFormData(prev => ({
+          ...prev,
+          photos: [...(prev.photos || []), ...dataUrls]
+        }))
+      })
+    }
+  }
+
+  const removePhoto = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      photos: (prev.photos || []).filter((_, i) => i !== index)
+    }))
   }
 
   const handleQuillChange = (field: keyof ProjectBriefFormData, value: string) => {
@@ -377,6 +407,50 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
                     onChange={(value) => handleQuillChange('other_information', value)}
                     height="200px"
                   />
+                </div>
+              </FormField>
+
+              {/* Photos Upload */}
+              <FormField label="Upload Photos">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center w-full">
+                    <label className="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <div className="flex flex-col items-center justify-center pt-7 pb-6">
+                        <svg className="w-8 h-8 text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        <p className="text-sm text-gray-500">Click to upload or drag and drop</p>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                      </div>
+                      <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
+                    </label>
+                  </div>
+                  
+                  {formData.photos && formData.photos.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold text-gray-700">Uploaded Photos ({formData.photos.length})</p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {formData.photos.map((photo, index) => (
+                          <div key={index} className="relative group">
+                            <img 
+                              src={photo} 
+                              alt={`Upload ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removePhoto(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </FormField>
             </div>

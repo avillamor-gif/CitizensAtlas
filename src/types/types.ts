@@ -85,6 +85,7 @@ export interface ProjectBrief {
     advocacy_timeline?: string;
     other_information?: string;
     country?: string;
+    photos?: string[];
     status?: 'draft' | 'published';
     submitted_by?: string;
     submitted_at?: string;
