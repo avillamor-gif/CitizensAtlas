@@ -100,7 +100,7 @@ export default function ActiveFightSiteDetailPage() {
         ) : brief ? (
           <>
             {/* Hero Section */}
-            <section className="relative overflow-hidden text-white py-20 md:py-28 px-4 sm:px-8 border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+            <section className="relative overflow-hidden text-white py-12 md:py-16 pb-8 px-4 sm:px-8 border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
               <div
                 aria-hidden
                 className="absolute inset-0 opacity-30"
