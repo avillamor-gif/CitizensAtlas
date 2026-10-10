@@ -9,11 +9,11 @@ import { projectBriefsToArticles } from '@/lib/utils/slug-utils'
 
 const globalStyles = `
   .project-brief-content a {
-    color: #dc2626 !important;
-    text-decoration: underline !important;
+    color: #FFA500 !important;
+    text-decoration: none !important;
   }
   .project-brief-content a:hover {
-    color: #991b1b !important;
+    color: #FFB84D !important;
   }
 `
 
