@@ -21,6 +21,15 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
   const [selectedReport, setSelectedReport] = useState<PartnerReport | null>(null);
   const [photoSliderIndex, setPhotoSliderIndex] = useState(0);
 
+  React.useEffect(() => {
+    if (selectedReport) {
+      console.log('📋 Selected Report:', selectedReport);
+      console.log('📸 Photos:', selectedReport.photos);
+      console.log('📸 Photos Type:', typeof selectedReport.photos);
+      console.log('📸 Photos Length:', selectedReport.photos?.length);
+    }
+  }, [selectedReport]);
+
   // Filter reports
   const filteredReports = reports.filter(report => {
     const searchLower = searchTerm.toLowerCase();
