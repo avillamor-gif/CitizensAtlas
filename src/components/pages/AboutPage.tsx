@@ -322,30 +322,6 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
-        <div className="container mx-auto rounded-2xl p-10 md:p-16 relative overflow-hidden" style={{ backgroundColor: 'rgba(26, 95, 122, 0.15)' }}>
-          <SectionLabel>
-            <span className="text-white">Get involved</span>
-          </SectionLabel>
-          <h2 className="text-4xl md:text-5xl font-bold max-w-3xl mb-6">Help us keep the Atlas honest.</h2>
-          <p className="text-gray-300 max-w-2xl mb-8 leading-relaxed">
-            Communities, waste-worker collectives, journalists and researchers — share on-ground
-            information about waste-to-energy projects, livelihood impacts, or gaps in official
-            reporting. Every submission is vetted by the Atlas team and GAIA partners before being
-            included.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/partner-with-us" className="px-6 py-3 rounded font-medium transition-all hover:opacity-90 text-gray-900" style={{ backgroundColor: 'var(--highlight)' }}>
-              Report a project →
-            </Link>
-            <Link href="/" className="px-6 py-3 rounded font-medium border transition-colors hover:opacity-80" style={{ borderColor: '#2f4059' }}>
-              Back to overview
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
