@@ -104,7 +104,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
 
             {selectedReport && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white shadow-lg">
+                    <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
                         <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                             <h2 className="text-xl font-bold text-gray-900">Report Details</h2>
                             <button
