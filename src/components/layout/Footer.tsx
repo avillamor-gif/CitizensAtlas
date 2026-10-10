@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
     return (
         <footer className="text-white hidden md:block border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
             <div className="container mx-auto py-12 px-4 sm:px-8 border-b" style={{ borderColor: 'var(--surface)' }}>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
                     {/* About Section */}
                     <div>
                         <h3 className="text-lg font-bold mb-4 text-white">Citizens' Atlas</h3>
@@ -31,15 +31,6 @@ const Footer: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wide">Follow us</h4>
                         <SocialIcons />
-                    </div>
-
-                    {/* Stay Informed Section */}
-                    <div>
-                        <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wide">Stay Informed</h4>
-                        <ul className="space-y-2">
-                            <li><Link href="#" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Newsletter</Link></li>
-                            <li><Link href="#" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Subscribe</Link></li>
-                        </ul>
                     </div>
                 </div>
             </div>
