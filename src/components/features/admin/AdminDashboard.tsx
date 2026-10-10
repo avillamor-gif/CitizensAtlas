@@ -305,14 +305,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                     await onLoadVideos?.()
                 } else if (activeAdminPage === 'pending-approvals') {
                     // Load all data for Pending Approvals page
-                    console.log('📥 Loading all data for Pending Approvals...')
                     await Promise.all([
                         onLoadProjects?.(),
                         onLoadNews?.(),
                         onLoadPublications?.(),
                         onLoadVideos?.()
                     ])
-                    console.log('✅ All data loaded for Pending Approvals')
                 } else if (activeAdminPage === 'reports-list') {
                     // Load all partner reports for management
                     await fetchAllReports()
@@ -334,10 +332,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     }, [activeAdminPage, isPageStateHydrated, pathname])
 
     const testLogout = async () => {
-        console.log('TEST: Logout button clicked in header');
         try {
             await signOut();
-            console.log('TEST: signOut completed');
             window.location.href = '/';
         } catch (error) {
             console.error('TEST: Logout error', error);
@@ -444,7 +440,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         publications={publications}
                         videos={videos}
                         onApprove={(item) => {
-                            console.log('🔵 AdminDashboard onApprove wrapper called with:', item);
                             onApproveDraft(item);
                             // Redirect to the appropriate list page after approval
                             const targetPage = {
@@ -454,16 +449,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                                 'video': 'videos-list'
                             }[item.type] as AdminPage;
                             
-                            console.log('🔵 Will redirect to:', targetPage);
                             // Short delay to allow the approval to complete
                             setTimeout(() => {
-                                console.log('🔵 Redirecting now to:', targetPage);
                                 setActiveAdminPage(targetPage);
                             }, 500);
                         }}
                         onReject={onRejectDraft}
                         onEdit={(item) => {
-                            console.log('✏️ AdminDashboard onEdit wrapper called with:', item);
                             
                             // Find the item in the appropriate array and set it as the edit target
                             switch (item.type) {
@@ -861,10 +853,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         try {
             const response = await fetch('/api/partner-reports?status=approved');
             const data = await response.json();
-            console.log('📊 Fetched Reports:', data.reports);
-            if (data.reports && data.reports.length > 0) {
-                console.log('📸 First report photos:', data.reports[0].photos);
-            }
             setAllReports(data.reports || []);
         } catch (error) {
             console.error('Error fetching all reports:', error);

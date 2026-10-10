@@ -64,8 +64,6 @@ async function sendSubmissionEmail(report: PartnerReport) {
         html: adminContent,
       }),
     });
-
-    console.log('✅ Submission emails sent for report:', report.id);
   } catch (error) {
     console.error('Error sending submission emails:', error);
   }
@@ -123,17 +121,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
 
-    console.log('📥 GET /api/partner-reports - Status filter:', status);
-
     // Fetch from database
     const reports = status
       ? await getReportsByStatus(status)
       : await getReportsByStatus('pending'); // Default to pending if no status specified
-
-    console.log('📤 Returning', reports.length, 'reports');
-    if (reports.length > 0) {
-      console.log('📸 First report:', reports[0]);
-    }
 
     return NextResponse.json({ reports });
   } catch (error) {

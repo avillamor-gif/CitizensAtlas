@@ -22,12 +22,8 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
   const [photoSliderIndex, setPhotoSliderIndex] = useState(0);
 
   React.useEffect(() => {
-    if (selectedReport) {
-      console.log('📋 Selected Report:', selectedReport);
-      console.log('📸 Photos:', selectedReport.photos);
-      console.log('📸 Photos Type:', typeof selectedReport.photos);
-      console.log('📸 Photos Length:', selectedReport.photos?.length);
-    }
+    // Reset photo slider when selecting a new report
+    setPhotoSliderIndex(0);
   }, [selectedReport]);
 
   // Filter reports

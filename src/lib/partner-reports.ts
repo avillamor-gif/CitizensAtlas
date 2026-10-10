@@ -44,9 +44,6 @@ export async function addReport(report: PartnerReport): Promise<PartnerReport | 
       return null;
     }
 
-    console.log('✅ Report saved successfully:', data?.[0]?.id);
-    console.log('📸 Saved photos:', data?.[0]?.photos);
-
     return data?.[0] ? convertToPartnerReport(data[0]) : null;
   } catch (error) {
     console.error('Error adding report:', error);
@@ -86,12 +83,6 @@ export async function getReportsByStatus(status: string): Promise<PartnerReport[
     if (error) {
       console.error('Error fetching reports by status:', error);
       return [];
-    }
-
-    console.log(`📥 Fetched ${data?.length || 0} reports with status "${status}"`);
-    if (data && data.length > 0) {
-      console.log('🔍 First report raw data:', data[0]);
-      console.log('📸 First report photos field:', data[0].photos);
     }
 
     return data ? data.map(convertToPartnerReport) : [];
