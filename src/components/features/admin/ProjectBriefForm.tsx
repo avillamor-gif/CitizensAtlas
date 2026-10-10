@@ -64,6 +64,9 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
   const [mounted, setMounted] = useState(false)
   const [countryPickerOpen, setCountryPickerOpen] = useState(false)
   const [countrySearch, setCountrySearch] = useState('')
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+  const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
   const [formData, setFormData] = useState<ProjectBriefFormData>(
     briefToEdit || {
       project_name: '',
@@ -127,49 +130,98 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files) {
-      const fileArray = Array.from(files).map(file => {
+      const newFiles = Array.from(files)
+      setPhotoFiles(prev => [...prev, ...newFiles])
+      
+      // Create preview URLs for display
+      newFiles.forEach(file => {
         const reader = new FileReader()
-        return new Promise<string>((resolve) => {
-          reader.onload = (event) => {
-            resolve(event.target?.result as string)
-          }
-          reader.readAsDataURL(file)
-        })
-      })
-      Promise.all(fileArray).then(dataUrls => {
-        setFormData(prev => ({
-          ...prev,
-          photos: [...(prev.photos || []), ...dataUrls]
-        }))
+        reader.onload = (event) => {
+          setPhotoPreviewUrls(prev => [...prev, event.target?.result as string])
+        }
+        reader.readAsDataURL(file)
       })
     }
   }
 
   const removePhoto = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      photos: (prev.photos || []).filter((_, i) => i !== index)
-    }))
+    setPhotoFiles(prev => prev.filter((_, i) => i !== index))
+    setPhotoPreviewUrls(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleQuillChange = (field: keyof ProjectBriefFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const uploadPhotosToStorage = async (): Promise<string[]> => {
+    if (photoFiles.length === 0) {
+      return formData.photos || []
+    }
+
+    try {
+      setUploading(true)
+      const uploadedUrls: string[] = []
+
+      for (const file of photoFiles) {
+        const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${file.name}`
+        const filePath = `project-briefs/${fileName}`
+
+        // Upload to Supabase Storage using fetch
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/project-briefs/${filePath}`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('atlas-auth-token') ? JSON.parse(localStorage.getItem('atlas-auth-token') || '{}').access_token : ''}`,
+              'Content-Type': file.type,
+            },
+            body: file,
+          }
+        )
+
+        if (response.ok) {
+          const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/project-briefs/${filePath}`
+          uploadedUrls.push(publicUrl)
+        } else {
+          console.error('Failed to upload photo:', response.statusText)
+        }
+      }
+
+      setUploading(false)
+      return uploadedUrls
+    } catch (error) {
+      console.error('Error uploading photos:', error)
+      setUploading(false)
+      throw error
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Add status based on user role
-    const briefData = {
-      ...formData,
-      status: (userRole === 'admin' || userRole === 'super-admin') ? 'published' : 'draft',
-      submitted_by: userId,
-      submitted_at: new Date().toISOString()
-    } as any
-    
-    console.log('📋 Form Submit - Field names:', Object.keys(briefData))
-    console.log('📋 Form Submit - Full data:', JSON.stringify(briefData, null, 2))
-    onSave(briefData)
+    try {
+      setUploading(true)
+      
+      // Upload photos to storage first
+      const photoUrls = await uploadPhotosToStorage()
+      
+      // Add status based on user role
+      const briefData = {
+        ...formData,
+        photos: photoUrls,
+        status: (userRole === 'admin' || userRole === 'super-admin') ? 'published' : 'draft',
+        submitted_by: userId,
+        submitted_at: new Date().toISOString()
+      } as any
+      
+      console.log('📋 Form Submit - Field names:', Object.keys(briefData))
+      console.log('📋 Form Submit - Photos:', photoUrls)
+      console.log('📋 Form Submit - Full data:', JSON.stringify(briefData, null, 2))
+      onSave(briefData)
+    } catch (error) {
+      console.error('Error saving brief:', error)
+      setUploading(false)
+    }
   }
 
   return (
@@ -426,12 +478,12 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
                     </label>
                   </div>
                   
-                  {formData.photos && formData.photos.length > 0 && (
+                  {(photoPreviewUrls && photoPreviewUrls.length > 0 || formData.photos && formData.photos.length > 0) && (
                     <div className="space-y-2">
-                      <p className="text-sm font-semibold text-gray-700">Uploaded Photos ({formData.photos.length})</p>
+                      <p className="text-sm font-semibold text-gray-700">Uploaded Photos ({(photoPreviewUrls.length + (formData.photos?.length || 0))})</p>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {formData.photos.map((photo, index) => (
-                          <div key={index} className="relative group">
+                        {photoPreviewUrls.map((photo, index) => (
+                          <div key={`preview-${index}`} className="relative group">
                             <img 
                               src={photo} 
                               alt={`Upload ${index + 1}`}
@@ -440,6 +492,29 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
                             <button
                               type="button"
                               onClick={() => removePhoto(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                        {formData.photos && formData.photos.map((photo, index) => (
+                          <div key={`existing-${index}`} className="relative group">
+                            <img 
+                              src={photo} 
+                              alt={`Existing ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  photos: (prev.photos || []).filter((_, i) => i !== index)
+                                }))
+                              }}
                               className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -463,14 +538,16 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
               variant="outline"
               onClick={onCancel}
               className="w-full sm:w-auto"
+              disabled={uploading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               className="w-full sm:w-auto bg-brand-dark-blue hover:bg-brand-medium-blue"
+              disabled={uploading}
             >
-              {briefToEdit ? 'Update Brief' : 'Save Brief'}
+              {uploading ? 'Uploading...' : (briefToEdit ? 'Update Brief' : 'Save Brief')}
             </Button>
           </div>
         </form>
