@@ -139,6 +139,34 @@ export async function updateReport(id: string, updates: Partial<PartnerReport>):
 
 // Helper function to convert database row to PartnerReport type
 function convertToPartnerReport(row: any): PartnerReport {
+  // Parse photos if it's stored as JSON string
+  let photos = [];
+  if (row.photos) {
+    if (typeof row.photos === 'string') {
+      try {
+        photos = JSON.parse(row.photos);
+      } catch (e) {
+        photos = [];
+      }
+    } else if (Array.isArray(row.photos)) {
+      photos = row.photos;
+    }
+  }
+
+  // Parse relevant_links if it's stored as JSON string
+  let relevantLinks = [];
+  if (row.relevant_links) {
+    if (typeof row.relevant_links === 'string') {
+      try {
+        relevantLinks = JSON.parse(row.relevant_links);
+      } catch (e) {
+        relevantLinks = [];
+      }
+    } else if (Array.isArray(row.relevant_links)) {
+      relevantLinks = row.relevant_links;
+    }
+  }
+
   return {
     id: row.id,
     name: row.name,
@@ -146,12 +174,12 @@ function convertToPartnerReport(row: any): PartnerReport {
     phone: row.phone,
     date: row.date,
     region: row.region,
-    photos: row.photos || [],
+    photos: photos,
     issue: row.issue,
     consulted: row.consulted,
     operatingCompany: row.operating_company,
     observations: row.observations,
-    relevantLinks: row.relevant_links || [],
+    relevantLinks: relevantLinks,
     privacyAccepted: row.privacy_accepted,
     status: row.status,
     submittedAt: row.submitted_at,
