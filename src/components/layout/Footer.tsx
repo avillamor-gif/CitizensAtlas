@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
     return (
         <footer className="text-white hidden md:block border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
             <div className="container mx-auto py-12 px-4 sm:px-8 border-b" style={{ borderColor: 'var(--surface)' }}>
-                <div className="grid md:grid-cols-4 gap-8 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                     {/* About Section */}
                     <div>
                         <h3 className="text-lg font-bold mb-4 text-white">Citizens' Atlas</h3>
