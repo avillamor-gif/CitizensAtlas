@@ -66,7 +66,7 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
     }, [loadMore, hasMore, isLoading]);
 
     return (
-        <div className="py-12 px-4 sm:px-8 lg:px-16 text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: '#2f2824' }}>
+        <div className="py-12 px-4 sm:px-8 lg:px-16 text-white" style={{ backgroundColor: 'var(--deep)' }}>
             <div className="container mx-auto">
                 <div className="mb-8">
                     {!hideTitle && (
