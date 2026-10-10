@@ -31,9 +31,9 @@ function BriefFieldRow({
   subtitle?: string
 }) {
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 p-4 sm:p-6 ${highlight ? 'bg-blue-50' : ''}`}>
+    <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 p-4 sm:p-6 border-b border-gray-700 hover:bg-gray-900/30 transition-colors`} style={{ backgroundColor: 'transparent' }}>
       <div className="md:col-span-1">
-        <h3 className={`text-xs sm:text-sm font-bold uppercase tracking-wide ${highlight ? 'text-blue-700' : 'text-gray-700'}`}>
+        <h3 className={`text-xs sm:text-sm font-bold uppercase tracking-wide text-gray-400`}>
           {label}
         </h3>
         {subtitle && <p className="text-xs italic text-gray-500 mt-1 lowercase">{subtitle}</p>}
@@ -41,12 +41,12 @@ function BriefFieldRow({
       <div className="md:col-span-2">
         {isHtml ? (
           <div
-            className={`project-brief-content text-sm leading-relaxed prose prose-sm max-w-none ${highlight ? 'text-blue-900 font-semibold' : 'text-gray-900'}`}
+            className={`project-brief-content text-sm leading-relaxed prose prose-sm max-w-none text-gray-200`}
             style={{ wordBreak: 'break-word' }}
             dangerouslySetInnerHTML={{ __html: value }}
           />
         ) : (
-          <p className={`text-sm leading-relaxed ${highlight ? 'text-blue-900 font-bold md:text-lg' : 'text-gray-900'}`}>
+          <p className={`text-sm leading-relaxed text-gray-200`}>
             {value}
           </p>
         )}
@@ -89,37 +89,63 @@ export default function ActiveFightSiteDetailPage() {
   }, [params])
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: 'var(--deep)' }}>
       <style>{globalStyles}</style>
       <Header />
       <main className="flex-grow">
         {loading ? (
           <div className="flex justify-center items-center py-24">
-            <div className="text-brand-dark-blue text-lg font-semibold">Loading active fight site...</div>
+            <div className="text-white text-lg font-semibold">Loading active fight site...</div>
           </div>
         ) : brief ? (
           <>
-            <div className="bg-brand-dark-blue text-white px-4 sm:px-8 text-center min-h-[300px] flex flex-col justify-center items-center">
-              <div>
-                <div className="inline-block bg-black text-white px-4 py-2 text-sm font-bold uppercase tracking-wider mb-4">
+            {/* Hero Section */}
+            <section className="relative overflow-hidden text-white py-20 md:py-28 px-4 sm:px-8 border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+              <div
+                aria-hidden
+                className="absolute inset-0 opacity-30"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)',
+                }}
+              />
+              <div className="container mx-auto relative">
+                <div className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-3 flex items-center gap-3">
+                  <span className="h-px w-10" style={{ backgroundColor: 'var(--highlight)' }} />
                   {brief.country || 'Active Fight Site'}
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-black uppercase leading-tight max-w-5xl">
+                <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
                   {brief.project_name}
                 </h1>
-                <button
-                  onClick={() => router.push('/active-fight-sites')}
-                  className="mt-6 text-white border-2 border-white hover:bg-white hover:text-brand-dark-blue px-4 py-2 rounded-md transition-colors"
-                >
-                  Back to Active Fight Sites
-                </button>
+                <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-3xl">
+                  {brief.location && `Located in ${brief.location}`}
+                </p>
+                
+                {/* Photo Gallery */}
+                {brief.photos && brief.photos.length > 0 && (
+                  <div className="mt-12">
+                    <h2 className="text-2xl font-semibold mb-6 text-white">Project Photos</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {brief.photos.map((photo, index) => (
+                        <div key={index} className="relative overflow-hidden rounded-lg aspect-video group">
+                          <img
+                            src={photo}
+                            alt={`${brief.project_name} - Photo ${index + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            </section>
 
-            <div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4">
+            {/* Content Section */}
+            <div className="max-w-7xl mx-auto py-8 sm:py-12 md:py-16 px-4">
               <div className="space-y-3">
                 <div className="bg-transparent">
-                  <div className="divide-y divide-gray-200 bg-white rounded-lg overflow-hidden shadow-sm">
+                  <div className="divide-y divide-gray-700 bg-transparent">
                     {brief.project_type && <BriefFieldRow label="Project Type" subtitle="(kind of energy project)" value={brief.project_type} />}
                     {brief.location && <BriefFieldRow label="Location" value={brief.location} />}
                     {brief.financing_amount && <BriefFieldRow label="Financing Amount" value={brief.financing_amount} />}
@@ -140,7 +166,7 @@ export default function ActiveFightSiteDetailPage() {
         ) : (
           <div className="flex justify-center items-center py-24">
             <div className="text-center">
-              <div className="text-brand-dark-blue text-lg font-semibold mb-4">Active Fight Site not found.</div>
+              <div className="text-white text-lg font-semibold mb-4">Active Fight Site not found.</div>
               <button onClick={() => router.push('/active-fight-sites')} className="text-brand-light-blue hover:underline">
                 Back to Active Fight Sites
               </button>
