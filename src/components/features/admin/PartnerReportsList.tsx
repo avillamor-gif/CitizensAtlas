@@ -7,14 +7,28 @@ interface ReportListProps {
   status?: 'pending' | 'approved' | 'rejected';
 }
 
+interface Notification {
+  type: 'success' | 'error';
+  message: string;
+  id: string;
+}
+
 const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) => {
   const [reports, setReports] = useState<PartnerReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedReport, setSelectedReport] = useState<PartnerReport | null>(null);
+  const [notification, setNotification] = useState<Notification | null>(null);
+  const [photoSliderIndex, setPhotoSliderIndex] = useState(0);
 
   useEffect(() => {
     fetchReports();
   }, [status]);
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    const id = Date.now().toString();
+    setNotification({ type, message, id });
+    setTimeout(() => setNotification(null), 4000);
+  };
 
   const fetchReports = async () => {
     try {
@@ -41,13 +55,13 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
         // Refresh the list to remove the approved report
         await fetchReports();
         setSelectedReport(null);
-        alert('Report approved successfully! Confirmation email sent to submitter.');
+        showNotification('success', '✅ Report approved successfully! Confirmation email sent to submitter.');
       } else {
-        alert('Failed to approve report');
+        showNotification('error', '❌ Failed to approve report');
       }
     } catch (error) {
       console.error('Error approving report:', error);
-      alert('Failed to approve report');
+      showNotification('error', '❌ Failed to approve report');
     }
   };
 
@@ -63,13 +77,13 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
         // Refresh the list to remove the rejected report
         await fetchReports();
         setSelectedReport(null);
-        alert('Report rejected successfully! Notification email sent to submitter.');
+        showNotification('success', '✅ Report rejected successfully! Notification email sent to submitter.');
       } else {
-        alert('Failed to reject report');
+        showNotification('error', '❌ Failed to reject report');
       }
     } catch (error) {
       console.error('Error rejecting report:', error);
-      alert('Failed to reject report');
+      showNotification('error', '❌ Failed to reject report');
     }
   };
 
@@ -79,6 +93,24 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
 
   return (
     <div className="space-y-6">
+      {/* Branded Notification Toast */}
+      {notification && (
+        <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-[9999] max-w-md w-full mx-auto animate-in fade-in slide-in-from-top-2 ${
+          notification.type === 'success' 
+            ? 'bg-gradient-to-r from-green-600 to-emerald-600' 
+            : 'bg-gradient-to-r from-red-600 to-orange-600'
+        } text-white shadow-2xl rounded-lg p-4 flex items-center gap-3`}>
+          <div className="flex-1">
+            <p className="font-semibold text-center">{notification.message}</p>
+          </div>
+          <button
+            onClick={() => setNotification(null)}
+            className="flex-shrink-0 text-white/80 hover:text-white transition"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">
           {status === 'pending' && 'Pending Approvals'}
@@ -210,6 +242,77 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
                 <label className="text-sm font-semibold text-gray-900">Observations & Impact</label>
                 <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.observations}</p>
               </div>
+
+              {selectedReport.photos && selectedReport.photos.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-gray-900 block mb-3">
+                    📸 Photos ({selectedReport.photos.length})
+                  </label>
+                  <div className="relative bg-gray-900 rounded-lg overflow-hidden">
+                    {/* Photo Display */}
+                    <div className="aspect-video bg-gray-800 flex items-center justify-center">
+                      {selectedReport.photos[photoSliderIndex] ? (
+                        <img 
+                          src={selectedReport.photos[photoSliderIndex]} 
+                          alt={`Photo ${photoSliderIndex + 1}`}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <div className="text-gray-400 text-center">
+                          <p className="text-sm">Photo unavailable</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Photo Navigation Controls */}
+                    {selectedReport.photos.length > 1 && (
+                      <>
+                        {/* Previous Button */}
+                        <button
+                          onClick={() => setPhotoSliderIndex((prev) => (prev === 0 ? selectedReport.photos!.length - 1 : prev - 1))}
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition z-10"
+                          title="Previous photo"
+                        >
+                          ◀
+                        </button>
+
+                        {/* Next Button */}
+                        <button
+                          onClick={() => setPhotoSliderIndex((prev) => (prev === selectedReport.photos!.length - 1 ? 0 : prev + 1))}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition z-10"
+                          title="Next photo"
+                        >
+                          ▶
+                        </button>
+
+                        {/* Photo Counter */}
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                          {photoSliderIndex + 1} / {selectedReport.photos.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Photo Thumbnails */}
+                  {selectedReport.photos.length > 1 && (
+                    <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+                      {selectedReport.photos.map((photo, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setPhotoSliderIndex(idx)}
+                          className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${
+                            idx === photoSliderIndex 
+                              ? 'border-blue-500 ring-2 ring-blue-300' 
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <img src={photo} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {selectedReport.relevantLinks && selectedReport.relevantLinks.length > 0 && (
                 <div>
