@@ -18,6 +18,8 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<keyof PartnerReport>('submittedAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [selectedReport, setSelectedReport] = useState<PartnerReport | null>(null);
+  const [photoSliderIndex, setPhotoSliderIndex] = useState(0);
 
   // Filter reports
   const filteredReports = reports.filter(report => {
@@ -205,9 +207,10 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
               paginatedReports.map((report) => (
                 <tr
                   key={report.id}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition"
+                  onClick={() => setSelectedReport(report)}
+                  className="border-b border-gray-200 hover:bg-gray-50 transition cursor-pointer"
                 >
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={selectedItems.includes(report.id!)}
                       onChange={(e) => handleSelectItem(report.id!, e.target.checked)}
@@ -224,7 +227,7 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
                   <td className="px-6 py-3 text-gray-600 text-sm">
                     {new Date(report.submittedAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-3 text-center">
+                  <td className="px-6 py-3 text-center" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => handleDelete(report.id!)}
                       className="inline-flex items-center justify-center w-9 h-9 rounded-md text-red-600 hover:bg-red-50 transition"
@@ -245,6 +248,158 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
         totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
+
+      {selectedReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
+            <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+              <h2 className="text-xl font-bold text-gray-900">Report Details</h2>
+              <button
+                onClick={() => setSelectedReport(null)}
+                className="text-gray-500 hover:text-gray-700 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-6 px-6 py-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Name</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.name}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Email</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.email}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Phone</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Region</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.region}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Date</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.date}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Consulted</label>
+                  <p className="text-gray-700 mt-1">{selectedReport.consulted}</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900">Operating Company</label>
+                <p className="text-gray-700 mt-1">{selectedReport.operatingCompany || 'N/A'}</p>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900">Issue Description</label>
+                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.issue}</p>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900">Observations & Impact</label>
+                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.observations}</p>
+              </div>
+
+              {selectedReport.photos && selectedReport.photos.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-gray-900 block mb-3">
+                    📸 Photos ({selectedReport.photos.length})
+                  </label>
+                  <div className="relative bg-gray-900 rounded-lg overflow-hidden">
+                    {/* Photo Display */}
+                    <div className="aspect-video bg-gray-800 flex items-center justify-center">
+                      {selectedReport.photos[photoSliderIndex] ? (
+                        <img 
+                          src={selectedReport.photos[photoSliderIndex]} 
+                          alt={`Photo ${photoSliderIndex + 1}`}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <div className="text-gray-400 text-center">
+                          <p className="text-sm">Photo unavailable</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Photo Navigation Controls */}
+                    {selectedReport.photos.length > 1 && (
+                      <>
+                        {/* Previous Button */}
+                        <button
+                          onClick={() => setPhotoSliderIndex((prev) => (prev === 0 ? selectedReport.photos!.length - 1 : prev - 1))}
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition z-10"
+                          title="Previous photo"
+                        >
+                          ◀
+                        </button>
+
+                        {/* Next Button */}
+                        <button
+                          onClick={() => setPhotoSliderIndex((prev) => (prev === selectedReport.photos!.length - 1 ? 0 : prev + 1))}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition z-10"
+                          title="Next photo"
+                        >
+                          ▶
+                        </button>
+
+                        {/* Photo Counter */}
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                          {photoSliderIndex + 1} / {selectedReport.photos.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Photo Thumbnails */}
+                  {selectedReport.photos.length > 1 && (
+                    <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+                      {selectedReport.photos.map((photo, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setPhotoSliderIndex(idx)}
+                          className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${
+                            idx === photoSliderIndex 
+                              ? 'border-blue-500 ring-2 ring-blue-300' 
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <img src={photo} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {selectedReport.relevantLinks && selectedReport.relevantLinks.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-gray-900">Relevant Links</label>
+                  <ul className="mt-1 space-y-1">
+                    {selectedReport.relevantLinks.map((link, idx) => (
+                      <li key={idx}>
+                        <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                          {link}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
