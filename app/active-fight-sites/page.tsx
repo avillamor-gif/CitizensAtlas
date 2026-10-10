@@ -8,39 +8,30 @@ import * as dataService from '@/lib/services/data-service'
 import { projectBriefsToArticles } from '@/lib/utils/slug-utils'
 
 function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
+  const imageUrl = brief.photos && brief.photos.length > 0 ? brief.photos[0] : '/fallback-project-image.svg'
   
   const cardContent = (
-    <div className="border rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl cursor-pointer" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+    <div className="border rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl cursor-pointer group" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+      {/* Image Section */}
+      <div className="relative overflow-hidden h-40 bg-gray-700">
+        <img
+          src={imageUrl}
+          alt={brief.project_name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = '/fallback-project-image.svg'
+          }}
+        />
+      </div>
+      
+      {/* Content Section */}
       <div className="p-6 flex flex-col flex-grow">
         <span className="text-xs font-bold px-2 py-1 inline-block mb-3 self-start rounded" style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}>
           {brief.project_type || 'Project Brief'}
         </span>
-        <h3 className="text-lg font-bold mb-2 flex-grow text-white">
+        <h3 className="text-lg font-bold flex-grow text-white">
           {brief.project_name}
         </h3>
-        {brief.location && (
-          <p className="text-sm mb-1" style={{ color: '#aeb9cc' }}>
-            <span className="font-semibold">Location:</span> {brief.location}
-          </p>
-        )}
-        {brief.country && (
-          <p className="text-sm mb-1" style={{ color: '#aeb9cc' }}>
-            <span className="font-semibold">Country:</span> {brief.country}
-          </p>
-        )}
-        {!brief.country && (
-          <p className="text-sm mb-1" style={{ color: '#ff6b6b' }}>
-            <span className="font-semibold">⚠ Country not specified</span>
-          </p>
-        )}
-        {brief.financing_amount && (
-          <p className="text-sm mb-1" style={{ color: '#aeb9cc' }}>
-            <span className="font-semibold">Financing:</span> {brief.financing_amount}
-          </p>
-        )}
-        {brief.timeline_and_status && (
-          <p className="text-sm mt-2 line-clamp-2" style={{ color: '#aeb9cc' }}>{brief.timeline_and_status}</p>
-        )}
         <div className="mt-4 self-start">
           <span className="text-sm font-bold hover:underline transition-colors" style={{ color: '#64b5ff' }}>
             View Details &rarr;
