@@ -165,19 +165,8 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-sm font-semibold text-gray-900">Name</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.name}</p>
-                                </div>
-                                <div>
-                                    <label className="text-sm font-semibold text-gray-900">Email</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.email}</p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-sm font-semibold text-gray-900">Phone</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.phone || 'N/A'}</p>
+                                    <label className="text-sm font-semibold text-gray-900">Date</label>
+                                    <p className="text-gray-700 mt-1">{selectedReport.date}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-semibold text-gray-900">Region</label>
@@ -185,15 +174,9 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-sm font-semibold text-gray-900">Date</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.date}</p>
-                                </div>
-                                <div>
-                                    <label className="text-sm font-semibold text-gray-900">Consulted</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.consulted}</p>
-                                </div>
+                            <div>
+                                <label className="text-sm font-semibold text-gray-900">Consulted</label>
+                                <p className="text-gray-700 mt-1">{selectedReport.consulted}</p>
                             </div>
 
                             <div>
