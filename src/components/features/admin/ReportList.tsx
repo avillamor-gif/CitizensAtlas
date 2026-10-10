@@ -107,8 +107,8 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
     <div className="w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-brand-dark-blue">Manage Partner Reports</h2>
-          <p className="text-gray-600 mt-1">View, manage, and delete all partner reports.</p>
+          <h2 className="text-3xl font-bold text-brand-dark-blue">Citizens' Reports</h2>
+          <p className="text-gray-600 mt-1">View, manage, and delete all reports.</p>
         </div>
       </div>
 

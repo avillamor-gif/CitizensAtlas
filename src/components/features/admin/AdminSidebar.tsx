@@ -257,18 +257,24 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
     });
   }
 
-  // Partner Reports Pending
+  // Citizens' Reports section
   if (canApproveDrafts) {
-    adminItems.push({
-      title: "Partner Reports",
-      page: "partner-reports-pending" as AdminPage,
+    navItems.push({
+      title: "Citizens' Reports",
       icon: FileText,
-    });
-    // Add Reports List for managing all reports
-    adminItems.push({
-      title: "All Reports",
-      page: "reports-list" as AdminPage,
-      icon: FileText,
+      isActive: activePage.startsWith('partner-reports') || activePage.startsWith('reports'),
+      items: [
+        {
+          title: "Pending Reports",
+          page: "partner-reports-pending" as AdminPage,
+          icon: FolderOpen,
+        },
+        {
+          title: "Project List",
+          page: "reports-list" as AdminPage,
+          icon: List,
+        },
+      ],
     });
   }
 
