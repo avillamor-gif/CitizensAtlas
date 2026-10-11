@@ -228,7 +228,7 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
 
       {/* Articles Section */}
       <ArticleListPage
-        title=""
+        title="News"
         items={filtered}
         onViewArticle={onViewArticle}
         hideTitle={true}
