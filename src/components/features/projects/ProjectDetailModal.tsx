@@ -311,10 +311,10 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
     return (
         <>
             {project && (
-                <div className="fixed inset-0 bg-black bg-opacity-30 z-40" onClick={onClose} />
+                <div className="fixed inset-0 bg-black bg-opacity-30 z-40 top-20" onClick={onClose} />
             )}
             <div 
-                className={`fixed inset-y-0 right-0 w-full sm:w-96 lg:w-[35%] bg-white shadow-2xl z-50 overflow-y-auto transition-smooth-slide ${
+                className={`fixed top-20 right-0 bottom-0 w-full sm:w-96 lg:w-[35%] bg-white shadow-2xl z-50 overflow-y-auto transition-smooth-slide ${
                     project ? 'translate-x-0' : 'translate-x-full'
                 }`}
                 onClick={(e) => e.stopPropagation()}
@@ -365,7 +365,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         ))}
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-end gap-2 bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%]">
+                <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-end gap-2 bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%] z-50">
                     {isAuthorized && onEdit && (
                         <button 
                             type="button" 

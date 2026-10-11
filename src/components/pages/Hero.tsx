@@ -222,16 +222,11 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     {/* Left Column: Map or Projects */}
                     <div className="lg:col-span-3">
                         {activeView === 'Map' ? (
-                           <div className="relative border rounded-lg shadow-lg overflow-hidden h-[400px] md:h-[600px] flex" style={{ borderColor: 'rgba(255, 165, 0, 0.2)', backgroundColor: '#051121' }}>
-                                <div className="flex-1">
-                                    <InteractiveMap 
-                                        projects={filteredProjects} 
-                                        onMarkerClick={handleMarkerClick}
-                                    />
-                                </div>
-                                {selectedProject && !projectToEdit && (
-                                    <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} isSidePanel={true} />
-                                )}
+                           <div className="relative border rounded-lg shadow-lg overflow-hidden h-[400px] md:h-[600px]" style={{ borderColor: 'rgba(255, 165, 0, 0.2)', backgroundColor: '#051121' }}>
+                                <InteractiveMap 
+                                    projects={filteredProjects} 
+                                    onMarkerClick={handleMarkerClick}
+                                />
                             </div>
                         ) : (
                             <ProjectGrid projects={filteredProjects} onProjectSelect={openDetailModal} />
@@ -280,7 +275,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     </div>
                 )}
             </div>
-            {selectedProject && !projectToEdit && activeView === 'Projects' && (
+            {selectedProject && !projectToEdit && (
                 <ProjectDetailModal project={selectedProject} onClose={closeDetailModal} onEdit={handleEditProject} />
             )}
             {projectToEdit && (
