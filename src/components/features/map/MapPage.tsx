@@ -135,7 +135,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                 <InteractiveMap projects={filteredProjects} onMarkerClick={openDetailModal} onMapLoad={handleMapLoad} />
                 
                 {/* Currently Viewing Card */}
-                <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-blue-50 p-2 md:p-3 rounded-lg shadow-lg z-10 w-[140px] md:w-[200px]">
+                <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-[#0d1b2a] p-2 md:p-3 rounded-lg shadow-lg z-10 w-[140px] md:w-[200px] border border-[#384860]">
                     {filters.country !== 'all' && countryNameToCode[filters.country] ? (
                         <div className="relative">
                             <div
@@ -146,13 +146,13 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                                 aria-hidden="true"
                             />
                             <div className="relative text-center">
-                                <h4 className="text-[10px] md:text-xs font-bold text-brand-dark-blue mb-0.5 md:mb-1">Currently Viewing</h4>
-                                <p className="text-xs md:text-sm font-extrabold text-brand-dark-blue">
+                                <h4 className="text-[10px] md:text-xs font-bold text-[#9eafc0] mb-0.5 md:mb-1">Currently Viewing</h4>
+                                <p className="text-xs md:text-sm font-extrabold text-[#a0b0c8]">
                                     {filters.country.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
                                 </p>
-                                <div className="mt-1 md:mt-2 pt-1 md:pt-2 border-t border-brand-dark-blue/20">
-                                    <p className="text-[9px] md:text-xs text-brand-dark-blue/80 mb-0.5">Total Cases</p>
-                                    <p className="text-sm md:text-lg font-bold text-brand-dark-blue">
+                                <div className="mt-1 md:mt-2 pt-1 md:pt-2 border-t border-[#384860]">
+                                    <p className="text-[9px] md:text-xs text-[#9eafc0]/80 mb-0.5">Total Cases</p>
+                                    <p className="text-sm md:text-lg font-bold text-[#a0b0c8]">
                                         {filteredProjects.length}
                                     </p>
                                 </div>
@@ -161,13 +161,13 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                         </div>
                     ) : (
                         <div className="text-center">
-                            <h4 className="text-xs font-bold text-brand-dark-blue mb-1">Currently Viewing</h4>
-                            <p className="text-sm font-extrabold text-brand-dark-blue">
+                            <h4 className="text-xs font-bold text-[#9eafc0] mb-1">Currently Viewing</h4>
+                            <p className="text-sm font-extrabold text-[#a0b0c8]">
                                 {filters.country === 'all' ? 'ALL COUNTRIES' : filters.country.toUpperCase()}
                             </p>
-                            <div className="mt-2 pt-2 border-t border-brand-dark-blue/20">
-                                <p className="text-xs text-brand-dark-blue/80 mb-0.5">Total Cases</p>
-                                <p className="text-lg font-bold text-brand-dark-blue">
+                            <div className="mt-2 pt-2 border-t border-[#384860]">
+                                <p className="text-xs text-[#9eafc0]/80 mb-0.5">Total Cases</p>
+                                <p className="text-lg font-bold text-[#a0b0c8]">
                                     {filteredProjects.length}
                                 </p>
                             </div>
