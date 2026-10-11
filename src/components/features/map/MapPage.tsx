@@ -196,6 +196,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                             filterOptions={filterOptions}
                             isCompact={true}
                             onClearFilters={handleClearFilters}
+                            isDarkMode={false}
                         />
                     </div>
                 </div>
@@ -230,6 +231,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                                     filterOptions={filterOptions}
                                     isCompact={false}
                                     onClearFilters={handleClearFilters}
+                                    isDarkMode={false}
                                 />
                             </div>
                         </div>

@@ -14,19 +14,25 @@ interface FilterPanelProps {
     filterOptions: FilterOptions;
     isCompact?: boolean;
     onClearFilters?: () => void;
+    isDarkMode?: boolean;
 }
 
-const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filterOptions, isCompact = false, onClearFilters }) => {
+const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filterOptions, isCompact = false, onClearFilters, isDarkMode = true }) => {
     const hasActiveFilters = filters.country !== 'all' || filters.solutionType !== 'all' || filters.ifi !== 'all' || filters.projectStatus !== 'all';
+    
+    const bgColor = isDarkMode ? '#0d1b2a' : 'transparent';
+    const textColor = isDarkMode ? '#9eafc0' : '#0a1628';
+    const borderColor = '#384860';
 
     return (
         <>
             <div className="flex items-center justify-between mb-2">
-                <h3 className={`${isCompact ? 'text-sm font-bold' : 'text-xl font-bold'}`} style={{ color: '#9eafc0' }}>Filters</h3>
+                <h3 className={`${isCompact ? 'text-sm font-bold' : 'text-xl font-bold'}`} style={{ color: textColor }}>Filters</h3>
                 {hasActiveFilters && onClearFilters && (
                     <button
                         onClick={onClearFilters}
-                        className={`${isCompact ? 'text-[10px] px-2 py-0.5' : 'text-xs px-3 py-1'} text-brand-dark-blue hover:text-brand-medium-blue font-semibold underline`}
+                        className={`${isCompact ? 'text-[10px] px-2 py-0.5' : 'text-xs px-3 py-1'} font-semibold underline`}
+                        style={{ color: isDarkMode ? '#ffa51d' : '#0a1628' }}
                     >
                         Clear All
                     </button>
@@ -37,12 +43,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.country || 'all'}
                     onValueChange={(value) => onFilterChange('country', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: bgColor, color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                         <SelectValue placeholder="All Countries" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
+                    <SelectContent style={{ backgroundColor: bgColor, borderColor: '#384860' }}>
                         {filterOptions.countries.filter(c => c !== '').map(country => (
-                            <SelectItem key={country} value={country} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
+                            <SelectItem key={country} value={country} className={isCompact ? 'text-xs' : ''} style={{ color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                                 {country === 'all' ? 'All Countries' : country}
                             </SelectItem>
                         ))}
@@ -53,12 +59,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.solutionType || 'all'}
                     onValueChange={(value) => onFilterChange('solutionType', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: bgColor, color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                         <SelectValue placeholder="All False Solution Types" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
+                    <SelectContent style={{ backgroundColor: bgColor, borderColor: '#384860' }}>
                         {filterOptions.solutionTypes.filter(t => t !== '').map(type => (
-                            <SelectItem key={type} value={type} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
+                            <SelectItem key={type} value={type} className={isCompact ? 'text-xs' : ''} style={{ color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                                 {type === 'all' ? 'All False Solution Types' : type}
                             </SelectItem>
                         ))}
@@ -69,12 +75,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.ifi || 'all'}
                     onValueChange={(value) => onFilterChange('ifi', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: bgColor, color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                         <SelectValue placeholder="All IFI Types" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
+                    <SelectContent style={{ backgroundColor: bgColor, borderColor: '#384860' }}>
                         {filterOptions.ifis.filter(i => i !== '').map(ifi => (
-                            <SelectItem key={ifi} value={ifi} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
+                            <SelectItem key={ifi} value={ifi} className={isCompact ? 'text-xs' : ''} style={{ color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                                 {ifi === 'all' ? 'All IFI Types' : ifi === 'N/A' ? 'No IFI' : ifi}
                             </SelectItem>
                         ))}
@@ -85,12 +91,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.projectStatus || 'all'}
                     onValueChange={(value) => onFilterChange('projectStatus', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: bgColor, color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                         <SelectValue placeholder="All Project Statuses" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
+                    <SelectContent style={{ backgroundColor: bgColor, borderColor: '#384860' }}>
                         {filterOptions.projectStatuses.filter(s => s !== '').map(status => (
-                            <SelectItem key={status} value={status} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
+                            <SelectItem key={status} value={status} className={isCompact ? 'text-xs' : ''} style={{ color: isDarkMode ? '#a0b0c8' : '#0a1628' }}>
                                 {status === 'all' ? 'All Project Statuses' : status}
                             </SelectItem>
                         ))}
