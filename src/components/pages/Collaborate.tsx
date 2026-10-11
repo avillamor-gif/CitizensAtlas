@@ -32,6 +32,10 @@ const Collaborate: React.FC = () => {
         }
     };
 
+    if (loading) {
+        return null;
+    }
+
     return (
         <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <div className="container mx-auto">
@@ -55,7 +59,7 @@ const Collaborate: React.FC = () => {
                     </div>
                 )}
 
-                {hasReports && !loading && (
+                {hasReports && (
                     <div className="text-center">
                         <div className="mb-12">
                             <h2 className="text-4xl font-extrabold mb-2">CITIZEN'S REPORT</h2>
