@@ -21,7 +21,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
             type="button"
             onClick={() => onViewArticle(item)}
             className="w-full text-left rounded-lg hover:opacity-90 transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group border"
-            style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}
+            style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#384860' }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#ffa51d';
                 setIsHovering(true);

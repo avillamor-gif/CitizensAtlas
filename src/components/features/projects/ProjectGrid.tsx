@@ -117,7 +117,7 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-9 pr-8 py-2 border rounded-md focus:ring-2 focus:ring-brand-medium-blue focus:border-white text-sm placeholder-gray-400"
-                            style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}
+                            style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}
                         />
                         {searchQuery && (
                             <button
@@ -134,13 +134,13 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
                 {/* Sort controls on the right */}
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <label htmlFor="sort-select" className="text-sm font-medium text-gray-700">Sort by:</label>
+                        <label htmlFor="sort-select" className="text-sm font-medium" style={{ color: '#9eafc0' }}>Sort by:</label>
                         <select
                             id="sort-select"
                             value={sortKey}
                             onChange={(e) => setSortKey(e.target.value as SortKey)}
                             className="p-2 border rounded-md text-sm focus:ring-brand-medium-blue focus:border-white"
-                            style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}
+                            style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}
                         >
                             <option value="publishDate">Publish Date</option>
                             <option value="country">Country</option>
@@ -151,7 +151,7 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
                     <button
                         onClick={toggleSortOrder}
                         className="p-2 border rounded-md text-sm flex items-center gap-1"
-                        style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}
+                        style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}
                         aria-label={`Sort in ${sortOrder === 'asc' ? 'descending' : 'ascending'} order`}
                     >
                         {sortOrder === 'asc' ? <span>&uarr; Asc</span> : <span>&darr; Desc</span>}

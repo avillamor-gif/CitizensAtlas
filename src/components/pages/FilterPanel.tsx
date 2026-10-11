@@ -22,7 +22,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
     return (
         <>
             <div className="flex items-center justify-between mb-2">
-                <h3 className={`${isCompact ? 'text-sm font-bold' : 'text-xl font-bold'} text-brand-dark-blue`}>Filters</h3>
+                <h3 className={`${isCompact ? 'text-sm font-bold' : 'text-xl font-bold'}`} style={{ color: '#9eafc0' }}>Filters</h3>
                 {hasActiveFilters && onClearFilters && (
                     <button
                         onClick={onClearFilters}
@@ -37,10 +37,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.country || 'all'}
                     onValueChange={(value) => onFilterChange('country', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
                         <SelectValue placeholder="All Countries" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#ffffff' }}>
+                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
                         {filterOptions.countries.filter(c => c !== '').map(country => (
                             <SelectItem key={country} value={country} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
                                 {country === 'all' ? 'All Countries' : country}
@@ -53,10 +53,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.solutionType || 'all'}
                     onValueChange={(value) => onFilterChange('solutionType', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
                         <SelectValue placeholder="All False Solution Types" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#ffffff' }}>
+                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
                         {filterOptions.solutionTypes.filter(t => t !== '').map(type => (
                             <SelectItem key={type} value={type} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
                                 {type === 'all' ? 'All False Solution Types' : type}
@@ -69,10 +69,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.ifi || 'all'}
                     onValueChange={(value) => onFilterChange('ifi', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
                         <SelectValue placeholder="All IFI Types" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#ffffff' }}>
+                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
                         {filterOptions.ifis.filter(i => i !== '').map(ifi => (
                             <SelectItem key={ifi} value={ifi} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
                                 {ifi === 'all' ? 'All IFI Types' : ifi === 'N/A' ? 'No IFI' : ifi}
@@ -85,10 +85,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
                     value={filters.projectStatus || 'all'}
                     onValueChange={(value) => onFilterChange('projectStatus', value)}
                 >
-                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#ffffff', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
+                    <SelectTrigger className={`w-full ${isCompact ? 'h-8 text-xs' : 'h-11'}`} style={{ borderColor: '#384860', backgroundColor: '#0d1b2a', color: '#a0b0c8' }}>
                         <SelectValue placeholder="All Project Statuses" />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#ffffff' }}>
+                    <SelectContent style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}>
                         {filterOptions.projectStatuses.filter(s => s !== '').map(status => (
                             <SelectItem key={status} value={status} className={isCompact ? 'text-xs' : ''} style={{ color: '#a0b0c8' }}>
                                 {status === 'all' ? 'All Project Statuses' : status}

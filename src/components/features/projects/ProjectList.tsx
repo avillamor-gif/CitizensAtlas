@@ -14,7 +14,7 @@ const ProjectListItem: React.FC<{ project: Project; onClick: () => void }> = ({ 
     return (
         <div
             className="p-6 border rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 group"
-            style={{ backgroundColor: '#0d1b2a', borderColor: '#ffffff' }}
+            style={{ backgroundColor: '#0d1b2a', borderColor: '#384860' }}
             onClick={onClick}
             role="button"
             tabIndex={0}
