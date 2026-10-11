@@ -12,6 +12,7 @@ interface ArticleGridCardProps {
 
 const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, pageTitle, onDownload }) => {
     const isVideo = pageTitle === 'Videos';
+    const [isHovering, setIsHovering] = React.useState(false);
     
     return (
         <button
@@ -21,9 +22,11 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
             style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#ffa51d';
+                setIsHovering(true);
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = '#2f4059';
+                setIsHovering(false);
             }}
         >
             <div className="h-48 overflow-hidden relative">
@@ -63,21 +66,15 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                 <span 
                     className="text-sm mt-auto self-start text-left transition-colors duration-200"
                     style={{ 
-                        color: '#98a7b8',
+                        color: isHovering ? '#ffa51d' : '#98a7b8',
                         fontWeight: 400,
                         fontSize: '14px',
                         fontStyle: 'normal',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
                     }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#ffa51d'
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#98a7b8'
-                    }}
                 >
-                    Read More →
+                    {isVideo ? 'Watch' : 'Read More'} →
                 </span>
             </div>
         </button>

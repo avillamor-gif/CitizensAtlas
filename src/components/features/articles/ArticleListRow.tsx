@@ -12,6 +12,7 @@ interface ArticleListRowProps {
 
 const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pageTitle, onDownload }) => {
     const isVideo = pageTitle === 'Videos';
+    const [isHovering, setIsHovering] = React.useState(false);
 
     return (
         <button
@@ -21,9 +22,11 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
             style={{ backgroundColor: 'rgba(26, 95, 122, 0.1)', borderColor: '#2f4059' }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#ffa51d';
+                setIsHovering(true);
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = '#2f4059';
+                setIsHovering(false);
             }}
         >
             <div className="sm:w-1/3 flex-shrink-0 h-48 sm:h-auto overflow-hidden relative">
@@ -63,21 +66,15 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                 <span 
                     className="text-sm mt-auto self-start text-left transition-colors duration-200"
                     style={{ 
-                        color: '#98a7b8',
+                        color: isHovering ? '#ffa51d' : '#98a7b8',
                         fontWeight: 400,
                         fontSize: '14px',
                         fontStyle: 'normal',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
                     }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#ffa51d'
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#98a7b8'
-                    }}
                 >
-                    Read More →
+                    {isVideo ? 'Watch' : 'Read More'} →
                 </span>
             </div>
         </button>
