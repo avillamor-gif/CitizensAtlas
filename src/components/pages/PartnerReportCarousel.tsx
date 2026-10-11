@@ -45,7 +45,18 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                     <div key={report.id || idx} className="flex-shrink-0 w-72">
                         <div 
                             onClick={() => setSelectedReport(report)}
-                            className="rounded-lg border border-gray-700 bg-gray-900 p-4 h-full hover:border-orange-500 transition-all duration-300 group cursor-pointer"
+                            className="rounded-lg border bg-gray-900 p-4 h-full transition-all duration-300 group cursor-pointer"
+                            style={{ borderColor: 'var(--highlight)' }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--highlight)';
+                                const titleEl = e.currentTarget.querySelector('h4');
+                                if (titleEl) titleEl.style.color = 'var(--highlight)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--highlight)';
+                                const titleEl = e.currentTarget.querySelector('h4');
+                                if (titleEl) titleEl.style.color = 'white';
+                            }}
                         >
                             <div className="mb-3">
                                 <span
@@ -56,7 +67,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </span>
                             </div>
 
-                            <h4 className="text-white font-bold mb-2 transition-colors line-clamp-2" style={{ color: 'white' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>
+                            <h4 className="text-white font-bold mb-2 transition-colors line-clamp-2">
                                 {report.issue}
                             </h4>
 
