@@ -32,6 +32,13 @@ const Home: React.FC<HomeProps> = (props) => {
     const publicationsWithSlugs = reconstructArticleSlugs(props.publicationsData);
     const videosWithSlugs = reconstructArticleSlugs(props.videosData);
 
+    // Handler for News items - open URL directly
+    const handleNewsArticleClick = (article: Article) => {
+        if (article.description) {
+            window.open(article.description, '_blank');
+        }
+    };
+
     return (
         <div>
             <Hero
@@ -47,7 +54,7 @@ const Home: React.FC<HomeProps> = (props) => {
             <ContentCarousel title="ACTIVE FIGHT SITES" items={projectBriefsAsArticles} hasBackground={false} onNavigate={props.onNavigate} page="active-fight-sites" onViewArticle={props.onViewArticle} isDarkTheme={true} />
             </div>
             <div className="text-white border-t" style={{ backgroundColor: '#00112b', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
-            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} isDarkTheme={true} />
+            <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={handleNewsArticleClick} isDarkTheme={true} />
             </div>
             <div style={{ backgroundColor: '#00071b' }}>
             <Collaborate />
