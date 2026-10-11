@@ -296,6 +296,37 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="my-8">
+                  <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>ADB · Investment per country (USD M)</div>
+                  <div className="space-y-2">
+                    {[
+                      { country: 'India', amount: 8050.4 },
+                      { country: 'Indonesia', amount: 4183.32 },
+                      { country: 'China', amount: 1205.62 },
+                      { country: 'Pakistan', amount: 707.43 },
+                      { country: 'Maldives', amount: 154.66 },
+                      { country: 'Thailand', amount: 154.1 },
+                      { country: 'Sri Lanka', amount: 150 },
+                      { country: 'Vietnam', amount: 126 },
+                      { country: 'Philippines', amount: 1.575 },
+                    ].map((d, idx) => {
+                      const max = 8050.4;
+                      return (
+                        <div key={idx} className="grid grid-cols-[8rem_1fr_6rem] items-center gap-3 text-sm">
+                          <span style={{ color: '#aeb9cc' }}>{d.country}</span>
+                          <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{ background: 'linear-gradient(to right, #1a5f7a, var(--highlight))', width: `${(d.amount / max) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-right font-medium tabular-nums" style={{ color: '#aeb9cc' }}>{d.amount.toLocaleString()}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="my-8">
                   <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>World Bank Group · Investment per country (USD M)</div>
                   <div className="space-y-2">
                     {[
