@@ -275,61 +275,70 @@ const AboutPage: React.FC = () => {
 
             {/* Expandable Section */}
             {isMoneyFlowExpanded && (
-              <div className="rounded-lg p-6 border transition-all duration-300" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-                <h3 className="text-xl font-normal text-white mb-4" style={{ color: '#aeb9cc' }}>Where the money goes</h3>
-                
-                <div className="space-y-4 text-gray-300 leading-relaxed">
-                  <p>
-                    Financial flows from development banks and export credit agencies support a range of infrastructure and development projects. Understanding where this money goes is essential to assessing the impacts of these investments on communities and the environment.
-                  </p>
+              <div className="rounded-lg p-6 border transition-all duration-300 space-y-8" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+                <div>
+                  <h3 className="text-xl font-normal text-white mb-4" style={{ color: '#aeb9cc' }}>Where the money goes</h3>
                   
-                  <div className="mt-6">
-                    <h4 className="text-base font-normal mb-3 text-white">Key sectors financed:</h4>
-                    <ul className="space-y-2 list-none">
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Energy Infrastructure:</strong> Coal, natural gas, hydropower, and large renewable projects</span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Transportation:</strong> Roads, railways, ports, and airports</span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Waste Management:</strong> Landfills, waste-to-energy facilities, and incineration plants</span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Water and Sanitation:</strong> Dams, water supply systems, and sewage treatment</span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Agriculture and Land Use:</strong> Plantations, agricultural infrastructure, and land development</span>
-                      </li>
-                    </ul>
+                  <div className="space-y-4 text-gray-300 leading-relaxed mb-6">
+                    <p>
+                      Across three banks, the database accounts for over USD 30 billion in false-solutions financing. India usually leads — closely followed by China as the second-highest destination of World Bank false-solutions investment.
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 mt-4">
+                      <div className="p-4 rounded" style={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
+                        <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">ADB total</div>
+                        <div className="text-2xl font-normal" style={{ color: 'var(--highlight)' }}>~$15.3 B</div>
+                      </div>
+                      <div className="p-4 rounded" style={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
+                        <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">WBG total</div>
+                        <div className="text-2xl font-normal" style={{ color: 'var(--highlight)' }}>~$11.0 B</div>
+                      </div>
+                      <div className="p-4 rounded" style={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
+                        <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">AIIB total</div>
+                        <div className="text-2xl font-normal" style={{ color: 'var(--highlight)' }}>~$4.0 B</div>
+                      </div>
+                    </div>
                   </div>
+                </div>
 
-                  <div className="mt-6">
-                    <h4 className="text-base font-normal mb-3 text-white">Direct recipients:</h4>
-                    <ul className="space-y-2 list-none">
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Government agencies:</strong> Ministries and state-owned enterprises implementing public projects</span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>Private corporations:</strong> Companies bidding for construction and operation contracts</span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span style={{ color: 'var(--highlight)' }}>•</span>
-                        <span><strong>International contractors:</strong> Engineering and construction firms, often based in developed countries</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <p className="mt-6 pt-4 border-t" style={{ borderColor: '#2f4059' }}>
-                    The Atlas tracks these financial flows to show how development finance is being allocated, who benefits from these investments, and what the environmental and social impacts are on the ground.
+                <div>
+                  <h4 className="text-base font-normal text-white mb-3" style={{ color: '#aeb9cc' }}>Non-IFI funders</h4>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    The largest external funders include KfW Bankengruppe, AFD, China Everbright Limited, and the ASEAN Infrastructure Fund. GEF appears across multiple projects and multiple banks.
                   </p>
+                  <div className="bg-gray-900 rounded p-4 space-y-3 max-h-64 overflow-y-auto">
+                    <div className="grid grid-cols-1 gap-2 text-xs text-gray-400">
+                      <div className="flex justify-between"><span>KfW Bankengruppe</span> <span>$843.48 M</span></div>
+                      <div className="flex justify-between"><span>China Everbright Limited</span> <span>$771.31 M</span></div>
+                      <div className="flex justify-between"><span>AFD</span> <span>$497.89 M</span></div>
+                      <div className="flex justify-between"><span>ASEAN Infrastructure Fund</span> <span>$200 M</span></div>
+                      <div className="flex justify-between"><span>LEAP (admin. by ADB)</span> <span>$123.1 M</span></div>
+                      <div className="flex justify-between"><span>Dynagreen</span> <span>$44.48 M</span></div>
+                      <div className="flex justify-between"><span>Global Environment Facility (GEF)</span> <span>$16 M</span></div>
+                      <div className="flex justify-between"><span>JFJCM</span> <span>$10 M</span></div>
+                      <div className="flex justify-between"><span>Korea Development Bank</span> <span>$8 M</span></div>
+                      <div className="flex justify-between"><span>Republic of Korea E-Asia Fund</span> <span>$6.5 M</span></div>
+                      <div className="flex justify-between"><span>Govt. of Norway</span> <span>$5.28 M</span></div>
+                      <div className="flex justify-between"><span>High Level Technology Fund</span> <span>$2 M</span></div>
+                      <div className="flex justify-between"><span>Japan Fund for Poverty Reduction</span> <span>$1.5 M</span></div>
+                      <div className="flex justify-between"><span>ETMPF</span> <span>$2 M</span></div>
+                      <div className="flex justify-between"><span>Govt. of Australia</span> <span>$1 M</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-base font-normal text-white mb-3" style={{ color: '#aeb9cc' }}>A note on rating inconsistencies</h4>
+                  <div className="space-y-3 text-gray-300 leading-relaxed text-sm">
+                    <p>
+                      ADB assigns letter grades A–C across three parameters (environment, involuntary resettlement, indigenous peoples), where A denotes high risk. Technical Assistance projects receive no rating at all, since they typically lack infrastructure components. Even within rated projects, inconsistencies are common — similar WtE projects display a wide range of environmental grades despite comparable scale.
+                    </p>
+                    <p>
+                      AIIB consolidates risk into a single cumulative grade. JICA offers minimal disclosure, occasionally assigning combined ratings only when full feasibility studies exist. In cases lacking official ratings, the database makes informed assumptions based on institutional patterns — not GAIA's independent assessment.
+                    </p>
+                    <p>
+                      Many projects have 15 to 50 individual project documents. While the team validated information with multiple rounds of review, full document-by-document parsing was infeasible within the project timeframe — a known limitation surfaced here in the interest of transparency.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
