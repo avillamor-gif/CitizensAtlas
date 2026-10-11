@@ -269,7 +269,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 
           const falseSolutionCheckboxValues = getCheckedLabels(row, {
             'Waste-to-Energy Incineration': ['False Solution - Waste-to-Energy Incineration (X/Yes)', 'False Solution - Waste-to-Energy Incineration'],
-            'Medical Incineration': ['False Solution - Medical Incineration (X/Yes)', 'False Solution - Medical Incineration'],
+            'Other Incineration': ['False Solution - Other Incineration (X/Yes)', 'False Solution - Other Incineration'],
             'Plastic-to-Fuel Technologies': ['False Solution - Plastic-to-Fuel Technologies (X/Yes)', 'False Solution - Plastic-to-Fuel Technologies'],
             'Plastic Recycling': ['False Solution - Plastic Recycling (X/Yes)', 'False Solution - Plastic Recycling'],
             'Refuse-Derived Plastics': ['False Solution - Refuse-Derived Plastics (X/Yes)', 'False Solution - Refuse-Derived Plastics'],

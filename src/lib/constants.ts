@@ -57,7 +57,7 @@ export const publicationsData: Article[] = [
 
 export const solutionTypeColors: { readonly [key: string]: { readonly hex: string; readonly tailwind: string } } = {
     'Waste-to-Energy Incineration': { hex: '#ef4444', tailwind: 'bg-red-500' },
-    'Medical Incineration': { hex: '#f97316', tailwind: 'bg-orange-500' },
+    'Other Incineration': { hex: '#f97316', tailwind: 'bg-orange-500' },
     'Plastic-to-Fuel Technologies': { hex: '#fbbf24', tailwind: 'bg-amber-400' },
     'Plastic Recycling': { hex: '#eab308', tailwind: 'bg-yellow-500' },
     'Refuse-Derived Plastics': { hex: '#a855f7', tailwind: 'bg-purple-500' },
@@ -83,7 +83,7 @@ export const normalizeSolutionType = (rawType: string): string => {
         return 'Waste-to-Energy Incineration';
     }
     if (lower.includes('medical') && lower.includes('incineration')) {
-        return 'Medical Incineration';
+        return 'Other Incineration';
     }
     if (lower.includes('plastic') && lower.includes('fuel')) {
         return 'Plastic-to-Fuel Technologies';
