@@ -295,7 +295,7 @@ const AboutPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="my-8">
+                <div className="my-8 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
                   <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>ADB · Investment per country (USD M)</div>
                   <div className="space-y-2">
                     {[
@@ -326,7 +326,7 @@ const AboutPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="my-8">
+                <div className="my-8 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
                   <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>World Bank Group · Investment per country (USD M)</div>
                   <div className="space-y-2">
                     {[
@@ -360,7 +360,7 @@ const AboutPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="my-8">
+                <div className="my-8 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
                   <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>AIIB · Investment per country (USD M)</div>
                   <div className="space-y-2">
                     {[
