@@ -1395,6 +1395,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         //     return;
         // }
 
+        // Set "None" as default for fields with no input
+        const ownerValue = owner?.trim() || 'None';
+        const privateSectorBorrowersValue = privateSectorBorrowers.length > 0 && privateSectorBorrowers.some(b => b.trim())
+            ? privateSectorBorrowers.join(', ')
+            : 'None';
+        const economicCooperationValue = economicCooperationOrPrograms?.trim() || 'None';
+        const otherImplementorsValue = otherImplementors?.trim() || 'None';
+        const otherFinanciersValue = otherFinanciers?.trim() || 'None';
+
         const details = `
     **Region:** ${regionValue}
     **Country:** ${formData.primaryCountry}
@@ -1403,13 +1412,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     **False Solution Type:** ${falseSolutionsValue}
 **IFI:** ${ifiValue}
 **Financial Instruments:** ${financialInstrumentsText}
-**Other Financiers:** ${otherFinanciers}
+**Other Financiers:** ${otherFinanciersValue}
 **Funding Source:** ${fundingSourceText}
 **Total Project Amount:** ${totalProjectAmount.toLocaleString()} M USD
-**Owner:** ${owner}
-**Private Sector Borrowers:** ${privateSectorBorrowers.join(', ')}
-**Economic Cooperation or Programs:** ${economicCooperationOrPrograms}
-**Other Implementors:** ${otherImplementors}
+**Owner:** ${ownerValue}
+**Private Sector Borrowers:** ${privateSectorBorrowersValue}
+**Economic Cooperation or Programs:** ${economicCooperationValue}
+**Other Implementors:** ${otherImplementorsValue}
 **Project Description:**
 ${projectDescription}
 ---
