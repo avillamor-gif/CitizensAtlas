@@ -13,7 +13,8 @@ const ProjectListItem: React.FC<{ project: Project; onClick: () => void }> = ({ 
     
     return (
         <div
-            className="bg-white p-6 border border-gray-200 rounded-lg cursor-pointer hover:shadow-md hover:border-brand-medium-blue transition-all duration-200 group"
+            className="p-6 border rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 group"
+            style={{ backgroundColor: '#0d1b2a', borderColor: '#ffffff' }}
             onClick={onClick}
             role="button"
             tabIndex={0}
@@ -23,21 +24,21 @@ const ProjectListItem: React.FC<{ project: Project; onClick: () => void }> = ({ 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">{project.publishDate || 'N/A'}</span>
+                        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#a0b0c8' }}>{project.country}</span>
+                        <span className="text-xs" style={{ color: '#6b7a8f' }}>•</span>
+                        <span className="text-xs" style={{ color: '#a0b0c8' }}>{project.publishDate || 'N/A'}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-brand-dark-blue mb-2 group-hover:text-brand-light-blue transition-colors duration-200">
+                    <h3 className="text-lg font-bold mb-2 group-hover:text-brand-light-blue transition-colors duration-200" style={{ color: '#ffffff' }}>
                         {project.title}
                     </h3>
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                        <span><strong className="text-gray-800">False Solution:</strong> {project.corruptionType}</span>
-                        <span><strong className="text-gray-800">Amount:</strong> {totalProjectAmount}</span>
-                        {ifi !== 'N/A' && <span><strong className="text-gray-800">IFI:</strong> {ifi}</span>}
+                    <div className="flex flex-wrap gap-4 text-sm" style={{ color: '#a0b0c8' }}>
+                        <span><strong className="text-white">False Solution:</strong> {project.corruptionType}</span>
+                        <span><strong className="text-white">Amount:</strong> {totalProjectAmount}</span>
+                        {ifi !== 'N/A' && <span><strong className="text-white">IFI:</strong> {ifi}</span>}
                     </div>
                 </div>
                 <div className="flex-shrink-0">
-                    <button className="text-brand-medium-blue hover:text-brand-dark-blue font-medium text-sm">
+                    <button className="font-medium text-sm hover:opacity-80 transition-opacity" style={{ color: '#ffa51d' }}>
                         View Details →
                     </button>
                 </div>
