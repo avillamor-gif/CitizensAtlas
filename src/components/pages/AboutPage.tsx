@@ -87,6 +87,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 const AboutPage: React.FC = () => {
+  const [isMoneyFlowExpanded, setIsMoneyFlowExpanded] = React.useState(false)
+  
   return (
     <div style={{ backgroundColor: 'var(--deep)' }}>
       {/* Hero Section */}
@@ -240,11 +242,98 @@ const AboutPage: React.FC = () => {
               </Link>
             ))}
           </div>
-          <p className="text-gray-300 leading-relaxed max-w-3xl">
-            These bodies often work with national and municipal governments, state-owned entities,
-            and corporations. Their involvement can take many forms, including loans, equity,
-            grants, technical assistance, guarantees, and other financial instruments.
-          </p>
+          <div className="flex flex-col gap-6">
+            <div className="flex items-start justify-between gap-6">
+              <p className="text-gray-300 leading-relaxed max-w-3xl flex-grow">
+                These bodies often work with national and municipal governments, state-owned entities,
+                and corporations. Their involvement can take many forms, including loans, equity,
+                grants, technical assistance, guarantees, and other financial instruments.
+              </p>
+              <button
+                onClick={() => setIsMoneyFlowExpanded(!isMoneyFlowExpanded)}
+                className="mt-1 px-4 py-2 rounded-lg font-normal text-sm transition-all duration-200 flex-shrink-0 whitespace-nowrap"
+                style={{
+                  backgroundColor: isMoneyFlowExpanded ? 'var(--highlight)' : '#112649',
+                  color: isMoneyFlowExpanded ? '#020e21' : '#c5ced9',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isMoneyFlowExpanded) {
+                    e.currentTarget.style.backgroundColor = '#0e2141'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isMoneyFlowExpanded) {
+                    e.currentTarget.style.backgroundColor = '#112649'
+                  }
+                }}
+              >
+                Where the money goes?
+              </button>
+            </div>
+
+            {/* Expandable Section */}
+            {isMoneyFlowExpanded && (
+              <div className="rounded-lg p-6 border transition-all duration-300" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+                <h3 className="text-xl font-normal text-white mb-4" style={{ color: '#aeb9cc' }}>Where the money goes</h3>
+                
+                <div className="space-y-4 text-gray-300 leading-relaxed">
+                  <p>
+                    Financial flows from development banks and export credit agencies support a range of infrastructure and development projects. Understanding where this money goes is essential to assessing the impacts of these investments on communities and the environment.
+                  </p>
+                  
+                  <div className="mt-6">
+                    <h4 className="text-base font-normal mb-3 text-white">Key sectors financed:</h4>
+                    <ul className="space-y-2 list-none">
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Energy Infrastructure:</strong> Coal, natural gas, hydropower, and large renewable projects</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Transportation:</strong> Roads, railways, ports, and airports</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Waste Management:</strong> Landfills, waste-to-energy facilities, and incineration plants</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Water and Sanitation:</strong> Dams, water supply systems, and sewage treatment</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Agriculture and Land Use:</strong> Plantations, agricultural infrastructure, and land development</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="mt-6">
+                    <h4 className="text-base font-normal mb-3 text-white">Direct recipients:</h4>
+                    <ul className="space-y-2 list-none">
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Government agencies:</strong> Ministries and state-owned enterprises implementing public projects</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>Private corporations:</strong> Companies bidding for construction and operation contracts</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <span style={{ color: 'var(--highlight)' }}>•</span>
+                        <span><strong>International contractors:</strong> Engineering and construction firms, often based in developed countries</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <p className="mt-6 pt-4 border-t" style={{ borderColor: '#2f4059' }}>
+                    The Atlas tracks these financial flows to show how development finance is being allocated, who benefits from these investments, and what the environmental and social impacts are on the ground.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
