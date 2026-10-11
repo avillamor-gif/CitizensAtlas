@@ -169,7 +169,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                 <div className="text-left max-w-4xl mb-8">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-8 h-1" style={{ backgroundColor: 'var(--highlight)' }}></div>
-                        <p className="text-xs font-bold tracking-[0.2em]" style={{ color: '#9eafc0' }}>
+                        <p className="text-xs tracking-[0.2em]" style={{ color: '#9eafc0', fontWeight: 400 }}>
                             A GAIA ASIA PACIFIC INITIATIVE
                         </p>
                     </div>
