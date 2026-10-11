@@ -79,7 +79,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                 <div className="container mx-auto relative">
                     <button
                         onClick={onBack}
-                        className="mb-6 text-white border border-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-md transition-colors text-sm font-medium"
+                        className="mb-6 text-white border border-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-md transition-colors text-sm font-normal"
                     >
                         ← {buttonText}
                     </button>
@@ -89,7 +89,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                             {article.category}
                         </div>
                     )}
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
                         {article.title}
                     </h1>
                 </div>
@@ -135,7 +135,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                                 href={publicationLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-sm font-bold text-gray-900 hover:opacity-80 transition-colors py-2 px-4 rounded-md"
+                                className="inline-flex items-center gap-2 text-sm font-normal text-gray-900 hover:opacity-80 transition-colors py-2 px-4 rounded-md"
                                 style={{ backgroundColor: 'var(--highlight)' }}
                             >
                                 Open Publication Link
@@ -145,7 +145,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
 
                     {article.documentNames && article.documentNames.length > 0 && (
                         <div className="mt-12 p-6 rounded-lg border" style={{ backgroundColor: 'rgba(255, 165, 0, 0.05)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
-                            <h3 className="text-xl font-bold text-white mb-4">Related Documents</h3>
+                            <h3 className="text-xl font-normal text-white mb-4">Related Documents</h3>
                             <ul className="space-y-2">
                                 {article.documentNames.map((doc, index) => {
                                     const docUrl = normalizeExternalUrl(article.documentUrls?.[index] || article.documentUrls?.[0]);
