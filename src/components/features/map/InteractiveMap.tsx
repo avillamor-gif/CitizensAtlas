@@ -532,14 +532,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 </div>
             )}
 
-            {!pickerMode && <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs">
+            {!pickerMode && <div className="absolute bottom-4 left-4 bg-[#0d1b2a] bg-opacity-95 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs border border-[#384860]">
                 <div>
-                    <h4 className="font-bold text-sm mb-2 text-brand-dark-blue">False Solution Types</h4>
+                    <h4 className="font-bold text-sm mb-2 text-[#9eafc0]">False Solution Types</h4>
                     <ul className="space-y-1">
                         {legendData.map(({ name, colorClass }) => (
                             <li key={name} className="flex items-center">
                                 <span className={`w-3 h-3 rounded-full mr-2 flex-shrink-0 ${colorClass}`}></span>
-                                <span className="text-xs text-gray-700">{name}</span>
+                                <span className="text-xs text-[#a0b0c8]">{name}</span>
                             </li>
                         ))}
                     </ul>
