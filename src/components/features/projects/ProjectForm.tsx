@@ -889,10 +889,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 parseCitySelectionValues(detailsMap.get('City')),
                 countrySelections
             );
-            const derivedRegions = countrySelections.map((country) => countryToRegionMap.get(country) || getRegionFromCountry(country)).filter(Boolean);
-            const mergedRegions = uniqueByValue(
-                [...regionSelections, ...derivedRegions].map((region) => ({ value: region, label: region }))
-            ).map((item) => item.value);
             
             
             const primaryCountry = countrySelections.length > 0 ? countrySelections[0] : '';
@@ -917,6 +913,21 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 }
             }
             
+            // Combine primary and secondary countries for countrySelections display
+            let fullCountrySelections = countrySelections;
+            if (primaryCountry && secondaryCountries.length > 0) {
+                // Ensure primary is first, then secondary countries
+                fullCountrySelections = [primaryCountry, ...secondaryCountries.filter(c => c !== primaryCountry)];
+            } else if (primaryCountry) {
+                fullCountrySelections = [primaryCountry];
+            }
+            
+            // Derive regions from all countries (primary + secondary)
+            const derivedRegions = fullCountrySelections.map((country) => countryToRegionMap.get(country) || getRegionFromCountry(country)).filter(Boolean);
+            const mergedRegions = uniqueByValue(
+                [...regionSelections, ...derivedRegions].map((region) => ({ value: region, label: region }))
+            ).map((item) => item.value);
+            
             // Determine latitude/longitude to use
             let latitude = sourceProject.latitude?.toString() || '';
             let longitude = sourceProject.longitude?.toString() || '';
@@ -933,7 +944,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             
             setFormData({
                 regionSelections: mergedRegions,
-                countrySelections,
+                countrySelections: fullCountrySelections,
                 primaryCountry,
                 secondaryCountries,
                 citySelections,
