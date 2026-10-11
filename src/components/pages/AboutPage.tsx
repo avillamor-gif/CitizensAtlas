@@ -275,60 +275,73 @@ const AboutPage: React.FC = () => {
 
             {/* Expandable Section */}
             {isMoneyFlowExpanded && (
-              <div className="rounded-lg p-6 border transition-all duration-300 space-y-8" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-                <div>
-                  <h3 className="text-xl font-normal text-white mb-4" style={{ color: '#aeb9cc' }}>Where the money goes</h3>
-                  
-                  <div className="space-y-4 text-gray-300 leading-relaxed mb-6">
-                    <p>
-                      Across three banks, the database accounts for over USD 30 billion in false-solutions financing. India usually leads — closely followed by China as the second-highest destination of World Bank false-solutions investment.
-                    </p>
-                    <div className="grid grid-cols-3 gap-4 mt-4">
-                      <div className="p-4 rounded" style={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
-                        <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">ADB total</div>
-                        <div className="text-2xl font-normal" style={{ color: 'var(--highlight)' }}>~$15.3 B</div>
-                      </div>
-                      <div className="p-4 rounded" style={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
-                        <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">WBG total</div>
-                        <div className="text-2xl font-normal" style={{ color: 'var(--highlight)' }}>~$11.0 B</div>
-                      </div>
-                      <div className="p-4 rounded" style={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
-                        <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">AIIB total</div>
-                        <div className="text-2xl font-normal" style={{ color: 'var(--highlight)' }}>~$4.0 B</div>
-                      </div>
-                    </div>
+              <div className="rounded-lg p-6 border transition-all duration-300" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+                <p className="text-gray-300 leading-relaxed mb-8 max-w-3xl">
+                  Across three banks, the database accounts for over USD 30 billion in false-solutions financing. India usually leads — closely followed by China as the second-highest destination of World Bank false-solutions investment.
+                </p>
+
+                <div className="grid md:grid-cols-3 gap-4 mb-8">
+                  <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
+                    <div className="text-xs uppercase tracking-widest text-gray-400 mb-2">ADB total</div>
+                    <div className="text-4xl font-normal" style={{ color: 'var(--highlight)' }}>~$15.3 B</div>
+                  </div>
+                  <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
+                    <div className="text-xs uppercase tracking-widest text-gray-400 mb-2">WBG total</div>
+                    <div className="text-4xl font-normal" style={{ color: 'var(--highlight)' }}>~$11.0 B</div>
+                  </div>
+                  <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
+                    <div className="text-xs uppercase tracking-widest text-gray-400 mb-2">AIIB total</div>
+                    <div className="text-4xl font-normal" style={{ color: 'var(--highlight)' }}>~$4.0 B</div>
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="text-base font-normal text-white mb-3" style={{ color: '#aeb9cc' }}>Non-IFI funders</h4>
-                  <p className="text-gray-300 leading-relaxed mb-4">
+                <div className="my-8">
+                  <h3 className="text-2xl font-normal text-white mb-3">Non-IFI funders</h3>
+                  <p className="text-gray-300 leading-relaxed mb-6 max-w-3xl">
                     The largest external funders include KfW Bankengruppe, AFD, China Everbright Limited, and the ASEAN Infrastructure Fund. GEF appears across multiple projects and multiple banks.
                   </p>
-                  <div className="bg-gray-900 rounded p-4 space-y-3 max-h-64 overflow-y-auto">
-                    <div className="grid grid-cols-1 gap-2 text-xs text-gray-400">
-                      <div className="flex justify-between"><span>KfW Bankengruppe</span> <span>$843.48 M</span></div>
-                      <div className="flex justify-between"><span>China Everbright Limited</span> <span>$771.31 M</span></div>
-                      <div className="flex justify-between"><span>AFD</span> <span>$497.89 M</span></div>
-                      <div className="flex justify-between"><span>ASEAN Infrastructure Fund</span> <span>$200 M</span></div>
-                      <div className="flex justify-between"><span>LEAP (admin. by ADB)</span> <span>$123.1 M</span></div>
-                      <div className="flex justify-between"><span>Dynagreen</span> <span>$44.48 M</span></div>
-                      <div className="flex justify-between"><span>Global Environment Facility (GEF)</span> <span>$16 M</span></div>
-                      <div className="flex justify-between"><span>JFJCM</span> <span>$10 M</span></div>
-                      <div className="flex justify-between"><span>Korea Development Bank</span> <span>$8 M</span></div>
-                      <div className="flex justify-between"><span>Republic of Korea E-Asia Fund</span> <span>$6.5 M</span></div>
-                      <div className="flex justify-between"><span>Govt. of Norway</span> <span>$5.28 M</span></div>
-                      <div className="flex justify-between"><span>High Level Technology Fund</span> <span>$2 M</span></div>
-                      <div className="flex justify-between"><span>Japan Fund for Poverty Reduction</span> <span>$1.5 M</span></div>
-                      <div className="flex justify-between"><span>ETMPF</span> <span>$2 M</span></div>
-                      <div className="flex justify-between"><span>Govt. of Australia</span> <span>$1 M</span></div>
+                  <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
+                    <div className="space-y-2">
+                      {[
+                        { name: "KfW Bankengruppe", amount: 843.48, bank: "ADB" },
+                        { name: "China Everbright Limited", amount: 771.31, bank: "WBG / AIIB" },
+                        { name: "AFD", amount: 497.89, bank: "ADB" },
+                        { name: "ASEAN Infrastructure Fund", amount: 200, bank: "ADB" },
+                        { name: "LEAP (admin. by ADB)", amount: 123.1, bank: "ADB" },
+                        { name: "Dynagreen", amount: 44.48, bank: "WBG" },
+                        { name: "Global Environment Facility (GEF)", amount: 16, bank: "ADB / WBG" },
+                        { name: "JFJCM", amount: 10, bank: "ADB" },
+                        { name: "Korea Development Bank", amount: 8, bank: "WBG" },
+                        { name: "Republic of Korea E-Asia Fund", amount: 6.5, bank: "ADB" },
+                        { name: "Govt. of Norway", amount: 5.28, bank: "ADB" },
+                        { name: "High Level Technology Fund", amount: 2, bank: "ADB" },
+                        { name: "Japan Fund for Poverty Reduction", amount: 1.5, bank: "ADB" },
+                        { name: "ETMPF", amount: 2, bank: "ADB" },
+                        { name: "Govt. of Australia", amount: 1, bank: "ADB" },
+                      ].map((f, idx) => {
+                        const maxAmount = 843.48;
+                        return (
+                          <div key={idx} className="grid grid-cols-[1fr_auto] items-center gap-4 text-sm">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="truncate text-gray-300">{f.name}</span>
+                              <span className="text-xs text-gray-500">{f.bank}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div className="h-2 w-40 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
+                                <div className="h-full rounded-full" style={{ width: `${(f.amount / maxAmount) * 100}%`, background: 'linear-gradient(90deg, #ffa51d, var(--highlight))' }} />
+                              </div>
+                              <span className="tabular-nums w-20 text-right text-gray-300">${f.amount.toLocaleString()} M</span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="text-base font-normal text-white mb-3" style={{ color: '#aeb9cc' }}>A note on rating inconsistencies</h4>
-                  <div className="space-y-3 text-gray-300 leading-relaxed text-sm">
+                <div className="my-8">
+                  <h3 className="text-2xl font-normal text-white mb-3">A note on rating inconsistencies</h3>
+                  <div className="space-y-4 text-gray-300 leading-relaxed">
                     <p>
                       ADB assigns letter grades A–C across three parameters (environment, involuntary resettlement, indigenous peoples), where A denotes high risk. Technical Assistance projects receive no rating at all, since they typically lack infrastructure components. Even within rated projects, inconsistencies are common — similar WtE projects display a wide range of environmental grades despite comparable scale.
                     </p>
