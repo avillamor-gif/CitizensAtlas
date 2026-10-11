@@ -433,16 +433,22 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                     <FormField label="Title" required>
                         <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>
-                    <FormField label="Description" required>
-                        <div className="mb-24">
-                            <TiptapEditor
-                                value={formData.description}
-                                onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
-                                height="200px"
-                                placeholder="Enter content..."
-                            />
-                        </div>
-                    </FormField>
+                    {itemType === 'News Update' ? (
+                        <FormField label="URL" required>
+                            <Input type="url" name="description" value={formData.description} onChange={handleInputChange} placeholder="https://example.com" required />
+                        </FormField>
+                    ) : (
+                        <FormField label="Description" required>
+                            <div className="mb-24">
+                                <TiptapEditor
+                                    value={formData.description}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+                                    height="200px"
+                                    placeholder="Enter content..."
+                                />
+                            </div>
+                        </FormField>
+                    )}
                     {itemType === 'Publication' ? (
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
