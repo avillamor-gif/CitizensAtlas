@@ -12,6 +12,7 @@ interface ArticleGridCardProps {
 
 const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, pageTitle, onDownload }) => {
     const isVideo = pageTitle === 'Videos';
+    const isNews = pageTitle === 'News';
     const [isHovering, setIsHovering] = React.useState(false);
     
     return (
@@ -60,9 +61,11 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                     )}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2 flex-grow">{item.title}</h3>
-                <p className="text-sm text-gray-300 line-clamp-3 mb-4">
-                    {toPlainText(item.description)}
-                </p>
+                {!isNews && (
+                    <p className="text-sm text-gray-300 line-clamp-3 mb-4">
+                        {toPlainText(item.description)}
+                    </p>
+                )}
                 <span 
                     className="mt-auto self-start text-left transition-colors duration-200"
                     style={{ 
@@ -74,7 +77,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                         letterSpacing: '0.05em'
                     }}
                 >
-                    {isVideo ? 'Watch' : 'Read More'} →
+                    {isVideo ? 'Watch' : isNews ? 'View Article' : 'Read More'} →
                 </span>
             </div>
         </button>

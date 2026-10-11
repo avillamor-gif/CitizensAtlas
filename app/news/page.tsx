@@ -26,7 +26,11 @@ export default function News() {
             <div className="text-brand-dark-blue text-lg font-semibold">Loading news...</div>
           </div>
         ) : (
-          <NewsPage items={news} onViewArticle={(article) => router.push(`/news/${article.slug}`)} />
+          <NewsPage items={news} onViewArticle={(article) => {
+            if (article.description) {
+              window.open(article.description, '_blank');
+            }
+          }} />
         )}
       </main>
       <Footer />
