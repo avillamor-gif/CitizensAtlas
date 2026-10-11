@@ -72,13 +72,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     const isEditMode = Boolean(itemToEdit);
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
     const [formData, setFormData] = useState({ ...emptyFormState, publishDate: today });
-    const [showAddCategory, setShowAddCategory] = useState(false);
-    const [newCategory, setNewCategory] = useState('');
     const [saveAsDraft, setSaveAsDraft] = useState(false); // New state for draft override
-    
-    // State for managing news categories (like ProjectForm)
-    const [newsCategories, setNewsCategories] = useState<string[]>(categories || ['Breaking News', 'Politics', 'Environment', 'N/A']);
-    const [showManageNewsCategories, setShowManageNewsCategories] = useState(false);
 
     // State for tag management
     const [newTag, setNewTag] = useState('');
@@ -89,13 +83,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     const publicationTypeOptions = Array.from(new Set([...(categories || []), formData.category].filter(Boolean as any)));
     const publicationCategoryOptions = Array.from(new Set([...(publicationCategories || []), formData.publicationCategory].filter(Boolean as any)));
     const previewImageUrl = formData.imageUrl?.trim() ? formData.imageUrl : '/fallback-project-image.svg';
-
-    // Update newsCategories when categories prop changes
-    useEffect(() => {
-        if (categories && categories.length > 0) {
-            setNewsCategories(categories);
-        }
-    }, [categories]);
 
     useEffect(() => {
         if (isEditMode && itemToEdit) {
@@ -211,43 +198,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
         }
     };
 
-    const handleAddCategory = () => {
-        if (newCategory.trim() && onAddCategory) {
-            onAddCategory(newCategory.trim());
-            setFormData(prev => ({ ...prev, category: newCategory.trim() }));
-            setNewCategory('');
-            setShowAddCategory(false);
-        }
-    };
-
     const handleAddPublicationCategory = () => {
         if (newPublicationCategory.trim() && onAddPublicationCategory) {
             onAddPublicationCategory(newPublicationCategory.trim());
             setFormData(prev => ({ ...prev, publicationCategory: newPublicationCategory.trim() }));
             setNewPublicationCategory('');
             setShowAddPublicationCategory(false);
-        }
-    };
-
-    const handleAddNewsCategory = () => {
-        if (newCategory.trim()) {
-            const trimmedCategory = newCategory.trim();
-            if (!newsCategories.includes(trimmedCategory)) {
-                setNewsCategories(prev => [...prev, trimmedCategory]);
-                setFormData(prev => ({ ...prev, category: trimmedCategory }));
-            }
-            setNewCategory('');
-            setShowAddCategory(false);
-        }
-    };
-
-    const handleDeleteNewsCategory = (categoryToDelete: string) => {
-        if (window.confirm(`Are you sure you want to delete the category "${categoryToDelete}"?`)) {
-            setNewsCategories(prev => prev.filter(cat => cat !== categoryToDelete));
-            // If the deleted category was selected, clear it
-            if (formData.category === categoryToDelete) {
-                setFormData(prev => ({ ...prev, category: '' }));
-            }
         }
     };
 
@@ -682,41 +638,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                                 Cancel
                                             </button>
                                         </div>
-                                    ) : (
-                                        <div className="mt-2 flex items-center gap-4">
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowAddCategory(true)}
-                                                className="text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                + Add more category
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowManageNewsCategories(!showManageNewsCategories)}
-                                                className="text-sm text-brand-medium-blue hover:underline"
-                                            >
-                                                - Manage Categories
-                                            </button>
-                                        </div>
-                                    )}
-                                    {showManageNewsCategories && (
-                                        <div className="mt-2 flex flex-wrap gap-2">
-                                            {newsCategories.map(cat => (
-                                                <div key={cat} className="inline-flex items-center bg-gray-100 rounded-md px-2 py-1 text-sm">
-                                                    <span className="text-gray-700">{cat}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteNewsCategory(cat)}
-                                                        className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                                                        title="Delete category"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                    ) : null}
                                 </>
                             )}
                         </FormField>
