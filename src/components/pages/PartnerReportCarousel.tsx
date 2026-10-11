@@ -56,7 +56,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </span>
                             </div>
 
-                            <h4 className="text-white font-bold mb-2 group-hover:text-orange-500 transition-colors line-clamp-2">
+                            <h4 className="text-white font-bold mb-2 transition-colors line-clamp-2" style={{ color: 'white' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>
                                 {report.issue}
                             </h4>
 
@@ -87,15 +87,21 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                 <>
                     <button
                         onClick={() => scroll('left')}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 transition-all duration-300 z-10"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 text-white rounded-full p-2 transition-all duration-300 z-10"
                         aria-label="Scroll left"
+                        style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                     >
                         <ArrowLeftIcon className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => scroll('right')}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 transition-all duration-300 z-10"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 text-white rounded-full p-2 transition-all duration-300 z-10"
                         aria-label="Scroll right"
+                        style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                     >
                         <ArrowRightIcon className="w-5 h-5" />
                     </button>
@@ -108,14 +114,18 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                     onClick={() => setSelectedReport(null)}
                 >
                     <div 
-                        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg"
+                        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg shadow-lg"
                         onClick={(e) => e.stopPropagation()}
+                        style={{ backgroundColor: '#0a1628', color: '#c5ced9' }}
                     >
-                        <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-                            <h2 className="text-xl font-bold text-gray-900">Report Details</h2>
+                        <div className="sticky top-0 z-20 flex items-center justify-between border-b px-6 py-4" style={{ backgroundColor: '#0f2340', borderColor: '#2f4059' }}>
+                            <h2 className="text-xl font-bold" style={{ color: '#ffffff' }}>Report Details</h2>
                             <button
                                 onClick={() => setSelectedReport(null)}
-                                className="text-gray-500 hover:text-gray-700 transition"
+                                className="transition"
+                                style={{ color: '#6b7a8f' }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = '#9aacbf'}
+                                onMouseLeave={(e) => e.currentTarget.style.color = '#6b7a8f'}
                             >
                                 ✕
                             </button>
@@ -124,11 +134,11 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                         <div className="space-y-6 px-6 py-6">
                             {selectedReport.photos && selectedReport.photos.length > 0 && (
                                 <div>
-                                    <label className="text-sm font-semibold text-gray-900 block mb-3">
+                                    <label className="text-sm font-semibold block mb-3" style={{ color: '#ffffff' }}>
                                         📸 Photos ({selectedReport.photos.length})
                                     </label>
-                                    <div className="relative bg-gray-900 rounded-lg overflow-hidden">
-                                        <div className="aspect-video bg-gray-800 flex items-center justify-center">
+                                    <div className="relative rounded-lg overflow-hidden" style={{ backgroundColor: '#0d1b2a' }}>
+                                        <div className="aspect-video flex items-center justify-center" style={{ backgroundColor: '#111f2e' }}>
                                             {selectedReport.photos[photoSliderIndex] ? (
                                                 <img 
                                                     src={selectedReport.photos[photoSliderIndex]} 
@@ -136,8 +146,8 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                                     className="w-full h-full object-contain"
                                                 />
                                             ) : (
-                                                <div className="text-gray-400 text-center">
-                                                    <p className="text-sm">Photo unavailable</p>
+                                                <div className="text-center">
+                                                    <p className="text-sm" style={{ color: '#6b7a8f' }}>Photo unavailable</p>
                                                 </div>
                                             )}
                                         </div>
@@ -146,21 +156,27 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                             <>
                                                 <button
                                                     onClick={() => setPhotoSliderIndex((prev) => (prev === 0 ? selectedReport.photos!.length - 1 : prev - 1))}
-                                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition z-10"
+                                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 transition z-10"
                                                     title="Previous photo"
+                                                    style={{ backgroundColor: 'rgba(255, 165, 0, 0.7)' }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--highlight)'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.7)'}
                                                 >
-                                                    ◀
+                                                    <ArrowLeftIcon className="w-4 h-4" />
                                                 </button>
 
                                                 <button
                                                     onClick={() => setPhotoSliderIndex((prev) => (prev === selectedReport.photos!.length - 1 ? 0 : prev + 1))}
-                                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition z-10"
+                                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 transition z-10"
                                                     title="Next photo"
+                                                    style={{ backgroundColor: 'rgba(255, 165, 0, 0.7)' }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--highlight)'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.7)'}
                                                 >
-                                                    ▶
+                                                    <ArrowRightIcon className="w-4 h-4" />
                                                 </button>
 
-                                                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                                                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-white text-xs px-3 py-1 rounded-full" style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
                                                     {photoSliderIndex + 1} / {selectedReport.photos.length}
                                                 </div>
                                             </>
@@ -171,42 +187,42 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-sm font-semibold text-gray-900">Date</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.date}</p>
+                                    <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Date</label>
+                                    <p className="mt-1" style={{ color: '#a0b0c8' }}>{selectedReport.date}</p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-semibold text-gray-900">Region</label>
-                                    <p className="text-gray-700 mt-1">{selectedReport.region}</p>
+                                    <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Region</label>
+                                    <p className="mt-1" style={{ color: '#a0b0c8' }}>{selectedReport.region}</p>
                                 </div>
                             </div>
 
                             <div>
-                                <label className="text-sm font-semibold text-gray-900">Consulted</label>
-                                <p className="text-gray-700 mt-1">{selectedReport.consulted}</p>
+                                <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Consulted</label>
+                                <p className="mt-1" style={{ color: '#a0b0c8' }}>{selectedReport.consulted}</p>
                             </div>
 
                             <div>
-                                <label className="text-sm font-semibold text-gray-900">Operating Company</label>
-                                <p className="text-gray-700 mt-1">{selectedReport.operatingCompany || 'N/A'}</p>
+                                <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Operating Company</label>
+                                <p className="mt-1" style={{ color: '#a0b0c8' }}>{selectedReport.operatingCompany || 'N/A'}</p>
                             </div>
 
                             <div>
-                                <label className="text-sm font-semibold text-gray-900">Issue Description</label>
-                                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.issue}</p>
+                                <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Issue Description</label>
+                                <p className="mt-1 whitespace-pre-wrap" style={{ color: '#a0b0c8' }}>{selectedReport.issue}</p>
                             </div>
 
                             <div>
-                                <label className="text-sm font-semibold text-gray-900">Observations & Impact</label>
-                                <p className="text-gray-700 mt-1 whitespace-pre-wrap">{selectedReport.observations}</p>
+                                <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Observations & Impact</label>
+                                <p className="mt-1 whitespace-pre-wrap" style={{ color: '#a0b0c8' }}>{selectedReport.observations}</p>
                             </div>
 
                             {selectedReport.relevantLinks && selectedReport.relevantLinks.length > 0 && (
                                 <div>
-                                    <label className="text-sm font-semibold text-gray-900">Relevant Links</label>
+                                    <label className="text-sm font-semibold" style={{ color: '#ffffff' }}>Relevant Links</label>
                                     <ul className="mt-1 space-y-1">
                                         {selectedReport.relevantLinks.map((link, idx) => (
                                             <li key={idx}>
-                                                <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                                                <a href={link} target="_blank" rel="noopener noreferrer" className="text-sm transition-colors" style={{ color: 'var(--highlight)' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
                                                     {link}
                                                 </a>
                                             </li>
