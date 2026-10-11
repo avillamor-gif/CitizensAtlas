@@ -81,7 +81,7 @@ const VideosPage: React.FC<VideosPageProps> = ({ items, onViewArticle }) => {
       </section>
 
       {/* Filters Section */}
-      <section className="px-4 sm:px-8 py-8 text-white" style={{ borderColor: '#2a394c' }}>
+      <section className="px-4 sm:px-8 py-4 text-white" style={{ borderColor: '#2a394c' }}>
         <div className="container mx-auto">
           {/* Category Buttons */}
           <div className="flex flex-wrap gap-2 pb-6 border-b" style={{ borderColor: '#2a394c' }}>

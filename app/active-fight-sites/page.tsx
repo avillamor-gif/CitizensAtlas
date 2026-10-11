@@ -187,7 +187,7 @@ export default function ActiveFightSites() {
         </section>
 
         {/* Filters Section */}
-        <section className="px-4 sm:px-8 py-8 text-white" style={{ borderColor: '#2a394c' }}>
+        <section className="px-4 sm:px-8 py-4 text-white" style={{ borderColor: '#2a394c' }}>
           <div className="container mx-auto">
             {/* Country Buttons */}
             <div className="flex flex-wrap gap-2 pb-6 border-b" style={{ borderColor: '#2a394c' }}>
@@ -333,7 +333,7 @@ export default function ActiveFightSites() {
         </section>
 
         {/* Content */}
-        <div className="py-12 px-4 sm:px-8 lg:px-16">
+        <div className="pt-4 pb-12 px-4 sm:px-8 lg:px-16">
           <div className="container mx-auto">
             {loading ? (
               <div className="flex justify-center items-center py-24">
