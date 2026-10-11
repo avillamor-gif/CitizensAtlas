@@ -316,7 +316,10 @@ export async function getNews() {
         submittedBy: n.submittedBy
       }))
     })
-    return data as Article[]
+    return ((data || []) as any[]).map(article => ({
+      ...article,
+      imageUrl: article.imageUrl || '/fallback-project-image.svg'
+    })) as Article[]
   } catch (error) {
     console.error('Error in getNews:', error)
     throw error
@@ -341,7 +344,10 @@ export async function getPublishedNews(limit?: number) {
     
     if (error) throw error
     
-    return (data || []) as Article[]
+    return ((data || []) as any[]).map(article => ({
+      ...article,
+      imageUrl: article.imageUrl || '/fallback-project-image.svg'
+    })) as Article[]
   } catch (error) {
     console.error('Error in getPublishedNews:', error)
     throw error
@@ -507,7 +513,11 @@ export async function getNewsById(id: number) {
     }
     
     const data = await response.json()
-    return Array.isArray(data) ? data[0] : data
+    const article = Array.isArray(data) ? data[0] : data
+    return {
+      ...article,
+      imageUrl: article.imageUrl || '/fallback-project-image.svg'
+    }
   } catch (error) {
     console.error('Error in getNewsById:', error)
     throw error
@@ -560,6 +570,7 @@ function normalizePublicationRecord(raw: any): Article {
     category: raw.category ?? raw.publicationType ?? raw.publication_type ?? '',
     publicationCategory: raw.publicationCategory ?? raw.publication_category ?? undefined,
     publisher: raw.publisher ?? raw.publication_publisher ?? undefined,
+    imageUrl: raw.imageUrl || '/fallback-project-image.svg',
   } as Article
 }
 
@@ -776,7 +787,10 @@ export async function getVideos() {
     }
     
     const data = await response.json()
-    return data as Article[]
+    return ((data || []) as any[]).map(article => ({
+      ...article,
+      imageUrl: article.imageUrl || '/fallback-project-image.svg'
+    })) as Article[]
   } catch (error) {
     console.error('Error in getVideos:', error)
     throw error
@@ -801,7 +815,10 @@ export async function getPublishedVideos(limit?: number) {
     
     if (error) throw error
     
-    return (data || []) as Article[]
+    return ((data || []) as any[]).map(article => ({
+      ...article,
+      imageUrl: article.imageUrl || '/fallback-project-image.svg'
+    })) as Article[]
   } catch (error) {
     console.error('Error in getPublishedVideos:', error)
     throw error
@@ -921,7 +938,11 @@ export async function getVideoById(id: number) {
     }
     
     const data = await response.json()
-    return Array.isArray(data) ? data[0] : data
+    const article = Array.isArray(data) ? data[0] : data
+    return {
+      ...article,
+      imageUrl: article.imageUrl || '/fallback-project-image.svg'
+    }
   } catch (error) {
     console.error('Error in getVideoById:', error)
     throw error
