@@ -296,6 +296,69 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="my-8">
+                  <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>World Bank Group · Investment per country (USD M)</div>
+                  <div className="space-y-2">
+                    {[
+                      { country: 'China', amount: 2460.2 },
+                      { country: 'India', amount: 2287.86 },
+                      { country: 'Pakistan', amount: 1945 },
+                      { country: 'Philippines', amount: 1250 },
+                      { country: 'Indonesia', amount: 1164 },
+                      { country: 'Bangladesh', amount: 375 },
+                      { country: 'Vietnam', amount: 314 },
+                      { country: 'Sri Lanka', amount: 303 },
+                      { country: 'Malaysia', amount: 123 },
+                      { country: 'Cambodia', amount: 67.3 },
+                      { country: 'Lao People\'s Democratic Republic', amount: 45.08 },
+                      { country: 'Papua New Guinea', amount: 15 },
+                    ].map((d, idx) => {
+                      const max = 2460.2;
+                      return (
+                        <div key={idx} className="grid grid-cols-[8rem_1fr_6rem] items-center gap-3 text-sm">
+                          <span style={{ color: '#aeb9cc' }}>{d.country}</span>
+                          <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{ background: 'linear-gradient(to right, #1a5f7a, var(--highlight))', width: `${(d.amount / max) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-right font-medium tabular-nums" style={{ color: '#aeb9cc' }}>{d.amount.toLocaleString()}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="my-8">
+                  <div className="text-xs uppercase tracking-widest mb-5" style={{ color: '#aeb9cc' }}>AIIB · Investment per country (USD M)</div>
+                  <div className="space-y-2">
+                    {[
+                      { country: 'India', amount: 1001 },
+                      { country: 'Bangladesh', amount: 698 },
+                      { country: 'Pakistan', amount: 650 },
+                      { country: 'Philippines', amount: 500 },
+                      { country: 'Indonesia', amount: 210 },
+                      { country: 'Türkiye', amount: 173.764 },
+                      { country: 'Maldives', amount: 151.13 },
+                    ].map((d, idx) => {
+                      const max = 1001;
+                      return (
+                        <div key={idx} className="grid grid-cols-[8rem_1fr_6rem] items-center gap-3 text-sm">
+                          <span style={{ color: '#aeb9cc' }}>{d.country}</span>
+                          <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{ background: 'linear-gradient(to right, #1a5f7a, var(--highlight))', width: `${(d.amount / max) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-right font-medium tabular-nums" style={{ color: '#aeb9cc' }}>{d.amount.toLocaleString()}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="my-8">
                   <h3 className="text-2xl font-normal text-white mb-3">Non-IFI funders</h3>
                   <p className="text-gray-300 leading-relaxed mb-6 max-w-3xl">
                     The largest external funders include KfW Bankengruppe, AFD, China Everbright Limited, and the ASEAN Infrastructure Fund. GEF appears across multiple projects and multiple banks.
