@@ -200,7 +200,7 @@ export default function ActiveFightSites() {
             </div>
 
             {/* Search and Filters Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(240px,1fr)_180px_140px_170px] gap-4 pt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(240px,1fr)_180px_140px_170px_auto] gap-4 pt-6">
               {/* Search Input */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 size-4" style={{ color: '#6b7a8f' }} />
@@ -280,21 +280,16 @@ export default function ActiveFightSites() {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </div>
 
-            {/* Status and Clear Filters */}
-            <div className="flex items-center justify-between gap-4 mt-6 min-h-9">
-              <p className="flex items-center gap-2 text-sm" style={{ color: '#aeb9cc' }}>
-                <SlidersHorizontal className="size-4" />
-                {filtered.length} {filtered.length === 1 ? 'site' : 'sites'}
-              </p>
+              {/* Clear Filters Button */}
               {hasActiveFilters && (
                 <button
                   onClick={handleClearFilters}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm rounded border transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-sm rounded border transition-colors h-10"
                   style={{
                     color: '#ff6b6b',
                     borderColor: '#ff6b6b',
+                    backgroundColor: 'transparent',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(255, 107, 107, 0.1)'
@@ -307,6 +302,12 @@ export default function ActiveFightSites() {
                   Clear
                 </button>
               )}
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center gap-2 text-sm mt-6" style={{ color: '#aeb9cc' }}>
+              <SlidersHorizontal className="size-4" />
+              {filtered.length} {filtered.length === 1 ? 'site' : 'sites'}
             </div>
           </div>
         </section>
