@@ -1929,15 +1929,6 @@ ${references}
                                 />
                             </FormField>
 
-                            <FormField label="Other Financiers">
-                                <Input
-                                    type="text"
-                                    placeholder="Enter other financiers"
-                                    value={formData.otherFinanciers}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, otherFinanciers: e.target.value }))}
-                                />
-                            </FormField>
-
                             <FormField label="Amount (M USD)">
                                 <Input
                                     type="number"
@@ -1948,17 +1939,27 @@ ${references}
                                     onChange={(e) => setFormData(prev => ({ ...prev, projectAmount: e.target.value }))}
                                 />
                             </FormField>
+
+                            <FormField label="Funding Source">
+                                <Input
+                                    type="text"
+                                    placeholder="Enter funding source"
+                                    value={formData.fundingSourceText}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, fundingSourceText: e.target.value }))}
+                                />
+                            </FormField>
                         </div>
 
-                        <FormField label="Funding Source">
-                            <textarea
-                                placeholder="Enter funding source information"
-                                value={formData.fundingSourceText}
-                                onChange={(e) => setFormData(prev => ({ ...prev, fundingSourceText: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none"
-                                rows={3}
-                            />
-                        </FormField>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <FormField label="Other Financiers">
+                                <Input
+                                    type="text"
+                                    placeholder="Enter other financiers"
+                                    value={formData.otherFinanciers}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, otherFinanciers: e.target.value }))}
+                                />
+                            </FormField>
+                        </div>
                         <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
