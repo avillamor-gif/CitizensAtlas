@@ -177,9 +177,6 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     <p className="text-gray-300 mb-4 text-lg">
                         A crowdsourced platform mapping false solutions to waste and climate, empowering communities with data, tools, and stories to expose harms and promote real Zero Waste solutions.
                     </p>
-                    <p className="text-gray-300 font-medium">
-                        Select a <span className="font-bold" style={{ color: 'var(--highlight)' }}>country</span> to dig into their false solution projects.
-                    </p>
                 </div>
 
                 {/* Sticky Toggle for Mobile */}
