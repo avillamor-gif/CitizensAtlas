@@ -39,6 +39,14 @@ const Home: React.FC<HomeProps> = (props) => {
         }
     };
 
+    // Handler for Publication items - open publication link directly
+    const handlePublicationArticleClick = (article: Article) => {
+        const publicationLink = article.documentUrls?.[0];
+        if (publicationLink) {
+            window.open(publicationLink, '_blank');
+        }
+    };
+
     return (
         <div>
             <Hero
@@ -63,7 +71,7 @@ const Home: React.FC<HomeProps> = (props) => {
             <ContentCarousel title="VIDEOS" items={videosWithSlugs} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} isDarkTheme={true} />
             </div>
             <div className="text-white border-t" style={{ backgroundColor: '#00071b', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
-            <ContentCarousel title="PUBLICATIONS" items={publicationsWithSlugs} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={props.onViewArticle} isDarkTheme={true} />
+            <ContentCarousel title="PUBLICATIONS" items={publicationsWithSlugs} hasBackground={false} onNavigate={props.onNavigate} page="publications" onViewArticle={handlePublicationArticleClick} isDarkTheme={true} />
             </div>
         </div>
     );
