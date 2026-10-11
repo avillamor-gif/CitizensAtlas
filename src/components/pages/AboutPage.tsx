@@ -395,7 +395,7 @@ const AboutPage: React.FC = () => {
                     The largest external funders include KfW Bankengruppe, AFD, China Everbright Limited, and the ASEAN Infrastructure Fund. GEF appears across multiple projects and multiple banks.
                   </p>
                   <div className="rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: '#0d1b2a' }}>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {[
                         { name: "KfW Bankengruppe", amount: 843.48, bank: "ADB" },
                         { name: "China Everbright Limited", amount: 771.31, bank: "WBG / AIIB" },
@@ -415,15 +415,20 @@ const AboutPage: React.FC = () => {
                       ].map((f, idx) => {
                         const maxAmount = 843.48;
                         return (
-                          <div key={idx} className="grid grid-cols-[8rem_1fr_6rem] items-center gap-3 text-sm">
-                            <span style={{ color: '#aeb9cc' }}>{f.name}</span>
+                          <div key={idx}>
+                            <div className="flex justify-between items-center mb-1">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span style={{ color: 'white' }} className="font-normal">{f.name}</span>
+                                <span className="text-xs" style={{ color: '#aeb9cc' }}>{f.bank}</span>
+                              </div>
+                              <span className="text-right font-medium tabular-nums ml-2" style={{ color: '#aeb9cc' }}>${f.amount.toLocaleString()} M</span>
+                            </div>
                             <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
                               <div
                                 className="h-full rounded-full transition-all"
                                 style={{ background: 'linear-gradient(to right, #1a5f7a, var(--highlight))', width: `${(f.amount / maxAmount) * 100}%` }}
                               />
                             </div>
-                            <span className="text-right font-medium tabular-nums" style={{ color: '#aeb9cc' }}>${f.amount.toLocaleString()} M</span>
                           </div>
                         );
                       })}
