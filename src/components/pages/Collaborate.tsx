@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowRightIcon } from '@/components/ui/icons';
 import { PartnerReport } from '@/types/types';
 import PartnerReportCarousel from './PartnerReportCarousel';
 
@@ -46,11 +45,8 @@ const Collaborate: React.FC = () => {
                     </div>
                     <PartnerReportCarousel reports={approvedReports} />
                     <div className="mt-12 text-center">
-                        <a href="mailto:citizensatlas@no-burn.org" className="inline-flex items-center text-lg font-bold hover:opacity-80 transition-colors" style={{ color: 'var(--highlight)' }}>
-                            <span className="w-8 h-8 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}>
-                                <ArrowRightIcon className="w-5 h-5" />
-                            </span>
-                            Share your own report
+                        <a href="https://citizensatlas.vercel.app/partner-with-us" className="inline-block px-6 py-3 text-lg font-bold rounded hover:opacity-80 transition-colors" style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}>
+                            Report a false solution
                         </a>
                     </div>
                 </div>
