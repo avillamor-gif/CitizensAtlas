@@ -67,14 +67,17 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                     </p>
                 )}
                 <span 
-                    className="mt-auto self-start text-left transition-colors duration-200"
+                    className="transition-colors duration-200"
                     style={{ 
                         color: isHovering ? '#ffa51d' : '#98a7b8',
                         fontWeight: 400,
                         fontSize: '12px',
                         fontStyle: 'normal',
                         textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
+                        letterSpacing: '0.05em',
+                        marginTop: isNews ? '16px' : 'auto',
+                        display: 'block',
+                        textAlign: 'left'
                     }}
                 >
                     {isVideo ? 'Watch' : isNews ? 'View Article' : 'Read More'} →
