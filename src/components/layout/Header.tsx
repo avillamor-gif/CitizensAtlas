@@ -96,8 +96,19 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         <div className="relative group">
                             <button
                                 onClick={() => setIsResourcesOpen(!isResourcesOpen)}
-                                className={`pb-1 transition-colors duration-200 text-gray-300 hover:text-white flex items-center gap-1`}
-                                style={{fontFamily: "'Inter', sans-serif", fontSize: '14px', fontWeight: 400}}
+                                className={`pb-1 transition-colors duration-200 flex items-center gap-1 ${
+                                    isActive('news') || isActive('publications') || isActive('videos')
+                                        ? 'border-b-2'
+                                        : 'text-gray-300 hover:text-white'
+                                }`}
+                                style={{
+                                    fontFamily: "'Inter', sans-serif", 
+                                    fontSize: '14px', 
+                                    fontWeight: 400,
+                                    ...(isActive('news') || isActive('publications') || isActive('videos') 
+                                        ? { color: 'var(--highlight)', borderColor: 'var(--highlight)' }
+                                        : {})
+                                }}
                             >
                                 Resources
                                 <svg className={`w-4 h-4 transition-transform ${isResourcesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
