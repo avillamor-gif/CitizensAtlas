@@ -275,7 +275,7 @@ const AboutPage: React.FC = () => {
 
             {/* Expandable Section */}
             {isMoneyFlowExpanded && (
-              <div className="rounded-lg p-6 border transition-all duration-300" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+              <div className="rounded-lg p-6 border transition-all duration-300 max-w-4xl" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
                 <p className="text-gray-300 leading-relaxed mb-8 max-w-3xl">
                   Across three banks, the database accounts for over USD 30 billion in false-solutions financing. India usually leads — closely followed by China as the second-highest destination of World Bank false-solutions investment.
                 </p>
