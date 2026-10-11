@@ -41,6 +41,7 @@ const NavLink: React.FC<{ href: string; isActive: boolean; children: React.React
 const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isResourcesOpen, setIsResourcesOpen] = useState(false);
     const { user: authUser } = useAuth();
     const resolvedUser = currentUser ?? authUser ?? undefined;
 
@@ -90,7 +91,72 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     <nav className="hidden lg:flex items-center space-x-4 xl:space-x-8">
                         <NavLink href="/" isActive={isActive('home')}>Home</NavLink>
                         <NavLink href="/about" isActive={isActive('about')}>About</NavLink>
-                        <NavLink href="/publications" isActive={isActive('publications')}>Publications</NavLink>
+                        
+                        {/* Resources Dropdown */}
+                        <div className="relative group">
+                            <button
+                                onClick={() => setIsResourcesOpen(!isResourcesOpen)}
+                                className={`pb-1 transition-colors duration-200 text-gray-300 hover:text-white flex items-center gap-1`}
+                                style={{fontFamily: "'Inter', sans-serif", fontSize: '14px', fontWeight: 400}}
+                            >
+                                Resources
+                                <svg className={`w-4 h-4 transition-transform ${isResourcesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                </svg>
+                            </button>
+                            
+                            {/* Dropdown Panel */}
+                            <div className={`absolute top-full left-0 mt-0 w-48 rounded-lg shadow-lg border transition-all duration-200 origin-top ${
+                                isResourcesOpen 
+                                    ? 'opacity-100 scale-y-100 pointer-events-auto' 
+                                    : 'opacity-0 scale-y-95 pointer-events-none'
+                            }`} style={{ 
+                                backgroundColor: 'var(--deep)',
+                                borderColor: 'var(--surface)',
+                                zIndex: 50
+                            }}>
+                                <Link
+                                    href="/news"
+                                    className={`block px-4 py-2.5 text-sm font-normal transition-colors ${
+                                        isActive('news') 
+                                            ? 'text-white' 
+                                            : 'text-gray-300 hover:text-white'
+                                    }`}
+                                    style={isActive('news') ? { color: 'var(--highlight)' } : {}}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.1)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                    Latest News
+                                </Link>
+                                <Link
+                                    href="/publications"
+                                    className={`block px-4 py-2.5 text-sm font-normal transition-colors border-t ${
+                                        isActive('publications') 
+                                            ? 'text-white' 
+                                            : 'text-gray-300 hover:text-white'
+                                    }`}
+                                    style={isActive('publications') ? { color: 'var(--highlight)', borderTopColor: 'var(--surface)' } : { borderTopColor: 'var(--surface)' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.1)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                    Publications
+                                </Link>
+                                <Link
+                                    href="/videos"
+                                    className={`block px-4 py-2.5 text-sm font-normal transition-colors border-t ${
+                                        isActive('videos') 
+                                            ? 'text-white' 
+                                            : 'text-gray-300 hover:text-white'
+                                    }`}
+                                    style={isActive('videos') ? { color: 'var(--highlight)', borderTopColor: 'var(--surface)' } : { borderTopColor: 'var(--surface)' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.1)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                    Videos
+                                </Link>
+                            </div>
+                        </div>
+                        
                         <NavLink href="/map" isActive={isActive('map')}>Map</NavLink>
                         <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
                         <Link
@@ -172,6 +238,78 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         >
                             About
                         </Link>
+
+                        {/* Resources Section - Mobile Accordion */}
+                        <div>
+                            <button
+                                onClick={() => setIsResourcesOpen(!isResourcesOpen)}
+                                className={`w-full text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
+                                    isResourcesOpen
+                                        ? 'text-white' 
+                                        : 'text-gray-300 hover:bg-opacity-50'
+                                }`}
+                                style={isResourcesOpen ? { backgroundColor: 'var(--surface)' } : {}}
+                            >
+                                <span className="flex items-center justify-between">
+                                    Resources
+                                    <svg className={`w-4 h-4 transition-transform ${isResourcesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                    </svg>
+                                </span>
+                            </button>
+                            
+                            {/* Submenu Items */}
+                            {isResourcesOpen && (
+                                <div className="pl-4 space-y-1">
+                                    <Link
+                                        href="/news"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setIsResourcesOpen(false);
+                                        }}
+                                        className={`block py-2 px-4 rounded-lg font-medium transition-colors ${
+                                            isActive('news')
+                                                ? 'text-white' 
+                                                : 'text-gray-300 hover:bg-opacity-50'
+                                        }`}
+                                        style={isActive('news') ? { backgroundColor: 'var(--surface)' } : {}}
+                                    >
+                                        Latest News
+                                    </Link>
+                                    <Link
+                                        href="/publications"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setIsResourcesOpen(false);
+                                        }}
+                                        className={`block py-2 px-4 rounded-lg font-medium transition-colors ${
+                                            isActive('publications')
+                                                ? 'text-white' 
+                                                : 'text-gray-300 hover:bg-opacity-50'
+                                        }`}
+                                        style={isActive('publications') ? { backgroundColor: 'var(--surface)' } : {}}
+                                    >
+                                        Publications
+                                    </Link>
+                                    <Link
+                                        href="/videos"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setIsResourcesOpen(false);
+                                        }}
+                                        className={`block py-2 px-4 rounded-lg font-medium transition-colors ${
+                                            isActive('videos')
+                                                ? 'text-white' 
+                                                : 'text-gray-300 hover:bg-opacity-50'
+                                        }`}
+                                        style={isActive('videos') ? { backgroundColor: 'var(--surface)' } : {}}
+                                    >
+                                        Videos
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
                         <Link
                             href="/publications"
                             onClick={() => setIsMobileMenuOpen(false)}
