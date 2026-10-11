@@ -25,7 +25,7 @@ function BriefFieldRow({
   return (
     <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 p-4 sm:p-6 border-b border-gray-700 hover:bg-gray-900/30 transition-colors`} style={{ backgroundColor: 'transparent' }}>
       <div className="md:col-span-1">
-        <h3 className={`text-xs sm:text-sm font-bold uppercase tracking-wide text-gray-400`}>
+        <h3 className={`text-xs sm:text-sm font-normal uppercase tracking-wide text-gray-400`}>
           {label}
         </h3>
         {subtitle && <p className="text-xs italic text-gray-500 mt-1 lowercase">{subtitle}</p>}
@@ -105,7 +105,7 @@ export default function ActiveFightSiteDetailPage() {
               <div className="container mx-auto relative">
                 <button
                   onClick={() => router.push('/active-fight-sites')}
-                  className="mb-6 text-white border border-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-md transition-colors text-sm font-medium"
+                  className="mb-6 text-white border border-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-md transition-colors text-sm font-normal"
                 >
                   ← Back to Active Fight Sites
                 </button>
@@ -113,7 +113,7 @@ export default function ActiveFightSiteDetailPage() {
                   <span className="h-px w-10" style={{ backgroundColor: 'var(--highlight)' }} />
                   {brief.country || 'Active Fight Site'}
                 </div>
-                <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
+                <h1 className="text-5xl md:text-6xl font-normal mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
                   {brief.project_name}
                 </h1>
                 <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-3xl">
@@ -123,7 +123,7 @@ export default function ActiveFightSiteDetailPage() {
                 {/* Photo Gallery */}
                 {brief.photos && brief.photos.length > 0 && (
                   <div className="mt-12">
-                    <h2 className="text-2xl font-semibold mb-6 text-white">Project Photos</h2>
+                    <h2 className="text-2xl font-normal mb-6 text-white">Project Photos</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {brief.photos.map((photo, index) => (
                         <div key={index} className="relative overflow-hidden rounded-lg aspect-video group cursor-pointer" onClick={() => setSelectedPhoto(photo)}>
@@ -184,7 +184,7 @@ export default function ActiveFightSiteDetailPage() {
         ) : (
           <div className="flex justify-center items-center py-24">
             <div className="text-center">
-              <div className="text-white text-lg font-semibold mb-4">Active Fight Site not found.</div>
+            <div className="text-white text-lg font-normal mb-4">Active Fight Site not found.</div>
               <button onClick={() => router.push('/active-fight-sites')} className="text-brand-light-blue hover:underline">
                 Back to Active Fight Sites
               </button>
