@@ -18,9 +18,10 @@ import {
 
 function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
   const imageUrl = brief.photos && brief.photos.length > 0 ? brief.photos[0] : '/fallback-project-image.svg'
+  const [isHovering, setIsHovering] = React.useState(false)
   
   const cardContent = (
-    <div className="border rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl cursor-pointer group" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
+    <div className="border rounded-lg shadow-md transition-all duration-300 flex flex-col overflow-hidden h-full hover:shadow-xl cursor-pointer group" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
       {/* Image Section */}
       <div className="relative overflow-hidden h-40 bg-gray-700">
         <img
@@ -45,18 +46,12 @@ function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
           <span 
             className="text-sm transition-colors duration-200"
             style={{ 
-              color: '#98a7b8',
+              color: isHovering ? '#ffa51d' : '#98a7b8',
               fontWeight: 400,
-              fontSize: '14px',
+              fontSize: '12px',
               fontStyle: 'normal',
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffa51d'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#98a7b8'
             }}
           >
             View Details →

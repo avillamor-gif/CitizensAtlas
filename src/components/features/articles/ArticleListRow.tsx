@@ -68,7 +68,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                     style={{ 
                         color: isHovering ? '#ffa51d' : '#98a7b8',
                         fontWeight: 400,
-                        fontSize: '14px',
+                        fontSize: '12px',
                         fontStyle: 'normal',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
