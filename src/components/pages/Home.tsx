@@ -1,6 +1,7 @@
 import React from 'react';
 import Hero from '@/components/pages/Hero';
 import ContentCarousel from '@/components/pages/ContentCarousel';
+import Collaborate from '@/components/pages/Collaborate';
 import { reconstructArticleSlugs, projectBriefsToArticles } from '@/lib/utils/slug-utils';
 // FIX: Import Page type from types.ts to fix circular dependency
 import { Project, FilterOptions, Article, Page, User, ProjectBrief } from '@/types/types';
@@ -47,6 +48,9 @@ const Home: React.FC<HomeProps> = (props) => {
             </div>
             <div className="text-white border-t" style={{ backgroundColor: '#00112b', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <ContentCarousel title="LATEST NEWS" items={newsWithSlugs} onNavigate={props.onNavigate} page="news" onViewArticle={props.onViewArticle} isDarkTheme={true} />
+            </div>
+            <div style={{ backgroundColor: '#00071b' }}>
+            <Collaborate />
             </div>
             <div className="text-white border-t" style={{ backgroundColor: '#00112b', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <ContentCarousel title="VIDEOS" items={videosWithSlugs} onNavigate={props.onNavigate} page="videos" onViewArticle={props.onViewArticle} isVideoCarousel={true} isDarkTheme={true} />
