@@ -42,8 +42,24 @@ function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
           {brief.project_name}
         </h3>
         <div className="mt-4 self-start">
-          <span className="text-sm font-bold hover:underline transition-colors" style={{ color: '#64b5ff' }}>
-            View Details &rarr;
+          <span 
+            className="text-sm transition-all duration-200"
+            style={{ 
+              color: '#98a7b8',
+              fontWeight: 400,
+              fontSize: '14px',
+              fontStyle: 'normal'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#ffa51d'
+              e.currentTarget.textContent = 'VIEW DETAILS →'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = '#98a7b8'
+              e.currentTarget.textContent = 'View Details →'
+            }}
+          >
+            View Details →
           </span>
         </div>
       </div>
