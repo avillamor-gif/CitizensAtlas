@@ -65,35 +65,41 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
     const publicationLink = normalizeExternalUrl(article.documentUrls?.[0]);
 
     return (
-        <div className="bg-white py-12">
-            <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
-                <div className="mb-8">
+        <div style={{ backgroundColor: 'var(--deep)' }} className="text-white">
+            {/* Hero Section */}
+            <section className="relative overflow-hidden text-white py-12 md:py-16 pb-8 px-4 sm:px-8 border-b" style={{ borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+                <div
+                    aria-hidden
+                    className="absolute inset-0 opacity-30"
+                    style={{
+                        background:
+                            'radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)',
+                    }}
+                />
+                <div className="container mx-auto relative">
                     <button
                         onClick={onBack}
-                        className="flex items-center gap-2 text-sm font-semibold text-brand-dark-blue hover:text-brand-light-blue transition-colors"
+                        className="mb-6 text-white border border-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-md transition-colors text-sm font-medium"
                     >
-                        <ArrowLeftIcon className="w-4 h-4" />
-                        {buttonText}
+                        ← {buttonText}
                     </button>
-                </div>
-                
-                <article>
-                    <header className="mb-8">
-                        <span className="bg-yellow-400 text-sm font-bold px-3 py-1 inline-block mb-4">
+                    {article.category && (
+                        <div className="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3 flex items-center gap-3">
+                            <span className="h-px w-10" style={{ backgroundColor: 'var(--highlight)' }} />
                             {article.category}
-                        </span>
-                        {article.publicationCategory && (
-                            <span className="ml-2 bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 inline-block mb-4 rounded">
-                                {article.publicationCategory}
-                            </span>
-                        )}
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-blue leading-tight">
-                            {article.title}
-                        </h1>
-                    </header>
-                    
+                        </div>
+                    )}
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
+                        {article.title}
+                    </h1>
+                </div>
+            </section>
+
+            {/* Content Section */}
+            <div className="container mx-auto px-4 sm:px-8 max-w-4xl py-12">
+                <article>
                     {videoEmbed && videoEmbed.embedUrl ? (
-                        <div className="mb-8">
+                        <div className="mb-12">
                             <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                                 <iframe
                                     src={videoEmbed.embedUrl}
@@ -105,7 +111,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                             </div>
                         </div>
                     ) : (
-                        <div className="mb-8">
+                        <div className="mb-12">
                             <img 
                                 src={article.imageUrl || '/fallback-project-image.svg'} 
                                 alt={article.title}
@@ -118,7 +124,8 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                     )}
 
                     <div
-                        className="project-brief-content prose prose-lg max-w-none text-gray-800 leading-relaxed"
+                        className="project-brief-content prose prose-lg prose-invert max-w-none text-gray-200 leading-relaxed"
+                        style={{ wordBreak: 'break-word' }}
                         dangerouslySetInnerHTML={{ __html: article.description || '' }}
                     />
 
@@ -128,7 +135,8 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                                 href={publicationLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-sm font-bold text-white bg-brand-dark-blue hover:bg-opacity-80 transition-colors py-2 px-4 rounded-md"
+                                className="inline-flex items-center gap-2 text-sm font-bold text-gray-900 hover:opacity-80 transition-colors py-2 px-4 rounded-md"
+                                style={{ backgroundColor: 'var(--highlight)' }}
                             >
                                 Open Publication Link
                             </a>
@@ -136,8 +144,8 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                     )}
 
                     {article.documentNames && article.documentNames.length > 0 && (
-                        <div className="mt-12 p-6 bg-gray-50 border rounded-lg">
-                            <h3 className="text-xl font-bold text-brand-dark-blue mb-4">Related Documents</h3>
+                        <div className="mt-12 p-6 rounded-lg border" style={{ backgroundColor: 'rgba(255, 165, 0, 0.05)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
+                            <h3 className="text-xl font-bold text-white mb-4">Related Documents</h3>
                             <ul className="space-y-2">
                                 {article.documentNames.map((doc, index) => {
                                     const docUrl = normalizeExternalUrl(article.documentUrls?.[index] || article.documentUrls?.[0]);
@@ -147,7 +155,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                                                 href={docUrl || '#'}
                                                 target={docUrl ? '_blank' : undefined}
                                                 rel={docUrl ? 'noopener noreferrer' : undefined}
-                                                className="text-brand-light-blue hover:underline flex items-center gap-2"
+                                                className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center gap-2"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                                                 {doc}
