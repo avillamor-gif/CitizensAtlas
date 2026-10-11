@@ -2126,13 +2126,13 @@ ${referencesValue}
                             </button>
                         </div>
                         <FormField label="Key documents URL">
-                            <Input
-                                type="url"
-                                name="keyDocuments"
-                                value={formData.keyDocuments}
-                                onChange={handleInputChange}
-                                placeholder="https://example.com/document"
-                            />
+                            <div className="mb-24 relative z-20">
+                                <TiptapEditor
+                                    value={formData.keyDocuments}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, keyDocuments: value }))}
+                                    height="300px"
+                                />
+                            </div>
                         </FormField>
 
                         <SectionTitle>Just Transition Indicators</SectionTitle>
