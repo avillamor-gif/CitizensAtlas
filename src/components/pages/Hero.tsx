@@ -156,7 +156,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
     }, [projects, filters]);
 
     return (
-        <section className="py-12 px-4 sm:px-8 lg:px-16 text-white relative overflow-hidden" style={{ backgroundColor: 'var(--deep)' }}>
+        <section className="py-8 sm:py-12 px-4 sm:px-8 lg:px-16 text-white relative overflow-hidden" style={{ backgroundColor: 'var(--deep)' }}>
             <div
         aria-hidden
         className="absolute inset-0 opacity-30"
@@ -165,19 +165,19 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
             "radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)",
         }}
       />
-            <div className="container mx-auto relative z-10">
+            <div className="container mx-auto relative z-10 px-4 sm:px-0">
                 <div className="text-left max-w-4xl mb-8">
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="w-8 h-1" style={{ backgroundColor: 'var(--highlight)' }}></div>
-                        <p className="text-xs tracking-[0.2em]" style={{ color: '#9eafc0', fontWeight: 400 }}>
+                    <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                        <div className="w-6 sm:w-8 h-1" style={{ backgroundColor: 'var(--highlight)' }}></div>
+                        <p className="text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.2em]" style={{ color: '#9eafc0', fontWeight: 400 }}>
                             A GAIA ASIA PACIFIC INITIATIVE
                         </p>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl mb-4 leading-tight" style={{ fontWeight: 400 }}>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-4 sm:mb-6 leading-tight" style={{ fontWeight: 400 }}>
                         The Citizens' Atlas on{' '}
                         <span style={{ color: 'var(--highlight)' }}>False Solutions</span> on Waste.
                     </h1>
-                    <p className="text-gray-300 mb-4 text-lg">
+                    <p className="text-gray-300 mb-4 text-sm sm:text-base md:text-lg">
                         A crowdsourced platform mapping false solutions to waste and climate, empowering communities with data, tools, and stories to expose harms and promote real Zero Waste solutions.
                     </p>
                 </div>
@@ -225,7 +225,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                     {/* Left Column: Map or Projects */}
                     <div className="lg:col-span-3">
                         {activeView === 'Map' ? (

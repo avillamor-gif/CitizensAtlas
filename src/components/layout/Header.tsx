@@ -65,17 +65,18 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
         <>
             <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                 <div className="container mx-auto flex justify-between items-center">
-                    <div className="flex-1 flex items-center gap-3">
+                    <div className="flex-1 flex items-center gap-2 sm:gap-3">
                         <Image 
                             src="/citizens-atlas-logo.png" 
                             alt="Citizens' Atlas Logo" 
-                            width={60}
-                            height={60}
-                            className="object-contain"
+                            width={50}
+                            height={50}
+                            className="object-contain sm:w-[60px] sm:h-[60px]"
                             priority
                         />
-                        <Link href="/" className="text-left block">
-                            <h1 style={{fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: '34px', color: '#7cbe31', lineHeight: 1}}>
+                        {/* Hide text on mobile, show on tablet and up */}
+                        <Link href="/" className="text-left hidden sm:block">
+                            <h1 style={{fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: 'clamp(20px, 5vw, 34px)', color: '#7cbe31', lineHeight: 1}}>
                                 Citizens' Atlas
                             </h1>
                             <p className="text-xs sm:text-sm" style={{ color: '#2f9030', lineHeight: 1 }}>on False Solutions to Climate and Circularity</p>
@@ -83,15 +84,15 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
+                    <nav className="hidden lg:flex items-center space-x-4 xl:space-x-8">
                         <NavLink href="/about" isActive={isActive('about')}>About</NavLink>
                         <NavLink href="/publications" isActive={isActive('publications')}>Publications</NavLink>
                         <NavLink href="/map" isActive={isActive('map')}>Map</NavLink>
                         <NavLink href="/partner-with-us" isActive={isActive('partner-with-us')}>Partner with us</NavLink>
                         <Link
                             href="/active-fight-sites"
-                            className="px-4 py-2 rounded-lg text-gray-900 font-medium transition-colors hover:opacity-90"
-                            style={{ backgroundColor: 'var(--highlight)', fontSize: '14px' }}
+                            className="px-4 py-2 rounded-lg text-gray-900 font-medium transition-colors hover:opacity-90 text-sm"
+                            style={{ backgroundColor: 'var(--highlight)' }}
                         >
                             Active Fight Sites
                         </Link>
