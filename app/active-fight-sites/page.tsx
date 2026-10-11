@@ -74,8 +74,35 @@ export default function ActiveFightSites() {
   }, [briefs])
 
   const countries = useMemo(() => {
-    const allCountries = briefs.map(b => b.country).filter(Boolean) as string[]
-    return ['all', ...Array.from(new Set(allCountries)).sort()]
+    // Split countries by comma to handle multiple countries in one field
+    const countryMap = new Map<string, number>()
+    
+    briefs.forEach(b => {
+      if (b.country) {
+        // Split by comma and trim whitespace
+        const countryList = b.country.split(',').map(c => c.trim()).filter(Boolean)
+        countryList.forEach(country => {
+          countryMap.set(country, (countryMap.get(country) || 0) + 1)
+        })
+      }
+    })
+    
+    return ['all', ...Array.from(countryMap.keys()).sort()]
+  }, [briefs])
+
+  const countryCountMap = useMemo(() => {
+    const countryMap = new Map<string, number>()
+    
+    briefs.forEach(b => {
+      if (b.country) {
+        const countryList = b.country.split(',').map(c => c.trim()).filter(Boolean)
+        countryList.forEach(country => {
+          countryMap.set(country, (countryMap.get(country) || 0) + 1)
+        })
+      }
+    })
+    
+    return countryMap
   }, [briefs])
 
   const projectTypes = useMemo(() => {
@@ -91,7 +118,14 @@ export default function ActiveFightSites() {
         search === '' ||
         brief.project_name.toLowerCase().includes(search.toLowerCase()) ||
         (brief.location ?? '').toLowerCase().includes(search.toLowerCase())
-      const matchesCountry = countryFilter === 'all' || brief.country === countryFilter
+      
+      // Handle country filter for comma-separated countries
+      let matchesCountry = countryFilter === 'all'
+      if (!matchesCountry && countryFilter && brief.country) {
+        const countryList = brief.country.split(',').map(c => c.trim()).filter(Boolean)
+        matchesCountry = countryList.includes(countryFilter)
+      }
+      
       const matchesType = projectTypeFilter === 'all' || brief.project_type === projectTypeFilter
       return matchesSearch && matchesCountry && matchesType
     })
@@ -160,7 +194,7 @@ export default function ActiveFightSites() {
                     }
                   }}
                 >
-                  {country === 'all' ? 'All countries' : country}
+                  {country === 'all' ? `All countries (${briefs.length})` : `${country} (${countryCountMap.get(country) || 0})`}
                 </button>
               ))}
             </div>
