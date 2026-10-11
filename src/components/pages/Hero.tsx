@@ -166,9 +166,16 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         }}
       />
             <div className="container mx-auto relative z-10">
-                                <div className="text-left max-w-4xl mb-8">
-                    <p className="text-gray-300 mb-4">
-                        The Citizens' Atlas is a crowdsourced platform mapping false solutions to waste and climate, empowering communities with data, tools, and stories to expose harms and promote real Zero Waste solutions.
+                <div className="text-left max-w-4xl mb-8">
+                    <p className="text-xs font-bold tracking-widest mb-4" style={{ color: 'var(--highlight)' }}>
+                        — A GAIA ASIA PACIFIC INITIATIVE
+                    </p>
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+                        The Citizens' Atlas on{' '}
+                        <span style={{ color: 'var(--highlight)' }}>False Solutions</span> on Waste.
+                    </h1>
+                    <p className="text-gray-300 mb-4 text-lg">
+                        A crowdsourced platform mapping false solutions to waste and climate, empowering communities with data, tools, and stories to expose harms and promote real Zero Waste solutions.
                     </p>
                     <p className="text-gray-300 font-medium">
                         Select a <span className="font-bold" style={{ color: 'var(--highlight)' }}>country</span> to dig into their false solution projects.
