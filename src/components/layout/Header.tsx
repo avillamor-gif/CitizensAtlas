@@ -18,6 +18,7 @@ interface HeaderProps {
 }
 
 const pageToPath: Record<string, string> = {
+    home: '/',
     about: '/about',
     publications: '/publications',
     map: '/map',
@@ -66,14 +67,16 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
             <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex-1 flex items-center gap-2 sm:gap-3">
-                        <Image 
-                            src="/citizens-atlas-logo.png" 
-                            alt="Citizens' Atlas Logo" 
-                            width={50}
-                            height={50}
-                            className="object-contain sm:w-[60px] sm:h-[60px]"
-                            priority
-                        />
+                        <Link href="/">
+                            <Image 
+                                src="/citizens-atlas-logo.png" 
+                                alt="Citizens' Atlas Logo" 
+                                width={50}
+                                height={50}
+                                className="object-contain sm:w-[60px] sm:h-[60px] cursor-pointer hover:opacity-80 transition-opacity"
+                                priority
+                            />
+                        </Link>
                         {/* Hide text on mobile, show on tablet and up */}
                         <Link href="/" className="text-left hidden sm:block">
                             <h1 style={{fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: 'clamp(20px, 5vw, 34px)', color: '#7cbe31', lineHeight: 1}}>
@@ -85,6 +88,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-4 xl:space-x-8">
+                        <NavLink href="/" isActive={isActive('home')}>Home</NavLink>
                         <NavLink href="/about" isActive={isActive('about')}>About</NavLink>
                         <NavLink href="/publications" isActive={isActive('publications')}>Publications</NavLink>
                         <NavLink href="/map" isActive={isActive('map')}>Map</NavLink>
@@ -144,6 +148,18 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     {/* Menu Content */}
                     <div className="md:hidden fixed top-[88px] left-0 right-0 border-b z-50 shadow-lg animate-in slide-in-from-top" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
                         <nav className="flex flex-col p-6 space-y-1">
+                        <Link
+                            href="/"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`text-left py-2.5 px-4 rounded-lg font-medium transition-colors ${
+                                isActive('home')
+                                    ? 'text-white' 
+                                    : 'text-gray-300 hover:bg-opacity-50 active:bg-opacity-70'
+                            }`}
+                            style={isActive('home') ? { backgroundColor: 'var(--surface)' } : {}}
+                        >
+                            Home
+                        </Link>
                         <Link
                             href="/about"
                             onClick={() => setIsMobileMenuOpen(false)}
