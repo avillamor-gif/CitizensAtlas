@@ -24,8 +24,9 @@ export default function Publications() {
   }
 
   const handleViewPublication = (article: Article) => {
-    if (article.publicationLink) {
-      window.open(article.publicationLink, '_blank');
+    const publicationLink = article.documentUrls?.[0];
+    if (publicationLink) {
+      window.open(publicationLink, '_blank');
     }
   }
 
