@@ -73,6 +73,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
     const [formData, setFormData] = useState({ ...emptyFormState, publishDate: today });
     const [saveAsDraft, setSaveAsDraft] = useState(false); // New state for draft override
+    
+    // State for publications category addition
+    const [showAddCategory, setShowAddCategory] = useState(false);
+    const [newCategory, setNewCategory] = useState('');
 
     // State for tag management
     const [newTag, setNewTag] = useState('');
@@ -195,6 +199,15 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 }));
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const handleAddCategory = () => {
+        if (newCategory.trim() && onAddCategory) {
+            onAddCategory(newCategory.trim());
+            setFormData(prev => ({ ...prev, category: newCategory.trim() }));
+            setNewCategory('');
+            setShowAddCategory(false);
         }
     };
 
@@ -608,37 +621,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                             <SelectValue placeholder="Select Category" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {newsCategories.filter(c => c !== '').map(cat => (
+                                            {categories && categories.filter(c => c !== '').map(cat => (
                                                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {showAddCategory ? (
-                                        <div className="mt-2 flex items-center space-x-2">
-                                            <Input
-                                                type="text"
-                                                value={newCategory}
-                                                onChange={(e) => setNewCategory(e.target.value)}
-                                                placeholder="Enter new category"
-                                                className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue text-sm"
-                                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddNewsCategory())}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={handleAddNewsCategory}
-                                                className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 text-sm"
-                                            >
-                                                Add
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => { setShowAddCategory(false); setNewCategory(''); }}
-                                                className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 text-sm"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    ) : null}
                                 </>
                             )}
                         </FormField>
