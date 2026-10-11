@@ -1929,6 +1929,15 @@ ${references}
                                 />
                             </FormField>
 
+                            <FormField label="Funding Source">
+                                <Input
+                                    type="text"
+                                    placeholder="Enter funding source"
+                                    value={formData.fundingSourceText}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, fundingSourceText: e.target.value }))}
+                                />
+                            </FormField>
+
                             <FormField label="Amount (M USD)">
                                 <Input
                                     type="number"
@@ -1937,15 +1946,6 @@ ${references}
                                     placeholder="0"
                                     value={formData.projectAmount}
                                     onChange={(e) => setFormData(prev => ({ ...prev, projectAmount: e.target.value }))}
-                                />
-                            </FormField>
-
-                            <FormField label="Funding Source">
-                                <Input
-                                    type="text"
-                                    placeholder="Enter funding source"
-                                    value={formData.fundingSourceText}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, fundingSourceText: e.target.value }))}
                                 />
                             </FormField>
                         </div>
