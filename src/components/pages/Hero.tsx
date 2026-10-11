@@ -173,7 +173,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                             A GAIA ASIA PACIFIC INITIATIVE
                         </p>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl mb-4 leading-tight" style={{ fontWeight: 400 }}>
                         The Citizens' Atlas on{' '}
                         <span style={{ color: 'var(--highlight)' }}>False Solutions</span> on Waste.
                     </h1>
