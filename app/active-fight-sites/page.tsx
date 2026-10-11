@@ -281,25 +281,26 @@ export default function ActiveFightSites() {
                 </SelectContent>
               </Select>
 
-              {/* Clear Filters Button */}
+              {/* Clear Filters Text */}
               {hasActiveFilters && (
                 <button
                   onClick={handleClearFilters}
-                  className="flex items-center gap-2 px-3 py-2 text-sm rounded border transition-colors h-10"
+                  className="flex items-center gap-1 text-sm transition-colors h-10 px-1"
                   style={{
-                    color: '#ff6b6b',
-                    borderColor: '#ff6b6b',
-                    backgroundColor: 'transparent',
+                    color: '#FFA500',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 107, 107, 0.1)'
+                    e.currentTarget.style.opacity = '0.8'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.opacity = '1'
                   }}
                 >
                   <X className="size-4" />
-                  Clear
+                  Clear filters
                 </button>
               )}
             </div>

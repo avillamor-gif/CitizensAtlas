@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Article } from '@/types/types';
-import ViewToggle from '@/components/pages/ViewToggle';
 import ArticleGridCard from './ArticleGridCard';
 import ArticleListRow from './ArticleListRow';
 
@@ -16,7 +15,6 @@ interface ArticleListPageProps {
 const ITEMS_PER_PAGE = 12;
 
 const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewArticle, onIncrementDownload, filterBar, hideTitle = false }) => {
-    const [view, setView] = useState<'grid' | 'list'>('grid');
     const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE);
     const [isLoading, setIsLoading] = useState(false);
     const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -75,33 +73,13 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
                                 <h1 className="text-4xl font-extrabold" style={{ color: 'var(--highlight)' }}>{title}</h1>
                                 <div className="w-16 h-1 mt-2" style={{ backgroundColor: 'var(--highlight)' }}></div>
                             </div>
-                            {!filterBar && <ViewToggle activeView={view} setActiveView={setView} />}
-                        </div>
-                    )}
-                    {filterBar && (
-                        <div className="flex flex-col md:flex-row md:items-center gap-3 mt-6">
-                            <div className="flex-1">{filterBar}</div>
-                            <div className="flex-shrink-0">
-                                <ViewToggle activeView={view} setActiveView={setView} />
-                            </div>
-                        </div>
-                    )}
-                    {hideTitle && !filterBar && (
-                        <div className="flex justify-end">
-                            <ViewToggle activeView={view} setActiveView={setView} />
                         </div>
                     )}
                 </div>
 
-                {view === 'grid' ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {displayedItems.map(item => <ArticleGridCard key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
-                    </div>
-                ) : (
-                    <div className="space-y-8">
-                        {displayedItems.map(item => <ArticleListRow key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
-                    </div>
-                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    {displayedItems.map(item => <ArticleGridCard key={item.id} item={item} onViewArticle={onViewArticle} pageTitle={title} onDownload={onIncrementDownload} />)}
+                </div>
                 
                 {/* Load More Trigger */}
                 {hasMore && (
