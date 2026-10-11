@@ -752,6 +752,11 @@ const emptyFormState = {
     projectName: '',
     projectNumber: '',
     falseSolutions: [''],
+    selectedIFIs: [] as string[],
+    financialInstrumentsText: '',
+    otherFinanciers: '',
+    fundingSourceText: '',
+    projectAmount: '',
     fundingRows: [{ ifi: '', financialInstrument: '', amount: '', otherIFIName: '' }] as FundingRow[],
     owner: '',
     privateSectorBorrowers: [''],
@@ -960,6 +965,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 falseSolutions: savedFalseSolutions
                     ? savedFalseSolutions.split(',').map(s => s.trim()).filter(Boolean)
                     : [''],
+                selectedIFIs: parseCommaSeparatedList(detailsMap.get('IFI')),
+                financialInstrumentsText: detailsMap.get('Financial Instruments') || '',
+                otherFinanciers: detailsMap.get('Other Financiers') || '',
+                fundingSourceText: detailsMap.get('Funding Source') || '',
+                projectAmount: (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, ''),
                 fundingRows,
                 owner: detailsMap.get('Owner') || '',
                 privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
@@ -1287,14 +1297,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
     const selectedMapLocation = null; // Map removed
 
-    const handleFundingRowChange = (index: number, key: keyof FundingRow, value: string) => {
-        setFormData((prev) => {
-            const nextRows = [...prev.fundingRows];
-            nextRows[index] = { ...nextRows[index], [key]: value };
-            return { ...prev, fundingRows: nextRows };
-        });
-    };
-    
     const handleRepeatableChange = (field: keyof typeof formData, index: number, value: any) => {
         const list = [...(formData[field] as any[])];
         list[index] = value;
@@ -1361,7 +1363,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         e.preventDefault();
         const {
             projectName, approvalDate, publishDate, falseSolutions,
-            regionSelections, countrySelections, primaryCountry, secondaryCountries, cityInput, projectNumber, fundingRows,
+            regionSelections, countrySelections, primaryCountry, secondaryCountries, cityInput, projectNumber,
+            selectedIFIs, financialInstrumentsText, otherFinanciers, fundingSourceText, projectAmount,
             owner, privateSectorBorrowers, economicCooperationOrPrograms, otherImplementors, projectDescription,
             projectStatus, startDate, endDate, environmental, socialSafeguard,
             keyDocuments, groupsInOpposition, typesOfActions, linksToActions,
@@ -1380,26 +1383,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
             .filter(Boolean)
             .join(', ');
 
-        const normalizedFundingRows = fundingRows
-            .map((row) => ({
-                ifi: row.ifi === 'Others' && row.otherIFIName 
-                    ? `Others (${row.otherIFIName.trim()})`
-                    : row.ifi.trim(),
-                financialInstrument: row.financialInstrument.trim(),
-                amount: row.amount.trim(),
-            }))
-            .filter((row) => row.ifi || row.financialInstrument || row.amount);
-
-        const ifiValue = normalizedFundingRows.map((row) => row.ifi).join(', ');
+        const ifiValue = selectedIFIs.join(', ');
         const falseSolutionsValue = falseSolutions.filter(s => s).join(', ');
-        
-        const financialInstrumentsValue = normalizedFundingRows.map((row) => row.financialInstrument).join(', ');
-        const totalProjectAmount = calculateFundingTotal(normalizedFundingRows);
-        const fundingSourceValue = normalizedFundingRows.length > 0
-            ? normalizedFundingRows
-                .map((row) => `${row.ifi} | ${row.financialInstrument} | ${row.amount} M USD`)
-                .join('\n')
-            : 'N/A';
+        const totalProjectAmount = parseFloat(projectAmount) || 0;
 
         const latNum = parseFloat(latitude);
         const lngNum = parseFloat(longitude);
@@ -1416,8 +1402,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 **Project Number:** ${projectNumber}
     **False Solution Type:** ${falseSolutionsValue}
 **IFI:** ${ifiValue}
-**Funding Source:** ${fundingSourceValue}
-**Financial Instruments:** ${financialInstrumentsValue}
+**Financial Instruments:** ${financialInstrumentsText}
+**Other Financiers:** ${otherFinanciers}
+**Funding Source:** ${fundingSourceText}
 **Total Project Amount:** ${totalProjectAmount.toLocaleString()} M USD
 **Owner:** ${owner}
 **Private Sector Borrowers:** ${privateSectorBorrowers.join(', ')}
@@ -1900,118 +1887,69 @@ ${references}
                     </div>
 
                         <SectionTitle>Financial Information</SectionTitle>
-                        {formData.fundingRows.map((row, index) => {
-                            const selectedElsewhere = formData.fundingRows
-                                .map((item, itemIndex) => (itemIndex === index ? '' : item.ifi))
-                                .filter(Boolean);
-                            const availableIfiOptions = IFI_OPTIONS.filter(
-                                (option) => option === row.ifi || !selectedElsewhere.includes(option)
-                            );
-                            const isFirstRow = index === 0;
-
-                            return (
-                                <div
-                                    key={index}
-                                    className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] items-end ${isFirstRow ? 'gap-3 mb-2' : 'gap-2 mb-0'}`}
-                                >
-                                    <div className={isFirstRow ? 'space-y-1' : ''}>
-                                        {isFirstRow && (
-                                            <Label className="text-sm font-medium text-gray-700">International Financial Institution (IFI)</Label>
-                                        )}
-                                        <Select
-                                            value={row.ifi || undefined}
-                                            onValueChange={(value) => handleFundingRowChange(index, 'ifi', value)}
-                                        >
-                                            <SelectTrigger className="h-10">
-                                                <SelectValue placeholder="Select IFI" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {availableIfiOptions.map((option) => (
-                                                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {row.ifi === 'Others' && (
-                                            <Input
-                                                type="text"
-                                                placeholder="Enter IFI name"
-                                                value={row.otherIFIName || ''}
-                                                onChange={(e) => handleFundingRowChange(index, 'otherIFIName', e.target.value)}
-                                                className="h-10 mt-1"
-                                            />
-                                        )}
-                                    </div>
-
-                                    <div className={isFirstRow ? 'space-y-1' : ''}>
-                                        {isFirstRow && (
-                                            <Label className="text-sm font-medium text-gray-700">Financial Instruments</Label>
-                                        )}
-                                        <Select
-                                            value={row.financialInstrument || undefined}
-                                            onValueChange={(value) => handleFundingRowChange(index, 'financialInstrument', value)}
-                                        >
-                                            <SelectTrigger className="h-10">
-                                                <SelectValue placeholder="Select instrument" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {FINANCIAL_INSTRUMENT_OPTIONS.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    <div className={isFirstRow ? 'space-y-1' : ''}>
-                                        {isFirstRow && (
-                                            <Label className="text-sm font-medium text-gray-700">Amount (M USD)</Label>
-                                        )}
-                                        <Input
-                                            type="number"
-                                            step="any"
-                                            min="0"
-                                            value={row.amount}
-                                            onChange={(e) => handleFundingRowChange(index, 'amount', e.target.value)}
-                                            placeholder="0"
-                                            className="h-10"
+                        <FormField label="International Financial Institution (IFI)">
+                            <div className="grid grid-cols-3 gap-3">
+                                {IFI_OPTIONS.map((ifi) => (
+                                    <div key={ifi} className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`ifi-${ifi}`}
+                                            checked={formData.selectedIFIs.includes(ifi)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFormData(prev => ({ ...prev, selectedIFIs: [...prev.selectedIFIs, ifi] }));
+                                                } else {
+                                                    setFormData(prev => ({ ...prev, selectedIFIs: prev.selectedIFIs.filter(i => i !== ifi) }));
+                                                }
+                                            }}
+                                            className="h-4 w-4 rounded border-gray-300"
                                         />
+                                        <label htmlFor={`ifi-${ifi}`} className="text-sm text-gray-700 cursor-pointer">{ifi}</label>
                                     </div>
-
-                                    <div className={isFirstRow ? 'pb-2' : 'pb-0'}>
-                                        {formData.fundingRows.length > 1 && (
-                                            <button
-                                                type="button"
-                                                onClick={() => removeRepeatableRow('fundingRows', index)}
-                                                className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md"
-                                                title="Remove row"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 mb-2">
-                            <div className="md:col-span-2">
-                                <button
-                                    type="button"
-                                    onClick={() => addRepeatableRow('fundingRows')}
-                                    disabled={formData.fundingRows.filter((row) => row.ifi).length >= IFI_OPTIONS.length}
-                                    className="text-sm text-brand-medium-blue hover:underline disabled:text-gray-400 disabled:no-underline"
-                                >
-                                    + Add Funding Source
-                                </button>
+                                ))}
                             </div>
-                            <div className="md:col-span-2 flex items-center gap-2">
-                                <Label className="text-sm font-medium text-gray-700 whitespace-nowrap">Total Project Amount (M USD)</Label>
+                        </FormField>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <FormField label="Financial Instruments">
                                 <Input
                                     type="text"
-                                    readOnly
-                                    className="bg-gray-50 w-full h-10"
-                                    value={calculateFundingTotal(formData.fundingRows).toLocaleString()}
+                                    placeholder="Enter financial instruments"
+                                    value={formData.financialInstrumentsText}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, financialInstrumentsText: e.target.value }))}
                                 />
-                            </div>
+                            </FormField>
+
+                            <FormField label="Other Financiers">
+                                <Input
+                                    type="text"
+                                    placeholder="Enter other financiers"
+                                    value={formData.otherFinanciers}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, otherFinanciers: e.target.value }))}
+                                />
+                            </FormField>
+
+                            <FormField label="Amount (M USD)">
+                                <Input
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    placeholder="0"
+                                    value={formData.projectAmount}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, projectAmount: e.target.value }))}
+                                />
+                            </FormField>
                         </div>
+
+                        <FormField label="Funding Source">
+                            <textarea
+                                placeholder="Enter funding source information"
+                                value={formData.fundingSourceText}
+                                onChange={(e) => setFormData(prev => ({ ...prev, fundingSourceText: e.target.value }))}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none"
+                                rows={3}
+                            />
+                        </FormField>
                         <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
@@ -2059,8 +1997,7 @@ ${references}
                         </div>
                         <SectionTitle>Environmental and Social Safeguards</SectionTitle>
                         <div className="space-y-4">
-                            {formData.fundingRows.filter(row => row.ifi).map((fundingRow, fundingIndex) => {
-                                const ifiName = fundingRow.ifi;
+                            {formData.selectedIFIs.map((ifiName, fundingIndex) => {
                                 const safeguard = formData.ifiSafeguards[ifiName] || {
                                     environment: '',
                                     involuntaryResettlement: '',
@@ -2147,7 +2084,7 @@ ${references}
                                     </div>
                                 );
                             })}
-                            {formData.fundingRows.filter(row => row.ifi).length === 0 && (
+                            {formData.selectedIFIs.length === 0 && (
                                 <div className="text-gray-500 text-sm p-4 bg-gray-50 rounded border border-gray-200">
                                     Add IFIs in the Financials section to configure social safeguards
                                 </div>
