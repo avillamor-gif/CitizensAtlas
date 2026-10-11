@@ -13,6 +13,7 @@ interface ArticleGridCardProps {
 const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, pageTitle, onDownload }) => {
     const isVideo = pageTitle === 'Videos';
     const isNews = pageTitle === 'News';
+    const isPublication = pageTitle === 'Publications';
     const [isHovering, setIsHovering] = React.useState(false);
     
     return (
@@ -61,7 +62,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                     )}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2 flex-grow">{item.title}</h3>
-                {!isNews && (
+                {!isNews && !isPublication && (
                     <p className="text-sm text-gray-300 line-clamp-3 mb-4">
                         {toPlainText(item.description)}
                     </p>
@@ -75,12 +76,12 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                         fontStyle: 'normal',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        marginTop: isNews ? '16px' : 'auto',
+                        marginTop: (isNews || isPublication) ? '16px' : 'auto',
                         display: 'block',
                         textAlign: 'left'
                     }}
                 >
-                    {isVideo ? 'Watch' : isNews ? 'View Article' : 'Read More'} →
+                    {isVideo ? 'Watch' : isNews ? 'View Article' : isPublication ? 'Open Publication Link' : 'Read More'} →
                 </span>
             </div>
         </button>

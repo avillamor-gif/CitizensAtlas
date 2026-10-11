@@ -13,6 +13,7 @@ interface ArticleListRowProps {
 const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pageTitle, onDownload }) => {
     const isVideo = pageTitle === 'Videos';
     const isNews = pageTitle === 'News';
+    const isPublication = pageTitle === 'Publications';
     const [isHovering, setIsHovering] = React.useState(false);
 
     return (
@@ -61,7 +62,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                     )}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                {!isNews && (
+                {!isNews && !isPublication && (
                     <p className="text-gray-300 line-clamp-4 flex-grow mb-4">
                         {toPlainText(item.description)}
                     </p>
@@ -75,12 +76,12 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                         fontStyle: 'normal',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        marginTop: isNews ? '16px' : 'auto',
+                        marginTop: (isNews || isPublication) ? '16px' : 'auto',
                         display: 'block',
                         textAlign: 'left'
                     }}
                 >
-                    {isVideo ? 'Watch' : isNews ? 'View Article' : 'Read More'} →
+                    {isVideo ? 'Watch' : isNews ? 'View Article' : isPublication ? 'Open Publication Link' : 'Read More'} →
                 </span>
             </div>
         </button>

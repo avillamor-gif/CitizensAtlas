@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Header, Footer } from '@/components/layout'
 import { PublicationsPage } from '@/components/features/articles'
 import { Article } from '@/types/types'
@@ -11,7 +10,6 @@ import { reconstructArticleSlugs } from '@/lib/utils/slug-utils'
 export default function Publications() {
   const [publications, setPublications] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
     dataService.getPublishedPublications().then(items => setPublications(reconstructArticleSlugs(items))).catch(console.error).finally(() => setLoading(false))
@@ -25,6 +23,12 @@ export default function Publications() {
     )
   }
 
+  const handleViewPublication = (article: Article) => {
+    if (article.publicationLink) {
+      window.open(article.publicationLink, '_blank');
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -36,7 +40,7 @@ export default function Publications() {
         ) : (
           <PublicationsPage
             items={publications}
-            onViewArticle={(article) => router.push(`/publications/${article.slug}`)}
+            onViewArticle={handleViewPublication}
             onIncrementDownload={handleIncrementDownload}
           />
         )}
