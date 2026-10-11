@@ -64,7 +64,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                     {toPlainText(item.description)}
                 </p>
                 <span 
-                    className="text-sm mt-auto self-start text-left transition-colors duration-200"
+                    className="mt-auto self-start text-left transition-colors duration-200"
                     style={{ 
                         color: isHovering ? '#ffa51d' : '#98a7b8',
                         fontWeight: 400,
