@@ -132,7 +132,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                         </div>
                     </div>
                 )}
-                <InteractiveMap projects={filteredProjects} onMarkerClick={openDetailModal} onMapLoad={handleMapLoad} />
+                <InteractiveMap projects={filteredProjects} onMarkerClick={openDetailModal} onMapLoad={handleMapLoad} useDarkStyle={true} />
                 
                 {/* Currently Viewing Card */}
                 <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-[#0d1b2a] p-2 md:p-3 rounded-lg shadow-lg z-10 w-[140px] md:w-[200px] border border-[#384860]">

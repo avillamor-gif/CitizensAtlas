@@ -66,9 +66,10 @@ interface InteractiveMapProps {
     onMapLoad?: () => void;
     selectedLocation?: { latitude: number; longitude: number } | null;
     pickerMode?: boolean;
+    useDarkStyle?: boolean;
 }
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false, useDarkStyle = false }) => {
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
     const mapRef = useRef<any>(null);
@@ -309,7 +310,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 ref={mapRef}
                 initialViewState={mapCenter}
                 style={{ width: '100%', height: '100%' }}
-                mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                mapStyle={useDarkStyle ? "https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"}
                 renderWorldCopies={false}
                 onLoad={(e) => {
                     const map = e.target;
