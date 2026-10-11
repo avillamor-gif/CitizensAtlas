@@ -189,14 +189,13 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
 
                 {/* Filters Panel - Desktop (right side) */}
                 <div className="hidden md:block absolute bottom-4 right-4 z-10 max-w-[200px] md:max-w-xs">
-                    <div className="bg-[#f7f8f9] p-3 border rounded-lg shadow-lg">
+                    <div className="bg-[#0d1b2a] p-3 border rounded-lg shadow-lg border-[#384860]">
                         <FilterPanel
                             filters={filters}
                             onFilterChange={onFilterChange}
                             filterOptions={filterOptions}
                             isCompact={true}
                             onClearFilters={handleClearFilters}
-                            isDarkMode={false}
                         />
                     </div>
                 </div>
@@ -208,14 +207,14 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                             className="absolute inset-0 bg-black bg-opacity-50"
                             onClick={() => setIsFilterOpen(false)}
                         />
-                        <div className="relative w-full bg-white rounded-t-2xl shadow-2xl max-h-[80vh] overflow-y-auto animate-slide-up">
-                            <div className="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-brand-dark-blue">Filters</h3>
+                        <div className="relative w-full bg-[#0d1b2a] rounded-t-2xl shadow-2xl max-h-[80vh] overflow-y-auto animate-slide-up">
+                            <div className="sticky top-0 bg-[#0d1b2a] border-b border-[#384860] px-4 py-3 flex items-center justify-between">
+                                <h3 className="text-lg font-bold text-[#9eafc0]">Filters</h3>
                                 <button
                                     onClick={() => setIsFilterOpen(false)}
-                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                    className="p-2 hover:bg-gray-700 rounded-full transition-colors"
                                 >
-                                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 text-[#9eafc0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
@@ -231,7 +230,6 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                                     filterOptions={filterOptions}
                                     isCompact={false}
                                     onClearFilters={handleClearFilters}
-                                    isDarkMode={false}
                                 />
                             </div>
                         </div>
