@@ -124,7 +124,7 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
                 className="pl-10 h-10"
                 style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                   color: '#a0b0c8',
                 }}
               />
@@ -135,14 +135,14 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
               <Select value={yearFilter} onValueChange={setYearFilter}>
                 <SelectTrigger className="h-10" style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                   color: '#a0b0c8',
                 }}>
                   <SelectValue placeholder="All Years" />
                 </SelectTrigger>
                 <SelectContent style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                 }}>
                   {years.map(year => (
                     <SelectItem 
@@ -164,14 +164,14 @@ const NewsPage: React.FC<NewsPageProps> = ({ items, onViewArticle }) => {
             <Select value={sortOrder} onValueChange={setSortOrder}>
               <SelectTrigger className="h-10" style={{
                 backgroundColor: '#0d1b2a',
-                borderColor: '#2f4059',
+                borderColor: '#ffffff',
                 color: '#a0b0c8',
               }}>
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent style={{
                 backgroundColor: '#0d1b2a',
-                borderColor: '#2f4059',
+                borderColor: '#ffffff',
               }}>
                 <SelectItem 
                   value="newest"

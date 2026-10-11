@@ -139,7 +139,7 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
                 className="pl-10 h-10"
                 style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                   color: '#a0b0c8',
                 }}
               />
@@ -150,14 +150,14 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
               <Select value={tagFilter} onValueChange={setTagFilter}>
                 <SelectTrigger className="h-10" style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                   color: '#a0b0c8',
                 }}>
                   <SelectValue placeholder="All Tags" />
                 </SelectTrigger>
                 <SelectContent style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                 }}>
                   {tags.map(tag => (
                     <SelectItem 
@@ -180,14 +180,14 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
               <Select value={yearFilter} onValueChange={setYearFilter}>
                 <SelectTrigger className="h-10" style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                   color: '#a0b0c8',
                 }}>
                   <SelectValue placeholder="All Years" />
                 </SelectTrigger>
                 <SelectContent style={{
                   backgroundColor: '#0d1b2a',
-                  borderColor: '#2f4059',
+                  borderColor: '#ffffff',
                 }}>
                   {years.map(year => (
                     <SelectItem 
@@ -209,14 +209,14 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
             <Select value={sortOrder} onValueChange={setSortOrder}>
               <SelectTrigger className="h-10" style={{
                 backgroundColor: '#0d1b2a',
-                borderColor: '#2f4059',
+                borderColor: '#ffffff',
                 color: '#a0b0c8',
               }}>
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent style={{
                 backgroundColor: '#0d1b2a',
-                borderColor: '#2f4059',
+                borderColor: '#ffffff',
               }}>
                 <SelectItem 
                   value="newest"
