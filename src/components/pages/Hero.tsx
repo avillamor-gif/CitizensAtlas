@@ -167,9 +167,12 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
       />
             <div className="container mx-auto relative z-10">
                 <div className="text-left max-w-4xl mb-8">
-                    <p className="text-xs font-bold tracking-widest mb-4" style={{ color: 'var(--highlight)' }}>
-                        — A GAIA ASIA PACIFIC INITIATIVE
-                    </p>
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-8 h-1" style={{ backgroundColor: 'var(--highlight)' }}></div>
+                        <p className="text-xs font-bold tracking-[0.2em]" style={{ color: '#9eafc0' }}>
+                            A GAIA ASIA PACIFIC INITIATIVE
+                        </p>
+                    </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
                         The Citizens' Atlas on{' '}
                         <span style={{ color: 'var(--highlight)' }}>False Solutions</span> on Waste.
