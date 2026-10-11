@@ -321,17 +321,15 @@ const AboutPage: React.FC = () => {
                       ].map((f, idx) => {
                         const maxAmount = 843.48;
                         return (
-                          <div key={idx} className="grid grid-cols-[1fr_auto] items-center gap-4 text-sm">
-                            <div className="flex items-center gap-3 min-w-0">
-                              <span className="truncate text-gray-300">{f.name}</span>
-                              <span className="text-xs text-gray-500">{f.bank}</span>
+                          <div key={idx} className="grid grid-cols-[8rem_1fr_6rem] items-center gap-3 text-sm">
+                            <span style={{ color: '#aeb9cc' }}>{f.name}</span>
+                            <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
+                              <div
+                                className="h-full rounded-full transition-all"
+                                style={{ background: 'linear-gradient(to right, #1a5f7a, var(--highlight))', width: `${(f.amount / maxAmount) * 100}%` }}
+                              />
                             </div>
-                            <div className="flex items-center gap-3">
-                              <div className="h-2 w-40 rounded-full" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)' }}>
-                                <div className="h-full rounded-full" style={{ width: `${(f.amount / maxAmount) * 100}%`, background: 'linear-gradient(90deg, #ffa51d, var(--highlight))' }} />
-                              </div>
-                              <span className="tabular-nums w-20 text-right text-gray-300">${f.amount.toLocaleString()} M</span>
-                            </div>
+                            <span className="text-right font-medium tabular-nums" style={{ color: '#aeb9cc' }}>${f.amount.toLocaleString()} M</span>
                           </div>
                         );
                       })}
