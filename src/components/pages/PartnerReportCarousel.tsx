@@ -46,14 +46,14 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                         <div 
                             onClick={() => setSelectedReport(report)}
                             className="rounded-lg border bg-gray-900 p-4 h-full transition-all duration-300 group cursor-pointer"
-                            style={{ borderColor: 'var(--highlight)' }}
+                            style={{ borderColor: 'rgb(55, 65, 81)' }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.borderColor = 'var(--highlight)';
                                 const titleEl = e.currentTarget.querySelector('h4');
                                 if (titleEl) titleEl.style.color = 'var(--highlight)';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = 'var(--highlight)';
+                                e.currentTarget.style.borderColor = 'rgb(55, 65, 81)';
                                 const titleEl = e.currentTarget.querySelector('h4');
                                 if (titleEl) titleEl.style.color = 'white';
                             }}
