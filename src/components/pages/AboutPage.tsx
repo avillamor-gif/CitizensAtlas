@@ -416,9 +416,9 @@ const AboutPage: React.FC = () => {
                         const maxAmount = 843.48;
                         return (
                           <div key={idx}>
-                            <div className="flex justify-between items-center mb-1">
+                            <div className="flex justify-between items-center mb-1 text-sm" style={{ fontSize: '14px' }}>
                               <div className="flex items-center gap-2 min-w-0">
-                                <span style={{ color: 'white' }} className="font-normal">{f.name}</span>
+                                <span style={{ color: '#aeb9cc' }} className="font-normal">{f.name}</span>
                                 <span className="text-xs" style={{ color: '#aeb9cc' }}>{f.bank}</span>
                               </div>
                               <span className="text-right font-medium tabular-nums ml-2" style={{ color: '#aeb9cc' }}>${f.amount.toLocaleString()} M</span>
