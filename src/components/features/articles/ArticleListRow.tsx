@@ -61,20 +61,20 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                     {toPlainText(item.description)}
                 </p>
                 <span 
-                    className="text-sm mt-auto self-start text-left transition-all duration-200"
+                    className="text-sm mt-auto self-start text-left transition-colors duration-200"
                     style={{ 
                         color: '#98a7b8',
                         fontWeight: 400,
                         fontSize: '14px',
-                        fontStyle: 'normal'
+                        fontStyle: 'normal',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
                     }}
                     onMouseEnter={(e) => {
                         e.currentTarget.style.color = '#ffa51d'
-                        e.currentTarget.textContent = 'READ MORE →'
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.color = '#98a7b8'
-                        e.currentTarget.textContent = 'Read More →'
                     }}
                 >
                     Read More →

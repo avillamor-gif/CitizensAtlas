@@ -43,20 +43,20 @@ function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
         </h3>
         <div className="mt-4 self-start">
           <span 
-            className="text-sm transition-all duration-200"
+            className="text-sm transition-colors duration-200"
             style={{ 
               color: '#98a7b8',
               fontWeight: 400,
               fontSize: '14px',
-              fontStyle: 'normal'
+              fontStyle: 'normal',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = '#ffa51d'
-              e.currentTarget.textContent = 'VIEW DETAILS →'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = '#98a7b8'
-              e.currentTarget.textContent = 'View Details →'
             }}
           >
             View Details →
