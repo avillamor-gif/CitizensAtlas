@@ -1404,6 +1404,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const otherImplementorsValue = otherImplementors?.trim() || 'None';
         const otherFinanciersValue = otherFinanciers?.trim() || 'None';
 
+        // Set "NA" as default for Community Opposition & Actions and Additional Information fields
+        const groupsInOppositionValue = groupsInOpposition.length > 0 && groupsInOpposition.some(g => g.trim())
+            ? groupsInOpposition.join(', ')
+            : 'NA';
+        const typesOfActionsValue = typesOfActions?.trim() || 'NA';
+        const linksToActionsValue = linksToActions?.trim() || 'NA';
+        const notesValue = notes?.trim() || 'NA';
+        const referencesValue = references?.trim() || 'NA';
+
         const details = `
     **Region:** ${regionValue}
     **Country:** ${formData.primaryCountry}
@@ -1434,14 +1443,14 @@ ${Object.entries(formData.ifiSafeguards).map(([ifi, safeguards]) => {
   return [ifi, ...fields].join('\n');
 }).join('\n\n')}
 **Key Documents:** ${keyDocuments}
-**Groups in Opposition:** ${groupsInOpposition.join(', ')}
-**Types of Actions:** ${typesOfActions}
-**Links to Actions:** ${linksToActions}
+**Groups in Opposition:** ${groupsInOppositionValue}
+**Types of Actions:** ${typesOfActionsValue}
+**Links to Actions:** ${linksToActionsValue}
 **Active GAIA Support:** ${activeGaiAASupport}
 **Notes:**
-${notes}
+${notesValue}
 **References:**
-${references}
+${referencesValue}
 ---
 **Gender Concerns:** ${genderConcerns}
 **Waste Workers:** ${wasteWorkers}
