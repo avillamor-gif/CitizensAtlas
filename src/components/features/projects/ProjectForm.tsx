@@ -1523,6 +1523,7 @@ ${references}
                                     <SelectItem value="Cancelled">Cancelled</SelectItem>
                                     <SelectItem value="Inactive">Inactive</SelectItem>
                                     <SelectItem value="Completed">Completed</SelectItem>
+                                    <SelectItem value="Unknown">Unknown</SelectItem>
                                 </SelectContent>
                             </Select>
                         </FormField>

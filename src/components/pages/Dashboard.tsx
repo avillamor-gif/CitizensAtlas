@@ -248,6 +248,7 @@ const Dashboard: React.FC<DashboardProps> = ({ projects, filters }) => {
         'Proposed': '#3b82f6', // blue-500
         'Cancelled': '#ef4444', // red-500
         'Inactive': '#94a3b8', // slate-400
+        'Unknown': '#a1a1aa', // zinc-400
         'N/A': '#a1a1aa' // zinc-400
     };
 

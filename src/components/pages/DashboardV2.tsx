@@ -453,6 +453,7 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
     'Proposed': '#3b82f6',
     'Cancelled': '#ef4444',
     'Inactive': '#94a3b8',
+    'Unknown': '#a1a1aa',
     'N/A': '#a1a1aa'
   }
 
