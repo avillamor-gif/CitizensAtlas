@@ -616,14 +616,14 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">
                         Preview ({parsedData.length} items)
                     </h2>
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg max-h-96">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50 sticky top-0">
+                    <div className="overflow-x-auto overflow-y-auto border border-gray-200 rounded-lg" style={{ maxHeight: '500px' }}>
+                        <table className="w-full divide-y divide-gray-200 border-collapse">
+                            <thead className="bg-gray-50 sticky top-0 z-10">
                                 <tr>
                                     {Object.keys(expandParsedDataForPreview(parsedData.slice(0, 1))[0] || {}).map((key) => (
                                         <th
                                             key={key}
-                                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                                            className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap bg-gray-50 border border-gray-300"
                                         >
                                             {key}
                                         </th>
@@ -632,12 +632,12 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {expandParsedDataForPreview(parsedData.slice(0, 5)).map((item, index) => (
-                                    <tr key={index}>
+                                    <tr key={index} className="hover:bg-gray-50">
                                         {Object.values(item).map((value: any, cellIndex) => (
-                                            <td key={cellIndex} className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
+                                            <td key={cellIndex} className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap border border-gray-200 min-w-max">
                                                 {typeof value === 'string' || typeof value === 'number'
-                                                    ? String(value).substring(0, 100)
-                                                    : JSON.stringify(value).substring(0, 100)}
+                                                    ? String(value).substring(0, 150)
+                                                    : JSON.stringify(value).substring(0, 150)}
                                             </td>
                                         ))}
                                     </tr>
