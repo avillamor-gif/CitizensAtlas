@@ -174,6 +174,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
             title: 'Environmental and Social Safeguards',
             content: (
                 <>
+                    <DetailRow label="Key Documents" value={detailsMap.get('Key Documents')} />
                     {detailsMap.get('IFI Safeguards') && (
                         <div className="text-sm text-gray-700 space-y-4">
                             {detailsMap.get('IFI Safeguards')!.split('\n\n').map((block, idx) => {
