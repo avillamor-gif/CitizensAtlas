@@ -288,6 +288,43 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
         }
     };
 
+    const expandParsedDataForPreview = (projects: any[]) => {
+        return projects.map(project => {
+            const expandedData: Record<string, any> = {
+                'Project Name': project.title,
+                'Country': project.country,
+                'False Solution Type': project.corruptionType,
+                'Status': project.status,
+                'Publish Date': project.publishDate,
+            };
+
+            // Parse details string to extract individual fields
+            if (project.details) {
+                const detailsText = project.details;
+                const fields = [
+                    'Project Number', 'Project Status', 'Region', 'City', 'Remarks',
+                    'IFI', 'Funding Source', 'Financial Instruments', 'Total Project Amount', 'Sector',
+                    'Owner', 'Private Sector Borrowers', 'Economic Cooperation or Programs', 'Other Financiers', 'Other Implementors',
+                    'Project Description', 'Approval Date', 'Start Date', 'End Date',
+                    'Key Documents', 'Groups in Opposition', 'Types of Actions', 'Links to Actions',
+                    'Active GAIA Support', 'Notes', 'References',
+                    'Gender Concerns', 'Waste Workers', 'Resettlement',
+                    'IFI Safeguards'
+                ];
+
+                fields.forEach(field => {
+                    const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm');
+                    const match = detailsText.match(regex);
+                    if (match && match[1]) {
+                        expandedData[field] = match[1].trim().substring(0, 100);
+                    }
+                });
+            }
+
+            return expandedData;
+        });
+    };
+
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
@@ -560,29 +597,18 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50 sticky top-0">
                                 <tr>
-                                    {Object.keys(parsedData[0] || {}).map((key) => {
-                                        const displayLabel = {
-                                            corruptionType: 'False Solution Type',
-                                            title: 'Project Name',
-                                            country: 'Country',
-                                            latitude: 'Latitude',
-                                            longitude: 'Longitude',
-                                            publishDate: 'Publish Date',
-                                            details: 'Details'
-                                        }[key] || key;
-                                        return (
-                                            <th
-                                                key={key}
-                                                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
-                                            >
-                                                {displayLabel}
-                                            </th>
-                                        );
-                                    })}
+                                    {Object.keys(expandParsedDataForPreview(parsedData.slice(0, 1))[0] || {}).map((key) => (
+                                        <th
+                                            key={key}
+                                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                                        >
+                                            {key}
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {parsedData.slice(0, 5).map((item, index) => (
+                                {expandParsedDataForPreview(parsedData.slice(0, 5)).map((item, index) => (
                                     <tr key={index}>
                                         {Object.values(item).map((value: any, cellIndex) => (
                                             <td key={cellIndex} className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
