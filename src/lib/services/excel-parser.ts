@@ -348,6 +348,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 **Project Number:** ${defaultNA(projectNumber)}
 **IFI:** ${defaultNA(combinedIfi)}
 **Funding Source:** ${defaultNA(fundingSource)}
+**Financial Instruments:** ${defaultNA(financialInstruments)}
 **Sector:** ${defaultNA(sector)}
 **Total Project Amount:** ${defaultNA(computedTotalAmount || '0')}
 **Owner:** ${defaultNA(owner)}
