@@ -40,7 +40,7 @@ const DetailRow: React.FC<{ label: string; value: string | undefined }> = ({ lab
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</p>
             {/* Render HTML content properly with styling for links */}
             <div 
-                className="text-sm text-gray-800 break-words w-full overflow-x-hidden [&_p]:m-0 [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800 [&_a]:break-words [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1"
+                className="text-sm text-gray-800 break-words w-full overflow-x-hidden [&_p]:m-0 [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800 [&_a]:break-all [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1"
                 dangerouslySetInnerHTML={{ __html: cleanedValue }}
             />
         </div>
