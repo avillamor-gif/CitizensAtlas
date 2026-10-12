@@ -80,7 +80,7 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
             <div className="container mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h2 className={`text-3xl font-extrabold ${textColor}`}>{title}</h2>
+                        <h2 className={`text-3xl font-normal ${textColor}`}>{title}</h2>
                         <div className={`w-16 h-1 mt-2 ${lineColor}`}></div>
                     </div>
                     <div className="flex items-center space-x-4">
