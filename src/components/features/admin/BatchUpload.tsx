@@ -291,31 +291,54 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
     const expandParsedDataForPreview = (projects: any[]) => {
         return projects.map(project => {
             const expandedData: Record<string, any> = {
-                'Project Name': project.title,
-                'Country': project.country,
-                'False Solution Type': project.corruptionType,
-                'Status': project.status,
-                'Publish Date': project.publishDate,
+                'Project Name': project.title || '',
+                'Project Number': '',
+                'Project Status': '',
+                'Region': '',
+                'Country': project.country || '',
+                'City': '',
+                'Remarks': '',
+                'False Solution Type': project.corruptionType || '',
+                'IFI': '',
+                'Funding Source': '',
+                'Financial Instruments': '',
+                'Total Project Amount': '',
+                'Sector': '',
+                'Owner': '',
+                'Private Sector Borrowers': '',
+                'Economic Cooperation or Programs': '',
+                'Other Financiers': '',
+                'Other Implementors': '',
+                'Project Description': '',
+                'Approval Date': '',
+                'Start Date': '',
+                'End Date': '',
+                'Key Documents': '',
+                'Groups in Opposition': '',
+                'Types of Actions': '',
+                'Links to Actions': '',
+                'Active GAIA Support': '',
+                'Notes': '',
+                'References': '',
+                'Gender Concerns': '',
+                'Waste Workers': '',
+                'Resettlement': '',
+                'Status': project.status || '',
+                'Publish Date': project.publishDate || '',
             };
 
             // Parse details string to extract individual fields
             if (project.details) {
                 const detailsText = project.details;
-                const fields = [
-                    'Project Number', 'Project Status', 'Region', 'City', 'Remarks',
-                    'IFI', 'Funding Source', 'Financial Instruments', 'Total Project Amount', 'Sector',
-                    'Owner', 'Private Sector Borrowers', 'Economic Cooperation or Programs', 'Other Financiers', 'Other Implementors',
-                    'Project Description', 'Approval Date', 'Start Date', 'End Date',
-                    'Key Documents', 'Groups in Opposition', 'Types of Actions', 'Links to Actions',
-                    'Active GAIA Support', 'Notes', 'References',
-                    'Gender Concerns', 'Waste Workers', 'Resettlement',
-                    'IFI Safeguards'
-                ];
-
-                fields.forEach(field => {
+                Object.keys(expandedData).forEach(field => {
+                    // Special handling for fields that already have values
+                    if (field === 'Project Name' || field === 'Country' || field === 'False Solution Type' || field === 'Status' || field === 'Publish Date') {
+                        return;
+                    }
+                    
                     const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm');
                     const match = detailsText.match(regex);
-                    if (match && match[1]) {
+                    if (match && match[1] && match[1].trim()) {
                         expandedData[field] = match[1].trim().substring(0, 100);
                     }
                 });
