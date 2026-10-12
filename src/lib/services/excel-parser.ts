@@ -248,6 +248,9 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const resettlement = getRowValue(row, ['Resettlement']);
           const publishDate = getRowValue(row, ['Publish Date']);
           const status = getRowValue(row, ['Status']);
+          const remarks = getRowValue(row, ['Remarks']);
+          const keyDocumentsUrl = getRowValue(row, ['Key Documents URL']);
+          const otherFinanciers = getRowValue(row, ['Other Financiers']);
 
           // Extract IFI Safeguards
           const ifiSafeguards: Record<string, {environment: string, involuntaryResettlement: string, indigenousPeoples: string}> = {};
@@ -314,7 +317,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
             return;
           }
           if (!corruptionType) {
-            errors.push(`Row ${rowNum}: Corruption Type is required`);
+            errors.push(`Row ${rowNum}: False Solution Type is required`);
             return;
           }
 
@@ -346,6 +349,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 **Private Sector Borrowers:** ${privateSectorBorrowers}
 **Economic Cooperation or Programs:** ${economicCooperationOrPrograms}
 **Other Implementors:** ${otherImplementors}
+**Other Financiers:** ${otherFinanciers}
 **Project Description:**
 ${projectDescription}
 ---
@@ -353,6 +357,8 @@ ${projectDescription}
 **Approval Date:** ${approvalDate}
 **Start Date:** ${startDate}
 **End Date:** ${endDate}
+**Remarks:** ${remarks}
+**Key Documents:** ${keyDocumentsUrl}
 **IFI Safeguards:**
 ${ifiSafeguardsText}
 **Groups in Opposition:** ${groupsInOpposition}

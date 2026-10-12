@@ -111,6 +111,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             'Owner (Public/ Private / PPP)',
             'Private Sector Borrower (comma-separated)',
             'Economic Cooperation or Programs',
+            'Other Financiers',
             'Other Implementors',
             'ADB - Environment',
             'ADB - Involuntary Resettlement',
@@ -204,6 +205,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             parseDetail(project.details, 'Owner', ['Owner (Public/ Private / PPP)']),
             parseDetail(project.details, 'Private Sector Borrowers', ['Private Sector Borrower']),
             parseDetail(project.details, 'Economic Cooperation', ['Economic Cooperation or Programs']),
+            parseDetail(project.details, 'Other Financiers'),
             parseDetail(project.details, 'Other Implementors'),
             parseDetail(project.details, 'ADB - Environment'),
             parseDetail(project.details, 'ADB - Involuntary Resettlement'),
@@ -552,28 +554,39 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">
                         Preview ({parsedData.length} items)
                     </h2>
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                    <div className="overflow-x-auto border border-gray-200 rounded-lg max-h-96">
                         <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-50 sticky top-0">
                                 <tr>
-                                    {Object.keys(parsedData[0] || {}).slice(0, 5).map((key) => (
-                                        <th
-                                            key={key}
-                                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
-                                            {key}
-                                        </th>
-                                    ))}
+                                    {Object.keys(parsedData[0] || {}).map((key) => {
+                                        const displayLabel = {
+                                            corruptionType: 'False Solution Type',
+                                            title: 'Project Name',
+                                            country: 'Country',
+                                            latitude: 'Latitude',
+                                            longitude: 'Longitude',
+                                            publishDate: 'Publish Date',
+                                            details: 'Details'
+                                        }[key] || key;
+                                        return (
+                                            <th
+                                                key={key}
+                                                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                                            >
+                                                {displayLabel}
+                                            </th>
+                                        );
+                                    })}
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {parsedData.slice(0, 5).map((item, index) => (
                                     <tr key={index}>
-                                        {Object.values(item).slice(0, 5).map((value: any, cellIndex) => (
-                                            <td key={cellIndex} className="px-4 py-3 text-sm text-gray-700">
+                                        {Object.values(item).map((value: any, cellIndex) => (
+                                            <td key={cellIndex} className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
                                                 {typeof value === 'string' || typeof value === 'number'
-                                                    ? String(value).substring(0, 50)
-                                                    : JSON.stringify(value).substring(0, 50)}
+                                                    ? String(value).substring(0, 100)
+                                                    : JSON.stringify(value).substring(0, 100)}
                                             </td>
                                         ))}
                                     </tr>
