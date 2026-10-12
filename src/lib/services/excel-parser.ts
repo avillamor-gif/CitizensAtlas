@@ -331,48 +331,53 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           })();
           const computedTotalAmount = totalProjectAmount || financialInstruments;
 
+          // Helper to replace empty strings with "NA"
+          const defaultNA = (value: string | null | undefined): string => {
+            return value && value.trim() ? value.trim() : 'NA';
+          };
+
           // Build details string to match ProjectForm exactly.
           const ifiSafeguardsText = Object.entries(ifiSafeguards).map(([ifi, safeguards]) =>
             `${ifi}\nEnvironment - ${safeguards.environment}\nInvoluntary Resettlement - ${safeguards.involuntaryResettlement}\nIndigenous Peoples - ${safeguards.indigenousPeoples}`
           ).join('\n\n');
 
           const details = `
-**Region:** ${region}
-**Country:** ${country}
-**City:** ${city}
-**Project Number:** ${projectNumber}
-**IFI:** ${combinedIfi}
-**Funding Source:** ${fundingSource}
-**Sector:** ${sector}
-**Total Project Amount:** ${computedTotalAmount || '0'}
-**Owner:** ${owner}
-**Private Sector Borrowers:** ${privateSectorBorrowers}
-**Economic Cooperation or Programs:** ${economicCooperationOrPrograms}
-**Other Implementors:** ${otherImplementors}
-**Other Financiers:** ${otherFinanciers}
+**Region:** ${defaultNA(region)}
+**Country:** ${defaultNA(country)}
+**City:** ${defaultNA(city)}
+**Project Number:** ${defaultNA(projectNumber)}
+**IFI:** ${defaultNA(combinedIfi)}
+**Funding Source:** ${defaultNA(fundingSource)}
+**Sector:** ${defaultNA(sector)}
+**Total Project Amount:** ${defaultNA(computedTotalAmount || '0')}
+**Owner:** ${defaultNA(owner)}
+**Private Sector Borrowers:** ${defaultNA(privateSectorBorrowers)}
+**Economic Cooperation or Programs:** ${defaultNA(economicCooperationOrPrograms)}
+**Other Implementors:** ${defaultNA(otherImplementors)}
+**Other Financiers:** ${defaultNA(otherFinanciers)}
 **Project Description:**
-${projectDescription}
+${defaultNA(projectDescription)}
 ---
-**Project Status:** ${projectStatus}
-**Approval Date:** ${approvalDate}
-**Start Date:** ${startDate}
-**End Date:** ${endDate}
-**Remarks:** ${remarks}
-**Key Documents:** ${keyDocumentsUrl}
+**Project Status:** ${defaultNA(projectStatus)}
+**Approval Date:** ${defaultNA(approvalDate)}
+**Start Date:** ${defaultNA(startDate)}
+**End Date:** ${defaultNA(endDate)}
+**Remarks:** ${defaultNA(remarks)}
+**Key Documents:** ${defaultNA(keyDocumentsUrl)}
 **IFI Safeguards:**
-${ifiSafeguardsText}
-**Groups in Opposition:** ${groupsInOpposition}
-**Types of Actions:** ${typesOfActions}
-**Links to Actions:** ${linksToActions}
-**Active GAIA Support:** ${activeGaiASupport}
+${defaultNA(ifiSafeguardsText)}
+**Groups in Opposition:** ${defaultNA(groupsInOpposition)}
+**Types of Actions:** ${defaultNA(typesOfActions)}
+**Links to Actions:** ${defaultNA(linksToActions)}
+**Active GAIA Support:** ${defaultNA(activeGaiASupport)}
 **Notes:**
-${notes}
+${defaultNA(notes)}
 **References:**
-${references}
+${defaultNA(references)}
 ---
-**Gender Concerns:** ${genderConcerns}
-**Waste Workers:** ${wasteWorkers}
-**Resettlement:** ${resettlement}
+**Gender Concerns:** ${defaultNA(genderConcerns)}
+**Waste Workers:** ${defaultNA(wasteWorkers)}
+**Resettlement:** ${defaultNA(resettlement)}
           `.trim();
 
           projects.push({
