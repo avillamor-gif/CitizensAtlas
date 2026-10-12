@@ -370,7 +370,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                         ))}
                     </div>
                 </div>
-                <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-end gap-2 bg-gray-50 border-t fixed bottom-0 right-0 w-full sm:w-96 lg:w-[35%] z-50">
+                <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-end gap-2 bg-gray-50 border-t sticky bottom-0 w-full z-50">
                     {isAuthorized && onEdit && (
                         <button 
                             type="button" 
