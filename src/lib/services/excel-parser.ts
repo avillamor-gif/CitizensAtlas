@@ -251,6 +251,8 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const remarks = getRowValue(row, ['Remarks']);
           const keyDocumentsUrl = getRowValue(row, ['Key Documents URL']);
           const otherFinanciers = getRowValue(row, ['Other Financiers']);
+          const latitude = parseFloat(getRowValue(row, ['Latitude'])) || 0;
+          const longitude = parseFloat(getRowValue(row, ['Longitude'])) || 0;
 
           // Extract IFI Safeguards
           const ifiSafeguards: Record<string, {environment: string, involuntaryResettlement: string, indigenousPeoples: string}> = {};
@@ -382,8 +384,8 @@ ${references}
             details,
             date: approvalDate || new Date().toISOString().split('T')[0],
             publishDate: publishDate || new Date().toISOString().split('T')[0],
-            latitude: parseFloat(getRowValue(row, ['Latitude'])) || 0,
-            longitude: parseFloat(getRowValue(row, ['Longitude'])) || 0,
+            latitude,
+            longitude,
             status: status === 'draft' ? 'draft' : 'published',
           });
         });
