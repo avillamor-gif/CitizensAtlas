@@ -217,10 +217,12 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const rowNum = index + 2; // +2 because Excel starts at 1 and we have headers
 
           const projectName = getRowValue(row, ['Project Name*', 'Project Name', 'Title']);
-          const country = getRowValue(row, ['Country/ies*', 'Country/ies', 'Country*', 'Country']);
-          const corruptionTypeText = getCsvValue(row, ['False Solution Type* (comma-separated)', 'False Solution Type*', 'False solution type', 'False Solution Type', 'Corruption Type*', 'Corruption Type', 'False Solutions']);
+          const country = getRowValue(row, ['Country', 'Country/ies*', 'Country/ies', 'Country*']);
+          const corruptionTypeText = getCsvValue(row, ['False Solution Type', 'False Solution Type* (comma-separated)', 'False Solution Type*', 'False solution type', 'Corruption Type*', 'Corruption Type', 'False Solutions']);
           const region = getRowValue(row, ['Region']);
-          const city = getRowValue(row, ['City/ies', 'City']);
+          const city = getRowValue(row, ['Primary Region/City', 'City/ies', 'City']);
+          const otherRegionsCities = getRowValue(row, ['Other Regions/Cities']);
+          const otherCountries = getRowValue(row, ['Other Countries/Territories']);
           const projectNumber = getRowValue(row, ['Project Number']);
           const totalProjectAmount = getRowValue(row, ['Total Project Amount (in millions of USD)', 'Total project amount in M USD', 'Total Project Amount', 'Project Amount']);
           const ifiText = getRowValue(row, ['International Financial Institution (IFI) (comma-separated)', 'International financial institution (IFI)', 'IFI']);
@@ -229,14 +231,17 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const financialInstruments = getRowValue(row, ['Financial Instruments (comma-separated amounts)', 'Financial Instruments']);
           const sector = getRowValue(row, ['Sector']);
           const owner = getRowValue(row, ['Owner (Public/Private/PPP)', 'Owner (Public/ Private / PPP)', 'Owner']);
-          const privateSectorBorrowers = getCsvValue(row, ['Private Sector Borrower (comma-separated)', 'Private Sector Borrowers (comma-separated)', 'Private Sector Borrowers']);
+          const privateSectorBorrowers = getCsvValue(row, ['Private Sector Borrower', 'Private Sector Borrower (comma-separated)', 'Private Sector Borrowers (comma-separated)', 'Private Sector Borrowers']);
           const economicCooperationOrPrograms = getRowValue(row, ['Economic Cooperation or Programs']);
           const otherImplementors = getRowValue(row, ['Other Implementors']);
+          const otherFinanciers = getRowValue(row, ['Other Financiers']);
           const projectDescription = getRowValue(row, ['Project Description', 'Project description', 'Description']);
           const projectStatus = getRowValue(row, ['Project Status', 'Status (proposed, active, cancelled, inactive)']);
           const approvalDate = getRowValue(row, ['Approval Date*', 'Approval Date', 'Approval date']);
           const startDate = getRowValue(row, ['Start Date', 'Start date']);
           const endDate = getRowValue(row, ['End Date', 'End date']);
+          const remarks = getRowValue(row, ['Remarks']);
+          const keyDocumentsUrl = getRowValue(row, ['Key Documents URL', 'Key Documents']);
           const groupsInOpposition = getCsvValue(row, ['Groups in Opposition (comma-separated)', 'Groups in Opposition']);
           const typesOfActions = getCsvValue(row, ['Types of Actions', 'Types of Actions (comma-separated)']);
           const linksToActions = getCsvValue(row, ['Links to Actions', 'Links to Actions (comma-separated)']);
@@ -248,9 +253,6 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const resettlement = getRowValue(row, ['Resettlement']);
           const publishDate = getRowValue(row, ['Publish Date']);
           const status = getRowValue(row, ['Status']);
-          const remarks = getRowValue(row, ['Remarks']);
-          const keyDocumentsUrl = getRowValue(row, ['Key Documents URL']);
-          const otherFinanciers = getRowValue(row, ['Other Financiers']);
 
           // Extract IFI Safeguards
           const ifiSafeguards: Record<string, {environment: string, involuntaryResettlement: string, indigenousPeoples: string}> = {};
@@ -345,17 +347,19 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 **Region:** ${defaultNA(region)}
 **Country:** ${defaultNA(country)}
 **City:** ${defaultNA(city)}
+**Other Countries/Territories:** ${defaultNA(otherCountries)}
+**Primary Region/City:** ${defaultNA(city)}
+**Other Regions/Cities:** ${defaultNA(otherRegionsCities)}
 **Project Number:** ${defaultNA(projectNumber)}
 **IFI:** ${defaultNA(combinedIfi)}
+**Other Financiers:** ${defaultNA(otherFinanciers)}
 **Funding Source:** ${defaultNA(fundingSource)}
 **Financial Instruments:** ${defaultNA(financialInstruments)}
-**Sector:** ${defaultNA(sector)}
 **Total Project Amount:** ${defaultNA(computedTotalAmount || '0')}
 **Owner:** ${defaultNA(owner)}
 **Private Sector Borrowers:** ${defaultNA(privateSectorBorrowers)}
 **Economic Cooperation or Programs:** ${defaultNA(economicCooperationOrPrograms)}
 **Other Implementors:** ${defaultNA(otherImplementors)}
-**Other Financiers:** ${defaultNA(otherFinanciers)}
 **Project Description:**
 ${defaultNA(projectDescription)}
 ---
