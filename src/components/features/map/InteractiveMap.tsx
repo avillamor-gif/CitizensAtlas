@@ -53,10 +53,12 @@ function calculateBubbleSize(amount: number, minAmount: number, maxAmount: numbe
 }
 
 const formatAmount = (num: number) => {
-    if (num >= 1_000_000_000) return `$${(num / 1_000_000_000).toFixed(1)}B`;
-    if (num >= 1_000_000) return `$${(num / 1_000_000).toFixed(0)}M`;
-    if (num >= 1_000) return `$${(num / 1_000).toFixed(0)}K`;
-    return `$${num}`;
+    // Input is in millions, so multiply to get actual dollars for formatting
+    const actualAmount = num * 1_000_000;
+    if (actualAmount >= 1_000_000_000) return `$${(actualAmount / 1_000_000_000).toFixed(1)}B`;
+    if (actualAmount >= 1_000_000) return `$${(actualAmount / 1_000_000).toFixed(0)}M`;
+    if (actualAmount >= 1_000) return `$${(actualAmount / 1_000).toFixed(0)}K`;
+    return `$${actualAmount}`;
 };
 
 interface InteractiveMapProps {
