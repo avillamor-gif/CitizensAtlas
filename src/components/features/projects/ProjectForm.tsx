@@ -1890,13 +1890,13 @@ ${referencesValue}
                             </div>
                         </FormField>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="Financial Instruments">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField label="Other Financiers">
                                 <Input
                                     type="text"
-                                    placeholder="Enter financial instruments"
-                                    value={formData.financialInstrumentsText}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, financialInstrumentsText: e.target.value }))}
+                                    placeholder="Enter other financiers"
+                                    value={formData.otherFinanciers}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, otherFinanciers: e.target.value }))}
                                 />
                             </FormField>
 
@@ -1909,7 +1909,16 @@ ${referencesValue}
                                 />
                             </FormField>
 
-                            <FormField label="Amount (M USD)">
+                            <FormField label="Financial Instruments">
+                                <Input
+                                    type="text"
+                                    placeholder="Enter financial instruments"
+                                    value={formData.financialInstrumentsText}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, financialInstrumentsText: e.target.value }))}
+                                />
+                            </FormField>
+
+                            <FormField label="Total Project Amount (in millions of USD)">
                                 <Input
                                     type="number"
                                     step="any"
@@ -1917,21 +1926,12 @@ ${referencesValue}
                                     placeholder="0"
                                     value={formData.projectAmount}
                                     onChange={(e) => setFormData(prev => ({ ...prev, projectAmount: e.target.value }))}
+                                    className="bg-yellow-50 border-yellow-300 focus:ring-yellow-500"
                                 />
                             </FormField>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="Other Financiers">
-                                <Input
-                                    type="text"
-                                    placeholder="Enter other financiers"
-                                    value={formData.otherFinanciers}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, otherFinanciers: e.target.value }))}
-                                />
-                            </FormField>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
                                 <Input 
@@ -1976,6 +1976,7 @@ ${referencesValue}
                                 />
                             </div>
                         </div>
+
                         <SectionTitle>Environmental and Social Safeguards</SectionTitle>
                         <div className="space-y-4">
                             {formData.selectedIFIs.map((ifiName, fundingIndex) => {
