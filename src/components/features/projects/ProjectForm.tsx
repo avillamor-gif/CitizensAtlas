@@ -1931,51 +1931,41 @@ ${referencesValue}
                             </FormField>
                         </div>
 
-                        <div>
-                            <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
+                        <FormField label="Owner (Public/ Private / PPP)">
                             <Input 
                                 type="text" 
                                 value={formData.owner || ''} 
                                 onChange={(e) => handleSelectChange('owner', e.target.value)}
                                 placeholder="e.g., Public, Private, PPP"
-                                className="mt-1"
                             />
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <Label className="text-sm font-medium text-gray-700">Private Sector Borrower <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
-                                <Input 
-                                    type="text" 
-                                    value={formData.privateSectorBorrowers.join(', ')} 
-                                    onChange={(e) => {
-                                        const values = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
-                                        setFormData({ ...formData, privateSectorBorrowers: values });
-                                    }}
-                                    placeholder="e.g., Company A, Company B"
-                                    className="mt-1"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-sm font-medium text-gray-700">Economic Cooperation or Programs</Label>
-                                <Input 
-                                    type="text" 
-                                    value={formData.economicCooperationOrPrograms || ''} 
-                                    onChange={(e) => setFormData({ ...formData, economicCooperationOrPrograms: e.target.value })}
-                                    placeholder="e.g., RCEP, CPTPP, Regional Programs"
-                                    className="mt-1"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-sm font-medium text-gray-700">Other Implementors</Label>
-                                <Input 
-                                    type="text" 
-                                    value={formData.otherImplementors || ''} 
-                                    onChange={(e) => setFormData({ ...formData, otherImplementors: e.target.value })}
-                                    placeholder="e.g., Ministry, NGOs, Local Organizations"
-                                    className="mt-1"
-                                />
-                            </div>
-                        </div>
+                        </FormField>
+                        <FormField label="Private Sector Borrower">
+                            <Input 
+                                type="text" 
+                                value={formData.privateSectorBorrowers.join(', ')} 
+                                onChange={(e) => {
+                                    const values = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
+                                    setFormData({ ...formData, privateSectorBorrowers: values });
+                                }}
+                                placeholder="e.g., Company A, Company B"
+                            />
+                        </FormField>
+                        <FormField label="Economic Cooperation or Programs">
+                            <Input 
+                                type="text" 
+                                value={formData.economicCooperationOrPrograms || ''} 
+                                onChange={(e) => setFormData({ ...formData, economicCooperationOrPrograms: e.target.value })}
+                                placeholder="e.g., RCEP, CPTPP, Regional Programs"
+                            />
+                        </FormField>
+                        <FormField label="Other Implementors">
+                            <Input 
+                                type="text" 
+                                value={formData.otherImplementors || ''} 
+                                onChange={(e) => setFormData({ ...formData, otherImplementors: e.target.value })}
+                                placeholder="e.g., Ministry, NGOs, Local Organizations"
+                            />
+                        </FormField>
 
                         <SectionTitle>Environmental and Social Safeguards</SectionTitle>
                         <div className="space-y-4">
