@@ -783,7 +783,7 @@ const emptyFormState = {
     displacement: '',
 };
 
-const IFI_OPTIONS = ['ADB', 'AIIB', 'GCF', 'GIZ', 'JICA', 'KOICA', 'IFC/ WB', 'Others'] as const;
+const IFI_OPTIONS = ['ADB', 'AIIB', 'GCF', 'GIZ', 'JICA', 'KOICA', 'IFC/WB', 'Others'] as const;
 const FINANCIAL_INSTRUMENT_OPTIONS: MultiSelectOption[] = [
     { value: 'Loans', label: 'Loans' },
     { value: 'Grants', label: 'Grants' },

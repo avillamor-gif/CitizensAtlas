@@ -254,7 +254,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
 
           // Extract IFI Safeguards
           const ifiSafeguards: Record<string, {environment: string, involuntaryResettlement: string, indigenousPeoples: string}> = {};
-          const ifis = ['ADB', 'AIIB', 'GCF', 'GIZ', 'JICA', 'KOICA', 'IFC/ WB', 'Others'];
+          const ifis = ['ADB', 'AIIB', 'GCF', 'GIZ', 'JICA', 'KOICA', 'IFC/WB', 'Others'];
           
           ifis.forEach(ifi => {
             const environment = getRowValue(row, [`${ifi} - Environment`]) || '';
@@ -298,7 +298,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
             'GIZ': ['IFI - GIZ (X/Yes)', 'IFI - GIZ'],
             'JICA': ['IFI - JICA (X/Yes)', 'IFI - JICA'],
             'KOICA': ['IFI - KOICA (X/Yes)', 'IFI - KOICA'],
-            'IFC/ WB': ['IFI - IFC/ WB (X/Yes)', 'IFI - IFC/ WB'],
+            'IFC/WB': ['IFI - IFC/WB (X/Yes)', 'IFI - IFC/WB'],
             'Others': ['IFI - Others (X/Yes)', 'IFI - Others'],
           });
 
