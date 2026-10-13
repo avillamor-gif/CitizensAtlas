@@ -671,6 +671,14 @@ const getDetailValue = (detailsMap: Map<string, string>, keys: string[]) => {
     return '';
 };
 
+// Helper to remove NA/N/A values for form display (NA should only appear in output, not in form fields)
+const cleanNAForForm = (value: string | undefined): string => {
+    if (!value) return '';
+    const trimmed = value.trim();
+    if (trimmed === 'NA' || trimmed === 'N/A') return '';
+    return trimmed;
+};
+
 const parseFundingRows = (detailsMap: Map<string, string>, totalAmountNum: number): FundingRow[] => {
     const fundingSourceRaw = detailsMap.get('Funding Source') || '';
     const parsedFromFundingSource = fundingSourceRaw
@@ -953,40 +961,40 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                 latitude,
                 longitude,
                 projectName: sourceProject.title || '',
-                projectNumber: detailsMap.get('Project Number') || '',
+                projectNumber: cleanNAForForm(detailsMap.get('Project Number')) || '',
                 falseSolutions: savedFalseSolutions
                     ? savedFalseSolutions.split(',').map(s => s.trim()).filter(Boolean)
                     : [''],
                 selectedIFIs: parseCommaSeparatedList(detailsMap.get('IFI')),
-                financialInstrumentsText: detailsMap.get('Financial Instruments') || '',
-                otherFinanciers: detailsMap.get('Other Financiers') || '',
-                fundingSourceText: detailsMap.get('Funding Source') || '',
-                projectAmount: (detailsMap.get('Total Project Amount') || '0').replace(/[^0-9.]/g, ''),
+                financialInstrumentsText: cleanNAForForm(detailsMap.get('Financial Instruments')) || '',
+                otherFinanciers: cleanNAForForm(detailsMap.get('Other Financiers')) || '',
+                fundingSourceText: cleanNAForForm(detailsMap.get('Funding Source')) || '',
+                projectAmount: (cleanNAForForm(detailsMap.get('Total Project Amount')) || '0').replace(/[^0-9.]/g, ''),
                 fundingRows,
-                owner: detailsMap.get('Owner') || '',
-                privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => s.trim()) || [''],
-                economicCooperationOrPrograms: detailsMap.get('Economic Cooperation or Programs') || '',
-                otherImplementors: detailsMap.get('Other Implementors') || '',
+                owner: cleanNAForForm(detailsMap.get('Owner')) || '',
+                privateSectorBorrowers: detailsMap.get('Private Sector Borrowers')?.split(', ').map(s => cleanNAForForm(s)) || [''],
+                economicCooperationOrPrograms: cleanNAForForm(detailsMap.get('Economic Cooperation or Programs')) || '',
+                otherImplementors: cleanNAForForm(detailsMap.get('Other Implementors')) || '',
                 ifiSafeguards,
-                projectDescription: getDetailValue(detailsMap, ['Project Description', 'Description']) || '',
-                projectStatus: getDetailValue(detailsMap, ['Project Status', 'Status']) || '',
+                projectDescription: cleanNAForForm(getDetailValue(detailsMap, ['Project Description', 'Description'])) || '',
+                projectStatus: cleanNAForForm(getDetailValue(detailsMap, ['Project Status', 'Status'])) || '',
                 approvalDate: sourceProject.date || '',
-                startDate: detailsMap.get('Start Date') || '',
-                endDate: detailsMap.get('End Date') || '',
+                startDate: cleanNAForForm(detailsMap.get('Start Date')) || '',
+                endDate: cleanNAForForm(detailsMap.get('End Date')) || '',
                 publishDate: sourceProject.publishDate || '',
-                environmental: detailsMap.get('Environmental Category')?.split(', ').map(s => s.trim()) || [''],
-                socialSafeguard: detailsMap.get('Social Safeguard')?.split(', ').map(s => s.trim()) || [''],
-                keyDocuments: detailsMap.get('Key Documents') || '',
-                groupsInOpposition: detailsMap.get('Groups in Opposition')?.split(', ').map(s => s.trim()) || [''],
-                typesOfActions: detailsMap.get('Types of Actions') || '',
-                linksToActions: detailsMap.get('Links to Actions') || '',
-                activeGaiAASupport: detailsMap.get('Active GAIA Support') || '',
-                notes: detailsMap.get('Notes') || '',
-                references: detailsMap.get('References') || '',
-                genderConcerns: detailsMap.get('Gender Concerns') || '',
-                wasteWorkers: detailsMap.get('Waste Workers') || '',
-                displacement: detailsMap.get('Resettlement') || detailsMap.get('Displacement') || '',
-                remarks: detailsMap.get('Remarks') || '',
+                environmental: (detailsMap.get('Environmental Category') || '').split(', ').map(s => cleanNAForForm(s)).filter(Boolean) || [''],
+                socialSafeguard: (detailsMap.get('Social Safeguard') || '').split(', ').map(s => cleanNAForForm(s)).filter(Boolean) || [''],
+                keyDocuments: cleanNAForForm(detailsMap.get('Key Documents')) || '',
+                groupsInOpposition: (detailsMap.get('Groups in Opposition') || '').split(', ').map(s => cleanNAForForm(s)).filter(Boolean) || [''],
+                typesOfActions: cleanNAForForm(detailsMap.get('Types of Actions')) || '',
+                linksToActions: cleanNAForForm(detailsMap.get('Links to Actions')) || '',
+                activeGaiAASupport: cleanNAForForm(detailsMap.get('Active GAIA Support')) || '',
+                notes: cleanNAForForm(detailsMap.get('Notes')) || '',
+                references: cleanNAForForm(detailsMap.get('References')) || '',
+                genderConcerns: cleanNAForForm(detailsMap.get('Gender Concerns')) || '',
+                wasteWorkers: cleanNAForForm(detailsMap.get('Waste Workers')) || '',
+                displacement: cleanNAForForm(detailsMap.get('Resettlement') || detailsMap.get('Displacement')) || '',
+                remarks: cleanNAForForm(detailsMap.get('Remarks')) || '',
             });
             
             setIsLoadingData(false);
