@@ -284,7 +284,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
             'Plastic to Nuclear Energy': ['False Solution - Plastic to Nuclear Energy (X/Yes)', 'False Solution - Plastic to Nuclear Energy'],
             'Chemical Recycling': ['False Solution - Chemical Recycling (X/Yes)', 'False Solution - Chemical Recycling'],
             'Carbon Capture on Landfill': ['False Solution - Carbon Capture on Landfill (X/Yes)', 'False Solution - Carbon Capture on Landfill'],
-            'Refuse-derived fuel': ['False Solution - Refuse-derived fuel (X/Yes)', 'False Solution - Refuse-derived fuel'],
+            'Refuse-Derived Fuel': ['False Solution - Refuse-derived fuel (X/Yes)', 'False Solution - Refuse-derived fuel'],
             'Carbon Credits': ['False Solution - Carbon Credits (X/Yes)', 'False Solution - Carbon Credits'],
           });
 

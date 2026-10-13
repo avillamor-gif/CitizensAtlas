@@ -104,7 +104,7 @@ function ADBPage() {
             <p>
               GAIA AP surveyed 48 false-solutions projects. The vast majority are linked with or
               advocate for incineration with or without energy conversion, pyrolysis, or
-              plastic-to-fuel. A minority endorse refuse-derived fuel and other specious recycling
+              plastic-to-fuel. A minority endorse Refuse-Derived Fuel and other specious recycling
               solutions. ADB's loan-heavy lending toward these projects adds materially to the debt
               burden of developing economies in the region.
             </p>

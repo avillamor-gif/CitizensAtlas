@@ -85,7 +85,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             'False Solution - Plastic to Nuclear Energy (X/Yes)',
             'False Solution - Chemical Recycling (X/Yes)',
             'False Solution - Carbon Capture on Landfill (X/Yes)',
-            'False Solution - Refuse-derived fuel (X/Yes)',
+            'False Solution - Refuse-Derived Fuel (X/Yes)',
             'False Solution - Carbon Credits (X/Yes)',
             'Project Description',
             'Approval Date*',

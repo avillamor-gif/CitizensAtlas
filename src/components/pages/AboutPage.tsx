@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 const trackedTechnologies = [
   'Waste-to-energy (WTE) incineration, including the burning of mixed, organic and medical waste',
-  'Refuse-derived fuel (RDF)',
+  'Refuse-Derived Fuel (RDF)',
   'Advanced and chemical plastic recycling',
   'Plastic and carbon credit schemes',
   'Bioplastics',

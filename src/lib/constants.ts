@@ -25,7 +25,7 @@ export const donutChartData: PieData[] = [
   { name: 'Waste-to-Energy', value: 45 },
   { name: 'Plastic-to-Fuel Technologies', value: 25 },
   { name: 'Chemical Recycling', value: 20 },
-  { name: 'Refuse-derived fuel', value: 10 },
+  { name: 'Refuse-Derived Fuel', value: 10 },
 ];
 
 export const newsData: Article[] = [
@@ -67,7 +67,8 @@ export const solutionTypeColors: { readonly [key: string]: { readonly hex: strin
     'Plastic to Nuclear Energy': { hex: '#8b5cf6', tailwind: 'bg-violet-500' },
     'Chemical Recycling': { hex: '#ec4899', tailwind: 'bg-pink-500' },
     'Carbon Capture on Landfill': { hex: '#f43f5e', tailwind: 'bg-rose-500' },
-    'Refuse-derived fuel': { hex: '#6366f1', tailwind: 'bg-indigo-500' },
+    'Refuse-Derived Fuel': { hex: '#6366f1', tailwind: 'bg-indigo-500' },
+    'Pyrolysis': { hex: '#f59e0b', tailwind: 'bg-amber-500' },
     'Carbon Credits': { hex: '#14b8a6', tailwind: 'bg-teal-500' },
     'default': { hex: '#3b82f6', tailwind: 'bg-blue-500' }
 };
@@ -113,7 +114,10 @@ export const normalizeSolutionType = (rawType: string): string => {
         return 'Carbon Capture on Landfill';
     }
     if (lower.includes('refuse-derived') && lower.includes('fuel')) {
-        return 'Refuse-derived fuel';
+        return 'Refuse-Derived Fuel';
+    }
+    if (lower.includes('pyrolysis')) {
+        return 'Pyrolysis';
     }
     if (lower.includes('carbon credit') && !lower.includes('plastic')) {
         return 'Carbon Credits';
@@ -388,7 +392,7 @@ A large-scale carbon offsetting project has been criticized for failing to obtai
         title: 'THE BILLIONAIRE TYCOON WHO BURNED THE FOREST: PALM OIL MOGUL SENTENCED TO 15 YEARS IN INDONESIA\'S \'BIGGEST\' CORRUPTION CASE INVOLVING DEFORESTATION AND MONEY LAUNDERING', 
         date: 'November 2023',
         publishDate: '2023-11-15',
-        corruptionType: 'Refuse-derived fuel', 
+        corruptionType: 'Refuse-Derived Fuel', 
         latitude: -0.7893, 
         longitude: 113.9213,
         details: `
@@ -695,7 +699,7 @@ Financial regulator press releases, technology news sites.
         country: 'PHILIPPINES',
         title: 'MANILA BAY RECLAMATION PROJECT LINKED TO PROCUREMENT IRREGULARITIES AND GREENWASHING',
         date: 'April 2023',
-        corruptionType: 'Refuse-derived fuel',
+        corruptionType: 'Refuse-Derived Fuel',
         latitude: 14.5995,
         longitude: 120.9842,
         details: `
@@ -851,7 +855,7 @@ Forensic accounting reports, court filings.
         country: 'MEXICO',
         title: 'ECO-TOURISM DEVELOPMENT IN CANCÚN ACCUSED OF GREENWASHING AND VIOLATING INDIGENOUS LAND RIGHTS',
         date: 'December 2023',
-        corruptionType: 'Refuse-derived fuel',
+        corruptionType: 'Refuse-Derived Fuel',
         latitude: 21.1619,
         longitude: -86.8515,
         details: `
@@ -968,7 +972,7 @@ NGO reports, satellite data on forest loss.
         country: 'TURKEY',
         title: 'ISTANBUL CANAL PROJECT RIDDLED WITH PROCUREMENT CORRUPTION AND EMBEZZLEMENT',
         date: 'September 2023',
-        corruptionType: 'Refuse-derived fuel',
+        corruptionType: 'Refuse-Derived Fuel',
         latitude: 41.0082,
         longitude: 28.9784,
         details: `
@@ -1007,7 +1011,7 @@ Opposition party reports, independent geological surveys.
         country: 'EGYPT',
         title: 'NEW ADMINISTRATIVE CAPITAL INFRASTRUCTURE PROJECTS BENEFIT COMPANIES WITH UNDUE INFLUENCE',
         date: 'August 2023',
-        corruptionType: 'Refuse-derived fuel',
+        corruptionType: 'Refuse-Derived Fuel',
         latitude: 30.0444,
         longitude: 31.2357,
         details: `
@@ -1086,7 +1090,7 @@ Satellite imagery analysis, community testimonies, academic studies.
         const cities = ['Buenos Aires', 'Dhaka', 'Phnom Penh', 'Santiago', 'Quito', 'Accra', 'Kuala Lumpur', 'Bucharest', 'Colombo', 'Seoul'];
         const latitudes = [-34.60, 23.81, 11.55, -33.44, -0.18, 5.60, 3.13, 44.42, 6.92, 37.56];
         const longitudes = [-58.38, 90.41, 104.92, -70.66, -78.46, -0.18, 101.68, 26.10, 79.86, 126.97];
-        const corruptionTypes = ['Waste-to-Energy', 'Plastic-to-Fuel Technologies', 'Chemical Recycling', 'Refuse-derived fuel'];
+        const corruptionTypes = ['Waste-to-Energy', 'Plastic-to-Fuel Technologies', 'Chemical Recycling', 'Refuse-Derived Fuel'];
         const projectTypes = ['Waste-to-energy plant', 'Chemical recycling facility', 'Landfill expansion', 'Biomass power plant', 'Hydroelectric dam', 'Carbon offset scheme', 'Industrial park', 'Port expansion', 'Monoculture plantation'];
         const ifis = ['World Bank', 'ADB', 'AIIB', 'JICA', 'EIB', 'AfDB', 'USAID', 'N/A'];
         const statuses = ['Proposed', 'Active', 'Cancelled', 'Inactive'];
