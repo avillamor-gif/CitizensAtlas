@@ -2023,81 +2023,66 @@ ${referencesValue}
                                     indigenousPeoples: ''
                                 };
                                 
+                                // Use "Environmental and Social Risk" for IFC/WB and AIIB
+                                const environmentLabel = (ifiName === 'IFC/WB' || ifiName === 'AIIB') ? 'Environmental and Social Risk' : 'Environment';
+                                
                                 return (
                                     <div key={fundingIndex} className="border rounded-lg p-4 bg-gray-50">
                                         <h4 className="font-semibold text-brand-dark-blue mb-3">{ifiName}</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                                             <div>
-                                                <Label className="text-sm font-medium text-gray-700">Environment</Label>
-                                                <Select 
-                                                    value={safeguard.environment || undefined}
-                                                    onValueChange={(value) => {
+                                                <Label className="text-sm font-medium text-gray-700">{environmentLabel}</Label>
+                                                <input
+                                                    type="text"
+                                                    value={safeguard.environment || ''}
+                                                    onChange={(e) => {
                                                         setFormData(prev => ({
                                                             ...prev,
                                                             ifiSafeguards: {
                                                                 ...prev.ifiSafeguards,
-                                                                [ifiName]: { ...safeguard, environment: value }
+                                                                [ifiName]: { ...safeguard, environment: e.target.value }
                                                             }
                                                         }));
                                                     }}
-                                                >
-                                                    <SelectTrigger className="mt-1">
-                                                        <SelectValue placeholder="Select Category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {environmentalCategories.map(cat => (
-                                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                    placeholder="Enter category"
+                                                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-dark-blue"
+                                                />
                                             </div>
                                             <div>
                                                 <Label className="text-sm font-medium text-gray-700">Involuntary Resettlement</Label>
-                                                <Select 
-                                                    value={safeguard.involuntaryResettlement || undefined}
-                                                    onValueChange={(value) => {
+                                                <input
+                                                    type="text"
+                                                    value={safeguard.involuntaryResettlement || ''}
+                                                    onChange={(e) => {
                                                         setFormData(prev => ({
                                                             ...prev,
                                                             ifiSafeguards: {
                                                                 ...prev.ifiSafeguards,
-                                                                [ifiName]: { ...safeguard, involuntaryResettlement: value }
+                                                                [ifiName]: { ...safeguard, involuntaryResettlement: e.target.value }
                                                             }
                                                         }));
                                                     }}
-                                                >
-                                                    <SelectTrigger className="mt-1">
-                                                        <SelectValue placeholder="Select Category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {socialSafeguardCategories.map(cat => (
-                                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                    placeholder="Enter category"
+                                                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-dark-blue"
+                                                />
                                             </div>
                                             <div>
                                                 <Label className="text-sm font-medium text-gray-700">Indigenous Peoples</Label>
-                                                <Select 
-                                                    value={safeguard.indigenousPeoples || undefined}
-                                                    onValueChange={(value) => {
+                                                <input
+                                                    type="text"
+                                                    value={safeguard.indigenousPeoples || ''}
+                                                    onChange={(e) => {
                                                         setFormData(prev => ({
                                                             ...prev,
                                                             ifiSafeguards: {
                                                                 ...prev.ifiSafeguards,
-                                                                [ifiName]: { ...safeguard, indigenousPeoples: value }
+                                                                [ifiName]: { ...safeguard, indigenousPeoples: e.target.value }
                                                             }
                                                         }));
                                                     }}
-                                                >
-                                                    <SelectTrigger className="mt-1">
-                                                        <SelectValue placeholder="Select Category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {socialSafeguardCategories.map(cat => (
-                                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                    placeholder="Enter category"
+                                                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-dark-blue"
+                                                />
                                             </div>
                                         </div>
                                     </div>
