@@ -1532,7 +1532,7 @@ ${referencesValue}
                             ))}
                         </div>
                     </FormField>
-                    <FormField label="Project description">
+                    <FormField label="Project Description">
                         <div className="mb-24 relative z-20">
                             <TiptapEditor
                                 value={formData.projectDescription}
@@ -2068,13 +2068,31 @@ ${referencesValue}
 
                         <SectionTitle>Just Transition Indicators</SectionTitle>
                         <FormField label="Gender concerns">
-                            <Textarea name="genderConcerns" value={formData.genderConcerns} onChange={handleInputChange} rows={3} />
+                            <div className="mb-24 relative z-20">
+                                <TiptapEditor
+                                    value={formData.genderConcerns}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, genderConcerns: value }))}
+                                    height="300px"
+                                />
+                            </div>
                         </FormField>
                         <FormField label="Waste workers">
-                            <Textarea name="wasteWorkers" value={formData.wasteWorkers} onChange={handleInputChange} rows={3} />
+                            <div className="mb-24 relative z-20">
+                                <TiptapEditor
+                                    value={formData.wasteWorkers}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, wasteWorkers: value }))}
+                                    height="300px"
+                                />
+                            </div>
                         </FormField>
                         <FormField label="Resettlement">
-                            <Textarea name="displacement" value={formData.displacement} onChange={handleInputChange} rows={3} />
+                            <div className="mb-24 relative z-20">
+                                <TiptapEditor
+                                    value={formData.displacement}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, displacement: value }))}
+                                    height="300px"
+                                />
+                            </div>
                         </FormField>
                         
                         <SectionTitle>Community Opposition & Actions</SectionTitle>
@@ -2147,10 +2165,22 @@ ${referencesValue}
                         
                         <SectionTitle>Additional Information</SectionTitle>
                         <FormField label="Notes">
-                            <Textarea name="notes" value={formData.notes} onChange={handleInputChange} rows={3} />
+                            <div className="mb-24 relative z-20">
+                                <TiptapEditor
+                                    value={formData.notes}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, notes: value }))}
+                                    height="300px"
+                                />
+                            </div>
                         </FormField>
                         <FormField label="References">
-                            <Textarea name="references" value={formData.references} onChange={handleInputChange} rows={3} />
+                            <div className="mb-24 relative z-20">
+                                <TiptapEditor
+                                    value={formData.references}
+                                    onChange={(value) => setFormData(prev => ({ ...prev, references: value }))}
+                                    height="300px"
+                                />
+                            </div>
                         </FormField>
                     </div>
                     <div className="p-6 bg-gray-50 border-t rounded-b-lg space-y-4">
