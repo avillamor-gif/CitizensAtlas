@@ -325,7 +325,6 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                 'Links to Actions': 'NA',
                 'Notes': 'NA',
                 'References': 'NA',
-                'Status': project.status || 'NA',
                 'Publish Date': project.publishDate || 'NA',
             };
 
