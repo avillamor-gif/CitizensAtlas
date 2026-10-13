@@ -228,7 +228,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const fundingSource = getRowValue(row, ['Funding Source', 'Funding source']);
           const financialInstruments = getRowValue(row, ['Financial Instruments (comma-separated amounts)', 'Financial Instruments']);
           const sector = getRowValue(row, ['Sector']);
-          const owner = getRowValue(row, ['Owner (Public/ Private / PPP)', 'Owner']);
+          const owner = getRowValue(row, ['Owner (Public/Private/PPP)', 'Owner (Public/ Private / PPP)', 'Owner']);
           const privateSectorBorrowers = getCsvValue(row, ['Private Sector Borrower (comma-separated)', 'Private Sector Borrowers (comma-separated)', 'Private Sector Borrowers']);
           const economicCooperationOrPrograms = getRowValue(row, ['Economic Cooperation or Programs']);
           const otherImplementors = getRowValue(row, ['Other Implementors']);
