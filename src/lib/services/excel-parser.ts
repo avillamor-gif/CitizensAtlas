@@ -222,7 +222,7 @@ export function parseProjectsExcel(file: File): Promise<ParseResult<Omit<Project
           const region = getRowValue(row, ['Region']);
           const city = getRowValue(row, ['City/ies', 'City']);
           const projectNumber = getRowValue(row, ['Project Number']);
-          const totalProjectAmount = getRowValue(row, ['Total Project Amount', 'Project Amount']);
+          const totalProjectAmount = getRowValue(row, ['Total Project Amount (in millions of USD)', 'Total project amount in M USD', 'Total Project Amount', 'Project Amount']);
           const ifiText = getRowValue(row, ['International Financial Institution (IFI) (comma-separated)', 'International financial institution (IFI)', 'IFI']);
           const ifiOther = getRowValue(row, ['Other IFI']);
           const fundingSource = getRowValue(row, ['Funding Source', 'Funding source']);
