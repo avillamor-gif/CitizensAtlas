@@ -1931,17 +1931,17 @@ ${referencesValue}
                             </FormField>
                         </div>
 
+                        <div>
+                            <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
+                            <Input 
+                                type="text" 
+                                value={formData.owner || ''} 
+                                onChange={(e) => handleSelectChange('owner', e.target.value)}
+                                placeholder="e.g., Public, Private, PPP"
+                                className="mt-1"
+                            />
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <Label className="text-sm font-medium text-gray-700">Owner (Public/ Private / PPP) <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
-                                <Input 
-                                    type="text" 
-                                    value={formData.owner || ''} 
-                                    onChange={(e) => handleSelectChange('owner', e.target.value)}
-                                    placeholder="e.g., Public, Private, PPP"
-                                    className="mt-1"
-                                />
-                            </div>
                             <div>
                                 <Label className="text-sm font-medium text-gray-700">Private Sector Borrower <span className="text-gray-500 text-xs">separate-by-commas</span></Label>
                                 <Input 
