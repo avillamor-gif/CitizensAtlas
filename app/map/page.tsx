@@ -57,7 +57,10 @@ export default function Map() {
       .flatMap(p => p.country ? p.country.split(',').map(c => c.trim()).filter(c => c !== '') : [])
     )).sort()]
     const solutionTypes = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
-    const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
+    const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => {
+      const ifiString = parseDetail(p.details, 'IFI') || 'N/A';
+      return ifiString.split(',').map(ifi => ifi.trim()).filter(ifi => ifi && ifi !== 'N/A').map(ifi => getIfiAbbreviation(ifi));
+    }).filter(ifi => ifi && ifi !== 'N/A')))]
     const projectStatuses = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
 
     return {

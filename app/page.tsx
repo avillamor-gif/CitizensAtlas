@@ -1165,7 +1165,10 @@ function HomePageContent() {
     
     const countries = ['all', ...uniqueCountries]
     const solutionTypes = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => p.corruptionType.split(',').map((s: string) => s.trim()).filter(s => s !== ''))))]
-    const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => getIfiAbbreviation(parseDetail(p.details, 'IFI') || 'N/A')).filter(ifi => ifi && ifi !== 'N/A')))]
+    const ifis = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).flatMap(p => {
+      const ifiString = parseDetail(p.details, 'IFI') || 'N/A';
+      return ifiString.split(',').map(ifi => ifi.trim()).filter(ifi => ifi && ifi !== 'N/A').map(ifi => getIfiAbbreviation(ifi));
+    }).filter(ifi => ifi && ifi !== 'N/A')))]
     const projectStatuses = ['all', ...Array.from(new Set(projects.filter(p => p.status === 'published' || p.status === undefined).map(p => parseDetail(p.details, 'Project Status')).filter(status => status && status !== '')))]
     return { countries, solutionTypes, ifis, projectStatuses }
   }, [projects])
@@ -1197,7 +1200,11 @@ function HomePageContent() {
       const countryMatch = filters.country === 'all' || projectCountries.includes(filters.country)
       
       const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType)
-      const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi
+      const projectIfis = (parseDetail(project.details, 'IFI') || 'N/A')
+        .split(',')
+        .map(ifi => ifi.trim())
+        .map(ifi => getIfiAbbreviation(ifi))
+      const ifiMatch = filters.ifi === 'all' || projectIfis.includes(filters.ifi)
       const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus
 
       return publishedMatch && countryMatch && solutionMatch && ifiMatch && statusMatch

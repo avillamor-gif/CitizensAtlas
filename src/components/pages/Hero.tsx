@@ -148,7 +148,11 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
             const countryMatch = filters.country === 'all' || projectCountries.includes(filters.country.toLowerCase().trim());
             
             const solutionMatch = filters.solutionType === 'all' || project.corruptionType.includes(filters.solutionType);
-            const ifiMatch = filters.ifi === 'all' || getIfiAbbreviation(parseDetail(project.details, 'IFI') || 'N/A') === filters.ifi;
+            const projectIfis = (parseDetail(project.details, 'IFI') || 'N/A')
+                .split(',')
+                .map(ifi => ifi.trim())
+                .map(ifi => getIfiAbbreviation(ifi));
+            const ifiMatch = filters.ifi === 'all' || projectIfis.includes(filters.ifi);
             const statusMatch = filters.projectStatus === 'all' || parseDetail(project.details, 'Project Status') === filters.projectStatus;
 
             return publishedMatch && countryMatch && solutionMatch && ifiMatch && statusMatch;
