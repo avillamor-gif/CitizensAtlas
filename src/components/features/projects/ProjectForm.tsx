@@ -799,14 +799,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
     const [formData, setFormData] = useState({ ...emptyFormState, publishDate: today });
     const [isLoadingData, setIsLoadingData] = useState(isEditMode);
-    const [environmentalCategories, setEnvironmentalCategories] = useState(['Category A', 'Category B', 'Category C', 'N/A']);
-    const [socialSafeguardCategories, setSocialSafeguardCategories] = useState(['Category A', 'Category B', 'Category C', 'N/A']);
-    const [showAddEnvironmentalCategory, setShowAddEnvironmentalCategory] = useState(false);
-    const [showAddSocialSafeguardCategory, setShowAddSocialSafeguardCategory] = useState(false);
-    const [newEnvironmentalCategory, setNewEnvironmentalCategory] = useState('');
-    const [newSocialSafeguardCategory, setNewSocialSafeguardCategory] = useState('');
-    const [showManageEnvironmentalCategories, setShowManageEnvironmentalCategories] = useState(false);
-    const [showManageSocialSafeguardCategories, setShowManageSocialSafeguardCategories] = useState(false);
     const [cityProvinceMap, setCityProvinceMap] = useState<Record<string, string>>({});
     const [countrySearch, setCountrySearch] = useState('');
     const [regionSearch, setRegionSearch] = useState('');
@@ -1318,44 +1310,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         if (list.length > 1) {
             list.splice(index, 1);
             setFormData(prev => ({ ...prev, [field]: list }));
-        }
-    };
-
-    const handleAddEnvironmentalCategory = () => {
-        if (newEnvironmentalCategory.trim()) {
-            setEnvironmentalCategories(prev => [...prev, newEnvironmentalCategory.trim()]);
-            setNewEnvironmentalCategory('');
-            setShowAddEnvironmentalCategory(false);
-        }
-    };
-
-    const handleAddSocialSafeguardCategory = () => {
-        if (newSocialSafeguardCategory.trim()) {
-            setSocialSafeguardCategories(prev => [...prev, newSocialSafeguardCategory.trim()]);
-            setNewSocialSafeguardCategory('');
-            setShowAddSocialSafeguardCategory(false);
-        }
-    };
-
-    const handleDeleteEnvironmentalCategory = (categoryToDelete: string) => {
-        if (window.confirm(`Are you sure you want to delete "${categoryToDelete}"?`)) {
-            setEnvironmentalCategories(prev => prev.filter(cat => cat !== categoryToDelete));
-            // Also remove from form data if selected
-            setFormData(prev => ({
-                ...prev,
-                environmental: prev.environmental.map(env => env === categoryToDelete ? '' : env)
-            }));
-        }
-    };
-
-    const handleDeleteSocialSafeguardCategory = (categoryToDelete: string) => {
-        if (window.confirm(`Are you sure you want to delete "${categoryToDelete}"?`)) {
-            setSocialSafeguardCategories(prev => prev.filter(cat => cat !== categoryToDelete));
-            // Also remove from form data if selected
-            setFormData(prev => ({
-                ...prev,
-                socialSafeguard: prev.socialSafeguard.map(safeguard => safeguard === categoryToDelete ? '' : safeguard)
-            }));
         }
     };
 
@@ -2093,22 +2047,6 @@ ${referencesValue}
                                     Add IFIs in the Financials section to configure social safeguards
                                 </div>
                             )}
-                        </div>
-                        <div className="mt-4">
-                            <button 
-                                type="button" 
-                                onClick={() => setShowAddEnvironmentalCategory(true)} 
-                                className="text-sm text-brand-medium-blue hover:underline"
-                            >
-                                + Add more Social Safeguard
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setShowManageEnvironmentalCategories(!showManageEnvironmentalCategories)}
-                                className="text-sm text-brand-medium-blue hover:underline ml-4"
-                            >
-                                - Manage Social Safeguard
-                            </button>
                         </div>
                         <FormField label="Key documents URL">
                             <div className="mb-24 relative z-20">
