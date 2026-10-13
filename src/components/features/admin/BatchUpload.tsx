@@ -290,6 +290,56 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
         }
     };
 
+    const parseDetail = (detailsText: string, fieldName: string): string => {
+        const regex = new RegExp(`\\*\\*${fieldName}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm');
+        const match = detailsText.match(regex);
+        return match && match[1] ? match[1].trim() : 'NA';
+    };
+
+    const parseSafeguardFields = (detailsText: string): Record<string, string> => {
+        const safeguardData: Record<string, string> = {};
+        const ifiSafeguardsMatch = detailsText.match(/\*\*IFI Safeguards:\*\*\s*([\s\S]*?)(?=\n\*\*|---|\n---|\$)/);
+        
+        if (ifiSafeguardsMatch && ifiSafeguardsMatch[1]) {
+            const safeguardsText = ifiSafeguardsMatch[1];
+            const ifiEntries = safeguardsText.split(/\n(?=[A-Z])/);
+            
+            ifiEntries.forEach(entry => {
+                const lines = entry.split('\n').filter(l => l.trim());
+                if (lines.length > 0) {
+                    const ifiName = lines[0].trim();
+                    
+                    // Map IFI names to display names
+                    let displayName = ifiName;
+                    if (ifiName.startsWith('ADB')) displayName = 'ADB';
+                    else if (ifiName.startsWith('AIIB')) displayName = 'AIIB';
+                    else if (ifiName.startsWith('GCF')) displayName = 'GCF';
+                    else if (ifiName.startsWith('GIZ')) displayName = 'GIZ';
+                    else if (ifiName.startsWith('JICA')) displayName = 'JICA';
+                    else if (ifiName.startsWith('KOICA')) displayName = 'KOICA';
+                    else if (ifiName.startsWith('IFC')) displayName = 'IFC/ WB';
+                    else if (ifiName.startsWith('Others')) displayName = 'Others';
+                    
+                    // Extract environment/safeguard values
+                    lines.slice(1).forEach(line => {
+                        if (line.includes('Environment')) {
+                            const value = line.split('-').slice(1).join('-').trim();
+                            safeguardData[`${displayName} - Environment`] = value || 'NA';
+                        } else if (line.includes('Involuntary Resettlement')) {
+                            const value = line.split('-').slice(1).join('-').trim();
+                            safeguardData[`${displayName} - Involuntary Resettlement`] = value || 'NA';
+                        } else if (line.includes('Indigenous Peoples')) {
+                            const value = line.split('-').slice(1).join('-').trim();
+                            safeguardData[`${displayName} - Indigenous Peoples`] = value || 'NA';
+                        }
+                    });
+                }
+            });
+        }
+        
+        return safeguardData;
+    };
+
     const expandParsedDataForPreview = (projects: any[]) => {
         return projects.map(project => {
             const expandedData: Record<string, any> = {
@@ -352,19 +402,45 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                 'Publish Date': project.publishDate || 'NA',
             };
 
-            // Parse details string to extract individual fields
+            // Parse details string to extract fields
             if (project.details) {
                 const detailsText = project.details;
-                Object.keys(expandedData).forEach(field => {
-                    // Special handling for fields that already have values
-                    if (field === 'Project Name' || field === 'Country' || field === 'False Solution Type' || field === 'Status' || field === 'Publish Date') {
-                        return;
-                    }
-                    
-                    const regex = new RegExp(`\\*\\*${field}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm');
-                    const match = detailsText.match(regex);
-                    if (match && match[1] && match[1].trim()) {
-                        expandedData[field] = match[1].trim().substring(0, 100);
+                
+                // Extract simple fields from details
+                expandedData['Project Number'] = parseDetail(detailsText, 'Project Number');
+                expandedData['Project Status'] = parseDetail(detailsText, 'Project Status');
+                expandedData['Project Description'] = parseDetail(detailsText, 'Project Description');
+                expandedData['Approval Date'] = parseDetail(detailsText, 'Approval Date');
+                expandedData['Start Date'] = parseDetail(detailsText, 'Start Date');
+                expandedData['End Date'] = parseDetail(detailsText, 'End Date');
+                expandedData['Region'] = parseDetail(detailsText, 'Region');
+                expandedData['Other Countries/Territories'] = parseDetail(detailsText, 'Other Countries');
+                expandedData['Primary Region/City'] = parseDetail(detailsText, 'City');
+                expandedData['Remarks'] = parseDetail(detailsText, 'Remarks');
+                expandedData['International Financial Institution (IFI)'] = parseDetail(detailsText, 'IFI');
+                expandedData['Other Financiers'] = parseDetail(detailsText, 'Other Financiers');
+                expandedData['Funding Source'] = parseDetail(detailsText, 'Funding Source');
+                expandedData['Financial Instruments'] = parseDetail(detailsText, 'Financial Instruments');
+                expandedData['Total Project Amount'] = parseDetail(detailsText, 'Total Project Amount');
+                expandedData['Owner'] = parseDetail(detailsText, 'Owner');
+                expandedData['Private Sector Borrowers'] = parseDetail(detailsText, 'Private Sector Borrowers');
+                expandedData['Economic Cooperation or Programs'] = parseDetail(detailsText, 'Economic Cooperation or Programs');
+                expandedData['Other Implementors'] = parseDetail(detailsText, 'Other Implementors');
+                expandedData['Key Documents'] = parseDetail(detailsText, 'Key Documents');
+                expandedData['Gender Concerns'] = parseDetail(detailsText, 'Gender Concerns');
+                expandedData['Waste Workers'] = parseDetail(detailsText, 'Waste Workers');
+                expandedData['Resettlement'] = parseDetail(detailsText, 'Resettlement');
+                expandedData['Groups in Opposition'] = parseDetail(detailsText, 'Groups in Opposition');
+                expandedData['Types of Actions'] = parseDetail(detailsText, 'Types of Actions');
+                expandedData['Links to Actions'] = parseDetail(detailsText, 'Links to Actions');
+                expandedData['Notes'] = parseDetail(detailsText, 'Notes');
+                expandedData['References'] = parseDetail(detailsText, 'References');
+                
+                // Parse safeguard fields
+                const safeguardData = parseSafeguardFields(detailsText);
+                Object.entries(safeguardData).forEach(([key, value]) => {
+                    if (expandedData.hasOwnProperty(key)) {
+                        expandedData[key] = value;
                     }
                 });
             }
