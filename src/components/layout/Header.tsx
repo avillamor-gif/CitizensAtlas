@@ -66,24 +66,17 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
     return (
         <>
             <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
-                <div className="container mx-auto flex justify-between items-center">
+                <div className="container mx-auto flex justify-between items-center h-20">
                     <div className="flex-1 flex items-center gap-2 sm:gap-3">
                         <Link href="/">
                             <Image 
                                 src="/citizensatlas_logo.jpg" 
                                 alt="Citizens' Atlas Logo" 
-                                width={50}
-                                height={50}
-                                className="object-contain sm:w-[60px] sm:h-[60px] cursor-pointer hover:opacity-80 transition-opacity"
+                                width={80}
+                                height={80}
+                                className="object-contain h-full w-auto cursor-pointer hover:opacity-80 transition-opacity"
                                 priority
                             />
-                        </Link>
-                        {/* Hide text on mobile, show on tablet and up */}
-                        <Link href="/" className="text-left hidden sm:block">
-                            <h1 style={{fontWeight: 400, fontSize: 'clamp(20px, 5vw, 34px)', color: '#7cbe31', lineHeight: 1}}>
-                                Citizens' Atlas
-                            </h1>
-                            <p className="text-xs sm:text-sm" style={{ color: '#2f9030', lineHeight: 1 }}>on False Solutions to Climate and Circularity</p>
                         </Link>
                     </div>
 
