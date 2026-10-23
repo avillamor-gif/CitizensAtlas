@@ -39,7 +39,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
             </div>
             <div className="p-1">
                 <span style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }} className="text-xs font-bold px-2 py-1 inline-block mb-2">{item.category}</span>
-                 text-white group-hover:text-brand-yellow transition-colors">{item.title}</h4>
+                <h4 className="text-white group-hover:text-brand-yellow transition-colors">{item.title}</h4>
             </div>
         </button>
     </div>

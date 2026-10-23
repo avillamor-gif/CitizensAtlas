@@ -429,7 +429,7 @@ const PartnerPage: React.FC = () => {
                             </p>
 
                             <div>
-                                 mb-3 text-gray-900">How will we use your information?</h3>
+                                <h3 className="mb-3 text-gray-900">How will we use your information?</h3>
                                 <div className="space-y-3">
                                     <p>
                                         We may use the contact information you provide to <strong>get in touch with you about your submission</strong>, clarify information, or request additional details.
@@ -444,7 +444,7 @@ const PartnerPage: React.FC = () => {
                             </div>
 
                             <div>
-                                 mb-3 text-gray-900">Language and accessibility</h3>
+                                <h3 className="mb-3 text-gray-900">Language and accessibility</h3>
                                 <div className="space-y-3">
                                     <p>
                                         <strong>English is currently the primary language used by the Citizen's Atlas team, and our capacity to translate submissions is currently limited.</strong> However, we welcome submissions in local and regional languages. Please share information in the language you are most comfortable using.

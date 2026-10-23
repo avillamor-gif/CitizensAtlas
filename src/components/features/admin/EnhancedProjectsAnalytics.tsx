@@ -479,7 +479,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
     <div className="w-full space-y-6">
       {/* Header */}
       <div>
-         sm:text-2xl text-gray-900">Projects Analytics</h2>
+        <h2 className="text-lg sm:text-2xl text-gray-900">Projects Analytics</h2>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">
           Comprehensive analysis of {analyticsData.totalProjects} projects across {analyticsData.countryCount} countries
         </p>
