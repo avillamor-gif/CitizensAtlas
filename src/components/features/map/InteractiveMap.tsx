@@ -14,6 +14,24 @@ const legendData = Object.entries(solutionTypeColors)
     .filter(([key]) => key !== 'default')
     .map(([name, { tailwind }]) => ({ name, colorClass: tailwind }));
 
+// City abbreviation mappings for common shorthand in project data
+const cityAbbreviationMap: Record<string, Record<string, string>> = {
+    'Philippines': {
+        'QC': 'Quezon City',
+        'NCR': 'Manila',
+        'CDO': 'Cagayan de Oro',
+        'GenSan': 'General Santos',
+    },
+};
+
+// Helper to normalize city names (handle abbreviations)
+const normalizeCityName = (city: string, country: string): string => {
+    if (!city || !country) return city;
+    
+    const countryAbbreviations = cityAbbreviationMap[country] || {};
+    return countryAbbreviations[city] || city;
+};
+
 // Helper functions to parse project details
 const parseDetail = (details: string, key: string): string => {
     // Handle both single-line (same line as key) and multi-line (next line) content
@@ -38,13 +56,17 @@ const getLocationDisplay = (project: Project): string => {
     return country || 'Unknown Location';
 };
 
+
 // Enrich project with city coordinates from details if available
 const enrichProjectWithCityCoordinates = (project: Project): Project => {
-    const city = parseDetail(project.details, 'City').trim();
+    let city = parseDetail(project.details, 'City').trim();
     
     if (!city || !project.country) {
         return project;
     }
+
+    // Normalize city name (convert abbreviations to full names)
+    city = normalizeCityName(city, project.country);
 
     // Try to find city coordinates
     const cityKey = `${city}::${project.country}`;
@@ -526,15 +548,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         
                         let coords = null;
                         let displayName = '';
-                        let selectedCity = cityOrCountry;
+                        let selectedCity = cityOrCountry ? normalizeCityName(cityOrCountry, countryName || '') : null;
                         
                         // If no city in the entry (legacy format) but we have cities from details, try them
-                        if (!cityOrCountry && citiesFromDetails.length > 0) {
+                        if (!selectedCity && citiesFromDetails.length > 0) {
                             // Try each city from details to find one that matches this country
                             for (const city of citiesFromDetails) {
-                                const cityKey = `${city}::${countryName}`;
+                                const normalizedCity = normalizeCityName(city, countryName || '');
+                                const cityKey = `${normalizedCity}::${countryName}`;
                                 if (cityCoordinates[cityKey]) {
-                                    selectedCity = city;
+                                    selectedCity = normalizedCity;
                                     break;
                                 }
                             }
