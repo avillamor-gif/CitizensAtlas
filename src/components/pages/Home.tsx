@@ -49,6 +49,7 @@ const Home: React.FC<HomeProps> = (props) => {
 
     return (
         <div>
+            <h1 className="sr-only">Citizens' Atlas - Mapping False Solutions to Waste and Climate</h1>
             <Hero
             projects={props.projects}
             onAddProject={props.onAddProject}

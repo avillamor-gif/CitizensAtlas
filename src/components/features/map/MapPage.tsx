@@ -130,7 +130,12 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
     }, [projects, filters]);
 
     return (
-        <div className="flex w-full h-[calc(100dvh-56px)] md:h-[calc(100vh-80px)] bg-white">
+        <>
+            {/* Page Title - Screen reader only or minimal display */}
+            <h1 className="sr-only">Interactive Map</h1>
+            
+            {/* Map Page Container */}
+            <div className="flex w-full h-[calc(100dvh-56px)] md:h-[calc(100vh-80px)] bg-white">
             {/* Map Container - shrinks when details panel is open */}
             <div className={`flex-1 relative overflow-hidden transition-smooth-slide ${
                 selectedProject ? 'md:flex-[0_0_65%]' : 'flex-1'
@@ -294,7 +299,8 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                     userRole={(user?.role as 'contributor' | 'admin' | 'super-admin') || 'contributor'}
                 />
             )}
-        </div>
+            </div>
+        </>
     );
 };
 

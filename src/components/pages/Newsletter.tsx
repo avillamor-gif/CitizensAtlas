@@ -71,6 +71,8 @@ const Newsletter: React.FC = () => {
     return (
         <section className="py-16 px-4 sm:px-8 text-white border-t" style={{ backgroundColor: 'var(--deep)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
             <div className="container mx-auto text-left max-w-3xl">
+                <h2 className="mb-8">Stay Updated</h2>
+                
                 {message && (
                     <div className={`mb-6 p-4 rounded-md ${
                         message.type === 'success' 
