@@ -135,6 +135,7 @@ export const cityCoordinates: Record<string, { lat: number; lng: number; name: s
   'Beijing::Mainland China': { lat: 39.9042, lng: 116.4074, name: 'Beijing' },
   'Shanghai::Mainland China': { lat: 31.2304, lng: 121.4737, name: 'Shanghai' },
   'Guangzhou::Mainland China': { lat: 23.1291, lng: 113.2644, name: 'Guangzhou' },
+  'Changsha::Mainland China': { lat: 28.2282, lng: 112.9388, name: 'Changsha' },
 
   // Sri Lanka cities
   'Colombo::Sri Lanka': { lat: 6.9271, lng: 80.6368, name: 'Colombo' },
