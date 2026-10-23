@@ -18,7 +18,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
     <div className="flex-shrink-0 w-72">
         <button 
             onClick={() => onViewArticle(item, sourcePage)}
-            className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-yellow rounded-lg"
+            className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-orange rounded-lg"
         >
             <div className="bg-gray-300 h-40 mb-2 overflow-hidden rounded-lg relative">
                 <img
@@ -39,7 +39,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
             </div>
             <div className="p-1">
                 <span style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }} className="text-xs font-bold px-2 py-1 inline-block mb-2">{item.category}</span>
-                <h4 className="text-white group-hover:text-brand-yellow transition-colors">{item.title}</h4>
+                <h4 className="text-white group-hover:text-brand-orange transition-colors">{item.title}</h4>
             </div>
         </button>
     </div>
@@ -72,8 +72,8 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
     // Use isDarkTheme for text colors, fallback to hasBackground logic
     const textColor = isDarkTheme ? 'text-white' : (hasBackground ? 'text-white' : 'text-brand-dark-blue');
     const borderColor = isDarkTheme ? 'border-gray-600' : (hasBackground ? 'border-white' : 'border-gray-400');
-    const hoverColor = isDarkTheme ? 'hover:border-brand-yellow hover:text-brand-yellow' : (hasBackground ? 'hover:bg-white hover:text-brand-dark-blue' : 'hover:bg-gray-200');
-    const lineColor = isDarkTheme ? 'bg-brand-yellow' : (hasBackground ? 'bg-white' : 'bg-brand-dark-blue');
+    const hoverColor = isDarkTheme ? 'hover:border-brand-orange hover:text-brand-orange' : (hasBackground ? 'hover:bg-white hover:text-brand-dark-blue' : 'hover:bg-gray-200');
+    const lineColor = isDarkTheme ? 'bg-brand-orange' : (hasBackground ? 'bg-white' : 'bg-brand-dark-blue');
 
     return (
         <section className="py-12 px-4 sm:px-8 lg:px-16">
