@@ -559,7 +559,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
     return (
         <div className="bg-white rounded-lg shadow-sm p-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-brand-dark-blue mb-3">Batch Upload</h1>
+                <h1 className="text-brand-dark-blue mb-3">Batch Upload</h1>
                 <p className="text-gray-600">
                     Upload multiple items at once using Excel files. Download the template, fill it out, and upload it back.
                 </p>
@@ -593,7 +593,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
 
             {/* Download Template */}
             <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3">Step 1: Download Template</h2>
+                <h2 className="text-gray-800 mb-3">Step 1: Download Template</h2>
                 <p className="text-sm text-gray-600 mb-4">
                     Download the Excel template for {contentType}, fill in your data, and save the file.
                 </p>
@@ -639,7 +639,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
 
             {/* Upload File */}
             <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3">Step 2: Upload Filled Template</h2>
+                <h2 className="text-gray-800 mb-3">Step 2: Upload Filled Template</h2>
                 <p className="text-sm text-gray-600 mb-4">
                     Select your filled Excel file to preview and validate the data.
                 </p>
@@ -669,7 +669,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             </div>
 
             <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3">Or Import from Google Sheets</h2>
+                <h2 className="text-gray-800 mb-3">Or Import from Google Sheets</h2>
                 <p className="text-sm text-gray-600 mb-4">
                     Paste a public or shared Google Sheets link and import it directly without exporting the file manually.
                 </p>
@@ -701,7 +701,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                 <div className="mb-8 space-y-4">
                     {errors.length > 0 && (
                         <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <h3 className="font-semibold text-red-800 mb-2">Errors ({errors.length})</h3>
+                            <h3 className="text-red-800 mb-2">Errors ({errors.length})</h3>
                             <ul className="list-disc list-inside space-y-1 text-sm text-red-700">
                                 {errors.map((error, index) => (
                                     <li key={index}>{error}</li>
@@ -711,7 +711,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
                     )}
                     {warnings.length > 0 && (
                         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <h3 className="font-semibold text-yellow-800 mb-2">Warnings ({warnings.length})</h3>
+                            <h3 className="text-yellow-800 mb-2">Warnings ({warnings.length})</h3>
                             <ul className="list-disc list-inside space-y-1 text-sm text-yellow-700">
                                 {warnings.map((warning, index) => (
                                     <li key={index}>{warning}</li>
@@ -725,7 +725,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             {/* Preview Data */}
             {parsedData.length > 0 && (
                 <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    <h2 className="text-gray-800 mb-4">
                         Preview ({parsedData.length} items)
                     </h2>
                     <div className="overflow-x-auto overflow-y-auto border border-gray-200 rounded-lg" style={{ maxHeight: '500px' }}>
@@ -768,7 +768,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             {/* Upload Button */}
             {parsedData.length > 0 && errors.length === 0 && (
                 <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-800 mb-3">Step 3: Upload to Database</h2>
+                    <h2 className="text-gray-800 mb-3">Step 3: Upload to Database</h2>
                     <button
                         onClick={handleUpload}
                         disabled={isUploading}
@@ -787,7 +787,7 @@ const BatchUpload: React.FC<BatchUploadProps> = ({ onSuccess, projects = [] }) =
             {/* Upload Results */}
             {uploadResults && (
                 <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
-                    <h3 className="font-semibold text-green-800 mb-2">Upload Complete</h3>
+                    <h3 className="text-green-800 mb-2">Upload Complete</h3>
                     <p className="text-sm text-green-700">
                         Successfully uploaded {uploadResults.success} items.
                         {uploadResults.failed > 0 && ` ${uploadResults.failed} items failed.`}

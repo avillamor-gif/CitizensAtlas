@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from"@/lib/utils"
+import { Button } from"@/components/ui/button"
+import { Card, CardContent } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
 
 const RotatingGlobe = dynamic(() => import('./RotatingGlobe'), { ssr: false });
 
@@ -66,7 +66,7 @@ export function LoginForm({
           <form className="p-6 md:p-8" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+                <h1>Welcome back</h1>
                 <p className="text-balance text-muted-foreground">
                   Login to your Atlas account
                 </p>
@@ -145,7 +145,7 @@ export function LoginForm({
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
+                Don&apos;t have an account?{""}
                 <a href="/auth/signup" className="underline underline-offset-4">
                   Sign up
                 </a>
@@ -171,7 +171,7 @@ export function LoginForm({
               
               {/* Text */}
               <div className="text-center text-white px-8">
-                <h2 className="text-3xl font-bold mb-3 drop-shadow-lg">Citizens' Atlas</h2>
+                <h2 className="mb-3 drop-shadow-lg">Citizens' Atlas</h2>
                 <p className="text-base opacity-90 drop-shadow-md max-w-md">on False Solutions to Climate and Circularity</p>
               </div>
             </div>
@@ -179,7 +179,7 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{""}
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>

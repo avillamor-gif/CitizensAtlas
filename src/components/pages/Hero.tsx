@@ -166,7 +166,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
         className="absolute inset-0 opacity-30"
         style={{
           background:
-            "radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)",
+"radial-gradient(ellipse at 20% 10%, rgba(100, 200, 255, 0.2), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255, 165, 0, 0.1), transparent 55%)",
         }}
       />
             <div className="container mx-auto relative z-10 px-4 sm:px-0">

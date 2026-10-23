@@ -22,7 +22,7 @@ const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ proj
             aria-label={`View details for ${project.title}`}
         >
             <span className="text-xs font-bold text-gray-500 tracking-widest mb-2">{project.country}</span>
-            <h3 className="text-lg font-bold text-brand-dark-blue mb-3 flex-grow group-hover:text-brand-light-blue transition-colors duration-200">{project.title}</h3>
+            <h3 className="text-brand-dark-blue mb-3 flex-grow group-hover:text-brand-light-blue transition-colors duration-200">{project.title}</h3>
             <div className="mt-auto pt-4 border-t border-gray-200">
                 <p className="text-sm text-gray-600 mb-2">
                     <span className="font-semibold text-gray-800">False Solution Type:</span> {project.corruptionType}
@@ -181,7 +181,7 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, onProjectSelect }) 
                 </>
             ) : (
                 <div className="text-center py-20 bg-gray-50 rounded-lg">
-                    <h3 className="text-2xl font-semibold text-brand-dark-blue">No Projects Found</h3>
+                    <h3 className="text-brand-dark-blue">No Projects Found</h3>
                     <p className="text-gray-600 mt-2">Try adjusting your filter criteria.</p>
                 </div>
             )}

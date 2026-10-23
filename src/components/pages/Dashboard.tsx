@@ -274,12 +274,12 @@ const Dashboard: React.FC<DashboardProps> = ({ projects, filters }) => {
                 <div className="relative z-10">
                     {selectedCountry ? (
                         <>
-                            <h3 className="text-2xl font-bold text-brand-dark-blue">No projects found for {titleCase(selectedCountry)}.</h3>
+                            <h3 className="text-brand-dark-blue">No projects found for {titleCase(selectedCountry)}.</h3>
                             <p className="text-gray-600 mt-2 text-lg">Try adjusting other filters or select 'All Countries'.</p>
                         </>
                     ) : (
                         <>
-                            <h3 className="text-2xl font-bold text-brand-dark-blue">No projects match the current filter criteria.</h3>
+                            <h3 className="text-brand-dark-blue">No projects match the current filter criteria.</h3>
                             <p className="text-gray-600 mt-2 text-lg">Adjust the filters to see dashboard data.</p>
                         </>
                     )}
@@ -300,7 +300,7 @@ const Dashboard: React.FC<DashboardProps> = ({ projects, filters }) => {
                                 aria-hidden="true"
                             ></div>
                              <div className="relative z-10 text-center p-4">
-                                <h4 className="font-bold text-brand-dark-blue mb-2">Currently Viewing</h4>
+                                <h4 className="text-brand-dark-blue mb-2">Currently Viewing</h4>
                                 <p className="text-2xl font-extrabold text-brand-dark-blue">
                                     {filters.country.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
                                 </p>
@@ -308,30 +308,30 @@ const Dashboard: React.FC<DashboardProps> = ({ projects, filters }) => {
                         </>
                     ) : (
                         <div className="text-center text-gray-500 p-4">
-                             <h4 className="font-bold text-brand-dark-blue mb-2">Geographic Filter</h4>
+                             <h4 className="text-brand-dark-blue mb-2">Geographic Filter</h4>
                              <p>Showing projects for all countries.</p>
                         </div>
                     )
                 }
             </div>
             <div className="bg-white p-4">
-                <h4 className="font-bold text-center text-brand-dark-blue mb-4">No. of Projects by IFI</h4>
+                <h4 className="text-center text-brand-dark-blue mb-4">No. of Projects by IFI</h4>
                 <HorizontalBarChart data={dashboardData.bankData} dataKey="projects" unit="" />
             </div>
             <div className="bg-white p-4">
-                <h4 className="font-bold text-center text-brand-dark-blue mb-4">Investment by IFI (in Billions)</h4>
+                <h4 className="text-center text-brand-dark-blue mb-4">Investment by IFI (in Billions)</h4>
                 <HorizontalBarChart data={dashboardData.bankData} dataKey="investment" unit="B" prefix="$" />
             </div>
             <div className="bg-white p-4">
-                <h4 className="font-bold text-center text-brand-dark-blue mb-4">Projects by False Solution Type</h4>
+                <h4 className="text-center text-brand-dark-blue mb-4">Projects by False Solution Type</h4>
                 <PieChartComponent data={dashboardData.donutData} totalProjects={dashboardData.totalProjects} />
             </div>
              <div className="bg-white p-4">
-                <h4 className="font-bold text-center text-brand-dark-blue mb-4">Active GAIA support</h4>
+                <h4 className="text-center text-brand-dark-blue mb-4">Active GAIA support</h4>
                 <PieChartComponent data={dashboardData.gaiaSupportData} totalProjects={dashboardData.totalProjects} colors={gaiaColors} />
             </div>
             <div className="bg-white p-4">
-                <h4 className="font-bold text-center text-brand-dark-blue mb-4">Project Status</h4>
+                <h4 className="text-center text-brand-dark-blue mb-4">Project Status</h4>
                 <PieChartComponent data={dashboardData.projectStatusData} totalProjects={dashboardData.totalProjects} colors={statusColors} isDonut={false} />
             </div>
         </div>

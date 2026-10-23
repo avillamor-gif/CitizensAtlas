@@ -61,7 +61,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                         </span>
                     )}
                 </div>
-                <h3 className="text-lg font-normal text-white mb-2 flex-grow" style={{ color: '#aeb9cc' }}>{item.title}</h3>
+                <h3 className="text-white mb-2 flex-grow" style={{ color: '#aeb9cc' }}>{item.title}</h3>
                 {!isNews && !isPublication && (
                     <p className="text-sm text-gray-300 line-clamp-3 mb-4">
                         {toPlainText(item.description)}

@@ -162,7 +162,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                                 aria-hidden="true"
                             />
                             <div className="relative text-center">
-                                <h4 className="text-[10px] md:text-xs font-bold text-[#9eafc0] mb-0.5 md:mb-1">Currently Viewing</h4>
+                                 text-[10px] md: text-[#9eafc0] mb-0.5 md:mb-1">Currently Viewing</h4>
                                 <p className="text-xs md:text-sm font-extrabold text-[#a0b0c8]">
                                     {filters.country.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
                                 </p>
@@ -177,7 +177,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                         </div>
                     ) : (
                         <div className="text-center">
-                            <h4 className="text-xs font-bold text-[#9eafc0] mb-1">Currently Viewing</h4>
+                            <h4 className="text-[#9eafc0] mb-1">Currently Viewing</h4>
                             <p className="text-sm font-extrabold text-[#a0b0c8]">
                                 {filters.country === 'all' ? 'ALL COUNTRIES' : filters.country.toUpperCase()}
                             </p>
@@ -245,7 +245,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                         />
                         <div className="relative w-full bg-[#0d1b2a] rounded-t-2xl shadow-2xl max-h-[80vh] overflow-y-auto animate-slide-up">
                             <div className="sticky top-0 bg-[#0d1b2a] border-b border-[#384860] px-4 py-3 flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-[#9eafc0]">Filters</h3>
+                                <h3 className="text-[#9eafc0]">Filters</h3>
                                 <button
                                     onClick={() => setIsFilterOpen(false)}
                                     className="p-2 hover:bg-gray-700 rounded-full transition-colors"

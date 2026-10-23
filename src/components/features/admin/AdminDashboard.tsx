@@ -405,7 +405,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         const AccessDenied = () => (
             <div className="flex flex-col items-center justify-center h-full p-8">
                 <div className="text-center max-w-md">
-                    <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
+                    <h2 className="text-red-600 mb-4">Access Denied</h2>
                     <p className="text-gray-600 mb-6">
                         You don't have permission to access this page. Please contact your administrator if you believe this is an error.
                     </p>

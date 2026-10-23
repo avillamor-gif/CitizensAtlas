@@ -32,7 +32,7 @@ const NavLink: React.FC<{ href: string; isActive: boolean; children: React.React
     <Link
         href={href}
         className={`pb-1 transition-colors duration-200 ${isActive ? 'border-b-2' : 'text-gray-300 hover:text-white'}`}
-        style={{fontFamily: "'Inter', sans-serif", fontSize: '14px', fontWeight: 400, ...( isActive ? { color: 'var(--highlight)', borderColor: 'var(--highlight)' } : {})}}
+        style={{fontFamily:"'Inter', sans-serif", fontSize: '14px', fontWeight: 400, ...( isActive ? { color: 'var(--highlight)', borderColor: 'var(--highlight)' } : {})}}
     >
         {children}
     </Link>
@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                                         : 'text-gray-300 hover:text-white'
                                 }`}
                                 style={{
-                                    fontFamily: "'Inter', sans-serif", 
+                                    fontFamily:"'Inter', sans-serif", 
                                     fontSize: '14px', 
                                     fontWeight: 400,
                                     ...(isActive('news') || isActive('publications') || isActive('videos') 

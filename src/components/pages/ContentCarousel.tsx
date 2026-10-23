@@ -39,7 +39,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ item, hasBackground, onViewAr
             </div>
             <div className="p-1">
                 <span style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }} className="text-xs font-bold px-2 py-1 inline-block mb-2">{item.category}</span>
-                <h4 className="text-white font-bold group-hover:text-brand-yellow transition-colors">{item.title}</h4>
+                 text-white group-hover:text-brand-yellow transition-colors">{item.title}</h4>
             </div>
         </button>
     </div>
@@ -80,7 +80,7 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, hasBack
             <div className="container mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h2 className={`text-3xl font-normal ${textColor}`}>{title}</h2>
+                        <h2 className={textColor}>{title}</h2>
                         <div className={`w-16 h-1 mt-2 ${lineColor}`}></div>
                     </div>
                     <div className="flex items-center space-x-4">

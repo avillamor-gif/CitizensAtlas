@@ -28,7 +28,7 @@ const ProjectListItem: React.FC<{ project: Project; onClick: () => void }> = ({ 
                         <span className="text-xs" style={{ color: '#6b7a8f' }}>•</span>
                         <span className="text-xs" style={{ color: '#a0b0c8' }}>{project.publishDate || 'N/A'}</span>
                     </div>
-                    <h3 className="text-lg font-bold mb-2 group-hover:text-brand-light-blue transition-colors duration-200" style={{ color: '#ffffff' }}>
+                    <h3 className="mb-2 group-hover:text-brand-light-blue transition-colors duration-200" style={{ color: '#ffffff' }}>
                         {project.title}
                     </h3>
                     <div className="flex flex-wrap gap-4 text-sm" style={{ color: '#a0b0c8' }}>
@@ -65,7 +65,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectSelect }) 
                 ))
             ) : (
                 <div className="text-center py-20 bg-gray-50 rounded-lg">
-                    <h3 className="text-2xl font-semibold text-brand-dark-blue">No Projects Found</h3>
+                    <h3 className="text-brand-dark-blue">No Projects Found</h3>
                     <p className="text-gray-600 mt-2">Try adjusting your filter criteria.</p>
                 </div>
             )}

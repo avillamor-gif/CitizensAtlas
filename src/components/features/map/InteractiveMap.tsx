@@ -71,7 +71,7 @@ interface InteractiveMapProps {
     mapStyle?: string;
 }
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false, mapStyle = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false, mapStyle ="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" }) => {
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
     const mapRef = useRef<any>(null);
@@ -422,12 +422,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         .map((c: string) => c.trim())
                         .filter((c: string) => c);
                     
-                    // Parse secondary countries - can be "country" or "country::city" format
-                    // Also handle legacy format with "(secondary)" suffix
+                    // Parse secondary countries - can be"country" or"country::city" format
+                    // Also handle legacy format with"(secondary)" suffix
                     const secondaryEntries = project.secondaryCountries
                         .split(',')
                         .map((entry: string) => {
-                            // Remove "(secondary)" suffix if present (legacy format)
+                            // Remove"(secondary)" suffix if present (legacy format)
                             return entry.trim().replace(/\s*\(secondary\)\s*/gi, '').trim();
                         })
                         .filter((entry: string) => entry);
@@ -476,7 +476,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         }
                         
                         if (!coords) {
-                            console.warn(`Secondary location "${entry}" not found in city or country coordinates`);
+                            console.warn(`Secondary location"${entry}" not found in city or country coordinates`);
                             return null;
                         }
                         
@@ -529,7 +529,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
             {projects.length === 0 && !pickerMode && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 pointer-events-none z-20">
                     <div className="text-center p-8 bg-white rounded-lg shadow-xl">
-                        <h3 className="text-2xl font-semibold text-brand-dark-blue">No Projects Found</h3>
+                        <h3 className="text-brand-dark-blue">No Projects Found</h3>
                         <p className="text-gray-600 mt-2">Try adjusting your filter criteria.</p>
                     </div>
                 </div>
@@ -537,7 +537,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
             {!pickerMode && <div className="absolute bottom-4 left-4 bg-[#0d1b2a] bg-opacity-95 p-3 rounded-lg shadow-lg z-10 max-w-[200px] md:max-w-xs border border-[#384860]">
                 <div>
-                    <h4 className="font-bold text-sm mb-2 text-[#9eafc0]">False Solution Types</h4>
+                    <h4 className="mb-2 text-[#9eafc0]">False Solution Types</h4>
                     <ul className="space-y-1">
                         {legendData.map(({ name, colorClass }) => (
                             <li key={name} className="flex items-center">

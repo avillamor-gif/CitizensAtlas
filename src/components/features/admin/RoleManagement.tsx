@@ -108,7 +108,7 @@ const RoleManagement: React.FC = () => {
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-brand-dark-blue flex items-center gap-2">
+          <h1 className="text-brand-dark-blue flex items-center gap-2">
             <Shield className="w-8 h-8" />
             Role Management
           </h1>
@@ -144,9 +144,9 @@ const RoleManagement: React.FC = () => {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-yellow-900">Unsaved Changes</h3>
+                <h3 className="text-yellow-900">Unsaved Changes</h3>
                 <p className="text-sm text-yellow-800 mt-1">
-                  You have unsaved permission changes. Click "Save Changes" to apply them.
+                  You have unsaved permission changes. Click"Save Changes" to apply them.
                 </p>
               </div>
             </div>
@@ -159,7 +159,7 @@ const RoleManagement: React.FC = () => {
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-blue-900">How to Edit Permissions</h3>
+              <h3 className="text-blue-900">How to Edit Permissions</h3>
               <p className="text-sm text-blue-800 mt-1">
                 Click on the toggle switches to enable/disable permissions for each role.
                 Super Admin always has all permissions enabled.

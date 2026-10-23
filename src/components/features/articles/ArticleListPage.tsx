@@ -70,7 +70,7 @@ const ArticleListPage: React.FC<ArticleListPageProps> = ({ title, items, onViewA
                     {!hideTitle && (
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                             <div>
-                                <h1 className="text-4xl font-extrabold" style={{ color: 'var(--highlight)' }}>{title}</h1>
+                                <h1 className="" style={{ color: 'var(--highlight)' }}>{title}</h1>
                                 <div className="w-16 h-1 mt-2" style={{ backgroundColor: 'var(--highlight)' }}></div>
                             </div>
                         </div>

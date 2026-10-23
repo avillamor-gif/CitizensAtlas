@@ -1,17 +1,17 @@
 "use client"
 
-import * as React from "react"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import * as React from"react"
+import { CalendarIcon } from"lucide-react"
+import { format } from"date-fns"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from"@/lib/utils"
+import { Button } from"@/components/ui/button"
+import { Calendar } from"@/components/ui/calendar"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from"@/components/ui/popover"
 
 interface DatePickerProps {
   value?: string
@@ -21,7 +21,7 @@ interface DatePickerProps {
   disabled?: boolean
 }
 
-export function DatePicker({ value, onChange, placeholder = "Pick a date", className, disabled }: DatePickerProps) {
+export function DatePicker({ value, onChange, placeholder ="Pick a date", className, disabled }: DatePickerProps) {
   const [date, setDate] = React.useState<Date | undefined>(() => {
     if (!value) return undefined;
     const d = new Date(value);
@@ -40,7 +40,7 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date", class
   const handleSelect = (selectedDate: Date | undefined) => {
     setDate(selectedDate)
     if (selectedDate) {
-      onChange(format(selectedDate, "yyyy-MM-dd"))
+      onChange(format(selectedDate,"yyyy-MM-dd"))
     } else {
       onChange("")
     }
@@ -53,13 +53,13 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date", class
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
+"w-full justify-start text-left font-normal",
+            !date &&"text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date && !isNaN(date.getTime()) ? format(date, "PPP") : <span>{placeholder}</span>}
+          {date && !isNaN(date.getTime()) ? format(date,"PPP") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

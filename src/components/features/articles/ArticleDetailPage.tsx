@@ -89,7 +89,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                             {article.category}
                         </div>
                     )}
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
+                     sm:text-5xl mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
                         {article.title}
                     </h1>
                 </div>
@@ -145,7 +145,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
 
                     {article.documentNames && article.documentNames.length > 0 && (
                         <div className="mt-12 p-6 rounded-lg border" style={{ backgroundColor: 'rgba(255, 165, 0, 0.05)', borderColor: 'rgba(255, 165, 0, 0.1)' }}>
-                            <h3 className="text-xl font-normal text-white mb-4">Related Documents</h3>
+                            <h3 className="text-white mb-4">Related Documents</h3>
                             <ul className="space-y-2">
                                 {article.documentNames.map((doc, index) => {
                                     const docUrl = normalizeExternalUrl(article.documentUrls?.[index] || article.documentUrls?.[0]);

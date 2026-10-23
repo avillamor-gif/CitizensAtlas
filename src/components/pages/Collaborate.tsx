@@ -37,7 +37,7 @@ const Collaborate: React.FC = () => {
             <div className="container mx-auto">
                 <div className="text-center">
                     <div className="mb-12">
-                        <h2 className="text-4xl font-normal mb-2">CITIZEN'S REPORT</h2>
+                        <h2 className="mb-2">CITIZEN'S REPORT</h2>
                         <div className="h-1 mb-4 mx-auto" style={{ width: '64px', backgroundColor: 'var(--highlight)' }}></div>
                         <p className="text-lg text-gray-300 max-w-3xl mb-8 mx-auto">
                             Community members have submitted the following reports about false solutions in their areas. Help us strengthen this database by sharing your own experiences.

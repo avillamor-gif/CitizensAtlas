@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
-import { useState, useEffect } from "react"
+import * as React from"react"
+import { useState, useEffect } from"react"
 import {
   Newspaper,
   FileText,
@@ -18,16 +18,16 @@ import {
   ChevronRight,
   Briefcase,
   Mail,
-} from "lucide-react"
+} from"lucide-react"
 
-import { NavMainAdmin } from "./NavMainAdmin"
-import { NavUser } from "@/components/navigation/nav-user"
-import { hasPermission } from "@/hooks/useRolePermissions"
+import { NavMainAdmin } from"./NavMainAdmin"
+import { NavUser } from"@/components/navigation/nav-user"
+import { hasPermission } from"@/hooks/useRolePermissions"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from"@/components/ui/collapsible"
 import {
   Sidebar,
   SidebarContent,
@@ -42,7 +42,7 @@ import {
   SidebarMenuSubButton,
   SidebarGroup,
   SidebarGroupLabel,
-} from "@/components/ui/sidebar"
+} from"@/components/ui/sidebar"
 
 export type AdminPage = 'projects-list' | 'projects-analytics' | 'projects-add' | 'projects-edit' | 'project-briefs-list' | 'project-briefs-add' | 'project-briefs-edit' | 'news-list' | 'news-categories' | 'news-add' | 'news-edit' | 'publications-list' | 'publications-types' | 'publications-categories' | 'publications-add' | 'publications-edit' | 'videos-list' | 'videos-categories' | 'videos-add' | 'videos-edit' | 'drafts-projects' | 'drafts-news' | 'drafts-publications' | 'drafts-videos' | 'pending-approvals' | 'partner-reports-pending' | 'reports-list' | 'notification-emails-config' | 'batch-upload' | 'team-management' | 'role-management' | 'account-profile';
 
@@ -112,23 +112,23 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Projects section
   if (canViewProjects) {
     navItems.push({
-      title: "Projects",
+      title:"Projects",
       icon: LayoutGrid,
       isActive: activePage.startsWith('projects'),
       items: [
         {
-          title: "Project List",
-          page: "projects-list" as AdminPage,
+          title:"Project List",
+          page:"projects-list" as AdminPage,
           icon: List,
         },
         {
-          title: "Add Project",
-          page: "projects-add" as AdminPage,
+          title:"Add Project",
+          page:"projects-add" as AdminPage,
           icon: Plus,
         },
         ...(canViewAnalytics ? [{
-          title: "Analytics",
-          page: "projects-analytics" as AdminPage,
+          title:"Analytics",
+          page:"projects-analytics" as AdminPage,
           icon: BarChart3,
         }] : []),
       ],
@@ -138,18 +138,18 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Project Briefs section (admin and super-admin only)
   if (canViewProjectBriefs) {
     navItems.push({
-      title: "Project Briefs",
+      title:"Project Briefs",
       icon: Briefcase,
       isActive: activePage.startsWith('project-briefs'),
       items: [
         {
-          title: "Briefs List",
-          page: "project-briefs-list" as AdminPage,
+          title:"Briefs List",
+          page:"project-briefs-list" as AdminPage,
           icon: List,
         },
         {
-          title: "Add Brief",
-          page: "project-briefs-add" as AdminPage,
+          title:"Add Brief",
+          page:"project-briefs-add" as AdminPage,
           icon: Plus,
         },
       ],
@@ -159,23 +159,23 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // News section
   if (canViewNews) {
     navItems.push({
-      title: "News Updates",
+      title:"News Updates",
       icon: Newspaper,
       isActive: activePage.startsWith('news'),
       items: [
         {
-          title: "News List",
-          page: "news-list" as AdminPage,
+          title:"News List",
+          page:"news-list" as AdminPage,
           icon: List,
         },
         {
-          title: "Add News",
-          page: "news-add" as AdminPage,
+          title:"Add News",
+          page:"news-add" as AdminPage,
           icon: Plus,
         },
         ...(canManageCategories ? [{
-          title: "Categories",
-          page: "news-categories" as AdminPage,
+          title:"Categories",
+          page:"news-categories" as AdminPage,
           icon: Tags,
         }] : []),
       ],
@@ -185,27 +185,27 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Publications section
   if (canViewPublications) {
     navItems.push({
-      title: "Publications",
+      title:"Publications",
       icon: FileText,
       isActive: activePage.startsWith('publications'),
       items: [
         {
-          title: "Publication List",
-          page: "publications-list" as AdminPage,
+          title:"Publication List",
+          page:"publications-list" as AdminPage,
           icon: List,
         },
         {
-          title: "Add Publication",
-          page: "publications-add" as AdminPage,
+          title:"Add Publication",
+          page:"publications-add" as AdminPage,
           icon: Plus,
         },
         ...(canManageCategories ? [{
-          title: "Publication Types",
-          page: "publications-types" as AdminPage,
+          title:"Publication Types",
+          page:"publications-types" as AdminPage,
           icon: Tags,
         }, {
-          title: "Publication Categories",
-          page: "publications-categories" as AdminPage,
+          title:"Publication Categories",
+          page:"publications-categories" as AdminPage,
           icon: Tags,
         }] : []),
       ],
@@ -215,23 +215,23 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Videos section
   if (canViewVideos) {
     navItems.push({
-      title: "Videos",
+      title:"Videos",
       icon: Film,
       isActive: activePage.startsWith('videos'),
       items: [
         {
-          title: "Video List",
-          page: "videos-list" as AdminPage,
+          title:"Video List",
+          page:"videos-list" as AdminPage,
           icon: List,
         },
         {
-          title: "Add Video",
-          page: "videos-add" as AdminPage,
+          title:"Add Video",
+          page:"videos-add" as AdminPage,
           icon: Plus,
         },
         ...(canManageCategories ? [{
-          title: "Categories",
-          page: "videos-categories" as AdminPage,
+          title:"Categories",
+          page:"videos-categories" as AdminPage,
           icon: Tags,
         }] : []),
       ],
@@ -242,8 +242,8 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   const adminItems = [];
   if (canBatchUpload) {
     adminItems.push({
-      title: "Batch Upload",
-      page: "batch-upload" as AdminPage,
+      title:"Batch Upload",
+      page:"batch-upload" as AdminPage,
       icon: Upload,
     });
   }
@@ -251,8 +251,8 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Pending Approvals
   if (canApproveDrafts) {
     adminItems.push({
-      title: "Pending Approvals",
-      page: "pending-approvals" as AdminPage,
+      title:"Pending Approvals",
+      page:"pending-approvals" as AdminPage,
       icon: FolderOpen,
     });
   }
@@ -260,18 +260,18 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Citizens' Reports section
   if (canApproveDrafts) {
     navItems.push({
-      title: "Citizens' Reports",
+      title:"Citizens' Reports",
       icon: FileText,
       isActive: activePage.startsWith('partner-reports') || activePage.startsWith('reports'),
       items: [
         {
-          title: "Pending Reports",
-          page: "partner-reports-pending" as AdminPage,
+          title:"Pending Reports",
+          page:"partner-reports-pending" as AdminPage,
           icon: FolderOpen,
         },
         {
-          title: "Report List",
-          page: "reports-list" as AdminPage,
+          title:"Report List",
+          page:"reports-list" as AdminPage,
           icon: List,
         },
       ],
@@ -281,8 +281,8 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   // Notification Email Configuration (Super Admin only)
   if (canManageTeam || canManageRoles) {
     adminItems.push({
-      title: "Notification Emails",
-      page: "notification-emails-config" as AdminPage,
+      title:"Notification Emails",
+      page:"notification-emails-config" as AdminPage,
       icon: Mail,
     });
   }
@@ -291,18 +291,18 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   const teamManagementItems = [];
   if (canManageTeam || canManageRoles) {
     teamManagementItems.push({
-      title: "Team Management",
+      title:"Team Management",
       icon: Users,
       isActive: activePage === 'team-management' || activePage === 'role-management',
       items: [
         ...(canManageTeam ? [{
-          title: "Manage Team",
-          page: "team-management" as AdminPage,
+          title:"Manage Team",
+          page:"team-management" as AdminPage,
           icon: Users,
         }] : []),
         ...(canManageRoles ? [{
-          title: "Role Management",
-          page: "role-management" as AdminPage,
+          title:"Role Management",
+          page:"role-management" as AdminPage,
           icon: Shield,
         }] : []),
       ],
@@ -310,13 +310,13 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
   }
 
   const userData = currentUser ? {
-    name: currentUser.full_name || currentUser.email || "User",
-    email: currentUser.email || "",
-    avatar: currentUser.avatar_url || "",
+    name: currentUser.full_name || currentUser.email ||"User",
+    email: currentUser.email ||"",
+    avatar: currentUser.avatar_url ||"",
   } : {
-    name: "Guest",
-    email: "",
-    avatar: "",
+    name:"Guest",
+    email:"",
+    avatar:"",
   };
 
   // Debug: Log what's being generated
@@ -364,10 +364,10 @@ export function AdminSidebar({ activePage, setActivePage, currentUser, ...props 
         <NavMainAdmin 
           items={navItems.map(item => ({
             ...item,
-            url: "#",
+            url:"#",
             items: item.items.map(subItem => ({
               title: subItem.title,
-              url: "#",
+              url:"#",
               isActive: activePage === subItem.page,
               onClick: () => setActivePage(subItem.page),
             }))

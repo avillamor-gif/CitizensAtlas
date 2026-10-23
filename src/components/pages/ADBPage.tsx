@@ -65,7 +65,7 @@ function ADBPage() {
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
           <div className="text-xs uppercase tracking-[0.25em] mb-3" style={{ color: '#aeb9cc' }}>IFI Profile</div>
-          <h1 className="text-6xl mb-6">
+          <h1 className="mb-6">
             <span style={{ color: 'var(--highlight)' }}>ADB</span> · <span style={{ color: 'white' }}>Asian Development Bank</span>
           </h1>
           <p className="text-lg leading-relaxed mb-6" style={{ color: '#aeb9cc' }}>
@@ -85,18 +85,18 @@ function ADBPage() {
           <Section title="Mandate and climate financing in Asia-Pacific">
             <p>
               ADB plays a central role in climate financing in Asia and the Pacific. It provides loans,
-              technical assistance and partnership facilities for "renewable energy infrastructure",
+              technical assistance and partnership facilities for"renewable energy infrastructure",
               low-carbon urban development, and emissions reduction. In 2024 Reuters reported on ADB's
               goal of devoting 50% of annual lending to climate finance by 2030, aiming for over
               USD 100 billion between 2019 and 2030.
             </p>
             <p>
               Civil society groups, including GAIA AP, have raised concerns that some of these
-              investments — waste-to-energy incineration, "repurposing" of coal plants, large hydropower,
+              investments — waste-to-energy incineration,"repurposing" of coal plants, large hydropower,
               and fossil gas under a transition framing — are false solutions that perpetuate harm
               rather than enable a just transition. Despite relying on coal and non-renewable feedstock
               like wood and petrochemicals as inputs to WtE incineration, ADB has justified these as
-              "renewable" energy.
+"renewable" energy.
             </p>
           </Section>
 
@@ -111,7 +111,7 @@ function ADBPage() {
             <p>
               The Energy Transition Mechanism (ETM) is central to understanding ADB's waste financing
               mission. ADB presents ETM as a tool to retire or repurpose coal-fired power plants ahead
-              of schedule, but critics argue its design — how "repurposing" is defined, who the
+              of schedule, but critics argue its design — how"repurposing" is defined, who the
               financing partners are, and the absence of robust safeguards — may allow coal and
               polluting technologies to persist under the guise of transition.
             </p>
@@ -120,7 +120,7 @@ function ADBPage() {
           <BarBlock title="ADB · Investment per country (USD millions)" data={investmentByCountry} />
 
           <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5" style={{ color: 'white' }}>Largest ADB projects in the database</h2>
+            <h2 className="mb-5" style={{ color: 'white' }}>Largest ADB projects in the database</h2>
             <div className="overflow-hidden rounded-lg border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <table className="w-full text-sm">
                 <thead>
@@ -144,7 +144,7 @@ function ADBPage() {
           </section>
 
           <div className="mt-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-            <h3 className="text-2xl font-bold mb-2 text-white">Read the policy brief</h3>
+            <h3 className="mb-2 text-white">Read the policy brief</h3>
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For deeper findings on emissions, costs to communities, and the role of informal waste workers,
               read the ADB factsheet.
@@ -162,7 +162,7 @@ function ADBPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="my-12">
-      <h2 className="text-3xl font-bold mb-5 text-white">{title}</h2>
+      <h2 className="mb-5 text-white">{title}</h2>
       <div className="space-y-4 leading-relaxed" style={{ color: '#aeb9cc' }}>{children}</div>
     </section>
   )

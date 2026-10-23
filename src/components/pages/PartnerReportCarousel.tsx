@@ -67,7 +67,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </span>
                             </div>
 
-                            <h4 className="text-white font-bold mb-2 transition-colors line-clamp-2">
+                             text-white mb-2 transition-colors line-clamp-2">
                                 {report.issue}
                             </h4>
 
@@ -130,7 +130,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                         style={{ backgroundColor: '#0a1628', color: '#c5ced9' }}
                     >
                         <div className="sticky top-0 z-20 flex items-center justify-between border-b px-6 py-4" style={{ backgroundColor: '#0f2340', borderColor: '#2f4059' }}>
-                            <h2 className="text-xl font-bold" style={{ color: '#ffffff' }}>Report Details</h2>
+                            <h2 className="" style={{ color: '#ffffff' }}>Report Details</h2>
                             <button
                                 onClick={() => setSelectedReport(null)}
                                 className="transition"

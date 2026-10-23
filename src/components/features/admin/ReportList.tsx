@@ -114,7 +114,7 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
     <div className="w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-brand-dark-blue">Citizens' Reports</h2>
+          <h2 className="text-brand-dark-blue">Citizens' Reports</h2>
           <p className="text-gray-600 mt-1">View, manage, and delete all reports.</p>
         </div>
       </div>
@@ -264,7 +264,7 @@ const ReportList: React.FC<ReportListProps> = ({ reports, onDeleteReports }) => 
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-              <h2 className="text-xl font-bold text-gray-900">Report Details</h2>
+              <h2 className="text-gray-900">Report Details</h2>
               <button
                 onClick={() => setSelectedReport(null)}
                 className="text-gray-500 hover:text-gray-700 transition"

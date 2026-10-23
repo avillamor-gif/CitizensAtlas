@@ -103,7 +103,7 @@ const FrontendChartCard: React.FC<FrontendChartCardProps> = ({
   isVisibleOnFrontend,
   onToggleVisibility,
   isSuperAdmin,
-  className = "col-span-2 lg:col-span-1"
+  className ="col-span-2 lg:col-span-1"
 }) => (
   <Card className={className}>
     <CardHeader>
@@ -479,7 +479,7 @@ const EnhancedProjectsAnalytics: React.FC<{ projects: Project[]; currentUser?: U
     <div className="w-full space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Projects Analytics</h2>
+         sm:text-2xl text-gray-900">Projects Analytics</h2>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">
           Comprehensive analysis of {analyticsData.totalProjects} projects across {analyticsData.countryCount} countries
         </p>

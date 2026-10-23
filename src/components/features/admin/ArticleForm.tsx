@@ -385,20 +385,20 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
         }
     };
     
-    const inputClass = "w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue";
+    const inputClass ="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue";
 
     const formContent = (
         <>
             {isModal && (
                 <div className="p-4 sm:p-6 md:p-8 border-b flex-shrink-0">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl sm:text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
+                         sm:text-2xl text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>
             )}
             <form onSubmit={handleSubmit} onClick={() => console.log('📋 Form clicked')} className="flex flex-col flex-1 overflow-hidden">
-                <div className={isModal ? "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" : "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
+                <div className={isModal ?"p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" :"p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
                     <FormField label="Title" required>
                         <Input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
                     </FormField>

@@ -28,7 +28,7 @@ const AddPublicationTypeModal: React.FC<AddPublicationTypeModalProps> = ({ onClo
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
                 <div className="p-6 border-b">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit Publication Type' : 'Add New Publication Type'}</h2>
+                        <h2 className="text-brand-dark-blue">{isEditMode ? 'Edit Publication Type' : 'Add New Publication Type'}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>

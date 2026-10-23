@@ -40,7 +40,7 @@ const NewsCategoryList: React.FC<NewsCategoryListProps> = ({ news, categories, o
     };
 
     const handleDelete = (categoryName: string) => {
-        if (window.confirm(`Are you sure you want to delete the category "${categoryName}"? This action cannot be undone.`)) {
+        if (window.confirm(`Are you sure you want to delete the category"${categoryName}"? This action cannot be undone.`)) {
             onDeleteCategory(categoryName);
         }
     };
@@ -49,7 +49,7 @@ const NewsCategoryList: React.FC<NewsCategoryListProps> = ({ news, categories, o
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                  <div>
-                    <h2 className="text-3xl font-bold text-brand-dark-blue">News Categories</h2>
+                    <h2 className="text-brand-dark-blue">News Categories</h2>
                     <p className="text-gray-600 mt-1">A list of all available categories for news updates.</p>
                 </div>
                 <button

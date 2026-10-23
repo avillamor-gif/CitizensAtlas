@@ -16,7 +16,7 @@ const SortableTableHeader = <T,>({
     sortKey,
     sortConfig,
     requestSort,
-    className = "px-6 py-4 font-bold text-brand-dark-blue"
+    className ="px-6 py-4 font-bold text-brand-dark-blue"
 }: SortableTableHeaderProps<T>) => {
     
     const isSorted = sortConfig && sortConfig.key === sortKey;

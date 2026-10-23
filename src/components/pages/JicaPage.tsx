@@ -17,7 +17,7 @@ function JicaPage() {
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
           <div className="text-xs uppercase tracking-[0.25em] mb-3" style={{ color: '#aeb9cc' }}>IFI Profile</div>
-          <h1 className="text-6xl mb-6">
+          <h1 className="mb-6">
             <span style={{ color: 'var(--highlight)' }}>JICA</span> · <span style={{ color: 'white' }}>Japan International Cooperation Agency</span>
           </h1>
           <p className="text-lg leading-relaxed mb-6" style={{ color: '#aeb9cc' }}>
@@ -60,7 +60,7 @@ function JicaPage() {
           <BarBlock title="JICA · Investment per country (USD millions)" data={investmentByCountry} />
 
           <div className="mt-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-            <h3 className="text-2xl font-bold mb-2 text-white">Learn more about JICA</h3>
+            <h3 className="mb-2 text-white">Learn more about JICA</h3>
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For more information about JICA's role in false solutions financing, see the Atlas.
             </p>
@@ -77,7 +77,7 @@ function JicaPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="my-12">
-      <h2 className="text-3xl font-bold mb-5 text-white">{title}</h2>
+      <h2 className="mb-5 text-white">{title}</h2>
       <div className="space-y-4 leading-relaxed" style={{ color: '#aeb9cc' }}>{children}</div>
     </section>
   )

@@ -254,7 +254,7 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Account Profile</h1>
+        <h1 className="text-gray-900">Account Profile</h1>
         <p className="text-sm text-gray-600 mt-1">
           Manage your account settings and profile information
         </p>
@@ -402,7 +402,7 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
             <CollapsibleTrigger asChild>
               <div className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                 <div>
-                  <h3 className="font-medium">Change Password</h3>
+                  <h3>Change Password</h3>
                   <p className="text-sm text-muted-foreground">
                     Update your password to keep your account secure
                   </p>
@@ -417,7 +417,7 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
                   <div className="relative">
                     <Input
                       id="newPassword"
-                      type={showNewPassword ? "text" : "password"}
+                      type={showNewPassword ?"text" :"password"}
                       value={passwordData.newPassword}
                       onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
                       placeholder="Enter new password (min. 6 characters)"
@@ -438,7 +438,7 @@ export default function AccountProfile({ currentUser }: AccountProfileProps) {
                   <div className="relative">
                     <Input
                       id="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showConfirmPassword ?"text" :"password"}
                       value={passwordData.confirmPassword}
                       onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                       placeholder="Re-enter new password"

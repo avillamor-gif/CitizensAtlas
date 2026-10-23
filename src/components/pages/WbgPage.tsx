@@ -51,7 +51,7 @@ function WbgPage() {
     { name: 'Solid Waste and Plastic Management Improvement Project', country: 'Cambodia', amount: 67.3 },
     { name: 'Yijun County Waste-to-Energy plant', country: 'China', amount: 44.48 },
     { name: 'Linshu WTE Plant', country: 'China', amount: 40.03 },
-    { name: 'Lao PDR Pollution and Waste Management Project', country: "Lao People's Democratic Republic", amount: 45.08 },
+    { name: 'Lao PDR Pollution and Waste Management Project', country:"Lao People's Democratic Republic", amount: 45.08 },
     { name: 'Bac Ninh WTE plant', country: 'Vietnam', amount: 74 },
     { name: 'Solid Waste and Plastic Management Improvement Project', country: 'Bangladesh', amount: 67.3 },
     { name: 'Pakistan Finance for Lowering Emissions in the Water and Waste Sectors', country: 'Pakistan', amount: 40 },
@@ -80,7 +80,7 @@ function WbgPage() {
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
           <div className="text-xs uppercase tracking-[0.25em] mb-3" style={{ color: '#aeb9cc' }}>IFI Profile</div>
-          <h1 className="text-6xl mb-6">
+          <h1 className="mb-6">
             <span style={{ color: 'var(--highlight)' }}>WBG</span> · <span style={{ color: 'white' }}>World Bank Group</span>
           </h1>
           <p className="text-lg leading-relaxed mb-6" style={{ color: '#aeb9cc' }}>
@@ -112,7 +112,7 @@ function WbgPage() {
             <p>
               WBG's recent portfolio, as tracked in the database, reveals a troubling pattern of
               promoting false solutions to environmental and waste crises. The Bank publicly emphasises
-              "just transition" and "circular economy" goals, but continues to fund waste-to-energy
+"just transition" and"circular economy" goals, but continues to fund waste-to-energy
               plants, advanced plastic recycling projects, and waste-to-roads initiatives. These
               technologies have been criticised for perpetuating fossil fuel dependence and undermining
               the hierarchy of priorities in waste management — beginning with reduction.
@@ -126,21 +126,21 @@ function WbgPage() {
 
           <Section title="Reporting inconsistencies">
             <p>
-              The WBG applies a dual risk system, categorising projects as "high" to "moderate", while
-              the IFC uses letter ratings — most often "B" (limited). These coexist confusingly: a
-              project may be listed as "Environmental Category: B" yet "Environmental and Social Risk:
-              Not applicable." It is rarely transparent what criteria trigger the shift from "moderate"
-              to "high." The Bac Ninh WTE plant illustrates this contradiction: despite being rated
-              "B – limited," IFC documents acknowledge the economic displacement of 116 households,
+              The WBG applies a dual risk system, categorising projects as"high" to"moderate", while
+              the IFC uses letter ratings — most often"B" (limited). These coexist confusingly: a
+              project may be listed as"Environmental Category: B" yet"Environmental and Social Risk:
+              Not applicable." It is rarely transparent what criteria trigger the shift from"moderate"
+              to"high." The Bac Ninh WTE plant illustrates this contradiction: despite being rated
+"B – limited," IFC documents acknowledge the economic displacement of 116 households,
               health and safety risks, and historical groundwater and soil pollution — impacts that
-              clearly exceed "limited" risk.
+              clearly exceed"limited" risk.
             </p>
           </Section>
 
           <BarBlock title="WBG · Investment per country (USD millions)" data={investmentByCountry} />
 
           <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5 text-white">Largest WBG projects in the database</h2>
+            <h2 className="mb-5 text-white">Largest WBG projects in the database</h2>
             <div className="overflow-hidden rounded-lg border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <table className="w-full text-sm">
                 <thead>
@@ -164,7 +164,7 @@ function WbgPage() {
           </section>
 
           <div className="mt-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-            <h3 className="text-2xl font-bold mb-2 text-white">Learn more about WBG</h3>
+            <h3 className="mb-2 text-white">Learn more about WBG</h3>
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For more information about the World Bank Group's role in false solutions financing, see the Atlas.
             </p>
@@ -181,7 +181,7 @@ function WbgPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="my-12">
-      <h2 className="text-3xl font-bold mb-5 text-white">{title}</h2>
+      <h2 className="mb-5 text-white">{title}</h2>
       <div className="space-y-4 leading-relaxed" style={{ color: '#aeb9cc' }}>{children}</div>
     </section>
   )

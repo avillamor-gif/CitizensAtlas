@@ -480,12 +480,12 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
         <div className="relative z-10">
           {selectedCountry ? (
             <>
-              <h3 className="text-2xl font-bold text-brand-dark-blue">No projects found for {titleCase(selectedCountry)}.</h3>
+              <h3 className="text-brand-dark-blue">No projects found for {titleCase(selectedCountry)}.</h3>
               <p className="text-gray-600 mt-2 text-lg">Try adjusting other filters or select 'All Countries'.</p>
             </>
           ) : (
             <>
-              <h3 className="text-2xl font-bold text-brand-dark-blue">No projects match the current filter criteria.</h3>
+              <h3 className="text-brand-dark-blue">No projects match the current filter criteria.</h3>
               <p className="text-gray-600 mt-2 text-lg">Adjust the filters to see dashboard data.</p>
             </>
           )}
@@ -511,7 +511,7 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
               aria-hidden="true"
             />
             <div className="relative z-10 text-center p-4">
-              <h4 className="font-bold text-brand-dark-blue mb-2">Currently Viewing</h4>
+              <h4 className="text-brand-dark-blue mb-2">Currently Viewing</h4>
               <p className="text-2xl font-extrabold text-brand-dark-blue">
                 {filters.country.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
               </p>
@@ -555,7 +555,7 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
           </>
         ) : (
           <div className="relative z-10 text-center p-4">
-            <h4 className="font-bold text-brand-dark-blue mb-2">Currently Viewing</h4>
+            <h4 className="text-brand-dark-blue mb-2">Currently Viewing</h4>
             <p className="text-2xl font-extrabold text-brand-dark-blue">
               {filters.country === 'all' ? 'ALL COUNTRIES' : filters.country.toUpperCase()}
             </p>
@@ -721,8 +721,8 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
           <CardContent className="p-2">
             <ChartContainer config={{
               projects: {
-                label: "Projects",
-                color: "#A855F7",
+                label:"Projects",
+                color:"#A855F7",
               },
             }} className="h-[220px]">
               <LineChart data={dashboardData.projectsTimelineData} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
@@ -776,8 +776,8 @@ const DashboardV2: React.FC<DashboardV2Props> = ({ projects, filters, currentUse
           <CardContent className="p-2">
             <ChartContainer config={{
               submissions: {
-                label: "Submissions",
-                color: "#14B8A6",
+                label:"Submissions",
+                color:"#14B8A6",
               },
             }} className="h-[220px]">
               <LineChart data={dashboardData.submissionTrendData} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>

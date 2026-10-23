@@ -61,7 +61,7 @@ const ArticleListRow: React.FC<ArticleListRowProps> = ({ item, onViewArticle, pa
                         </span>
                     )}
                 </div>
-                <h3 className="text-xl font-normal text-white mb-2" style={{ color: '#aeb9cc' }}>{item.title}</h3>
+                <h3 className="text-white mb-2" style={{ color: '#aeb9cc' }}>{item.title}</h3>
                 {!isNews && !isPublication && (
                     <p className="text-gray-300 line-clamp-4 flex-grow mb-4">
                         {toPlainText(item.description)}

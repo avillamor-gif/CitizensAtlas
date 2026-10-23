@@ -32,11 +32,11 @@ function AiibPage() {
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
           <div className="text-xs uppercase tracking-[0.25em] mb-3" style={{ color: '#aeb9cc' }}>IFI Profile</div>
-          <h1 className="text-6xl mb-6">
+          <h1 className="mb-6">
             <span style={{ color: 'var(--highlight)' }}>AIIB</span> · <span style={{ color: 'white' }}>Asian Infrastructure Investment Bank</span>
           </h1>
           <p className="text-lg leading-relaxed mb-6" style={{ color: '#aeb9cc' }}>
-            Founded in 2016, initiated by China under the slogan "lean, clean and green." By mid-2024 it had 109 member countries, with China holding over a quarter of voting power.
+            Founded in 2016, initiated by China under the slogan"lean, clean and green." By mid-2024 it had 109 member countries, with China holding over a quarter of voting power.
           </p>
 
           <div className="space-y-4" style={{ borderTopColor: '#2f4059', borderTopWidth: '1px' }}>
@@ -55,7 +55,7 @@ function AiibPage() {
               increasingly includes waste-to-energy projects that critics argue are false solutions. The
               North Dhaka Waste-to-Energy Project in Bangladesh is emblematic: AIIB approved
               USD 100 million non-sovereign financing in 2025 for a multi-line incineration facility to
-              "reduce landfill waste and generate renewable energy." The ESIA identifies displacement
+"reduce landfill waste and generate renewable energy." The ESIA identifies displacement
               of ragpickers, land acquisition, and air-pollutant emissions likely to exceed safe baseline
               thresholds.
             </p>
@@ -73,7 +73,7 @@ function AiibPage() {
           <BarBlock title="AIIB · Investment per country (USD millions)" data={investmentByCountry} />
 
           <section className="my-12">
-            <h2 className="text-3xl font-bold mb-5 text-white">Largest AIIB projects in the database</h2>
+            <h2 className="mb-5 text-white">Largest AIIB projects in the database</h2>
             <div className="overflow-hidden rounded-lg border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
               <table className="w-full text-sm">
                 <thead>
@@ -97,7 +97,7 @@ function AiibPage() {
           </section>
 
           <div className="mt-12 rounded-lg p-6 border" style={{ borderColor: '#2f4059', backgroundColor: 'rgba(26, 95, 122, 0.1)' }}>
-            <h3 className="text-2xl font-bold mb-2 text-white">Learn more about AIIB</h3>
+            <h3 className="mb-2 text-white">Learn more about AIIB</h3>
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For more information about AIIB's role in false solutions financing, see the Atlas.
             </p>
@@ -114,7 +114,7 @@ function AiibPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="my-12">
-      <h2 className="text-3xl font-bold mb-5 text-white">{title}</h2>
+      <h2 className="mb-5 text-white">{title}</h2>
       <div className="space-y-4 leading-relaxed" style={{ color: '#aeb9cc' }}>{children}</div>
     </section>
   )

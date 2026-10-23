@@ -7,9 +7,9 @@ interface ViewToggleProps {
 }
 
 const ViewToggle: React.FC<ViewToggleProps> = ({ activeView, setActiveView }) => {
-    const baseClasses = "p-2 rounded-md transition-colors duration-200";
-    const activeClasses = "bg-brand-dark-blue text-white";
-    const inactiveClasses = "bg-gray-200 text-gray-600 hover:bg-gray-300";
+    const baseClasses ="p-2 rounded-md transition-colors duration-200";
+    const activeClasses ="bg-brand-dark-blue text-white";
+    const inactiveClasses ="bg-gray-200 text-gray-600 hover:bg-gray-300";
 
     return (
         <div className="flex items-center space-x-2 p-1 bg-gray-100 rounded-lg">

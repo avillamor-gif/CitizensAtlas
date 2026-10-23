@@ -63,7 +63,7 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
                 onClick={onToggle}
                 className="w-full px-3 sm:px-4 py-3 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors"
             >
-                <h3 className="text-sm font-bold text-brand-dark-blue text-left">{section.title}</h3>
+                <h3 className="text-brand-dark-blue text-left">{section.title}</h3>
                 <svg
                     className={`w-4 h-4 text-brand-dark-blue transition-transform duration-300 flex-shrink-0 ml-2 ${
                         isOpen ? 'transform rotate-180' : ''
@@ -245,7 +245,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     <div className="flex justify-between items-start gap-3">
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
-                            <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                             sm:text-base text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
                                 {detailsMap.get('Project Status') && (
                                     <>
@@ -328,7 +328,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                     <div className="flex justify-between items-start gap-3">
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
-                            <h2 className="text-sm sm:text-base font-bold text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                             sm:text-base text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
                                 {detailsMap.get('Project Status') && (
                                     <>

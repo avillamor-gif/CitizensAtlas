@@ -228,7 +228,7 @@ const ProjectBriefForm: React.FC<ProjectBriefFormProps> = ({
     <div className="w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-brand-dark-blue">
+          <h2 className="text-brand-dark-blue">
             {briefToEdit ? 'Edit Project Brief' : 'Add Project Brief'}
           </h2>
           <p className="text-gray-600 mt-1">

@@ -19,14 +19,14 @@ const parseCurrency = (currencyString: string): number => {
 // Reusable components for the dashboard
 const StatCard: React.FC<{ title: string; value: string | number }> = ({ title, value }) => (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-        <h4 className="text-sm font-medium text-gray-500">{title}</h4>
+        <h4 className="text-gray-500">{title}</h4>
         <p className="text-3xl font-bold text-brand-dark-blue mt-1">{value}</p>
     </div>
 );
 
 const ChartCard: React.FC<{ title: string; children: React.ReactNode; className?: string; chartClassName?: string }> = ({ title, children, className = 'col-span-1', chartClassName = 'h-80' }) => (
     <div className={`bg-white p-6 rounded-lg border border-gray-200 shadow-sm ${className}`}>
-        <h3 className="text-lg font-semibold text-brand-dark-blue mb-4">{title}</h3>
+        <h3 className="text-brand-dark-blue mb-4">{title}</h3>
         <div className={chartClassName}>
             {children}
         </div>
@@ -156,7 +156,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
     return (
         <div className="space-y-8">
             <div>
-                <h2 className="text-3xl font-bold text-brand-dark-blue">Projects Analytics</h2>
+                <h2 className="text-brand-dark-blue">Projects Analytics</h2>
                 <p className="text-gray-600 mt-1">An overview of all submitted project data.</p>
             </div>
 
@@ -205,7 +205,7 @@ const ProjectsAnalytics: React.FC<{ projects: Project[] }> = ({ projects }) => {
                                 ))}
                             </Pie>
                             <Tooltip content={<CustomTooltip />} />
-                            <Legend layout="vertical" align="right" verticalAlign="middle" iconSize={10} wrapperStyle={{fontSize: "12px", width: "120px", overflow: "hidden"}}/>
+                            <Legend layout="vertical" align="right" verticalAlign="middle" iconSize={10} wrapperStyle={{fontSize:"12px", width:"120px", overflow:"hidden"}}/>
                         </PieChart>
                     </ResponsiveContainer>
                 </ChartCard>

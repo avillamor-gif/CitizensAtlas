@@ -154,7 +154,7 @@ const PartnerPage: React.FC = () => {
                     <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
                         <div className="max-w-xl pt-2">
                             <p className="mb-4 text-xs uppercase tracking-[0.32em] text-[#9eaac2]">Partner With Us</p>
-                            <h2 className="max-w-md text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+                             max-w-md leading-tight text-white">
                                 An open reporting space for citizens.
                             </h2>
                             <div className="mt-8 space-y-6 text-base leading-8 text-[#aeb9cc] sm:text-lg">
@@ -414,7 +414,7 @@ const PartnerPage: React.FC = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
                     <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
                         <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-                            <h2 className="text-xl font-bold text-gray-900">Privacy Policy and Data Use Statement</h2>
+                            <h2 className="text-gray-900">Privacy Policy and Data Use Statement</h2>
                             <button
                                 onClick={() => setShowPrivacyModal(false)}
                                 className="text-gray-500 hover:text-gray-700 transition"
@@ -429,7 +429,7 @@ const PartnerPage: React.FC = () => {
                             </p>
 
                             <div>
-                                <h3 className="mb-3 text-lg font-semibold text-gray-900">How will we use your information?</h3>
+                                 mb-3 text-gray-900">How will we use your information?</h3>
                                 <div className="space-y-3">
                                     <p>
                                         We may use the contact information you provide to <strong>get in touch with you about your submission</strong>, clarify information, or request additional details.
@@ -444,7 +444,7 @@ const PartnerPage: React.FC = () => {
                             </div>
 
                             <div>
-                                <h3 className="mb-3 text-lg font-semibold text-gray-900">Language and accessibility</h3>
+                                 mb-3 text-gray-900">Language and accessibility</h3>
                                 <div className="space-y-3">
                                     <p>
                                         <strong>English is currently the primary language used by the Citizen's Atlas team, and our capacity to translate submissions is currently limited.</strong> However, we welcome submissions in local and regional languages. Please share information in the language you are most comfortable using.

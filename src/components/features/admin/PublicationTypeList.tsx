@@ -40,7 +40,7 @@ const PublicationTypeList: React.FC<PublicationTypeListProps> = ({ publications,
     };
 
     const handleDelete = (typeName: string) => {
-        if (window.confirm(`Are you sure you want to delete the publication type "${typeName}"? This action cannot be undone.`)) {
+        if (window.confirm(`Are you sure you want to delete the publication type"${typeName}"? This action cannot be undone.`)) {
             onDeleteType(typeName);
         }
     };
@@ -49,7 +49,7 @@ const PublicationTypeList: React.FC<PublicationTypeListProps> = ({ publications,
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                  <div>
-                    <h2 className="text-3xl font-bold text-brand-dark-blue">Publication Types</h2>
+                    <h2 className="text-brand-dark-blue">Publication Types</h2>
                     <p className="text-gray-600 mt-1">A list of all available types for publications.</p>
                 </div>
                 <button

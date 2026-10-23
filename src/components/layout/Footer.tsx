@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                     {/* About Section */}
                     <div>
-                        <h3 className="text-lg font-bold mb-4 text-white">Citizens' Atlas</h3>
+                        <h3 className="mb-4 text-white">Citizens' Atlas</h3>
                         <p className="text-sm text-gray-400 leading-relaxed">
                             Tracking false solutions to waste. Making development finance visible across the Asia-Pacific region.
                         </p>
@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
                     
                     {/* Links Section */}
                     <div>
-                        <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wide">About the Atlas</h4>
+                        <h4 className="mb-4 text-white uppercase tracking-wide">About the Atlas</h4>
                         <ul className="space-y-2">
                             <li><Link href="/about" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>About</Link></li>
                             <li><Link href="/publications" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Publications</Link></li>
@@ -29,13 +29,13 @@ const Footer: React.FC = () => {
 
                     {/* Social Section */}
                     <div>
-                        <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wide">Follow us</h4>
+                        <h4 className="mb-4 text-white uppercase tracking-wide">Follow us</h4>
                         <SocialIcons />
                     </div>
 
                     {/* Stay Informed Section */}
                     <div>
-                        <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wide">Stay Informed</h4>
+                        <h4 className="mb-4 text-white uppercase tracking-wide">Stay Informed</h4>
                         <ul className="space-y-2">
                             <li><Link href="#" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Newsletter</Link></li>
                             <li><Link href="#" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Subscribe</Link></li>

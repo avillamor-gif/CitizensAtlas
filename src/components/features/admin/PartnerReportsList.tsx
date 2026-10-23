@@ -112,10 +112,10 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
         </div>
       )}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">
-          {status === 'pending' && "Pending Citizens Reports"}
-          {status === 'approved' && "Approved Citizens Reports"}
-          {status === 'rejected' && "Rejected Citizens Reports"}
+        <h2>
+          {status === 'pending' &&"Pending Citizens Reports"}
+          {status === 'approved' &&"Approved Citizens Reports"}
+          {status === 'rejected' &&"Rejected Citizens Reports"}
         </h2>
         <span className="text-sm text-gray-500">{reports.length} reports</span>
       </div>
@@ -133,7 +133,7 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">{report.name}</h3>
+                  <h3 className="text-gray-900">{report.name}</h3>
                   <p className="text-sm text-gray-600 mt-1">{report.email}</p>
                   <div className="flex gap-4 mt-2">
                     <span className="text-sm text-gray-600">Region: {report.region}</span>
@@ -185,7 +185,7 @@ const PartnerReportsList: React.FC<ReportListProps> = ({ status = 'pending' }) =
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-              <h2 className="text-xl font-bold text-gray-900">Report Details</h2>
+              <h2 className="text-gray-900">Report Details</h2>
               <button
                 onClick={() => setSelectedReport(null)}
                 className="text-gray-500 hover:text-gray-700 transition"

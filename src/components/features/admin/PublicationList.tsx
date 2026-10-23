@@ -91,7 +91,7 @@ const PublicationList: React.FC<PublicationListProps> = ({ publications, onAddPu
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                 <div>
-                    <h2 className="text-3xl font-bold text-brand-dark-blue">Manage Publications</h2>
+                    <h2 className="text-brand-dark-blue">Manage Publications</h2>
                     <p className="text-gray-600 mt-1">Add, edit, or delete publications.</p>
                 </div>
             </div>

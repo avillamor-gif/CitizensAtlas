@@ -268,7 +268,7 @@ const TeamManagement: React.FC = () => {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
+          <h1 className="text-gray-900">Team Management</h1>
           <p className="text-sm text-gray-600 mt-1">
             Invite and manage team members ({members.length} active, {pendingInvites.length} pending)
           </p>
@@ -293,7 +293,7 @@ const TeamManagement: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No team members yet</h3>
+          <h3 className="text-gray-900 mb-2">No team members yet</h3>
           <p className="text-sm text-gray-600 mb-6">
             Get started by inviting your first team member
           </p>
@@ -307,7 +307,7 @@ const TeamManagement: React.FC = () => {
           {/* Pending Invitations Section */}
           {pendingInvites.length > 0 && (
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+              <h2 className="text-gray-900 mb-3">
                 Pending Invitations ({pendingInvites.length})
               </h2>
               <div className="bg-yellow-50 rounded-lg border border-yellow-200 overflow-hidden">
@@ -385,7 +385,7 @@ const TeamManagement: React.FC = () => {
 
           {/* Active Members Section */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            <h2 className="text-gray-900 mb-3">
               Active Members ({members.length})
             </h2>
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">

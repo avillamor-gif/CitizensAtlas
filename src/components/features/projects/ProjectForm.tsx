@@ -60,7 +60,7 @@ type IFISafeguard = {
 
 // Region to Countries mapping
 const regionCountries: Record<string, string[]> = {
-    'Africa': ['Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cameroon', 'Cabo Verde', 'Central African Republic', 'Chad', 'Comoros', 'Congo', 'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 'Equatorial Guinea', 'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', "Cote d'Ivoire", 'Kenya', 'Lesotho', 'Liberia', 'Libya', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Morocco', 'Mozambique', 'Namibia', 'Niger', 'Nigeria', 'Rwanda', 'Sao Tome and Principe', 'Senegal', 'Seychelles', 'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania', 'Togo', 'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'],
+    'Africa': ['Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cameroon', 'Cabo Verde', 'Central African Republic', 'Chad', 'Comoros', 'Congo', 'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 'Equatorial Guinea', 'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau',"Cote d'Ivoire", 'Kenya', 'Lesotho', 'Liberia', 'Libya', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Morocco', 'Mozambique', 'Namibia', 'Niger', 'Nigeria', 'Rwanda', 'Sao Tome and Principe', 'Senegal', 'Seychelles', 'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania', 'Togo', 'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'],
     'Central Asia': ['Kazakhstan', 'Kyrgyzstan', 'Tajikistan', 'Turkmenistan', 'Uzbekistan'],
     'East Asia': ['Mainland China', 'Japan', 'Mongolia', 'North Korea', 'South Korea', 'Taiwan'],
     'South Asia': ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', 'Pakistan', 'Sri Lanka'],
@@ -99,7 +99,7 @@ const countryCities: Record<string, string[]> = {
     'Ghana': ['Accra', 'Kumasi', 'Tamale', 'Takoradi', 'Ashaiman', 'Tema', 'Cape Coast', 'Obuasi', 'Sekondi', 'Koforidua', 'Sunyani', 'Tarkwa', 'Bolgatanga'],
     'Guinea': ['Conakry', 'Nzérékoré', 'Kankan', 'Kindia', 'Labé', 'Kamsar', 'Mamou', 'Télimélé', 'Kouroussa', 'Guéckédou'],
     'Guinea-Bissau': ['Bissau', 'Bafatá', 'Gabú', 'Bissorã', 'Bolama', 'Cacheu', 'Gabu', 'Oio'],
-    "Cote d'Ivoire": ['Abidjan', 'Bouaké', 'Daloa', 'Yamoussoukro', 'San-Pédro', 'Korhogo', 'Man', 'Soubré', 'Gagnoa', 'Dimbokro', 'Sassandra', 'Katiola'],
+"Cote d'Ivoire": ['Abidjan', 'Bouaké', 'Daloa', 'Yamoussoukro', 'San-Pédro', 'Korhogo', 'Man', 'Soubré', 'Gagnoa', 'Dimbokro', 'Sassandra', 'Katiola'],
     'Kenya': ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi', 'Kitale', 'Kericho', 'Meru', 'Isiolo', 'Wajir', 'Kiunga'],
     'Lesotho': ['Maseru', 'Teyateyaneng', 'Mafeteng', 'Hlotse', 'Mohale\'s Hoek', 'Maputsoe', 'Morija', 'Leribe'],
     'Liberia': ['Monrovia', 'Gbarnga', 'Buchanan', 'Ganta', 'Kakata', 'Bensonville', 'Todee', 'Voinjama', 'Yekepa'],
@@ -497,7 +497,7 @@ const normalizeCountryName = (country: string) => {
     if (!trimmed) {
         return '';
     }
-    // Strip legacy "(primary)" and "(secondary)" suffixes
+    // Strip legacy"(primary)" and"(secondary)" suffixes
     trimmed = trimmed.replace(/\s*\((?:primary|secondary)\)\s*/gi, '').trim();
     if (!trimmed) {
         return '';
@@ -693,7 +693,7 @@ const parseFundingRows = (detailsMap: Map<string, string>, totalAmountNum: numbe
             let ifi = ifiRaw;
             let otherIFIName = '';
             
-            // Check if IFI is "Others (Custom Name)" format
+            // Check if IFI is"Others (Custom Name)" format
             const othersMatch = ifiRaw.match(/^Others\s*\((.+)\)$/);
             if (othersMatch) {
                 ifi = 'Others';
@@ -722,7 +722,7 @@ const parseFundingRows = (detailsMap: Map<string, string>, totalAmountNum: numbe
         let ifi = ifiRaw;
         let otherIFIName = '';
         
-        // Check if IFI is "Others (Custom Name)" format
+        // Check if IFI is"Others (Custom Name)" format
         const othersMatch = ifiRaw.match(/^Others\s*\((.+)\)$/);
         if (othersMatch) {
             ifi = 'Others';
@@ -816,8 +816,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
     const [isCityOpen, setIsCityOpen] = useState(false);
 
     const SectionTitle: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({ children, isFirst = false }) => (
-        <div className={isFirst && !isModal ? "pt-0 mt-0 mb-4" : "pt-6 mt-6 mb-4 border-t"}>
-            <h3 className="text-lg font-semibold text-brand-dark-blue">{children}</h3>
+        <div className={isFirst && !isModal ?"pt-0 mt-0 mb-4" :"pt-6 mt-6 mb-4 border-t"}>
+            <h3 className="text-brand-dark-blue">{children}</h3>
         </div>
     );
 
@@ -908,12 +908,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
                     .split(',')
                     .map((c: string) => {
                         const trimmed = c.trim();
-                        // Extract country name from "country::city" format if present
+                        // Extract country name from"country::city" format if present
                         const parts = trimmed.split('::');
                         const country = parts[0].trim();
-                        // Normalize the country name (strips legacy suffixes like "(primary)", "(secondary)")
+                        // Normalize the country name (strips legacy suffixes like"(primary)","(secondary)")
                         const normalized = normalizeCountryName(country);
-                        // Return "country::city" format if cities exist, otherwise just country
+                        // Return"country::city" format if cities exist, otherwise just country
                         return parts.length > 1 ? `${normalized}::${parts.slice(1).join('::')}` : normalized;
                     })
                     .filter((c: string) => c);
@@ -1336,7 +1336,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
 
         const regionValue = regionSelections.join(', ');
         // Store only primary country in country field; secondary countries go in secondaryCountries field
-        // Apply normalizeCountryName to ensure no legacy suffixes like "(primary)" or "(secondary)"
+        // Apply normalizeCountryName to ensure no legacy suffixes like"(primary)" or"(secondary)"
         const countryValue = normalizeCountryName(formData.primaryCountry || countrySelections.join(', '));
 
         const cityValue = cityInput
@@ -1357,7 +1357,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         //     return;
         // }
 
-        // Set "None" as default for fields with no input
+        // Set"None" as default for fields with no input
         const ownerValue = owner?.trim() || 'None';
         const privateSectorBorrowersValue = privateSectorBorrowers.length > 0 && privateSectorBorrowers.some(b => b.trim())
             ? privateSectorBorrowers.join(', ')
@@ -1366,7 +1366,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onClose, onProjectAdded, proj
         const otherImplementorsValue = otherImplementors?.trim() || 'None';
         const otherFinanciersValue = otherFinanciers?.trim() || 'None';
 
-        // Set "NA" as default for Community Opposition & Actions and Additional Information fields
+        // Set"NA" as default for Community Opposition & Actions and Additional Information fields
         const groupsInOppositionValue = groupsInOpposition.length > 0 && groupsInOpposition.some(g => g.trim())
             ? groupsInOpposition.join(', ')
             : 'NA';
@@ -1469,23 +1469,23 @@ ${referencesValue}
         }
     };
     
-    const inputClass = "w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue";
-    const repeatableInputClass = "w-full p-3 border border-gray-300 rounded-md";
+    const inputClass ="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue";
+    const repeatableInputClass ="w-full p-3 border border-gray-300 rounded-md";
     const selectClass = `${inputClass} appearance-none bg-white`;
-    const dateInputClass = "w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue box-border";
+    const dateInputClass ="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-medium-blue focus:border-brand-medium-blue box-border";
 
     const formContent = (
         <>
             {isModal && (
                 <div className="p-4 sm:p-6 border-b flex-shrink-0">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-brand-dark-blue">{isEditMode ? 'Edit Project' : 'Add New Project'}</h2>
+                         sm:text-xl text-brand-dark-blue">{isEditMode ? 'Edit Project' : 'Add New Project'}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>
             )}
             <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-                <div className={isModal ? "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" : "p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
+                <div className={isModal ?"p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1" :"p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"}>
                     <SectionTitle isFirst={true}>Project Information</SectionTitle>
                     <FormField label="Project Name">
                         <Input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} />
@@ -1835,7 +1835,7 @@ ${referencesValue}
                                                             }}
                                                             className="w-full text-left px-4 py-2 hover:bg-purple-50 text-sm bg-purple-50 font-semibold"
                                                         >
-                                                            Add "{citySearch}" (custom)
+                                                            Add"{citySearch}" (custom)
                                                         </button>
                                                     )}
                                                     {citySearch.length === 0 && getCityOptionsForCountries(formData.countrySelections).length === 0 && (
@@ -1976,12 +1976,12 @@ ${referencesValue}
                                     indigenousPeoples: ''
                                 };
                                 
-                                // Use "Environmental and Social Risk" for IFC/WB and AIIB
+                                // Use"Environmental and Social Risk" for IFC/WB and AIIB
                                 const environmentLabel = (ifiName === 'IFC/WB' || ifiName === 'AIIB') ? 'Environmental and Social Risk' : 'Environment';
                                 
                                 return (
                                     <div key={fundingIndex} className="border rounded-lg p-4 bg-gray-50">
-                                        <h4 className="font-semibold text-brand-dark-blue mb-3">{ifiName}</h4>
+                                        <h4 className="text-brand-dark-blue mb-3">{ifiName}</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                                             <div>
                                                 <Label className="text-sm font-medium text-gray-700">{environmentLabel}</Label>

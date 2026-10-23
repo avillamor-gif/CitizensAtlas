@@ -27,7 +27,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ filters, onFilterChange, filt
     return (
         <>
             <div className="flex items-center justify-between mb-2">
-                <h3 className={`${isCompact ? 'text-sm font-bold' : 'text-xl font-bold'}`} style={{ color: textColor }}>Filters</h3>
+                <h3 style={{ color: textColor }}>Filters</h3>
                 {hasActiveFilters && onClearFilters && (
                     <button
                         onClick={onClearFilters}

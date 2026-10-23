@@ -53,7 +53,7 @@ const DraftsList: React.FC<DraftsListProps> = ({
     // Detailed status breakdown for ALL news items
     console.log('  📰 NEWS STATUS BREAKDOWN:');
     news.forEach(n => {
-      console.log(`    ID ${n.id}: status="${n.status}" (type: ${typeof n.status}) - "${n.title?.substring(0, 30)}..."`);
+      console.log(`    ID ${n.id}: status="${n.status}" (type: ${typeof n.status}) -"${n.title?.substring(0, 30)}..."`);
     });
 
     const {
@@ -78,7 +78,7 @@ const DraftsList: React.FC<DraftsListProps> = ({
 
     const handleApprove = (item: DraftItem) => {
         console.log('🔘 Approve button clicked for:', item);
-        if (window.confirm(`Approve "${item.title}"?`)) {
+        if (window.confirm(`Approve"${item.title}"?`)) {
             console.log('✅ User confirmed approval, calling onApprove...');
             onApprove(item);
         } else {
@@ -87,7 +87,7 @@ const DraftsList: React.FC<DraftsListProps> = ({
     };
 
     const handleReject = (item: DraftItem) => {
-        if (window.confirm(`Reject and delete "${item.title}"? This cannot be undone.`)) {
+        if (window.confirm(`Reject and delete"${item.title}"? This cannot be undone.`)) {
             onReject(item);
         }
     };
@@ -110,7 +110,7 @@ const DraftsList: React.FC<DraftsListProps> = ({
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                 <div>
-                    <h2 className="text-3xl font-bold text-brand-dark-blue">Pending Approvals</h2>
+                    <h2 className="text-brand-dark-blue">Pending Approvals</h2>
                     <p className="text-gray-600 mt-1">
                         Review and approve submissions from contributors ({paginatedItems.length} pending)
                     </p>

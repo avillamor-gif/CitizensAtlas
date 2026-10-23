@@ -158,7 +158,7 @@ export default function NotificationEmailList() {
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-gray-900 mb-2">
           Notification Email Configuration
         </h2>
         <p className="text-gray-600">
@@ -184,7 +184,7 @@ export default function NotificationEmailList() {
           onSubmit={editingId ? handleUpdate : handleAdd}
           className="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-200"
         >
-          <h3 className="text-lg font-semibold mb-4 text-gray-900">
+          <h3 className="mb-4 text-gray-900">
             {editingId ? 'Edit Email' : 'Add New Email'}
           </h3>
 
@@ -254,7 +254,7 @@ export default function NotificationEmailList() {
 
       {/* Email list */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">
+        <h3 className="mb-4 text-gray-900">
           Configured Emails ({emails.length})
         </h3>
 
