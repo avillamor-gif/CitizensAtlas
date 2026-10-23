@@ -454,7 +454,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                             className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110 shadow-lg relative group"
                             onMouseEnter={() => setHoveredClusterId(cluster.id as number)}
                             onMouseLeave={() => setHoveredClusterId(null)}
-                            title={cluster.countries?.join(', ')}
                         >
                             <div className="text-center">
                                 <div className="text-white font-bold text-sm">{cluster.count}</div>
@@ -499,7 +498,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                             className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110 relative group"
                             onMouseEnter={() => setHoveredMarkerId(project.id)}
                             onMouseLeave={() => setHoveredMarkerId(null)}
-                            title={locationDisplay}
                         >
                             {project.size > 35 && (
                                 <span
@@ -616,7 +614,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                         border: '1px solid rgba(255,255,255,0.8)',
                                     }}
                                     className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition-all hover:scale-110"
-                                    title={`Secondary: ${displayName}`}
                                 >
                                 </div>
                             </Marker>
