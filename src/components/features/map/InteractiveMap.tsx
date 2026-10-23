@@ -28,6 +28,16 @@ const parseProjectAmount = (details: string): number => {
     return parseFloat(numberString) || 0;
 };
 
+// Helper to get city and country for display
+const getLocationDisplay = (project: Project): string => {
+    const city = parseDetail(project.details, 'City').trim();
+    const country = project.country || '';
+    if (city && country) {
+        return `${city}, ${country}`;
+    }
+    return country || 'Unknown Location';
+};
+
 // Enrich project with city coordinates from details if available
 const enrichProjectWithCityCoordinates = (project: Project): Project => {
     const city = parseDetail(project.details, 'City').trim();
@@ -98,6 +108,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
     const [hoveredClusterId, setHoveredClusterId] = useState<number | null>(null);
+    const [hoveredMarkerId, setHoveredMarkerId] = useState<number | null>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
 
@@ -163,9 +174,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
         // Enrich projects with city coordinates before clustering
         const enrichedProjects = projects.map(enrichProjectWithCityCoordinates);
 
-        // Initialize supercluster
+        // Initialize supercluster with smaller radius to prevent clustering different countries together
         const index = new Supercluster({
-            radius: 80,
+            radius: 50,
             maxZoom: 16,
             minZoom: 0,
         });
@@ -409,7 +420,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                 <div className="text-white font-semibold text-xs">{formatAmount(cluster.totalAmount)}</div>
                             </div>
                             {hoveredClusterId === cluster.id && cluster.countries && cluster.countries.length > 0 && (
-                                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
+                                <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
                                     {cluster.countries.join(', ')}
                                 </div>
                             )}
@@ -418,7 +429,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                 ))}
 
                 {/* Individual project markers */}
-                {offsetMarkers.map((project: any) => (
+                {offsetMarkers.map((project: any) => {
+                    const locationDisplay = getLocationDisplay(project);
+                    return (
                     <Marker
                         key={`marker-${project.id}`}
                         longitude={project.longitude}
@@ -437,7 +450,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                 opacity: 0.7,
                                 border: project.isOffset ? '2px solid rgba(255,255,255,0.8)' : 'none',
                             }}
-                            className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110"
+                            className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110 relative group"
+                            onMouseEnter={() => setHoveredMarkerId(project.id)}
+                            onMouseLeave={() => setHoveredMarkerId(null)}
+                            title={locationDisplay}
                         >
                             {project.size > 35 && (
                                 <span
@@ -447,9 +463,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                     {formatAmount(project.amount)}
                                 </span>
                             )}
+                            {hoveredMarkerId === project.id && (
+                                <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
+                                    {locationDisplay}
+                                </div>
+                            )}
                         </div>
                     </Marker>
-                ))}
+                    );
+                })}
 
                 {/* Secondary country markers - only show at lower zoom levels */}
                 {zoom < 6 && offsetMarkers.map((project: any) => {
