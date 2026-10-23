@@ -47,9 +47,9 @@ function BriefCard({ brief, href }: { brief: ProjectBrief; href: string }) {
         <span className="text-xs font-bold px-2 py-1 inline-block mb-3 self-start rounded" style={{ backgroundColor: 'var(--highlight)', color: '#0a1628' }}>
           {brief.project_type || 'Project Brief'}
         </span>
-        <h3 className="flex-grow text-white group-hover:text-brand-orange transition-colors">
+        <h4 className="flex-grow text-white group-hover:text-brand-orange transition-colors">
           {brief.project_name}
-        </h3>
+        </h4>
         <div className="mt-4 self-start">
           <span 
             className="transition-colors duration-200"
