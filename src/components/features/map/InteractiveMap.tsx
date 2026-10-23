@@ -20,16 +20,19 @@ const cityAbbreviationMap: Record<string, Record<string, string>> = {
         'QC': 'Quezon City',
         'NCR': 'Manila',
         'CDO': 'Cagayan de Oro',
-        'GenSan': 'General Santos',
+        'GENSAN': 'General Santos',
     },
 };
 
-// Helper to normalize city names (handle abbreviations)
+// Helper to normalize city names (handle abbreviations) - case-insensitive
 const normalizeCityName = (city: string, country: string): string => {
     if (!city || !country) return city;
     
+    const cityUpper = city.toUpperCase();
     const countryAbbreviations = cityAbbreviationMap[country] || {};
-    return countryAbbreviations[city] || city;
+    const normalized = countryAbbreviations[cityUpper];
+    
+    return normalized || city;
 };
 
 // Helper functions to parse project details
@@ -59,9 +62,10 @@ const getLocationDisplay = (project: Project): string => {
 
 // Enrich project with city coordinates from details if available
 const enrichProjectWithCityCoordinates = (project: Project): Project => {
-    let city = parseDetail(project.details, 'City').trim();
+    let city = parseDetail(project.details, 'City').trim().toUpperCase();
     
-    if (!city || !project.country) {
+    // Skip if city is empty, NA, or not specified
+    if (!city || city === 'NA' || city === 'N/A' || city === 'UNKNOWN' || !project.country) {
         return project;
     }
 
@@ -85,7 +89,7 @@ const enrichProjectWithCityCoordinates = (project: Project): Project => {
         console.log(`[City Geocoding] Available Philippine cities:`, Object.keys(cityCoordinates).filter(k => k.includes('Philippines')));
     }
 
-    // If not found, return original project (will use stored country-level coordinates)
+    // If not found, return original project (will use stored country-level coordinates = capital)
     return project;
 };
 
