@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                     <div className="flex-1 flex items-center gap-2 sm:gap-3">
                         <Link href="/">
                             <Image 
-                                src="/citizens-atlas-logo.png" 
+                                src="/citizensatlas_logo.jpg" 
                                 alt="Citizens' Atlas Logo" 
                                 width={50}
                                 height={50}
