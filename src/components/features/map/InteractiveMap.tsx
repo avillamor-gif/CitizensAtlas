@@ -451,8 +451,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                     </Marker>
                 ))}
 
-                {/* Secondary country markers */}
-                {offsetMarkers.map((project: any) => {
+                {/* Secondary country markers - only show at lower zoom levels */}
+                {zoom < 6 && offsetMarkers.map((project: any) => {
                     // Debug: log secondary countries data
                     if (project.id) {
                         console.log(`Project ${project.id} (${project.title}): secondaryCountries =`, project.secondaryCountries);
