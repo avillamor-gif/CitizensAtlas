@@ -139,7 +139,7 @@ export const cityCoordinates: Record<string, { lat: number; lng: number; name: s
 
   // Sri Lanka cities
   'Colombo::Sri Lanka': { lat: 6.9271, lng: 80.6368, name: 'Colombo' },
-  'Kandy::Sri Lanka': { lat: 6.9271, lng: 80.6368, name: 'Kandy' },
+  'Kandy::Sri Lanka': { lat: 7.2906, lng: 80.6337, name: 'Kandy' },
 
   // Nepal cities
   'Kathmandu::Nepal': { lat: 27.7172, lng: 85.3240, name: 'Kathmandu' },
@@ -179,7 +179,7 @@ export const cityCoordinates: Record<string, { lat: number; lng: number; name: s
   'Rio de Janeiro::Brazil': { lat: -22.9068, lng: -43.1729, name: 'Rio de Janeiro' },
   'Buenos Aires::Argentina': { lat: -34.6037, lng: -58.3816, name: 'Buenos Aires' },
   'Lima::Peru': { lat: -12.0464, lng: -77.0428, name: 'Lima' },
-  'Santiago::Chile': { lat: -33.8688, lng: -51.2093, name: 'Santiago' },
+  'Santiago::Chile': { lat: -33.8688, lng: -70.6693, name: 'Santiago' },
 
   // Middle East cities
   'Dubai::United Arab Emirates': { lat: 25.2048, lng: 55.2708, name: 'Dubai' },
