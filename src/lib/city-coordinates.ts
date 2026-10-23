@@ -437,9 +437,124 @@ export const cityCoordinates: Record<string, { lat: number; lng: number; name: s
   'Zhengzhou::China': { lat: 34.7466, lng: 113.6253, name: 'Zhengzhou' },
 };
 
+// Helper to title case a string
+const toTitleCase = (str: string): string => {
+  return str.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ');
+};
+
+// City abbreviation map for handling shorthand city names (e.g., QC -> Quezon City)
+const cityAbbreviationMap: Record<string, Record<string, string>> = {
+  'Philippines': {
+    'QC': 'Quezon City',
+    'NCR': 'Manila',
+    'CDO': 'Cagayan De Oro City',
+    'GENSAN': 'General Santos City',
+    'DAVAO': 'Davao City',
+    'CEBU': 'Cebu City',
+    'MANILA': 'Manila',
+    'MANILA CITY': 'Manila',
+  },
+  'China': {
+    'BJ': 'Beijing',
+    'SH': 'Shanghai',
+    'GZ': 'Guangzhou',
+    'SZ': 'Shenzhen',
+    'CQ': 'Chongqing',
+    'CD': 'Chengdu',
+    'HZ': 'Hangzhou',
+    'WH': 'Wuhan',
+    'NJ': 'Nanjing',
+    'TJ': 'Tianjin',
+  },
+  'Vietnam': {
+    'HN': 'Hanoi',
+    'HCM': 'Ho Chi Minh City',
+    'SGN': 'Ho Chi Minh City',
+    'HCMC': 'Ho Chi Minh City',
+    'DN': 'Da Nang',
+    'HP': 'Hai Phong',
+    'CT': 'Can Tho',
+  },
+  'Indonesia': {
+    'JKT': 'Jakarta',
+    'SBY': 'Surabaya',
+    'BDG': 'Bandung',
+    'MDN': 'Medan',
+    'SRG': 'Semarang',
+    'MKS': 'Makassar',
+    'PLG': 'Palembang',
+    'YIA': 'Yogyakarta',
+    'BJM': 'Banjarmasin',
+    'PTK': 'Pontianak',
+  },
+  'India': {
+    'DEL': 'New Delhi',
+    'MUM': 'Mumbai',
+    'BLR': 'Bangalore',
+    'HYD': 'Hyderabad',
+    'MAS': 'Chennai',
+    'CCU': 'Kolkata',
+    'PNE': 'Pune',
+    'AMD': 'Ahmedabad',
+    'JAI': 'Jaipur',
+    'SUV': 'Surat',
+  },
+  'Thailand': {
+    'BKK': 'Bangkok',
+    'CNX': 'Chiang Mai',
+    'HKT': 'Phuket',
+  },
+  'Myanmar': {
+    'YGN': 'Yangon',
+    'MDL': 'Mandalay',
+    'NPT': 'Naypyidaw',
+  },
+  'Malaysia': {
+    'KL': 'Kuala Lumpur',
+    'PG': 'George Town',
+    'JB': 'Johor Bahru',
+  },
+  'United States': {
+    'NYC': 'New York City',
+    'LA': 'Los Angeles',
+    'SF': 'San Francisco',
+    'CHI': 'Chicago',
+    'HOU': 'Houston',
+  },
+  'United Kingdom': {
+    'LHR': 'London',
+    'MAN': 'Manchester',
+    'BHM': 'Birmingham',
+  },
+};
+
 export function getCityCoordinates(cityName: string, countryName: string): { lat: number; lng: number; name: string } | undefined {
   if (!cityName || !countryName) return undefined;
   
-  const key = `${cityName}::${countryName}`;
+  // Clean and normalize city name
+  let normalizedCity = cityName.trim();
+  
+  // Skip if NA or unknown
+  if (normalizedCity.toUpperCase() === 'NA' || 
+      normalizedCity.toUpperCase() === 'N/A' || 
+      normalizedCity.toUpperCase() === 'UNKNOWN') {
+    return undefined;
+  }
+  
+  // Convert to uppercase for abbreviation matching
+  const cityUpper = normalizedCity.toUpperCase();
+  
+  // Check for abbreviations
+  const countryAbbreviations = cityAbbreviationMap[countryName] || {};
+  if (countryAbbreviations[cityUpper]) {
+    normalizedCity = countryAbbreviations[cityUpper];
+  } else {
+    // Convert to title case for database lookup
+    normalizedCity = toTitleCase(normalizedCity);
+  }
+  
+  const key = `${normalizedCity}::${countryName}`;
   return cityCoordinates[key];
 }

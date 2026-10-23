@@ -8,20 +8,96 @@ import { Project } from '@/types/types';
 import { solutionTypeColors, getSolutionTypeColor } from '@/lib/constants';
 import { offsetOverlappingMarkers, OffsetMarker } from '@/lib/utils/marker-offsetting';
 import { countryCoordinates } from '@/lib/country-coordinates';
-import { cityCoordinates } from '@/lib/city-coordinates';
+import { cityCoordinates, getCityCoordinates } from '@/lib/city-coordinates';
 
 const legendData = Object.entries(solutionTypeColors)
     .filter(([key]) => key !== 'default')
     .map(([name, { tailwind }]) => ({ name, colorClass: tailwind }));
 
-// City abbreviation mappings for common shorthand in project data
+// City abbreviation map for handling shorthand city names (e.g., QC -> Quezon City)
 const cityAbbreviationMap: Record<string, Record<string, string>> = {
-    'Philippines': {
-        'QC': 'Quezon City',
-        'NCR': 'Manila',
-        'CDO': 'Cagayan de Oro',
-        'GENSAN': 'General Santos',
-    },
+  'Philippines': {
+    'QC': 'Quezon City',
+    'NCR': 'Manila',
+    'CDO': 'Cagayan De Oro City',
+    'GENSAN': 'General Santos City',
+    'DAVAO': 'Davao City',
+    'CEBU': 'Cebu City',
+    'MANILA': 'Manila',
+    'MANILA CITY': 'Manila',
+  },
+  'China': {
+    'BJ': 'Beijing',
+    'SH': 'Shanghai',
+    'GZ': 'Guangzhou',
+    'SZ': 'Shenzhen',
+    'CQ': 'Chongqing',
+    'CD': 'Chengdu',
+    'HZ': 'Hangzhou',
+    'WH': 'Wuhan',
+    'NJ': 'Nanjing',
+    'TJ': 'Tianjin',
+  },
+  'Vietnam': {
+    'HN': 'Hanoi',
+    'HCM': 'Ho Chi Minh City',
+    'SGN': 'Ho Chi Minh City',
+    'HCMC': 'Ho Chi Minh City',
+    'DN': 'Da Nang',
+    'HP': 'Hai Phong',
+    'CT': 'Can Tho',
+  },
+  'Indonesia': {
+    'JKT': 'Jakarta',
+    'SBY': 'Surabaya',
+    'BDG': 'Bandung',
+    'MDN': 'Medan',
+    'SRG': 'Semarang',
+    'MKS': 'Makassar',
+    'PLG': 'Palembang',
+    'YIA': 'Yogyakarta',
+    'BJM': 'Banjarmasin',
+    'PTK': 'Pontianak',
+  },
+  'India': {
+    'DEL': 'New Delhi',
+    'MUM': 'Mumbai',
+    'BLR': 'Bangalore',
+    'HYD': 'Hyderabad',
+    'MAS': 'Chennai',
+    'CCU': 'Kolkata',
+    'PNE': 'Pune',
+    'AMD': 'Ahmedabad',
+    'JAI': 'Jaipur',
+    'SUV': 'Surat',
+  },
+  'Thailand': {
+    'BKK': 'Bangkok',
+    'CNX': 'Chiang Mai',
+    'HKT': 'Phuket',
+  },
+  'Myanmar': {
+    'YGN': 'Yangon',
+    'MDL': 'Mandalay',
+    'NPT': 'Naypyidaw',
+  },
+  'Malaysia': {
+    'KL': 'Kuala Lumpur',
+    'PG': 'George Town',
+    'JB': 'Johor Bahru',
+  },
+  'United States': {
+    'NYC': 'New York City',
+    'LA': 'Los Angeles',
+    'SF': 'San Francisco',
+    'CHI': 'Chicago',
+    'HOU': 'Houston',
+  },
+  'United Kingdom': {
+    'LHR': 'London',
+    'MAN': 'Manchester',
+    'BHM': 'Birmingham',
+  },
 };
 
 // Helper to normalize city names (handle abbreviations) - case-insensitive
@@ -69,23 +145,16 @@ const toTitleCase = (str: string): string => {
 
 // Enrich project with city coordinates from details if available
 const enrichProjectWithCityCoordinates = (project: Project): Project => {
-    let city = parseDetail(project.details, 'City').trim();
+    const city = parseDetail(project.details, 'City').trim();
     
-    // Skip if city is empty, NA, or not specified
-    if (!city || city.toUpperCase() === 'NA' || city.toUpperCase() === 'N/A' || city.toUpperCase() === 'UNKNOWN' || !project.country) {
+    // Skip if no city or country
+    if (!city || !project.country) {
         return project;
     }
 
-    // Normalize city name (convert abbreviations to full names) - works with uppercase
-    city = normalizeCityName(city.toUpperCase(), project.country);
-    
-    // Convert to title case for database lookup
-    city = toTitleCase(city);
-
-    // Try to find city coordinates
-    const cityKey = `${city}::${project.country}`;
-    if (cityCoordinates[cityKey]) {
-        const coords = cityCoordinates[cityKey];
+    // Use getCityCoordinates which handles case conversion, abbreviations, and NA values
+    const coords = getCityCoordinates(city, project.country);
+    if (coords) {
         return {
             ...project,
             latitude: coords.lat,
@@ -554,26 +623,27 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         
                         let coords = null;
                         let displayName = '';
-                        let selectedCity = cityOrCountry ? normalizeCityName(cityOrCountry, countryName || '') : null;
+                        let selectedCity = cityOrCountry;
                         
                         // If no city in the entry (legacy format) but we have cities from details, try them
                         if (!selectedCity && citiesFromDetails.length > 0) {
                             // Try each city from details to find one that matches this country
                             for (const city of citiesFromDetails) {
-                                const normalizedCity = normalizeCityName(city, countryName || '');
-                                const cityKey = `${normalizedCity}::${countryName}`;
-                                if (cityCoordinates[cityKey]) {
-                                    selectedCity = normalizedCity;
+                                const cityCoords = getCityCoordinates(city, countryName || '');
+                                if (cityCoords) {
+                                    selectedCity = city;
+                                    coords = cityCoords;
+                                    displayName = `${city}, ${countryName}`;
                                     break;
                                 }
                             }
                         }
                         
                         // Try to get city coordinates first if city is specified
-                        if (selectedCity && countryName) {
-                            const cityKey = `${selectedCity}::${countryName}`;
-                            if (cityCoordinates[cityKey]) {
-                                coords = cityCoordinates[cityKey];
+                        if (selectedCity && countryName && !coords) {
+                            const cityCoords = getCityCoordinates(selectedCity, countryName);
+                            if (cityCoords) {
+                                coords = cityCoords;
                                 displayName = `${selectedCity}, ${countryName}`;
                             }
                         }
