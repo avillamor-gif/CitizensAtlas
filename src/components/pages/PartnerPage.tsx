@@ -154,7 +154,7 @@ const PartnerPage: React.FC = () => {
                     <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
                         <div className="max-w-xl pt-2">
                             <p className="mb-4 text-xs uppercase tracking-[0.32em] text-[#9eaac2]">Partner With Us</p>
-                             max-w-md leading-tight text-white">
+                            <h2 className="max-w-md text-4xl font-extrabold leading-tight text-white sm:text-5xl">
                                 An open reporting space for citizens.
                             </h2>
                             <div className="mt-8 space-y-6 text-base leading-8 text-[#aeb9cc] sm:text-lg">

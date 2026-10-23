@@ -67,7 +67,7 @@ const PartnerReportCarousel: React.FC<PartnerReportCarouselProps> = ({ reports }
                                 </span>
                             </div>
 
-                             text-white mb-2 transition-colors line-clamp-2">
+                            <h4 className="text-white mb-2 transition-colors line-clamp-2">
                                 {report.issue}
                             </h4>
 

@@ -162,7 +162,7 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
                                 aria-hidden="true"
                             />
                             <div className="relative text-center">
-                                 text-[10px] md: text-[#9eafc0] mb-0.5 md:mb-1">Currently Viewing</h4>
+                                <h4 className="text-[10px] md:text-[12px] text-[#9eafc0] mb-0.5 md:mb-1">Currently Viewing</h4>
                                 <p className="text-xs md:text-sm font-extrabold text-[#a0b0c8]">
                                     {filters.country.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
                                 </p>

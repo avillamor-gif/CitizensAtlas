@@ -89,7 +89,7 @@ const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ article, onBack, 
                             {article.category}
                         </div>
                     )}
-                     sm:text-5xl mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
+                    <h1 className="text-lg sm:text-5xl mb-6 leading-tight max-w-4xl" style={{ color: 'white' }}>
                         {article.title}
                     </h1>
                 </div>

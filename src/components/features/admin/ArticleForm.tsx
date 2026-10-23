@@ -392,7 +392,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             {isModal && (
                 <div className="p-4 sm:p-6 md:p-8 border-b flex-shrink-0">
                     <div className="flex justify-between items-center">
-                         sm:text-2xl text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
+                        <h2 className="text-lg sm:text-2xl text-brand-dark-blue">{isEditMode ? 'Edit' : 'Add New'} {itemType}</h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
                     </div>
                 </div>
