@@ -14,6 +14,7 @@
 import { Project, Article, ProjectBrief } from '@/types/types'
 import * as supabaseService from './supabase-service'
 import { getCountryCoordinates } from '../country-coordinates'
+import { getCityCoordinates } from '../city-coordinates'
 
 // Check if Supabase is configured
 const isSupabaseConfigured = () => {
@@ -163,18 +164,41 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function createProject(project: Omit<Project, 'id'>): Promise<Project> {
-  // Auto-geocode using country if coordinates are missing
+  // Helper to parse details
+  const parseDetail = (details: string, key: string): string => {
+    const match = details.match(new RegExp(`\\*\\*${key}:\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|\\n---|$)`, 'm'));
+    return match ? match[1].trim() : '';
+  };
+
+  // Auto-geocode using city first, then country if coordinates are missing
   let enrichedProject = { ...project };
   
-  if ((!enrichedProject.latitude || !enrichedProject.longitude) && enrichedProject.country) {
-    const coords = getCountryCoordinates(enrichedProject.country);
-    if (coords) {
-      enrichedProject = {
-        ...enrichedProject,
-        latitude: enrichedProject.latitude || coords.lat,
-        longitude: enrichedProject.longitude || coords.lng,
-      };
-      console.log(`📍 Auto-geocoded ${enrichedProject.country} to [${coords.lat}, ${coords.lng}]`);
+  if (!enrichedProject.latitude || !enrichedProject.longitude) {
+    // Try to get city coordinates first
+    const city = parseDetail(enrichedProject.details, 'City');
+    if (city && enrichedProject.country) {
+      const cityCoords = getCityCoordinates(city, enrichedProject.country);
+      if (cityCoords) {
+        enrichedProject = {
+          ...enrichedProject,
+          latitude: enrichedProject.latitude || cityCoords.lat,
+          longitude: enrichedProject.longitude || cityCoords.lng,
+        };
+        console.log(`📍 Auto-geocoded ${city}, ${enrichedProject.country} to [${cityCoords.lat}, ${cityCoords.lng}]`);
+      }
+    }
+    
+    // Fall back to country coordinates if city not found
+    if ((!enrichedProject.latitude || !enrichedProject.longitude) && enrichedProject.country) {
+      const countryCoords = getCountryCoordinates(enrichedProject.country);
+      if (countryCoords) {
+        enrichedProject = {
+          ...enrichedProject,
+          latitude: enrichedProject.latitude || countryCoords.lat,
+          longitude: enrichedProject.longitude || countryCoords.lng,
+        };
+        console.log(`📍 Auto-geocoded ${enrichedProject.country} to [${countryCoords.lat}, ${countryCoords.lng}]`);
+      }
     }
   }
 
