@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
                         </Link>
                         {/* Hide text on mobile, show on tablet and up */}
                         <Link href="/" className="text-left hidden sm:block">
-                            <h1 style={{fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: 'clamp(20px, 5vw, 34px)', color: '#7cbe31', lineHeight: 1}}>
+                            <h1 style={{fontWeight: 400, fontSize: 'clamp(20px, 5vw, 34px)', color: '#7cbe31', lineHeight: 1}}>
                                 Citizens' Atlas
                             </h1>
                             <p className="text-xs sm:text-sm" style={{ color: '#2f9030', lineHeight: 1 }}>on False Solutions to Climate and Circularity</p>

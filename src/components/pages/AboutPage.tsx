@@ -103,7 +103,7 @@ const AboutPage: React.FC = () => {
         />
         <div className="container mx-auto relative">
           <SectionLabel>About the Atlas</SectionLabel>
-          <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, fontSize: '72px', lineHeight: '73px', marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '72px', lineHeight: '73px', marginBottom: '2rem' }}>
             Tracking false solutions. Making finance <span style={{ color: '#ffa51d' }}>accountable.</span> Strengthening community <span style={{ color: '#ffa51d' }}>voices</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-6">
@@ -211,7 +211,7 @@ const AboutPage: React.FC = () => {
                     }
                   }}
                 >
-                  <div className="font-normal mb-4" style={{ color: '#ffa51d', fontFamily: 'Fraunces', fontWeight: 400, fontSize: '36px' }}>
+                  <div className="font-normal mb-4" style={{ color: '#ffa51d', fontWeight: 400, fontSize: '36px' }}>
                     {i.code}
                   </div>
                   <div className="text-white font-medium leading-snug text-base mb-3">{i.name}</div>
