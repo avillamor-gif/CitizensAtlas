@@ -109,6 +109,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     const [zoom, setZoom] = useState(3);
     const [hoveredClusterId, setHoveredClusterId] = useState<number | null>(null);
     const [hoveredMarkerId, setHoveredMarkerId] = useState<number | null>(null);
+    const [selectedClusterCountries, setSelectedClusterCountries] = useState<Set<string> | null>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
 
@@ -128,6 +129,13 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
             });
         }
     }, [selectedLocation]);
+
+    // Clear cluster filter when zooming out
+    useEffect(() => {
+        if (zoom < 5 && selectedClusterCountries) {
+            setSelectedClusterCountries(null);
+        }
+    }, [zoom, selectedClusterCountries]);
 
     const { minAmount, maxAmount } = useMemo(() => {
         const enrichedProjects = projects.map(enrichProjectWithCityCoordinates);
@@ -392,9 +400,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         anchor="center"
                         onClick={(e) => {
                             e.originalEvent.stopPropagation();
-                            // Zoom into cluster
+                            // Zoom into cluster and filter to only show this cluster's countries
                             if (mapRef.current && superclusterRef.current) {
                                 const expansionZoom = superclusterRef.current.getClusterExpansionZoom(cluster.id as number);
+                                setSelectedClusterCountries(new Set(cluster.countries || []));
                                 mapRef.current.flyTo({
                                     center: [cluster.lng, cluster.lat],
                                     zoom: expansionZoom,
@@ -430,6 +439,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
                 {/* Individual project markers */}
                 {offsetMarkers.map((project: any) => {
+                    // Filter to only show projects from selected cluster countries when zoomed in
+                    if (selectedClusterCountries && !selectedClusterCountries.has(project.country)) {
+                        return null;
+                    }
+                    
                     const locationDisplay = getLocationDisplay(project);
                     return (
                     <Marker
