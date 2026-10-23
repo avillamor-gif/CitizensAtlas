@@ -78,6 +78,27 @@ export const cityCoordinates: Record<string, { lat: number; lng: number; name: s
   'Depok::Indonesia': { lat: -6.4000, lng: 106.7942, name: 'Depok' },
   'Bekasi::Indonesia': { lat: -6.2349, lng: 107.0063, name: 'Bekasi' },
 
+  // Indonesia provinces
+  'West Java Province::Indonesia': { lat: -6.9175, lng: 107.6062, name: 'West Java Province' },
+  'East Java Province::Indonesia': { lat: -7.2575, lng: 112.7521, name: 'East Java Province' },
+  'Central Java Province::Indonesia': { lat: -7.1500, lng: 110.1428, name: 'Central Java Province' },
+  'South Sulawesi Province::Indonesia': { lat: -8.6500, lng: 119.4167, name: 'South Sulawesi Province' },
+  'North Sulawesi Province::Indonesia': { lat: 1.4518, lng: 124.8754, name: 'North Sulawesi Province' },
+  'South Kalimantan Province::Indonesia': { lat: -3.3000, lng: 114.5917, name: 'South Kalimantan Province' },
+  'West Kalimantan Province::Indonesia': { lat: 0.0000, lng: 111.0000, name: 'West Kalimantan Province' },
+  'Banten Province::Indonesia': { lat: -6.4000, lng: 106.6333, name: 'Banten Province' },
+  'Riau Province::Indonesia': { lat: 0.5471, lng: 101.4472, name: 'Riau Province' },
+  'Jambi Province::Indonesia': { lat: -1.6300, lng: 103.6167, name: 'Jambi Province' },
+  'South Sumatra Province::Indonesia': { lat: -2.9333, lng: 104.7667, name: 'South Sumatra Province' },
+  'North Sumatra Province::Indonesia': { lat: 3.5952, lng: 98.6722, name: 'North Sumatra Province' },
+  'Aceh Province::Indonesia': { lat: 5.5317, lng: 95.3197, name: 'Aceh Province' },
+  'Lampung Province::Indonesia': { lat: -5.2000, lng: 105.2667, name: 'Lampung Province' },
+  'Yogyakarta::Indonesia': { lat: -7.8000, lng: 110.3833, name: 'Yogyakarta' },
+  'Bali Province::Indonesia': { lat: -8.6705, lng: 115.2126, name: 'Bali Province' },
+  'Nusa Tenggara Timur Province::Indonesia': { lat: -8.6500, lng: 123.5957, name: 'Nusa Tenggara Timur Province' },
+  'Papua Province::Indonesia': { lat: -4.5, lng: 137.0, name: 'Papua Province' },
+  'West Papua Province::Indonesia': { lat: -1.3667, lng: 130.7500, name: 'West Papua Province' },
+
   // Southeast Asia cities (expanded) - additional cities not in main sections
   'Bangkok::Thailand': { lat: 13.7563, lng: 100.5018, name: 'Bangkok' },
   'Chiang Mai::Thailand': { lat: 18.7883, lng: 98.9853, name: 'Chiang Mai' },
