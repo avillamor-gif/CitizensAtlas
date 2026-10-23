@@ -178,7 +178,7 @@ const Hero: React.FC<HeroProps> = ({ activeView, setActiveView, projects, onAddP
                         </p>
                     </div>
                     <h1 className="mb-4 sm:mb-6 leading-tight" style={{ fontSize: '72px', lineHeight: '73px' }}>
-                        Citizens Atlas on{' '}
+                        The Citizens Atlas on{' '}
                         <span style={{ color: 'var(--highlight)' }}>False Climate and Circularity Solutions</span>.
                     </h1>
                     <p className="text-gray-300 mb-4 text-sm sm:text-base md:text-lg">
