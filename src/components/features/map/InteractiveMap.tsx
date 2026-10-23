@@ -97,6 +97,7 @@ interface InteractiveMapProps {
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick, onMapClick, onMapLoad, selectedLocation = null, pickerMode = false, mapStyle ="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" }) => {
     const [pickedLocation, setPickedLocation] = useState<{ latitude: number; longitude: number } | null>(selectedLocation);
     const [zoom, setZoom] = useState(3);
+    const [hoveredClusterId, setHoveredClusterId] = useState<number | null>(null);
     const mapRef = useRef<any>(null);
     const superclusterRef = useRef<any>(null);
 
@@ -209,6 +210,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         typeFreq[type] = (typeFreq[type] || 0) + 1;
                     });
                     
+                    // Get unique countries in cluster
+                    const countries = [...new Set(clusteredProjects.map(leaf => leaf.properties.country))];
+                    
                     const mostCommonType = Object.entries(typeFreq).sort((a, b) => b[1] - a[1])[0]?.[0] || 'default';
                     const clusterColor = getSolutionTypeColor(mostCommonType, 'hex');
                     
@@ -220,6 +224,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                         count: clusteredProjects.length,
                         totalAmount,
                         color: clusterColor,
+                        countries: countries,
                     });
                 } else {
                     // It's an individual point (when zoomed in)
@@ -394,12 +399,20 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                 backgroundColor: cluster.color,
                                 opacity: 0.8,
                             }}
-                            className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110 shadow-lg"
+                            className="rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-all hover:scale-110 shadow-lg relative group"
+                            onMouseEnter={() => setHoveredClusterId(cluster.id as number)}
+                            onMouseLeave={() => setHoveredClusterId(null)}
+                            title={cluster.countries?.join(', ')}
                         >
                             <div className="text-center">
                                 <div className="text-white font-bold text-sm">{cluster.count}</div>
                                 <div className="text-white font-semibold text-xs">{formatAmount(cluster.totalAmount)}</div>
                             </div>
+                            {hoveredClusterId === cluster.id && cluster.countries && cluster.countries.length > 0 && (
+                                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
+                                    {cluster.countries.join(', ')}
+                                </div>
+                            )}
                         </div>
                     </Marker>
                 ))}
