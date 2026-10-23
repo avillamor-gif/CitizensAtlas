@@ -66,14 +66,14 @@ const Header: React.FC<HeaderProps> = ({ currentUser, activePage }) => {
     return (
         <>
             <header className="py-2.5 px-4 sm:px-6 lg:px-16 shadow-lg sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--deep)', borderColor: 'var(--surface)' }}>
-                <div className="container mx-auto flex justify-between items-center h-16">
+                <div className="container mx-auto flex justify-between items-center h-14">
                     <div className="flex-1 flex items-center gap-2 sm:gap-3">
                         <Link href="/">
                             <Image 
                                 src="/citizensatlas_logo.jpg" 
                                 alt="Citizens' Atlas Logo" 
-                                width={50}
-                                height={50}
+                                width={45}
+                                height={45}
                                 className="object-contain cursor-pointer hover:opacity-80 transition-opacity"
                                 priority
                             />
