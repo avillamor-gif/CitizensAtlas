@@ -460,7 +460,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                 <div className="text-white font-semibold text-xs">{formatAmount(cluster.totalAmount)}</div>
                             </div>
                             {hoveredClusterId === cluster.id && cluster.countries && cluster.countries.length > 0 && (
-                                <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
+                                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
                                     {cluster.countries.join(', ')}
                                 </div>
                             )}
@@ -508,7 +508,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
                                 </span>
                             )}
                             {hoveredMarkerId === project.id && (
-                                <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
+                                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
                                     {locationDisplay}
                                 </div>
                             )}
