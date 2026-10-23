@@ -38,12 +38,12 @@ const MapPage: React.FC<MapPageProps> = ({ projects, filterOptions, onUpdateProj
     const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(true);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [mapStyleIndex, setMapStyleIndex] = useState(0);
+    const [mapStyleIndex, setMapStyleIndex] = useState(1);
 
     const mapStyles = [
-        { name: 'Dark Matter', url: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' },
-        { name: 'Voyager', url: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json' },
-        { name: 'Voyager No Labels', url: 'https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json' },
+        { name: 'Dark', url: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' },
+        { name: 'Light', url: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json' },
+        { name: 'Light No Labels', url: 'https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json' },
     ];
 
     // Local filter change handler - validates the value before updating
