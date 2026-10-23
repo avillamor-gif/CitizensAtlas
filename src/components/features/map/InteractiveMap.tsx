@@ -28,6 +28,29 @@ const parseProjectAmount = (details: string): number => {
     return parseFloat(numberString) || 0;
 };
 
+// Enrich project with city coordinates from details if available
+const enrichProjectWithCityCoordinates = (project: Project): Project => {
+    const city = parseDetail(project.details, 'City').trim();
+    
+    if (!city || !project.country) {
+        return project;
+    }
+
+    // Try to find city coordinates
+    const cityKey = `${city}::${project.country}`;
+    if (cityCoordinates[cityKey]) {
+        const coords = cityCoordinates[cityKey];
+        return {
+            ...project,
+            latitude: coords.lat,
+            longitude: coords.lng,
+        };
+    }
+
+    // If not found, return original project (will use stored country-level coordinates)
+    return project;
+};
+
 // Calculate bubble size based on project amount using a logarithmic scale
 function calculateBubbleSize(amount: number, minAmount: number, maxAmount: number): number {
     const minSize = 20; // min pixel size
@@ -95,7 +118,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     }, [selectedLocation]);
 
     const { minAmount, maxAmount } = useMemo(() => {
-        const amounts = projects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
+        const enrichedProjects = projects.map(enrichProjectWithCityCoordinates);
+        const amounts = enrichedProjects.map(p => parseProjectAmount(p.details)).filter(a => a > 0);
         if (amounts.length === 0) return { minAmount: 0, maxAmount: 0 };
         return {
             minAmount: Math.min(...amounts),
@@ -104,7 +128,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
     }, [projects]);
 
     const markers = useMemo(() => {
-        return projects.map(project => {
+        const enrichedProjects = projects.map(enrichProjectWithCityCoordinates);
+        return enrichedProjects.map(project => {
             const amount = parseProjectAmount(project.details);
             const size = calculateBubbleSize(amount, minAmount, maxAmount);
             const colorClass = getSolutionTypeColor(project.corruptionType, 'tailwind');
@@ -134,6 +159,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
     // Initialize and manage clustering
     const clustersAndMarkers = useMemo(() => {
+        // Enrich projects with city coordinates before clustering
+        const enrichedProjects = projects.map(enrichProjectWithCityCoordinates);
+
         // Initialize supercluster
         const index = new Supercluster({
             radius: 80,
@@ -141,7 +169,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
             minZoom: 0,
         });
 
-        const projectPoints = projects.map(p => ({
+        const projectPoints = enrichedProjects.map(p => ({
             type: 'Feature' as const,
             geometry: {
                 type: 'Point' as const,
@@ -214,6 +242,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
 
     // Calculate center point based on all projects
     const mapCenter = useMemo(() => {
+        // Enrich projects with city coordinates before calculating center
+        const enrichedProjects = projects.map(enrichProjectWithCityCoordinates);
+
         if (selectedLocation && !Number.isNaN(selectedLocation.latitude) && !Number.isNaN(selectedLocation.longitude)) {
             return {
                 longitude: selectedLocation.longitude,
@@ -222,11 +253,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ projects, onMarkerClick
             };
         }
 
-        if (projects.length === 0) {
+        if (enrichedProjects.length === 0) {
             return { longitude: 0, latitude: 20, zoom: 1.5 };
         }
 
-        const validProjects = projects.filter(p => 
+        const validProjects = enrichedProjects.filter(p => 
             p.latitude && p.longitude && 
             !isNaN(p.latitude) && !isNaN(p.longitude)
         );
