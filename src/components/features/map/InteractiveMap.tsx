@@ -57,6 +57,12 @@ const enrichProjectWithCityCoordinates = (project: Project): Project => {
         };
     }
 
+    // Debug log for missing city coordinates
+    if (project.country === 'Philippines') {
+        console.log(`[City Geocoding] Philippines project "${project.title}" - City not found: "${city}" - Looking for key: "${cityKey}"`);
+        console.log(`[City Geocoding] Available Philippine cities:`, Object.keys(cityCoordinates).filter(k => k.includes('Philippines')));
+    }
+
     // If not found, return original project (will use stored country-level coordinates)
     return project;
 };
