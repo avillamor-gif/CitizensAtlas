@@ -60,17 +60,27 @@ const getLocationDisplay = (project: Project): string => {
 };
 
 
+// Helper to title case a string (for proper database key matching)
+const toTitleCase = (str: string): string => {
+    return str.split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+};
+
 // Enrich project with city coordinates from details if available
 const enrichProjectWithCityCoordinates = (project: Project): Project => {
-    let city = parseDetail(project.details, 'City').trim().toUpperCase();
+    let city = parseDetail(project.details, 'City').trim();
     
     // Skip if city is empty, NA, or not specified
-    if (!city || city === 'NA' || city === 'N/A' || city === 'UNKNOWN' || !project.country) {
+    if (!city || city.toUpperCase() === 'NA' || city.toUpperCase() === 'N/A' || city.toUpperCase() === 'UNKNOWN' || !project.country) {
         return project;
     }
 
-    // Normalize city name (convert abbreviations to full names)
-    city = normalizeCityName(city, project.country);
+    // Normalize city name (convert abbreviations to full names) - works with uppercase
+    city = normalizeCityName(city.toUpperCase(), project.country);
+    
+    // Convert to title case for database lookup
+    city = toTitleCase(city);
 
     // Try to find city coordinates
     const cityKey = `${city}::${project.country}`;
@@ -81,12 +91,6 @@ const enrichProjectWithCityCoordinates = (project: Project): Project => {
             latitude: coords.lat,
             longitude: coords.lng,
         };
-    }
-
-    // Debug log for missing city coordinates
-    if (project.country === 'Philippines') {
-        console.log(`[City Geocoding] Philippines project "${project.title}" - City not found: "${city}" - Looking for key: "${cityKey}"`);
-        console.log(`[City Geocoding] Available Philippine cities:`, Object.keys(cityCoordinates).filter(k => k.includes('Philippines')));
     }
 
     // If not found, return original project (will use stored country-level coordinates = capital)
