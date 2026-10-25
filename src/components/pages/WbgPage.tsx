@@ -168,9 +168,9 @@ function WbgPage() {
             <p className="text-sm mb-4" style={{ color: '#aeb9cc' }}>
               For more information about the World Bank Group's role in false solutions financing, see the Atlas.
             </p>
-            <Link href="/" className="text-sm font-medium transition" style={{ color: 'var(--highlight)' }}>
-              ← Back to overview
-            </Link>
+            <a href="https://www.no-burn.org/wp-content/uploads/2026/10/WB-Factsheet.pdf" target="_blank" rel="noopener noreferrer" className="text-sm font-medium transition" style={{ color: 'var(--highlight)' }}>
+              Download the fact sheet
+            </a>
           </div>
         </div>
       </section>
