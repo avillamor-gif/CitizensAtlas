@@ -149,9 +149,9 @@ function ADBPage() {
               For deeper findings on emissions, costs to communities, and the role of informal waste workers,
               read the ADB factsheet.
             </p>
-            <Link href="/" className="text-sm font-medium transition" style={{ color: 'var(--highlight)' }}>
-              ← Back to overview
-            </Link>
+            <a href="https://www.no-burn.org/wp-content/uploads/2025/11/Factsheet-Citizens-Atlas-ADB.pdf" target="_blank" rel="noopener noreferrer" className="text-sm font-medium transition" style={{ color: 'var(--highlight)' }}>
+              Download the fact sheet
+            </a>
           </div>
         </div>
       </section>
