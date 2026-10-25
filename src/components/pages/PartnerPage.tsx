@@ -153,7 +153,7 @@ const PartnerPage: React.FC = () => {
                 <div className="mx-auto max-w-6xl rounded-[28px] bg-[#081a39] px-6 py-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.28)] sm:px-10 sm:py-10 lg:px-16 lg:py-14">
                     <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
                         <div className="max-w-xl pt-2">
-                            <p className="mb-4 text-xs uppercase tracking-[0.32em] text-[#9eaac2]">Partner With Us</p>
+                            <p className="mb-4 text-xs uppercase tracking-[0.32em] text-[#9eaac2]">EXPOSE A FALSE SOLUTION!</p>
                             <h2 className="max-w-md text-4xl font-extrabold leading-tight text-white sm:text-5xl">
                                 An open reporting space for citizens.
                             </h2>

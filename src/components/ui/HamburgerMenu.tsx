@@ -45,8 +45,8 @@ export function HamburgerMenu({ onNavigate }: HamburgerMenuProps) {
         <DropdownMenuItem onClick={() => handleNavigation('/map')} className="cursor-pointer">
           Map
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleNavigation('/partner')} className="cursor-pointer">
-          Partner with us
+        <DropdownMenuItem onClick={() => handleNavigation('/partner-with-us')} className="cursor-pointer">
+          Expose a False Solution!
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

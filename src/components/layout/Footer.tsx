@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
                             <li><Link href="/about" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>About</Link></li>
                             <li><Link href="/publications" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Publications</Link></li>
                             <li><Link href="/map" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Map</Link></li>
-                            <li><Link href="/partner-with-us" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Partner with us</Link></li>
+                            <li><Link href="/partner-with-us" className="text-gray-400 hover:transition-colors text-sm" style={{ color: 'rgb(156, 163, 175)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--highlight)'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgb(156, 163, 175)'}>Expose a False Solution!</Link></li>
                         </ul>
                     </div>
 
