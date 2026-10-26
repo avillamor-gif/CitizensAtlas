@@ -251,21 +251,19 @@ const AboutPage: React.FC = () => {
               </p>
               <button
                 onClick={() => setIsMoneyFlowExpanded(!isMoneyFlowExpanded)}
-                className="mt-1 px-4 py-2 rounded-lg font-normal text-sm transition-all duration-200 flex-shrink-0 whitespace-nowrap"
+                className="mt-1 px-8 py-3 rounded-lg font-semibold text-base transition-all duration-200 flex-shrink-0 whitespace-nowrap"
                 style={{
-                  backgroundColor: isMoneyFlowExpanded ? 'var(--highlight)' : '#112649',
-                  color: isMoneyFlowExpanded ? '#020e21' : '#c5ced9',
+                  backgroundColor: isMoneyFlowExpanded ? 'var(--highlight)' : 'var(--highlight)',
+                  color: isMoneyFlowExpanded ? '#020e21' : '#020e21',
                   border: 'none',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
-                  if (!isMoneyFlowExpanded) {
-                    e.currentTarget.style.backgroundColor = '#0e2141'
-                  }
+                  e.currentTarget.style.backgroundColor = '#ff9800'
                 }}
                 onMouseLeave={(e) => {
                   if (!isMoneyFlowExpanded) {
-                    e.currentTarget.style.backgroundColor = '#112649'
+                    e.currentTarget.style.backgroundColor = 'var(--highlight)'
                   }
                 }}
               >
