@@ -545,7 +545,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                     />
                                 </FormField>
                                 <FormField label="Solution Type" required>
-                                    <div className="flex items-center space-x-6">
+                                    <div className="flex items-center space-x-6 justify-center">
                                         <label className="flex items-center cursor-pointer">
                                             <input
                                                 type="radio"
@@ -555,7 +555,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                                 onChange={() => setFormData({ ...formData, publicationSolutionType: 'False Solutions' })}
                                                 className="w-4 h-4 cursor-pointer"
                                             />
-                                            <span className="ml-2 text-sm text-gray-300">False Solutions</span>
+                                            <span className="ml-2 text-sm text-white">False Solutions</span>
                                         </label>
                                         <label className="flex items-center cursor-pointer">
                                             <input
@@ -566,7 +566,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                                 onChange={() => setFormData({ ...formData, publicationSolutionType: 'Solutions' })}
                                                 className="w-4 h-4 cursor-pointer"
                                             />
-                                            <span className="ml-2 text-sm text-gray-300">Solutions</span>
+                                            <span className="ml-2 text-sm text-white">Solutions</span>
                                         </label>
                                     </div>
                                 </FormField>
