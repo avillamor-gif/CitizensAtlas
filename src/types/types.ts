@@ -36,6 +36,7 @@ export interface Article {
     slug: string;
     category: string;
     publicationCategory?: string;
+    publicationSolutionType?: 'False Solutions' | 'Solutions'; // For publications
     title: string;
     description: string;
     imageUrl: string;

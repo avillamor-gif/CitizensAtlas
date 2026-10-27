@@ -44,6 +44,7 @@ const emptyFormState = {
     description: '',
     category: '',
     publicationCategory: '',
+    publicationSolutionType: 'False Solutions' as 'False Solutions' | 'Solutions',
     publisher: '',
     imageUrl: '',
     tagColor: 'bg-yellow-400',
@@ -95,6 +96,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
             const resolvedPublicationCategory = itemToEdit.publicationCategory || editItem.publication_category || '';
             const resolvedPublisher = itemToEdit.publisher || editItem.publication_publisher || '';
             const resolvedPublicationLink = itemToEdit.documentUrls?.[0] || editItem.publicationLink || editItem.publication_link || '';
+            const resolvedPublicationSolutionType = itemToEdit.publicationSolutionType || editItem.publication_solution_type || 'False Solutions';
 
             console.log('🔄 [ArticleForm useEffect] Loading item to edit:', {
                 id: itemToEdit.id,
@@ -112,6 +114,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 description: itemToEdit.description || '',
                 category: resolvedCategory,
                 publicationCategory: resolvedPublicationCategory,
+                publicationSolutionType: resolvedPublicationSolutionType as 'False Solutions' | 'Solutions',
                 publisher: resolvedPublisher,
                 imageUrl: itemToEdit.imageUrl,
                 tagColor: itemToEdit.tagColor,
@@ -347,6 +350,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                 articleData.category = formData.category.trim();
                 articleData.publisher = formData.publisher.trim() || undefined;
                 articleData.publicationCategory = formData.publicationCategory.trim() || undefined;
+                articleData.publicationSolutionType = formData.publicationSolutionType;
                 const normalizedLink = formData.publicationLink.trim();
                 articleData.documentNames = normalizedLink ? [deriveDocumentNameFromLink(normalizedLink)] : [];
                 articleData.documentUrls = normalizedLink ? [normalizedLink] : [];
@@ -540,6 +544,34 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ onClose, onSubmit, onUpdate, 
                                         placeholder="Enter publisher"
                                     />
                                 </FormField>
+                                <FormField label="Solution Type" required>
+                                    <div className="flex items-center space-x-6">
+                                        <label className="flex items-center cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="publicationSolutionType"
+                                                value="False Solutions"
+                                                checked={formData.publicationSolutionType === 'False Solutions'}
+                                                onChange={() => setFormData({ ...formData, publicationSolutionType: 'False Solutions' })}
+                                                className="w-4 h-4 cursor-pointer"
+                                            />
+                                            <span className="ml-2 text-sm text-gray-300">False Solutions</span>
+                                        </label>
+                                        <label className="flex items-center cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="publicationSolutionType"
+                                                value="Solutions"
+                                                checked={formData.publicationSolutionType === 'Solutions'}
+                                                onChange={() => setFormData({ ...formData, publicationSolutionType: 'Solutions' })}
+                                                className="w-4 h-4 cursor-pointer"
+                                            />
+                                            <span className="ml-2 text-sm text-gray-300">Solutions</span>
+                                        </label>
+                                    </div>
+                                </FormField>
+                            </div>
+                            <div className="grid grid-cols-1 gap-4">
                                 <FormField label="Publication Link">
                                     <Input
                                         type="url"
