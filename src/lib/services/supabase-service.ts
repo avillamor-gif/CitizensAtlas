@@ -569,7 +569,7 @@ function normalizePublicationRecord(raw: any): Article {
     ...raw,
     category: raw.category ?? raw.publicationType ?? raw.publication_type ?? '',
     publicationCategory: raw.publicationCategory ?? raw.publication_category ?? undefined,
-    publicationSolutionType: raw.publicationSolutionType ?? raw.publication_solution_type ?? undefined,
+    publicationSolutionType: raw.publicationSolutionType ?? raw.publication_solution_type ?? 'False Solutions',
     publisher: raw.publisher ?? raw.publication_publisher ?? undefined,
     imageUrl: raw.imageUrl || '/fallback-project-image.svg',
   } as Article
