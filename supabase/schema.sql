@@ -69,6 +69,7 @@ CREATE TABLE publications (
   slug TEXT UNIQUE NOT NULL,
   category TEXT NOT NULL,
   "publicationCategory" TEXT,
+  "publicationSolutionType" TEXT DEFAULT 'False Solutions' CHECK ("publicationSolutionType" IN ('False Solutions', 'Solutions')),
   publisher TEXT,
   description TEXT,
   "imageUrl" TEXT,
