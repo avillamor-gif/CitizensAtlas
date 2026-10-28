@@ -49,6 +49,13 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                         </div>
                     </div>
                 )}
+                {isPublication && item.publicationSolutionType && (
+                    <div className="absolute top-0 left-0 right-0 flex justify-center pt-2 z-10">
+                        <div className="px-3 py-1.5 rounded text-xs font-bold text-white" style={{ backgroundColor: item.publicationSolutionType === 'Solutions' ? '#10b981' : '#f59e0b' }}>
+                            {item.publicationSolutionType}
+                        </div>
+                    </div>
+                )}
             </div>
             <div className="p-6 flex flex-col flex-grow">
                 <div className="mb-3 flex flex-wrap gap-2">
@@ -58,11 +65,6 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                     {item.publicationCategory && (
                         <span className="text-xs font-semibold px-2 py-1 inline-block self-start rounded" style={{ backgroundColor: 'rgba(26, 95, 122, 0.3)', color: '#64b5ff' }}>
                             {item.publicationCategory}
-                        </span>
-                    )}
-                    {isPublication && item.publicationSolutionType && (
-                        <span className="text-xs font-semibold px-2 py-1 inline-block self-start rounded" style={{ backgroundColor: item.publicationSolutionType === 'Solutions' ? '#10b981' : '#f59e0b', color: '#ffffff' }}>
-                            {item.publicationSolutionType}
                         </span>
                     )}
                 </div>
