@@ -1,17 +1,69 @@
-# Partner Reports Database Setup
+# Database Migrations
 
-This migration creates the `partner_reports` table in Supabase PostgreSQL for persistent storage of citizen reports.
+This directory contains SQL migrations for the Citizens Atlas database setup in Supabase PostgreSQL.
 
-## Setup Instructions
+## Available Migrations
 
-### 1. Run the SQL Migration
+### 1. Partner Reports Table (`001_create_partner_reports_table.sql`)
+
+Creates the `partner_reports` table for persistent storage of citizen reports.
+
+#### Setup Instructions
 
 Go to your Supabase project:
 - Navigate to **SQL Editor** → **New Query**
 - Copy the contents of `001_create_partner_reports_table.sql`
 - Execute the query
 
-### 2. Verify the Table
+### 2. Publication Solution Type Column (`002_add_publication_solution_type.sql`)
+
+Adds the `publication_solution_type` column to the `publications` table to enable the display of solution type badges on the publications page.
+
+#### Setup Instructions
+
+Go to your Supabase project:
+- Navigate to **SQL Editor** → **New Query**
+- Copy the contents of `002_add_publication_solution_type.sql`
+- Execute the query
+
+This migration:
+- Adds `publication_solution_type` column with type VARCHAR(50)
+- Sets default value to 'False Solutions'
+- Creates an index for efficient filtering
+
+#### Verify the Column
+
+```sql
+SELECT id, title, publication_solution_type FROM publications LIMIT 5;
+```
+
+#### Update Existing Records (Optional)
+
+```sql
+UPDATE publications 
+SET publication_solution_type = 'False Solutions' 
+WHERE publication_solution_type IS NULL;
+```
+
+---
+
+## General Setup Instructions
+
+### 1. Run SQL Migrations
+
+Go to your Supabase project:
+- Navigate to **SQL Editor** → **New Query**
+- Copy the contents of each migration file in numerical order
+- Execute the queries
+
+### 2. Verify the Tables
+
+```sql
+SELECT * FROM partner_reports LIMIT 1;
+SELECT * FROM publications LIMIT 1;
+```
+
+### 3. Verify the Table
 
 ```sql
 SELECT * FROM partner_reports LIMIT 1;

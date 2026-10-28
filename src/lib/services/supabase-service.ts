@@ -657,6 +657,7 @@ export async function updatePublication(id: number, updates: Partial<Article>) {
       id,
       category: updates.category,
       publicationCategory: updates.publicationCategory,
+      publicationSolutionType: updates.publicationSolutionType,
       publisher: updates.publisher,
       keys: Object.keys(updates)
     })
@@ -685,6 +686,7 @@ export async function updatePublication(id: number, updates: Partial<Article>) {
       id: updated?.id,
       category: updated?.category,
       publicationCategory: updated?.publicationCategory,
+      publicationSolutionType: updated?.publicationSolutionType,
       publisher: updated?.publisher,
       keys: updatedRaw ? Object.keys(updatedRaw) : []
     })
@@ -696,6 +698,9 @@ export async function updatePublication(id: number, updates: Partial<Article>) {
     }
     if (typeof updates.publicationCategory === 'string' && updated?.publicationCategory !== updates.publicationCategory) {
       throw new Error(`Publication category was not persisted (expected: "${updates.publicationCategory}", got: "${updated?.publicationCategory ?? ''}")`)
+    }
+    if (typeof updates.publicationSolutionType === 'string' && updated?.publicationSolutionType !== updates.publicationSolutionType) {
+      throw new Error(`Publication solution type was not persisted (expected: "${updates.publicationSolutionType}", got: "${updated?.publicationSolutionType ?? ''}")`)
     }
 
     return updated
