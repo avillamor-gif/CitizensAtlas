@@ -50,7 +50,7 @@ const ArticleGridCard: React.FC<ArticleGridCardProps> = ({ item, onViewArticle, 
                     </div>
                 )}
                 {isPublication && (
-                    <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-lg" style={{ backgroundColor: item.publicationSolutionType === 'Solutions' ? '#10b981' : '#f59e0b' }}>
+                    <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-lg z-10" style={{ backgroundColor: item.publicationSolutionType === 'Solutions' ? '#10b981' : '#f59e0b' }}>
                         {item.publicationSolutionType || 'False Solutions'}
                     </div>
                 )}
