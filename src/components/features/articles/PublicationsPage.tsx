@@ -273,7 +273,7 @@ const PublicationsPage: React.FC<PublicationsPageProps> = ({ items, onViewArticl
 
       {/* Articles Section */}
       <ArticleListPage
-        title=""
+        title="Publications"
         items={filtered}
         onViewArticle={onViewArticle}
         onIncrementDownload={onIncrementDownload}
