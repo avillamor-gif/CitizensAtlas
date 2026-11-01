@@ -6,6 +6,7 @@ const NOISY_MESSAGES = [
   'The width(-1) and height(-1) of chart should be greater than 0',
   '<ellipse> attribute rx: A negative value is not valid.',
   'Using DEFAULT root logger',
+  'was preloaded using link preload but not used within a few seconds',
 ]
 
 function shouldSuppress(args: unknown[]): boolean {
