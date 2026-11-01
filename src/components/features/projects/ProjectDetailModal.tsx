@@ -63,7 +63,7 @@ const AccordionItem: React.FC<{ section: AccordionSection; isOpen: boolean; onTo
                 onClick={onToggle}
                 className="w-full px-3 sm:px-4 py-3 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors"
             >
-                <h3 className="text-brand-dark-blue text-left">{section.title}</h3>
+                <h3 className="text-sm sm:text-base text-brand-dark-blue text-left font-semibold">{section.title}</h3>
                 <svg
                     className={`w-4 h-4 text-brand-dark-blue transition-transform duration-300 flex-shrink-0 ml-2 ${
                         isOpen ? 'transform rotate-180' : ''
