@@ -244,8 +244,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                 <div className="p-3 sm:p-4 border-b flex-shrink-0 bg-white sticky top-0 z-10">
                     <div className="flex justify-between items-start gap-3">
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
-                            <h2 className="text-sm sm:text-base text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
+                            <h2 className="text-lg sm:text-2xl text-brand-dark-blue mt-1 leading-tight font-bold">{project.title}</h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
                                 {detailsMap.get('Project Status') && (
                                     <>
@@ -327,8 +327,8 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClos
                 <div className="p-3 sm:p-4 border-b flex-shrink-0 bg-white sticky top-0 z-10">
                     <div className="flex justify-between items-start gap-3">
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
-                            <h2 className="text-sm sm:text-base text-brand-dark-blue mt-1 leading-tight">{project.title}</h2>
+                            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">{project.country}</p>
+                            <h2 className="text-lg sm:text-2xl text-brand-dark-blue mt-1 leading-tight font-bold">{project.title}</h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
                                 {detailsMap.get('Project Status') && (
                                     <>
