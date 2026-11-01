@@ -565,23 +565,14 @@ export async function getPublications() {
 function normalizePublicationRecord(raw: any): Article {
   if (!raw) return raw
 
-  const solutionType = raw.publicationSolutionType ?? raw.publication_solution_type ?? 'False Solutions'
-  
-  const normalized = {
+  return {
     ...raw,
     category: raw.category ?? raw.publicationType ?? raw.publication_type ?? '',
     publicationCategory: raw.publicationCategory ?? raw.publication_category ?? undefined,
-    publicationSolutionType: solutionType,
+    publicationSolutionType: raw.publicationSolutionType ?? raw.publication_solution_type ?? 'False Solutions',
     publisher: raw.publisher ?? raw.publication_publisher ?? undefined,
     imageUrl: raw.imageUrl || '/fallback-project-image.svg',
   } as Article
-
-  // Debug: log if solution type is being set to default
-  if (solutionType === 'False Solutions' && !raw.publicationSolutionType && !raw.publication_solution_type) {
-    console.log('⚠️ [normalizePublicationRecord] Using default "False Solutions" for publication:', raw.id, raw.title)
-  }
-
-  return normalized
 }
 
 export async function getPublishedPublications(limit?: number) {
@@ -601,13 +592,6 @@ export async function getPublishedPublications(limit?: number) {
     const { data, error } = await query
     
     if (error) throw error
-    
-    // Debug log to check what fields are returned
-    if (data && Array.isArray(data) && data.length > 0) {
-      const firstRecord = data[0] as any
-      console.log('📚 [getPublishedPublications] Sample raw record keys:', Object.keys(firstRecord))
-      console.log('📚 [getPublishedPublications] Sample publicationSolutionType value:', firstRecord?.publicationSolutionType ?? firstRecord?.publication_solution_type ?? 'MISSING')
-    }
     
     return ((data || []) as any[]).map(normalizePublicationRecord)
   } catch (error) {
